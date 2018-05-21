@@ -38,7 +38,6 @@ class GraphCtrl extends MetricsPanelCtrl {
   subTabIndex: number;
   processor: DataProcessor;
 
-  datasourceRequest: Object;
   backendURL: string;
   analyticsTypes: Array<String> = ['Anomaly detection', 'Pettern Detection (not implemented yet)'];
   anomalyTypes = []; // TODO: remove it later. Only for alert tab
@@ -173,20 +172,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       this.render(this.seriesList);
       this.$scope.$digest();
     });
-
-    appEvents.on('ds-request-response', data => {
-      console.log(data)
-      let params = data.config.params;
-      this.datasourceRequest = {
-        url: params.url,
-        type: params.inspect.type,
-        method: params.method,
-        data: params.data,
-        ...params
-      };
-      console.log(this.datasourceRequest)
-    });
-
+    
     this.anomalyController.fetchAnomalyTypesStatuses();
 
   }
