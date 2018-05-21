@@ -129,7 +129,7 @@
     "sort": 0,
     "value_type": "individual"
   },
-  "type": "corpglory-grafalys-graph-panel",
+  "type": "hastic-graph-panel",
   "xaxis": {
     "buckets": null,
     "mode": "time",

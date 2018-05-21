@@ -128,7 +128,7 @@ var template = `
 </div>
 `;
 
-coreModule.directive('grafalysGraphThresholdForm', function() {
+coreModule.directive('hasticGraphThresholdForm', function() {
   return {
     restrict: 'E',
     template: template,
