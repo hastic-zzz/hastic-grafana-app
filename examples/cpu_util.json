@@ -1,0 +1,158 @@
+
+{
+  "alert": {
+    "conditions": [
+      {
+        "evaluator": {
+          "params": [
+            0.5
+          ],
+          "type": "gt"
+        },
+        "operator": {
+          "type": "and"
+        },
+        "query": {
+          "params": [
+            "A",
+            "5m",
+            "now"
+          ]
+        },
+        "reducer": {
+          "params": [],
+          "type": "avg"
+        },
+        "type": "query"
+      }
+    ],
+    "executionErrorState": "alerting",
+    "frequency": "60s",
+    "handler": 1,
+    "name": "OkAlert",
+    "noDataState": "no_data",
+    "notifications": []
+  },
+  "aliasColors": {},
+  "analyticsType": "Anomaly detection",
+  "anomalyType": "",
+  "anomalyTypes": [
+    {
+      "algorithm": "unsupervised",
+      "color": "rgba(214, 131, 206, 0.95)",
+      "name": "cpu_utilization_unsupervised"
+    },
+    {
+      "algorithm": "unsupervised",
+      "color": "red",
+      "name": "AnomalyNamefff"
+    },
+    {
+      "algorithm": "unsupervised",
+      "color": "red",
+      "name": "AnomalyName"
+    },
+    {
+      "algorithm": "unsupervised",
+      "color": "red",
+      "name": "anomaly_nameret"
+    }
+  ],
+  "backendURL": "http://corpglory.com:8000",
+  "bars": false,
+  "dashLength": 10,
+  "dashes": false,
+  "datasource": "accelerometer",
+  "fill": 1,
+  "gridPos": {
+    "h": 13,
+    "w": 24,
+    "x": 0,
+    "y": 0
+  },
+  "id": 2,
+  "legend": {
+    "avg": false,
+    "current": false,
+    "max": false,
+    "min": false,
+    "show": true,
+    "total": false,
+    "values": false
+  },
+  "lines": true,
+  "linewidth": 1,
+  "nullPointMode": "null",
+  "percentage": false,
+  "pointradius": 5,
+  "points": false,
+  "renderer": "flot",
+  "seriesOverrides": [],
+  "spaceLength": 10,
+  "stack": false,
+  "steppedLine": false,
+  "targets": [
+    {
+      "groupBy": [],
+      "measurement": "ec2_cpu_utilization",
+      "orderByTime": "ASC",
+      "policy": "default",
+      "refId": "A",
+      "resultFormat": "time_series",
+      "select": [
+        [
+          {
+            "params": [
+              "value"
+            ],
+            "type": "field"
+          }
+        ]
+      ],
+      "tags": []
+    }
+  ],
+  "thresholds": [
+    {
+      "colorMode": "critical",
+      "fill": true,
+      "line": true,
+      "op": "gt",
+      "value": 0.5
+    }
+  ],
+  "timeFrom": null,
+  "timeShift": null,
+  "title": "Panel Title",
+  "tooltip": {
+    "shared": true,
+    "sort": 0,
+    "value_type": "individual"
+  },
+  "type": "corpglory-grafalys-graph-panel",
+  "xaxis": {
+    "buckets": null,
+    "mode": "time",
+    "name": null,
+    "show": true,
+    "values": []
+  },
+  "yaxes": [
+    {
+      "format": "short",
+      "label": null,
+      "logBase": 1,
+      "max": null,
+      "min": null,
+      "show": true
+    },
+    {
+      "format": "short",
+      "label": null,
+      "logBase": 1,
+      "max": null,
+      "min": null,
+      "show": true
+    }
+  ]
+}

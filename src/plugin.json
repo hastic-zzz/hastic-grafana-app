@@ -1,0 +1,21 @@
+{
+  "type": "panel",
+  "name": "Hastic Graph Panel",
+  "id": "hastic-graph-panel",
+
+  "info": {
+    "author": {
+      "name": "CorpGlory Team",
+      "url": "https://corpglory.com"
+    },
+    "logos": {
+      "small": "img/icn-graph-panel.svg",
+      "large": "img/icn-graph-panel.svg"
+    }
+  },
+
+  "dependencies": {
+    "grafanaVersion": "5.1.x"
+  }
+}
+

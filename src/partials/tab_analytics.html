@@ -1,0 +1,144 @@
+<h5> Analytics </h5>
+<div class="editor-row">
+  <div class="section gf-form-group">
+    <div class="gf-form">
+      <label class="gf-form-label width-8"> Analytics type </label>
+      <div class="gf-form-select-wrapper">
+        <select class="gf-form-input width-12"
+          ng-model="ctrl.panel.analyticsType"
+          ng-options="source as source for source in ctrl.analyticsTypes"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+
+<h5> Anomaly Types </h5>
+<div class="editor-row">
+  <div class="gf-form" ng-repeat="anomalyType in ctrl.anomalyController.anomalyTypes">
+
+    <label class="gf-form-label width-4"> Name </label>
+    <input
+      type="text" class="gf-form-input max-width-15"
+      ng-model="anomalyType.name"
+      ng-disabled="true"
+    >
+
+    <!--
+    <label class="gf-form-label width-6"> Confidence </label>
+    <input
+      type="number" class="gf-form-input width-5 ng-valid ng-scope ng-empty ng-dirty ng-valid-number ng-touched"
+      placeholder="auto" bs-tooltip="'Override automatic decimal precision for legend and tooltips'"
+      data-placement="right" ng-model="ctrl.panel.decimals" ng-change="ctrl.render()" ng-model-onblur="" data-original-title="" title=""
+    />
+    -->
+
+    <label class="gf-form-label width-6"> Color </label>
+    <span class="gf-form-label">
+      <color-picker
+        color="anomalyType.color"
+        onChange="ctrl.onAnomalyColorChange.bind(ctrl, anomalyType.key)"
+      />
+    </span>
+
+    <label class="gf-form-label">
+      <a class="pointer" tabindex="1" ng-click="ctrl.onToggleAnomalyTypeLabelingMode(anomalyType.key)">
+        <i class="fa fa-bar-chart" ng-if="!anomalyType.saving"></i>
+        <i class="fa fa-spinner fa-spin" ng-if="anomalyType.saving"></i>
+        <b ng-if="anomalyType.selected && !anomalyType.deleteMode && !anomalyType.saving"> labeling </b>
+        <b ng-if="anomalyType.selected && anomalyType.deleteMode && !anomalyType.saving"> deleting </b>
+        <b ng-if="anomalyType.saving" ng-disabled="true"> saving... </b>
+      </a>
+    </label>
+
+
+    <label class="gf-form-label"> Alerts: </label>
+    <label
+      class="gf-form-label text-center"
+      style="width: 4rem"
+      ng-if="anomalyType.alertEnabled === undefined" 
+      bs-tooltip="'Alarting status isn`t available. Wait please.'"
+    >
+      <i class="fa fa-spinner fa-spin"></i>
+    </label>
+
+    <gf-form-switch
+      ng-if="anomalyType.alertEnabled !== undefined"
+      on-change="ctrl.onAnomalyAlertChange(anomalyType)"
+      checked="anomalyType.alertEnabled"
+      style="height: 36px;"
+    />
+
+    <label class="gf-form-label">
+      <a
+        ng-if="anomalyType.visible"
+        ng-disabled="anomalyType.selected"
+        bs-tooltip="'Hide. It`s visible now.'"
+        ng-click="ctrl.onAnomalyToggleVisibility(anomalyType.key)"
+        class="pointer"
+      >
+        <i class="fa fa-eye"></i>
+      </a>
+
+      <a
+        ng-if="!anomalyType.visible"
+        ng-disabled="anomalyType.selected"
+        bs-tooltip="'Show. It`s hidden now.'"
+        ng-click="ctrl.onAnomalyToggleVisibility(anomalyType.key)"
+        class="pointer"
+      >
+        <i class="fa fa-eye-slash"></i>
+      </a>
+    </label>
+
+    <label class="gf-form-label">
+      <a
+        ng-if="!anomalyType.selected"
+        ng-click="ctrl.onAnomalyRemove(anomalyType.key)"
+        class="pointer"
+      >
+        <i class="fa fa-trash"></i>
+      </a>
+
+      <a
+        ng-if="anomalyType.selected"
+        ng-click="ctrl.onAnomalyCancelLabeling(anomalyType.key)"
+        class="pointer"
+      >
+        <i class="fa fa-ban"></i>
+      </a>
+    </label>
+
+    <label>
+      <i ng-if="anomalyType.status === 'learning'" class="grafana-tip fa fa-leanpub ng-scope" bs-tooltip="'Learning'"></i>
+      <i ng-if="anomalyType.status === 'pending'" class="grafana-tip fa fa-list-ul ng-scope" bs-tooltip="'Pending'"></i>
+      <i ng-if="anomalyType.status === 'failed'" class="grafana-tip fa fa-exclamation-circle ng-scope" bs-tooltip="'Failed'"></i>
+    </label>
+
+  </div>
+</div>
+
+<div class="editor-row" ng-if="ctrl.anomalyController.creatingAnomalyType">
+  <div class="gf-form">
+    <label class="gf-form-label width-4"> Name </label>
+    <input
+      type="text" class="gf-form-input max-width-15"
+      ng-model="ctrl.anomalyController.newAnomalyType.name"
+      ng-change="ctrl.onAnomalyNameChange()"
+    >
+
+    <label class="gf-form-label">
+      <a class="pointer" tabindex="1" ng-click="ctrl.saveAnomalyType()">
+        <b ng-if="!ctrl.anomalyController.savingAnomalyType"> create </b>
+        <b ng-if="ctrl.anomalyController.savingAnomalyType" ng-disabled="true"> saving... </b>
+      </a>
+    </label>
+  </div>
+</div>
+
+<div class="gf-form-button-row" ng-if="!ctrl.anomalyController.creatingAnomalyType">
+  <button class="btn btn-inverse" ng-click="ctrl.createNewAnomalyType()">
+    <i class="fa fa-plus"></i>
+    Add an Anomaly Type
+  </button>
+</div>
