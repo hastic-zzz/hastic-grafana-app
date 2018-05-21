@@ -1,12 +1,12 @@
 {
   "type": "panel",
-  "name": "Hastic Graph Panel",
+  "name": "Hastic Graph",
   "id": "hastic-graph-panel",
 
   "info": {
     "author": {
-      "name": "CorpGlory Team",
-      "url": "https://corpglory.com"
+      "name": "Hastic.Core Team",
+      "url": "https://github.com/hastic/hastic-grafana-graph-panel"
     },
     "logos": {
       "small": "img/icn-graph-panel.svg",
