@@ -73,6 +73,7 @@ export class AnomalyController {
     this._creatingNewAnomalyType = false;
     this._savingNewAnomalyType = false;
     this.runAnomalyTypeAlertEnabledWaiter(this._newAnomalyType);
+    this._runAnomalyTypeStatusWaiter(this._newAnomalyType);
   }
 
   get creatingAnomalyType() { return this._creatingNewAnomalyType; }
