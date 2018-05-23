@@ -1,5 +1,6 @@
 import { Segment, SegmentKey } from '../model/segment';
 import { MetricExpanded } from '../model/metric';
+import { DatasourceRequest } from '../model/datasource';
 import { SegmentsSet } from '../model/segment_set';
 import { AnomalyKey, AnomalyType, AnomalySegment } from '../model/anomaly';
 
@@ -11,13 +12,14 @@ export class AnomalyService {
   constructor(private _backendURL: string, private _backendSrv: BackendSrv) {
   }
 
-  async postNewAnomalyType(metric: MetricExpanded, newAnomalyType: AnomalyType, panelId: number) {
+  async postNewAnomalyType(metric: MetricExpanded, datasourceRequest: DatasourceRequest, newAnomalyType: AnomalyType, panelId: number) {
     return this._backendSrv.post(
       this._backendURL + '/anomalies', 
       {
         name: newAnomalyType.name,
         metric: metric.toJSON(),
-        panelUrl: window.location.origin + window.location.pathname + `?panelId=${panelId}&fullscreen`
+        panelUrl: window.location.origin + window.location.pathname + `?panelId=${panelId}&fullscreen`,
+        datasource: datasourceRequest
       }
     )
   };
