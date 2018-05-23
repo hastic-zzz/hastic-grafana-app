@@ -7,6 +7,7 @@ import { GraphRenderer } from './graph_renderer';
 import { GraphLegend } from './graph_legend';
 import { DataProcessor } from './data_processor';
 import { Metric, MetricExpanded } from './model/metric';
+import { DatasourceRequest } from './model/datasource';
 import { AnomalyKey, AnomalyType } from './model/anomaly';
 import { AnomalyService } from './services/anomaly_service';
 import { AnomalyController } from './controllers/anomaly_controller';
@@ -38,8 +39,9 @@ class GraphCtrl extends MetricsPanelCtrl {
   subTabIndex: number;
   processor: DataProcessor;
 
+  datasourceRequest: DatasourceRequest;
   backendURL: string;
-  analyticsTypes: Array<String> = ['Anomaly detection', 'Pettern Detection (not implemented yet)'];
+  analyticsTypes: Array<String> = ['Anomaly detection', 'Pattern Detection (not implemented yet)'];
   anomalyTypes = []; // TODO: remove it later. Only for alert tab
   anomalyController: AnomalyController;
 
@@ -135,8 +137,8 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   /** @ngInject */
   constructor(
-    $scope, $injector, private annotationsSrv, 
-    private keybindingSrv, private backendSrv, 
+    $scope, $injector, private annotationsSrv,
+    private keybindingSrv, private backendSrv,
     private popoverSrv, private contextSrv
 ) {
     super($scope, $injector);
@@ -172,7 +174,17 @@ class GraphCtrl extends MetricsPanelCtrl {
       this.render(this.seriesList);
       this.$scope.$digest();
     });
-    
+    appEvents.on('ds-request-response', data => {
+      let requestConfig = data.config;
+      this.datasourceRequest = {
+        url: requestConfig.url,
+        type: requestConfig.inspect.type,
+        method: requestConfig.method,
+        data: requestConfig.data,
+        params: requestConfig.params
+      };
+    });
+
     this.anomalyController.fetchAnomalyTypesStatuses();
 
   }
@@ -472,8 +484,10 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   async saveAnomalyType() {
+    this.refresh();
     await this.anomalyController.saveNewAnomalyType(
       new MetricExpanded(this.panel.datasource, this.panel.targets),
+      this.datasourceRequest,
       this.panel.id
     );
     this.$scope.$digest();

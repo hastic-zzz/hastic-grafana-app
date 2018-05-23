@@ -4,7 +4,8 @@ import {
   AnomalyKey, AnomalyType,
   AnomalyTypesSet, AnomalySegment, AnomalySegmentsSearcher, AnomalySermentPair
 } from '../model/anomaly';
-import { MetricExpanded } from '../model/metric'
+import { MetricExpanded } from '../model/metric';
+import { DatasourceRequest } from '../model/datasource';
 import { Segment, SegmentKey } from '../model/segment';
 import { SegmentsSet } from '../model/segment_set';
 import { SegmentArray } from '../model/segment_array';
@@ -65,13 +66,14 @@ export class AnomalyController {
     this._savingNewAnomalyType = false;
   }
 
-  async saveNewAnomalyType(metricExpanded: MetricExpanded, panelId: number) {
+  async saveNewAnomalyType(metricExpanded: MetricExpanded, datasourceRequest: DatasourceRequest, panelId: number) {
     this._savingNewAnomalyType = true;
-    await this._anomalyService.postNewAnomalyType(metricExpanded, this._newAnomalyType, panelId);
+    await this._anomalyService.postNewAnomalyType(metricExpanded, datasourceRequest, this._newAnomalyType, panelId);
     this._anomalyTypesSet.addAnomalyType(this._newAnomalyType);
     this._creatingNewAnomalyType = false;
     this._savingNewAnomalyType = false;
     this.runAnomalyTypeAlertEnabledWaiter(this._newAnomalyType);
+    this._runAnomalyTypeStatusWaiter(this._newAnomalyType);
   }
 
   get creatingAnomalyType() { return this._creatingNewAnomalyType; }
