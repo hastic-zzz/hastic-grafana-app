@@ -1,8 +1,18 @@
 # Hastic Graph Panel
 
-A better version of default Grafana's Graph Panel
+A better version of default Grafana's Graph Panel. Can render Anomalies & more.
+In order to detect anomalies and make predictions, you need to install: https://github.com/hastic/hastic-server
 
-Can render Anomalies & more.
+# Installation
+
+Clone repo
+```
+cd $GRAFANA_PATH/data/plugins
+git clone git@github.com:hastic/hastic-grafana-graph-panel.git
+```
+
+and restart your `$GRAFANA_PATH/bin/grafana-server` server.
+
 
 # Build
 
