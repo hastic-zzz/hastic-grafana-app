@@ -23,7 +23,17 @@ export class AnomalyService {
       }
     )
   };
-  
+
+  async isBackendOk(): Promise<boolean> {
+    console.log(this._backendURL);
+    try {
+      var data = await this._backendSrv.get(this._backendURL);
+      return true;
+    } catch(e) {
+      return false;
+    }
+  }
+   
   async updateSegments(
     key: AnomalyKey, addedSegments: SegmentsSet<Segment>, removedSegments: SegmentsSet<Segment>
   ): Promise<SegmentKey[]> {
