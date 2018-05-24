@@ -14,12 +14,16 @@ git clone git@github.com:hastic/hastic-grafana-graph-panel.git
 and restart your `$GRAFANA_PATH/bin/grafana-server` server.
 
 
-# Build
+
+# Development
+
+## Build
 
 ```
 npm install
 npm run build
 ```
+
 
 # Changelog
 
