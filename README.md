@@ -2,6 +2,7 @@
 
 A better version of default Grafana's Graph Panel. Can render Anomalies & more.
 In order to detect anomalies and make predictions, you need to install: https://github.com/hastic/hastic-server
+You need [Grafana versoin 5.1.1 or more](https://grafana.com/grafana/download)
 
 # Installation
 
