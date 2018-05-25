@@ -195,8 +195,10 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   get backendURL(): string {
-
-    return 'http://grafalys-analytic-unit.corpglory.com/';
+    if(this.templateSrv.index['HASTIC_SERVER_URL'] === undefined) {
+      return undefined;
+    }
+    return this.templateSrv.index['HASTIC_SERVER_URL'].current.value;
   }
 
   async runBackendConnectivityCheck() {

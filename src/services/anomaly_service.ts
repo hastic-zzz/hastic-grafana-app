@@ -25,7 +25,6 @@ export class AnomalyService {
   };
 
   async isBackendOk(): Promise<boolean> {
-    console.log(this._backendURL);
     try {
       var data = await this._backendSrv.get(this._backendURL);
       return true;
