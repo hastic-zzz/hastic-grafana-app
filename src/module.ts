@@ -21,6 +21,8 @@ import config from 'grafana/app/core/config';
 
 import _ from 'lodash';
 
+const BACKEND_VARIABLE_NAME = "HASTIC_SERVER_URL";
+
 
 class GraphCtrl extends MetricsPanelCtrl {
   static template = template;
@@ -40,7 +42,6 @@ class GraphCtrl extends MetricsPanelCtrl {
   processor: DataProcessor;
 
   datasourceRequest: DatasourceRequest;
-  backendURL: string;
   analyticsTypes: Array<String> = ['Anomaly detection', 'Pattern Detection (not implemented yet)'];
   anomalyTypes = []; // TODO: remove it later. Only for alert tab
   anomalyController: AnomalyController;
@@ -132,14 +133,14 @@ class GraphCtrl extends MetricsPanelCtrl {
     thresholds: [],
     anomalyType: '',
     analyticsType: 'Anomaly detection',
-    backendURL: 'http://localhost:8000'
   };
 
   /** @ngInject */
   constructor(
     $scope, $injector, private annotationsSrv,
     private keybindingSrv, private backendSrv,
-    private popoverSrv, private contextSrv
+    private popoverSrv, private contextSrv,
+    private alertSrv
 ) {
     super($scope, $injector);
 
@@ -150,7 +151,11 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     this.processor = new DataProcessor(this.panel);
 
-    var anomalyService = new AnomalyService(this.panel.backendURL, backendSrv as BackendSrv);
+    
+    var anomalyService = new AnomalyService(this.backendURL, backendSrv as BackendSrv);
+    
+    this.runBackendConnectivityCheck();
+
     this.anomalyController = new AnomalyController(this.panel, anomalyService, this.events);
     this.anomalyTypes = this.panel.anomalyTypes;
     keybindingSrv.bind('d', this.onDKey.bind(this));
@@ -187,6 +192,32 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     this.anomalyController.fetchAnomalyTypesStatuses();
 
+  }
+
+  get backendURL(): string {
+    if(this.templateSrv.index['HASTIC_SERVER_URL'] === undefined) {
+      return undefined;
+    }
+    return this.templateSrv.index['HASTIC_SERVER_URL'].current.value;
+  }
+
+  async runBackendConnectivityCheck() {
+    if(this.backendURL === '' || this.backendURL === undefined) {
+      this.alertSrv.set(
+        `Dashboard variable $${BACKEND_VARIABLE_NAME} is missing`, 
+        'Please set $${BACKEND_VARIABLE_NAME} ', 
+        'warning', 4000
+      );
+      return;
+    }
+
+    var as = new AnomalyService(this.backendURL, this.backendSrv);
+    var isOK = await as.isBackendOk();
+    if(!isOK) {
+      this.alertSrv.set(
+        'Can`t connect to Hastic server', `Hastic server: "${this.backendURL}"`, 'warning', 4000
+      );
+    } 
   }
 
   link(scope, elem, attrs, ctrl) {
