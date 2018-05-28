@@ -21,7 +21,7 @@ import config from 'grafana/app/core/config';
 
 import _ from 'lodash';
 
-const BACKEND_VARIABLE_NAME = "HASTIC_SERVER_URL";
+const BACKEND_VARIABLE_NAME = 'HASTIC_SERVER_URL';
 
 
 class GraphCtrl extends MetricsPanelCtrl {
@@ -195,17 +195,17 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   get backendURL(): string {
-    if(this.templateSrv.index['HASTIC_SERVER_URL'] === undefined) {
+    if(this.templateSrv.index[BACKEND_VARIABLE_NAME] === undefined) {
       return undefined;
     }
-    return this.templateSrv.index['HASTIC_SERVER_URL'].current.value;
+    return this.templateSrv.index[BACKEND_VARIABLE_NAME].current.value;
   }
 
   async runBackendConnectivityCheck() {
     if(this.backendURL === '' || this.backendURL === undefined) {
       this.alertSrv.set(
         `Dashboard variable $${BACKEND_VARIABLE_NAME} is missing`, 
-        'Please set $${BACKEND_VARIABLE_NAME} ', 
+        `Please set $${BACKEND_VARIABLE_NAME}`, 
         'warning', 4000
       );
       return;
