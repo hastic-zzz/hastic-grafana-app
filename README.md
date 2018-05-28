@@ -21,7 +21,7 @@ You should have [hastic-server](https://github.com/hastic/hastic-server) running
 
 - open new dasboard where you want to see Hastic panel
 - open Dashboard `Settings` (top right corner) and then `Varables` 
-- Add new `Constant` [variable](http://docs.grafana.org/reference/templating/#variable-types) with `name` equals to `$HASTIC_SERVER_URL` and `value` with URL of your hastic-server instance (e.g. `http://localhost:8000`) in your dashboard
+- Add new `Constant` [variable](http://docs.grafana.org/reference/templating/#variable-types) with `name` equals to `HASTIC_SERVER_URL` and `value` with URL of your hastic-server instance (e.g. `http://localhost:8000`) in your dashboard
 - Save settings and close Settings window
 - set one metrics in `Metrics` tab. Only one metric suported
 - go to `Analytics tab` and create new anomaly
