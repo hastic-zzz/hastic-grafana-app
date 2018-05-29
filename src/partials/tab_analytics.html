@@ -41,8 +41,11 @@
       />
     </span>
 
-    <label class="gf-form-label">
-      <a class="pointer" tabindex="1" ng-click="ctrl.onToggleAnomalyTypeLabelingMode(anomalyType.key)">
+    <label class="gf-form-label" ng-style="anomalyType.status === 'learning' && { 'cursor': 'not-allowed' }">
+      <a class="pointer" tabindex="1"
+        ng-click="ctrl.onToggleAnomalyTypeLabelingMode(anomalyType.key)"
+        ng-disabled="anomalyType.status === 'learning'"
+      >
         <i class="fa fa-bar-chart" ng-if="!anomalyType.saving"></i>
         <i class="fa fa-spinner fa-spin" ng-if="anomalyType.saving"></i>
         <b ng-if="anomalyType.selected && !anomalyType.deleteMode && !anomalyType.saving"> labeling </b>
@@ -56,7 +59,7 @@
     <label
       class="gf-form-label text-center"
       style="width: 4rem"
-      ng-if="anomalyType.alertEnabled === undefined" 
+      ng-if="anomalyType.alertEnabled === undefined"
       bs-tooltip="'Alarting status isn`t available. Wait please.'"
     >
       <i class="fa fa-spinner fa-spin"></i>
