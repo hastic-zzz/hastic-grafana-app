@@ -35,7 +35,7 @@ export class AnomalyType {
       this._panelObject = {};
     }
     _.defaults(this._panelObject, {
-      name: 'anomaly_name', confidence: 0.2, color: 'red'
+      name: 'anomaly_name', confidence: 0.2, color: 'red', pattern: 'Peaks'
     });
 
     //this._metric = new Metric(_panelObject.metric);
@@ -45,6 +45,9 @@ export class AnomalyType {
 
   set name(value: string) { this._panelObject.name = value; }
   get name(): string { return this._panelObject.name; }
+
+  set pattern(value: string) { this._panelObject.pattern = value; }
+  get pattern(): string { return this._panelObject.pattern; }
 
   set confidence(value: number) { this._panelObject.confidence = value; }
   get confidence(): number { return this._panelObject.confidence; }
