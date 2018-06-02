@@ -19,7 +19,8 @@ export class AnomalyService {
         name: newAnomalyType.name,
         metric: metric.toJSON(),
         panelUrl: window.location.origin + window.location.pathname + `?panelId=${panelId}&fullscreen`,
-        datasource: datasourceRequest
+        datasource: datasourceRequest,
+        pattern: newAnomalyType.pattern
       }
     )
   };

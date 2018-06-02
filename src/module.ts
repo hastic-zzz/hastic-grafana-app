@@ -43,6 +43,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   datasourceRequest: DatasourceRequest;
   analyticsTypes: Array<String> = ['Anomaly detection', 'Pattern Detection (not implemented yet)'];
+  patterns: Array<String> = ['Peaks', 'Jumps', 'Drops', 'General approach'];
   anomalyTypes = []; // TODO: remove it later. Only for alert tab
   anomalyController: AnomalyController;
 
