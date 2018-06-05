@@ -42,7 +42,6 @@ class GraphCtrl extends MetricsPanelCtrl {
   processor: DataProcessor;
 
   datasourceRequest: DatasourceRequest;
-  analyticsTypes: Array<String> = ['Anomaly detection', 'Pattern Detection (not implemented yet)'];
   patterns: Array<String> = ['General approach', 'Peaks', 'Jumps', 'Drops'];
   anomalyTypes = []; // TODO: remove it later. Only for alert tab
   anomalyController: AnomalyController;
@@ -133,7 +132,6 @@ class GraphCtrl extends MetricsPanelCtrl {
     seriesOverrides: [],
     thresholds: [],
     anomalyType: '',
-    analyticsType: 'Anomaly detection',
   };
 
   /** @ngInject */

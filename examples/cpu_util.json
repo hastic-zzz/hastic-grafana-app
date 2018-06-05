@@ -34,7 +34,6 @@
     "notifications": []
   },
   "aliasColors": {},
-  "analyticsType": "Anomaly detection",
   "anomalyType": "",
   "anomalyTypes": [
     {
