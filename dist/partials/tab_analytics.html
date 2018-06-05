@@ -9,6 +9,15 @@
       ng-disabled="true"
     >
 
+    <label class="gf-form-label width-8"> Pattern type </label>
+    <div class="gf-form-select-wrapper">
+      <select class="gf-form-input width-12"
+        ng-model="anomalyType.pattern"
+        ng-options="pattern as pattern disable when pattern !== 'General approach' for pattern in ctrl.patterns"
+        ng-disabled="true"
+      />
+    </div>
+
     <!--
     <label class="gf-form-label width-6"> Confidence </label>
     <input
@@ -100,7 +109,7 @@
     <label>
       <i ng-if="anomalyType.status === 'learning'" class="grafana-tip fa fa-leanpub ng-scope" bs-tooltip="'Learning'"></i>
       <i ng-if="anomalyType.status === 'pending'" class="grafana-tip fa fa-list-ul ng-scope" bs-tooltip="'Pending'"></i>
-      <i ng-if="anomalyType.status === 'failed'" class="grafana-tip fa fa-exclamation-circle ng-scope" bs-tooltip="'Failed'"></i>
+      <i ng-if="anomalyType.status === 'failed'" class="grafana-tip fa fa-exclamation-circle ng-scope" bs-tooltip="'Error: ' + anomalyType.error"></i>
     </label>
 
   </div>
