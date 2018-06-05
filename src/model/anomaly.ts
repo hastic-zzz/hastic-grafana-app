@@ -26,6 +26,7 @@ export class AnomalyType {
   private _saving: boolean = false;
   private _segmentSet = new SegmentArray<AnomalySegment>();
   private _status: string;
+  private _error: string;
   private _metric: Metric;
   
   private _alertEnabled?: boolean;
@@ -100,6 +101,9 @@ export class AnomalyType {
     }
     this._status = value;
   }
+
+  get error() { return this._error; }
+  set error(value) { this._error = value; }
 
   get isActiveStatus() {
     return this.status !== 'ready' && this.status !== 'failed';

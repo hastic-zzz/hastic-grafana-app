@@ -81,7 +81,7 @@ export class AnomalyService {
       var data = await this._backendSrv.get(
         this._backendURL + '/anomalies/status', { name: key }
       );
-      return data.status as string;
+      return data;
     }
 
     let timeout = async () => new Promise(

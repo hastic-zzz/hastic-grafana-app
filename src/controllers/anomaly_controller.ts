@@ -294,9 +294,14 @@ export class AnomalyController {
       anomalyType.key, 1000
     );
 
-    for await (const status of statusGenerator) {
+    for await (const data of statusGenerator) {
+      let status = data.status;
+      let error = data.errorMessage;
       if(anomalyType.status !== status) {
         anomalyType.status = status;
+        if(error !== undefined) {
+          anomalyType.error = error;
+        }
         this._emitter.emit('anomaly-type-status-change', anomalyType);
       }
       if(!anomalyType.isActiveStatus) {
