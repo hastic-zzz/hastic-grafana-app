@@ -1,18 +1,3 @@
-<h5> Analytics </h5>
-<div class="editor-row">
-  <div class="section gf-form-group">
-    <div class="gf-form">
-      <label class="gf-form-label width-8"> Analytics type </label>
-      <div class="gf-form-select-wrapper">
-        <select class="gf-form-input width-12"
-          ng-model="ctrl.panel.analyticsType"
-          ng-options="source as source for source in ctrl.analyticsTypes"
-        />
-      </div>
-    </div>
-  </div>
-</div>
-
 <h5> Anomaly Types </h5>
 <div class="editor-row">
   <div class="gf-form" ng-repeat="anomalyType in ctrl.anomalyController.anomalyTypes">
@@ -129,6 +114,14 @@
       ng-model="ctrl.anomalyController.newAnomalyType.name"
       ng-change="ctrl.onAnomalyNameChange()"
     >
+
+    <label class="gf-form-label width-8"> Pattern type </label>
+    <div class="gf-form-select-wrapper">
+      <select class="gf-form-input width-12"
+        ng-model="ctrl.anomalyController.newAnomalyType.pattern"
+        ng-options="pattern as pattern disable when pattern !== 'General approach' for pattern in ctrl.patterns"
+      />
+    </div>
 
     <label class="gf-form-label">
       <a class="pointer" tabindex="1" ng-click="ctrl.saveAnomalyType()">
