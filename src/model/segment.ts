@@ -23,9 +23,6 @@ export class Segment {
   }
 
   expandDist(allDist: number, portion: number): Segment {
-    if(allDist * portion < this.length) {
-      return new Segment(this._key, this.from, this.to);
-    }
     var p = Math.round(this.middle - allDist * portion / 2);
     var q = Math.round(this.middle + allDist * portion / 2);
     p = Math.min(p, this.from);
