@@ -49,10 +49,10 @@ export class AnomalyController {
     return this._anomalySegmentsSearcher.bind(this);
   }
 
-  private _anomalySegmentsSearcher(point: number): AnomalySermentPair[] {
+  private _anomalySegmentsSearcher(point: number, rangeDist: number): AnomalySermentPair[] {
     var result: AnomalySermentPair[] = [];
     this._anomalyTypesSet.anomalyTypes.forEach(at => {
-      var segs = at.segments.findSegments(point);
+      var segs = at.segments.findSegments(point, rangeDist);
       segs.forEach(s => {
         result.push({ anomalyType: at, segment: s });
       })

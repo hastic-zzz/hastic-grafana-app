@@ -6,7 +6,7 @@ import { Metric } from './metric';
 import _ from 'lodash';
 
 export type AnomalySermentPair = { anomalyType: AnomalyType, segment: AnomalySegment };
-export type AnomalySegmentsSearcher = (point: number) => AnomalySermentPair[];
+export type AnomalySegmentsSearcher = (point: number, rangeDist: number) => AnomalySermentPair[];
 
 export type AnomalyKey = string;
 

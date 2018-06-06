@@ -40,6 +40,7 @@ export class GraphTooltip {
     var seriesList = this.getSeriesFn();
     var allSeriesMode = this.panel.tooltip.shared;
     var group, value, absoluteTime, hoverInfo, i, series, seriesHtml, tooltipFormat;
+    var rangeDist = Math.abs(xAxes[0].max - xAxes[0].min);
 
     // if panelRelY is defined another panel wants us to show a tooltip
     // get pageX from position on x axis and pageY from relative position in original panel
@@ -113,7 +114,7 @@ export class GraphTooltip {
         plot.highlight(hoverInfo.index, hoverInfo.hoverIndex);
       }
 
-      seriesHtml += this._appendAnomaliesHTML(pos.x);
+      seriesHtml += this._appendAnomaliesHTML(pos.x, rangeDist);
 
       this._renderAndShow(absoluteTime, seriesHtml, pos, xMode);
     }
@@ -136,7 +137,7 @@ export class GraphTooltip {
 
       group += '<div class="graph-tooltip-value">' + value + '</div>';
 
-      group += this._appendAnomaliesHTML(pos.x);
+      group += this._appendAnomaliesHTML(pos.x, rangeDist);
 
       this._renderAndShow(absoluteTime, group, pos, xMode);
     }
@@ -188,9 +189,9 @@ export class GraphTooltip {
     }
   };
 
-  private _appendAnomaliesHTML(pos: number): string {
+  private _appendAnomaliesHTML(pos: number, rangeDist: number): string {
     var result = '';
-    var segments = this._anomalySegmentsSearcher(pos);
+    var segments = this._anomalySegmentsSearcher(pos, rangeDist);
     if(segments.length === 0) {
       return '';
     }

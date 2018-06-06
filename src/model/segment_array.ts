@@ -47,8 +47,11 @@ export class SegmentArray<T extends Segment> implements SegmentsSet<T> {
     this._segments.push(segment);
   }
 
-  findSegments(point: number): T[] {
-    return this._segments.filter(s => (s.from <= point) && (point <= s.to));
+  findSegments(point: number, rangeDist: number): T[] {
+    return this._segments.filter(s => {
+      var expanded = s.expandDist(rangeDist, 0.01);
+      return (expanded.from <= point) && (point <= expanded.to);
+    });
   }
 
   removeInRange(from: number, to: number): T[] {
