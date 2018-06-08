@@ -33,6 +33,8 @@ You should have [hastic-server](https://github.com/hastic/hastic-server) running
   - when you finished labeling - click button with chart icon once more. `saving...` status should appear.
 - you should see `Learning` status while hastic-server is learning (first learning can take a while).
 - when `Learning` status dissapear - you should see anomalies labeled in your graph
+- <img src="assets/mag_icon.png" /> this icon means that the anomaly was marked by the server
+- <img src="assets/pin_icon.png" /> this icon means that the anomaly was marked by the user
 
 
 # Development
