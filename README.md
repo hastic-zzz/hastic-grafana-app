@@ -1,8 +1,10 @@
 # Hastic Graph Panel
 
 A better version of default Grafana's Graph Panel. Can render Anomalies & more.
-In order to detect anomalies and make predictions, you need to install: https://github.com/hastic/hastic-server
-You need [Grafana version 5.1.1 or more](https://grafana.com/grafana/download)
+In order to detect anomalies and make predictions, you need to install: 
+
+* [hastic-server](https://github.com/hastic/hastic-server)
+* [Grafana >= 5.1.1](https://grafana.com/grafana/download)
 
 <img src="https://hastic.io/images/cpu_white.gif" />
 
