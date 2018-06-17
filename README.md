@@ -2,6 +2,8 @@
 
 A better version of Grafana's default Graph Panel. Able to render Anomalies & more.
 
+**Please note that we are still in alpha, so features are subject to change**
+
 <img src="https://hastic.io/images/cpu_white.gif" />
 
 # Prerequisites
