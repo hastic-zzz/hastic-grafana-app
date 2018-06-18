@@ -16,7 +16,7 @@ A better version of Grafana's default Graph Panel. Able to render Anomalies & mo
 - Clone the repository
 ```
 cd $GRAFANA_PATH/data/plugins
-git clone git@github.com:hastic/hastic-grafana-graph-panel.git
+git clone https://github.com/hastic/hastic-grafana-graph-panel.git
 ```
 
 - Restart `$GRAFANA_PATH/bin/grafana-server` server.
