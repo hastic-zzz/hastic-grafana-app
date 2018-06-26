@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Launch Chrome against localhost",
+      "url": "http://localhost:3000/d/Votr2gvmk/nginx",
+      "sourceMaps": true,
+      "pathMapping": {
+        "/public/plugins/hastic-graph-panel": "${workspaceFolder}/dist"
+      },
+      "webRoot": "${workspaceFolder}",
+      "sourceMapPathOverrides": {
+        "webpack:///./*": "${webRoot}/src/*"
+      }
+    }
+  ]
+}
