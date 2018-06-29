@@ -48,7 +48,7 @@ export class AnomalyType {
   get name(): string { return this._panelObject.name; }
 
   set pattern(value: string) { this._panelObject.pattern = value; }
-  get pattern(): string { return this._panelObject.pattern; }
+  get pattern(): string { return this._panelObject.pattern.split(' ')[0]; }
 
   set confidence(value: number) { this._panelObject.confidence = value; }
   get confidence(): number { return this._panelObject.confidence; }
