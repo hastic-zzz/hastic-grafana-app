@@ -13,9 +13,12 @@ A better version of Grafana's default Graph Panel. Able to render Anomalies & mo
 
 # Installation
 
-- Navigate to /plugins directory in <GRAFANA_PATH>/data/plugins
+**Note, that <GRAFANA_PATH>/data/plugins directory will NOT be present until grafana-server was started at least once!**
 
-**Note, that <GRAFANA_PATH>/data/plugins directory will only be created after grafana-server was started at least once!**
+**Also possible to create directory manually by typing:**
+```mkdir -p data/plugins```
+
+- Navigate to /plugins directory in <GRAFANA_PATH>/data/plugins
 ```
 cd $GRAFANA_PATH/data/plugins
 ```
