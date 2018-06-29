@@ -29,9 +29,9 @@ git clone https://github.com/hastic/hastic-grafana-graph-panel.git
 ```
 
 - Restart grafana-server
-```
-$GRAFANA_PATH/bin/grafana-server
-```
+  - Stop any running instances of grafana-server
+  - Start grafana-server by:
+    ```$GRAFANA_PATH/bin/grafana-server```
 
 # Usage
 
