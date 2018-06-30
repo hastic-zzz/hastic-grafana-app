@@ -68,6 +68,7 @@ let colors = [
   '#DEDAF7',
 ];
 
+export { colors as colors }
 
 export function hexToHsl(color) {
   return tinycolor(color).toHsl();

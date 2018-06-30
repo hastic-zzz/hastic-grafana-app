@@ -3,6 +3,7 @@ import { SegmentArray } from './segment_array';
 import { Segment, SegmentKey } from './segment';
 import { Metric } from './metric';
 
+import { colors } from '../colors'
 import _ from 'lodash';
 
 export type AnomalySermentPair = { anomalyType: AnomalyType, segment: AnomalySegment };
@@ -36,7 +37,7 @@ export class AnomalyType {
       this._panelObject = {};
     }
     _.defaults(this._panelObject, {
-      name: 'anomaly_name', confidence: 0.2, color: 'red', pattern: 'General'
+      name: 'anomaly_name', confidence: 0.2, color: colors[Math.floor(Math.random()*colors.length)], pattern: 'General'
     });
 
     //this._metric = new Metric(_panelObject.metric);
