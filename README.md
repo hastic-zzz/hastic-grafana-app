@@ -13,14 +13,28 @@ A better version of Grafana's default Graph Panel. Able to render Anomalies & mo
 
 # Installation
 
-- Clone the repository
+**Note, that <GRAFANA_PATH>/data/plugins directory will NOT be present until grafana-server was started at least once!**
+
+**Also possible to create directory manually by typing:**
+```mkdir -p data/plugins```
+
+- Navigate to /plugins directory in <GRAFANA_PATH>/data/plugins
 ```
 cd $GRAFANA_PATH/data/plugins
+```
+
+- Clone the repository
+```
 git clone https://github.com/hastic/hastic-grafana-graph-panel.git
 ```
 
-- Restart `$GRAFANA_PATH/bin/grafana-server` server.
-
+- Restart grafana-server
+  - For grafana installed via Standalone Linux Binaries:
+    - Stop any running instances of grafana-server
+    - Start grafana-server by:
+      ```$GRAFANA_PATH/bin/grafana-server```
+  - For grafana installed via Package Manager:
+    - type in ```systemctl restart grafana-server```
 
 # Usage
 
