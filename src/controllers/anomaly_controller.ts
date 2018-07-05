@@ -12,6 +12,7 @@ import { SegmentArray } from '../model/segment_array';
 import { Emitter } from 'grafana/app/core/utils/emitter'
 
 import _ from 'lodash';
+import { LABEL_COLORS } from '../colors';
 
 export const REGION_FILL_ALPHA = 0.7;
 export const REGION_STROKE_ALPHA = 0.9;
@@ -31,6 +32,7 @@ export class AnomalyController {
   private _savingNewAnomalyType: boolean = false;
   private _tempIdCounted = -1;
   private _graphLocked = false;
+  private _currentColorIndex = 0;
 
   private _statusRunners: Set<AnomalyKey> = new Set<AnomalyKey>();
 
@@ -43,6 +45,9 @@ export class AnomalyController {
     this._labelingDataDeletedSegments = new SegmentArray<AnomalySegment>();
     this._anomalyTypesSet = new AnomalyTypesSet(this._panelObject.anomalyTypes);
     this.anomalyTypes.forEach(a => this.runAnomalyTypeAlertEnabledWaiter(a));
+    this._currentColorIndex = this._panelObject.anomalyTypes.length % LABEL_COLORS.length;
+    
+    
   }
 
   getAnomalySegmentsSearcher(): AnomalySegmentsSearcher {
@@ -64,6 +69,9 @@ export class AnomalyController {
     this._newAnomalyType = new AnomalyType();
     this._creatingNewAnomalyType = true;
     this._savingNewAnomalyType = false;
+    this._newAnomalyType.color = LABEL_COLORS[this._currentColorIndex];
+    this._currentColorIndex++;
+    this._currentColorIndex %= LABEL_COLORS.length
   }
 
   async saveNewAnomalyType(metricExpanded: MetricExpanded, datasourceRequest: DatasourceRequest, panelId: number) {

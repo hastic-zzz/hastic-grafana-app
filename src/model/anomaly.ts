@@ -37,7 +37,7 @@ export class AnomalyType {
       this._panelObject = {};
     }
     _.defaults(this._panelObject, {
-      name: 'anomaly_name', confidence: 0.2, color: LABEL_COLORS[Math.floor(Math.random()*LABEL_COLORS.length)], pattern: 'General'
+      name: 'anomaly_name', confidence: 0.2, color: LABEL_COLORS[0], pattern: 'General'
     });
 
     //this._metric = new Metric(_panelObject.metric);
