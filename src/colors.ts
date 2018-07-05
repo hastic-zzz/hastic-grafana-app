@@ -67,8 +67,19 @@ let colors = [
   '#F9D9F9',
   '#DEDAF7',
 ];
+let labelColors = [
+  '#FF99FF',
+  '#71b1f9',
+  '#aee9fb',
+  '#9ce677',
+  '#f88990',
+  '#f9e26e',
+  '#f8c171',
+];
+let colorIndex = 0;
 
-export { colors as colors }
+export { colorIndex as colorIndex };
+export { labelColors as labelColors };
 
 export function hexToHsl(color) {
   return tinycolor(color).toHsl();
