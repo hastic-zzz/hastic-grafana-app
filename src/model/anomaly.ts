@@ -3,7 +3,7 @@ import { SegmentArray } from './segment_array';
 import { Segment, SegmentKey } from './segment';
 import { Metric } from './metric';
 
-import { labelColors, colorIndex } from '../colors'
+import { labelColors } from '../colors'
 import _ from 'lodash';
 
 export type AnomalySermentPair = { anomalyType: AnomalyType, segment: AnomalySegment };

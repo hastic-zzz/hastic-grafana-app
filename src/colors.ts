@@ -76,10 +76,8 @@ let labelColors = [
   '#f9e26e',
   '#f8c171',
 ];
-let colorIndex = 0;
 
-export { colorIndex as colorIndex };
-export { labelColors as labelColors };
+export { labelColors };
 
 export function hexToHsl(color) {
   return tinycolor(color).toHsl();
