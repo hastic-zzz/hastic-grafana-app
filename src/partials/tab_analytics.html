@@ -107,6 +107,7 @@
     </label>
 
     <label>
+      <i ng-if="anomalyType.status === 'initialising'" class="grafana-tip fa fa-hourglass ng-scope" bs-tooltip="'Initialising'"></i>
       <i ng-if="anomalyType.status === 'learning'" class="grafana-tip fa fa-leanpub ng-scope" bs-tooltip="'Learning'"></i>
       <i ng-if="anomalyType.status === 'pending'" class="grafana-tip fa fa-list-ul ng-scope" bs-tooltip="'Pending'"></i>
       <i ng-if="anomalyType.status === 'failed'" class="grafana-tip fa fa-exclamation-circle ng-scope" bs-tooltip="'Error: ' + anomalyType.error"></i>
