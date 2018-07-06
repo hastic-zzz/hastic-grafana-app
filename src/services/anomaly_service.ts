@@ -58,7 +58,7 @@ export class AnomalyService {
   }
 
   async getSegments(key: AnomalyKey, from?: number, to?: number): Promise<AnomalySegment[]> {
-    var payload: any = { anomaly_id: key };
+    var payload: any = { predictor_id: key };
     if(from !== undefined) {
       payload['from'] = from;
     }
@@ -97,7 +97,7 @@ export class AnomalyService {
 
   async getAlertEnabled(key: AnomalyKey): Promise<boolean> {
     var data = await this._backendSrv.get(
-      this._backendURL + '/alerts', { anomaly_id: key }
+      this._backendURL + '/alerts', { predictor_id: key }
     );
     return data.enable as boolean;
 
@@ -105,7 +105,7 @@ export class AnomalyService {
 
   async setAlertEnabled(key: AnomalyKey, value: boolean): Promise<void> {
     return this._backendSrv.post(
-      this._backendURL + '/alerts', { anomaly_id: key, enable: value }
+      this._backendURL + '/alerts', { predictor_id: key, enable: value }
     );
   }
 
