@@ -2,7 +2,7 @@ import { Segment, SegmentKey } from '../models/segment';
 import { MetricExpanded } from '../models/metric';
 import { DatasourceRequest } from '../models/datasource';
 import { SegmentsSet } from '../models/segment_set';
-import { AnalyticUnitKey, AnalyticUnit, AnalyticSegment } from '../models/analytic_unit';
+import { AnalyticUnitId, AnalyticUnit, AnalyticSegment } from '../models/analytic_unit';
 
 import { BackendSrv } from 'grafana/app/core/services/backend_srv';
 
@@ -35,7 +35,7 @@ export class AnalyticService {
   }
    
   async updateSegments(
-    key: AnalyticUnitKey, addedSegments: SegmentsSet<Segment>, removedSegments: SegmentsSet<Segment>
+    key: AnalyticUnitId, addedSegments: SegmentsSet<Segment>, removedSegments: SegmentsSet<Segment>
   ): Promise<SegmentKey[]> {
 
     const getJSONs = (segs: SegmentsSet<Segment>) => segs.getSegments().map(segment => ({
@@ -57,7 +57,7 @@ export class AnalyticService {
     return data.added_ids as SegmentKey[];
   }
 
-  async getSegments(key: AnalyticUnitKey, from?: number, to?: number): Promise<AnalyticSegment[]> {
+  async getSegments(key: AnalyticUnitId, from?: number, to?: number): Promise<AnalyticSegment[]> {
     var payload: any = { predictor_id: key };
     if(from !== undefined) {
       payload['from'] = from;
@@ -76,7 +76,7 @@ export class AnalyticService {
     return segments.map(s => new AnalyticSegment(s.labeled, s.id, s.start, s.finish));
   }
 
-  async * getAnomalyTypeStatusGenerator(key: AnalyticUnitKey, duration: number) {
+  async * getAnomalyTypeStatusGenerator(key: AnalyticUnitId, duration: number) {
     let statusCheck = async () => {
       var data = await this._backendSrv.get(
         this._backendURL + '/anomalies/status', { name: key }
@@ -95,7 +95,7 @@ export class AnalyticService {
     
   }
 
-  async getAlertEnabled(key: AnalyticUnitKey): Promise<boolean> {
+  async getAlertEnabled(key: AnalyticUnitId): Promise<boolean> {
     var data = await this._backendSrv.get(
       this._backendURL + '/alerts', { predictor_id: key }
     );
@@ -103,7 +103,7 @@ export class AnalyticService {
 
   }
 
-  async setAlertEnabled(key: AnalyticUnitKey, value: boolean): Promise<void> {
+  async setAlertEnabled(key: AnalyticUnitId, value: boolean): Promise<void> {
     return this._backendSrv.post(
       this._backendURL + '/alerts', { predictor_id: key, enable: value }
     );

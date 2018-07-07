@@ -8,7 +8,7 @@ import _ from 'lodash';
 export type AnalyticSegmentPair = { anomalyType: AnalyticUnit, segment: AnalyticSegment };
 export type AnalyticSegmentsSearcher = (point: number, rangeDist: number) => AnalyticSegmentPair[];
 
-export type AnalyticUnitKey = string;
+export type AnalyticUnitId = string;
 
 export class AnalyticSegment extends Segment {
   constructor(public labeled: boolean, key: SegmentKey, from: number, to: number) {
@@ -42,7 +42,7 @@ export class AnalyticUnit {
     //this._metric = new Metric(_panelObject.metric);
   }
 
-  get key(): AnalyticUnitKey { return this.name; }
+  get key(): AnalyticUnitId { return this.name; }
 
   set name(value: string) { this._panelObject.name = value; }
   get name(): string { return this._panelObject.name; }
@@ -118,14 +118,14 @@ export class AnalyticUnit {
 
 export class AnalyticUnitsSet {
 
-  private _mapKeyIndex: Map<AnalyticUnitKey, number>;
+  private _mapKeyIndex: Map<AnalyticUnitId, number>;
   private _items: AnalyticUnit[];
 
   constructor(private _panelObject: any[]) {
     if(_panelObject === undefined) {
       throw new Error('panel object can`t be undefined');
     }
-    this._mapKeyIndex = new Map<AnalyticUnitKey, number>();
+    this._mapKeyIndex = new Map<AnalyticUnitId, number>();
     this._items = _panelObject.map(p => new AnalyticUnit(p));
     this._rebuildIndex();
   }
@@ -138,7 +138,7 @@ export class AnalyticUnitsSet {
     this._items.push(anomalyType);
   }
 
-  removeAnomalyType(key: AnalyticUnitKey) {
+  removeAnomalyType(key: AnalyticUnitId) {
     var index = this._mapKeyIndex[key];
     this._panelObject.splice(index, 1);
     this._items.splice(index, 1);
@@ -151,7 +151,7 @@ export class AnalyticUnitsSet {
     });
   }
 
-  byKey(key: AnalyticUnitKey): AnalyticUnit {
+  byKey(key: AnalyticUnitId): AnalyticUnit {
     return this._items[this._mapKeyIndex[key]];
   }
 

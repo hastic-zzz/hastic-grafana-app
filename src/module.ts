@@ -8,7 +8,7 @@ import { GraphLegend } from './graph_legend';
 import { DataProcessor } from './data_processor';
 import { MetricExpanded } from './models/metric';
 import { DatasourceRequest } from './models/datasource';
-import { AnalyticUnitKey, AnalyticUnit } from './models/analytic_unit';
+import { AnalyticUnitId, AnalyticUnit } from './models/analytic_unit';
 import { AnalyticService } from './services/analytic_service';
 import { AnalyticController } from './controllers/analytic_controller';
 
@@ -525,7 +525,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.render(this.seriesList);
   }
 
-  onColorChange(key: AnalyticUnitKey, value) {
+  onColorChange(key: AnalyticUnitId, value) {
     this.analyticsController.onAnomalyColorChange(key, value);
     this.render();
   }
@@ -553,7 +553,7 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
  async onToggleLabelingMode(key) {
-    await this.analyticsController.toggleAnomalyTypeLabelingMode(key as AnalyticUnitKey);
+    await this.analyticsController.toggleAnomalyTypeLabelingMode(key as AnalyticUnitId);
     this.$scope.$digest();
     this.render();
   }
@@ -569,7 +569,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.analyticsController.toggleAnomalyTypeAlertEnabled(anomalyType);
   }
 
-  onToggleVisibility(key: AnalyticUnitKey) {
+  onToggleVisibility(key: AnalyticUnitId) {
     this.analyticsController.toggleVisibility(key);
     this.render();
   }

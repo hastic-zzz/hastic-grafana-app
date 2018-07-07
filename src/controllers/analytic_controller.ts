@@ -1,7 +1,9 @@
+// Corresponds to https://github.com/hastic/hastic-server/blob/master/server/src/models/analytic_unit.ts
+
 import { AnalyticService } from '../services/analytic_service'
 
 import {
-  AnalyticUnitKey, AnalyticUnit,
+  AnalyticUnitId, AnalyticUnit,
   AnalyticUnitsSet, AnalyticSegment, AnalyticSegmentsSearcher, AnalyticSegmentPair
 } from '../models/analytic_unit';
 import { MetricExpanded } from '../models/metric';
@@ -9,6 +11,7 @@ import { DatasourceRequest } from '../models/datasource';
 import { Segment, SegmentKey } from '../models/segment';
 import { SegmentsSet } from '../models/segment_set';
 import { SegmentArray } from '../models/segment_array';
+
 import { Emitter } from 'grafana/app/core/utils/emitter'
 
 import _ from 'lodash';
@@ -23,7 +26,7 @@ export const REGION_DELETE_COLOR_DARK = 'white';
 export class AnalyticController {
 
   private _analyticUnitsSet: AnalyticUnitsSet;
-  private _selectedAnalyticUnitKey: AnalyticUnitKey = null;
+  private _selectedAnalyticUnitKey: AnalyticUnitId = null;
 
   private _labelingDataAddedSegments: SegmentsSet<AnalyticSegment>;
   private _labelingDataDeletedSegments: SegmentsSet<AnalyticSegment>;
@@ -33,7 +36,7 @@ export class AnalyticController {
   private _tempIdCounted = -1;
   private _graphLocked = false;
 
-  private _statusRunners: Set<AnalyticUnitKey> = new Set<AnalyticUnitKey>();
+  private _statusRunners: Set<AnalyticUnitId> = new Set<AnalyticUnitId>();
 
 
   constructor(private _panelObject: any, private _analyticService: AnalyticService, private _emitter: Emitter) {
@@ -91,7 +94,7 @@ export class AnalyticController {
     return this._analyticUnitsSet.byKey(this._selectedAnalyticUnitKey);
   }
 
-  async toggleAnomalyTypeLabelingMode(key: AnalyticUnitKey) {
+  async toggleAnomalyTypeLabelingMode(key: AnalyticUnitId) {
     if(this.labelingAnomaly && this.labelingAnomaly.saving) {
       throw new Error('Can`t toggel during saving');
     }
@@ -158,7 +161,7 @@ export class AnalyticController {
     return this._analyticUnitsSet.items;
   }
 
-  onAnomalyColorChange(key: AnalyticUnitKey, value) {
+  onAnomalyColorChange(key: AnalyticUnitId, value) {
     this._analyticUnitsSet.byKey(key).color = value;
   }
 
@@ -332,7 +335,7 @@ export class AnalyticController {
     return this._tempIdCounted;
   }
 
-  public toggleVisibility(key: AnalyticUnitKey, value?: boolean) {
+  public toggleVisibility(key: AnalyticUnitId, value?: boolean) {
     var anomaly = this._analyticUnitsSet.byKey(key);
     if(value !== undefined) {
       anomaly.visible = value;
