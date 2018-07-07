@@ -12,8 +12,8 @@
     <label class="gf-form-label width-8"> Type </label>
     <div class="gf-form-select-wrapper">
       <select class="gf-form-input width-12"
-        ng-model="analyticUnit.pattern"
-        ng-options="pattern as pattern for pattern in ctrl.patterns"
+        ng-model="analyticUnit.type"
+        ng-options="type as type for type in ctrl.ANALYTIC_TYPES"
         ng-disabled="true"
       />
     </div>
@@ -126,8 +126,8 @@
     <label class="gf-form-label width-8"> Type </label>
     <div class="gf-form-select-wrapper">
       <select class="gf-form-input width-12"
-        ng-model="ctrl.analyticsController.newAnalyticUnit.pattern"
-        ng-options="pattern as pattern disable when (pattern !== 'General' && pattern !== 'Drops' && pattern !== 'Peaks') for pattern in ctrl.patterns"
+        ng-model="ctrl.analyticsController.newAnalyticUnit.type"
+        ng-options="type as type for type in ctrl.ANALYTIC_TYPES"
       />
     </div>
 

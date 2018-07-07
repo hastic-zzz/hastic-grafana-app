@@ -26,6 +26,7 @@ const BACKEND_VARIABLE_NAME = 'HASTIC_SERVER_URL';
 
 class GraphCtrl extends MetricsPanelCtrl {
   static template = template;
+  ANALYTIC_TYPES: Array<String> = ['General', 'Drops', 'Peaks'];
 
   hiddenSeries: any = {};
   seriesList: any = [];
@@ -43,7 +44,7 @@ class GraphCtrl extends MetricsPanelCtrl {
   processor: DataProcessor;
 
   datasourceRequest: DatasourceRequest;
-  patterns: Array<String> = ['General', 'Drops', 'Peaks', 'Jumps'];
+  
   anomalyTypes = []; // TODO: remove it later. Only for alert tab
   analyticsController: AnalyticController;
 
@@ -566,7 +567,7 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   onAnomalyAlertChange(anomalyType: AnalyticUnit) {
-    this.analyticsController.toggleAnomalyTypeAlertEnabled(anomalyType);
+    this.analyticsController.toggleAlertEnabled(anomalyType);
   }
 
   onToggleVisibility(key: AnalyticUnitId) {

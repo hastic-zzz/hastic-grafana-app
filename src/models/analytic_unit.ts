@@ -28,7 +28,7 @@ export class AnalyticUnit {
   private _status: string;
   private _error: string;
   private _metric: Metric;
-  
+
   private _alertEnabled?: boolean;
 
   constructor(private _panelObject?: any) {
@@ -36,19 +36,20 @@ export class AnalyticUnit {
       this._panelObject = {};
     }
     _.defaults(this._panelObject, {
-      name: 'AnalyticUnitName', confidence: 0.2, color: 'red', pattern: 'General'
+      name: 'AnalyticUnitName', confidence: 0.2, color: 'red', type: 'General'
     });
 
     //this._metric = new Metric(_panelObject.metric);
   }
 
   get id(): AnalyticUnitId { return this._panelObject.id; }
+  set id(value: AnalyticUnitId) { this._panelObject.id = value; }
 
   set name(value: string) { this._panelObject.name = value; }
   get name(): string { return this._panelObject.name; }
 
-  set pattern(value: string) { this._panelObject.pattern = value; }
-  get pattern(): string { return this._panelObject.pattern.split(' ')[0]; }
+  set type(value: string) { this._panelObject.type = value; }
+  get type(): string { return this._panelObject.type; }
 
   set confidence(value: number) { this._panelObject.confidence = value; }
   get confidence(): number { return this._panelObject.confidence; }
@@ -65,7 +66,7 @@ export class AnalyticUnit {
   get saving(): boolean { return this._saving; }
   set saving(value: boolean) { this._saving = value; }
 
-  get visible(): boolean { 
+  get visible(): boolean {
     return (this._panelObject.visible === undefined) ? true : this._panelObject.visible
   }
   set visible(value: boolean) {
@@ -88,13 +89,13 @@ export class AnalyticUnit {
   set segments(value: SegmentsSet<AnalyticSegment>) {
     this._segmentSet.setSegments(value.getSegments());
   }
-  
+
   get status() { return this._status; }
   set status(value) {
     if(
-      value !== 'ready' && 
-      value !== 'learning' && 
-      value !== 'pending' && 
+      value !== 'ready' &&
+      value !== 'learning' &&
+      value !== 'pending' &&
       value !== 'failed'
     ) {
       throw new Error('Unsupported status value: ' + value);

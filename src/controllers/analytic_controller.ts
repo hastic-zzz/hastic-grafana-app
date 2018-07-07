@@ -30,7 +30,7 @@ export class AnalyticController {
 
   private _labelingDataAddedSegments: SegmentsSet<AnalyticSegment>;
   private _labelingDataDeletedSegments: SegmentsSet<AnalyticSegment>;
-  private _newAnalyticUnitType: AnalyticUnit = null;
+  private _newAnalyticUnit: AnalyticUnit = null;
   private _creatingNewAnalyticType: boolean = false;
   private _savingNewAnalyticUnit: boolean = false;
   private _tempIdCounted = -1;
@@ -65,24 +65,26 @@ export class AnalyticController {
   }
 
   createNew() {
-    this._newAnalyticUnitType = new AnalyticUnit();
+    this._newAnalyticUnit = new AnalyticUnit();
     this._creatingNewAnalyticType = true;
     this._savingNewAnalyticUnit = false;
   }
 
   async saveNew(metricExpanded: MetricExpanded, datasourceRequest: DatasourceRequest, panelId: number) {
     this._savingNewAnalyticUnit = true;
-    await this._analyticService.postNewItem(metricExpanded, datasourceRequest, this._newAnalyticUnitType, panelId);
-    this._analyticUnitsSet.addItem(this._newAnalyticUnitType);
+    this._newAnalyticUnit.id = await this._analyticService.postNewItem(
+      metricExpanded, datasourceRequest, this._newAnalyticUnit, panelId
+    );
+    this._analyticUnitsSet.addItem(this._newAnalyticUnit);
     this._creatingNewAnalyticType = false;
     this._savingNewAnalyticUnit = false;
-    this.runEnabledWaiter(this._newAnalyticUnitType);
-    this._runStatusWaiter(this._newAnalyticUnitType);
+    this.runEnabledWaiter(this._newAnalyticUnit);
+    this._runStatusWaiter(this._newAnalyticUnit);
   }
 
   get creatingNew() { return this._creatingNewAnalyticType; }
   get saving() { return this._savingNewAnalyticUnit; }
-  get newAnalyticUnit(): AnalyticUnit { return this._newAnalyticUnitType; }
+  get newAnalyticUnit(): AnalyticUnit { return this._newAnalyticUnit; }
 
   get graphLocked() { return this._graphLocked; }
   set graphLocked(value) { this._graphLocked = value; }
@@ -286,6 +288,10 @@ export class AnalyticController {
       throw new Error('anomalyType not defined');
     }
 
+    if(anomalyType.id === undefined) {
+      throw new Error('anomalyType.id is undefined');
+    }
+
     if(this._statusRunners.has(anomalyType.id)) {
       return;
     }
@@ -322,7 +328,7 @@ export class AnalyticController {
     }
   }
 
-  async toggleAnomalyTypeAlertEnabled(anomalyType: AnalyticUnit) {
+  async toggleAlertEnabled(anomalyType: AnalyticUnit) {
     var enabled = anomalyType.alertEnabled;
     anomalyType.alertEnabled = undefined;
     await this._analyticService.setAlertEnabled(anomalyType.id, enabled);
