@@ -1,8 +1,8 @@
-import { Segment, SegmentKey } from '../model/segment';
-import { MetricExpanded } from '../model/metric';
-import { DatasourceRequest } from '../model/datasource';
-import { SegmentsSet } from '../model/segment_set';
-import { AnalyticUnitKey, AnalyticUnit, AnalyticSegment } from '../model/analytic_unit';
+import { Segment, SegmentKey } from '../models/segment';
+import { MetricExpanded } from '../models/metric';
+import { DatasourceRequest } from '../models/datasource';
+import { SegmentsSet } from '../models/segment_set';
+import { AnalyticUnitKey, AnalyticUnit, AnalyticSegment } from '../models/analytic_unit';
 
 import { BackendSrv } from 'grafana/app/core/services/backend_srv';
 

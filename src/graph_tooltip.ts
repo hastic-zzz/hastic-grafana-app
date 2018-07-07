@@ -1,4 +1,4 @@
-import { AnalyticSegmentsSearcher } from "model/analytic_unit";
+import { AnalyticSegmentsSearcher } from "models/analytic_unit";
 
 export class GraphTooltip {
 

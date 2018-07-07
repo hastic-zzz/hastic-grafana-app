@@ -3,12 +3,12 @@ import { AnalyticService } from '../services/analytic_service'
 import {
   AnalyticUnitKey, AnalyticUnit,
   AnalyticUnitsSet, AnalyticSegment, AnalyticSegmentsSearcher, AnalyticSegmentPair
-} from '../model/analytic_unit';
-import { MetricExpanded } from '../model/metric';
-import { DatasourceRequest } from '../model/datasource';
-import { Segment, SegmentKey } from '../model/segment';
-import { SegmentsSet } from '../model/segment_set';
-import { SegmentArray } from '../model/segment_array';
+} from '../models/analytic_unit';
+import { MetricExpanded } from '../models/metric';
+import { DatasourceRequest } from '../models/datasource';
+import { Segment, SegmentKey } from '../models/segment';
+import { SegmentsSet } from '../models/segment_set';
+import { SegmentArray } from '../models/segment_array';
 import { Emitter } from 'grafana/app/core/utils/emitter'
 
 import _ from 'lodash';

@@ -6,9 +6,9 @@ import template from './template';
 import { GraphRenderer } from './graph_renderer';
 import { GraphLegend } from './graph_legend';
 import { DataProcessor } from './data_processor';
-import { MetricExpanded } from './model/metric';
-import { DatasourceRequest } from './model/datasource';
-import { AnalyticUnitKey, AnalyticUnit } from './model/analytic_unit';
+import { MetricExpanded } from './models/metric';
+import { DatasourceRequest } from './models/datasource';
+import { AnalyticUnitKey, AnalyticUnit } from './models/analytic_unit';
 import { AnalyticService } from './services/analytic_service';
 import { AnalyticController } from './controllers/analytic_controller';
 

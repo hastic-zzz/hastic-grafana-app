@@ -1,4 +1,4 @@
-import { Segment } from './model/segment';
+import { Segment } from './models/segment';
 import { GraphTooltip } from './graph_tooltip';
 import { ThresholdManager } from './threshold_manager';
 import { convertValuesToHistogram, getSeriesValues } from './histogram';
