@@ -73,7 +73,7 @@ export class AnalyticController {
   async saveNew(metricExpanded: MetricExpanded, datasourceRequest: DatasourceRequest, panelId: number) {
     this._savingNewAnalyticUnit = true;
     await this._analyticService.postNewAnalyticUnit(metricExpanded, datasourceRequest, this._newAnalyticUnitType, panelId);
-    this._analyticUnitsSet.addAnomalyType(this._newAnalyticUnitType);
+    this._analyticUnitsSet.addItem(this._newAnalyticUnitType);
     this._creatingNewAnalyticType = false;
     this._savingNewAnalyticUnit = false;
     this.runEnabledWaiter(this._newAnalyticUnitType);
@@ -91,7 +91,7 @@ export class AnalyticController {
     if(this._selectedAnalyticUnitKey === null) {
       return null;
     }
-    return this._analyticUnitsSet.byKey(this._selectedAnalyticUnitKey);
+    return this._analyticUnitsSet.byId(this._selectedAnalyticUnitKey);
   }
 
   async toggleAnomalyTypeLabelingMode(key: AnalyticUnitId) {
@@ -162,7 +162,7 @@ export class AnalyticController {
   }
 
   onAnomalyColorChange(key: AnalyticUnitId, value) {
-    this._analyticUnitsSet.byKey(key).color = value;
+    this._analyticUnitsSet.byId(key).color = value;
   }
 
   fetchAnomalyTypesStatuses() {
@@ -278,7 +278,7 @@ export class AnalyticController {
     if(key === this._selectedAnalyticUnitKey) {
       this.dropLabeling();
     }
-    this._analyticUnitsSet.removeAnomalyType(key);
+    this._analyticUnitsSet.removeItem(key);
   }
 
   private async _runStatusWaiter(anomalyType: AnalyticUnit) {
@@ -336,7 +336,7 @@ export class AnalyticController {
   }
 
   public toggleVisibility(key: AnalyticUnitId, value?: boolean) {
-    var anomaly = this._analyticUnitsSet.byKey(key);
+    var anomaly = this._analyticUnitsSet.byId(key);
     if(value !== undefined) {
       anomaly.visible = value;
     } else {

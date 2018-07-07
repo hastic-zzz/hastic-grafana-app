@@ -118,28 +118,28 @@ export class AnalyticUnit {
 
 export class AnalyticUnitsSet {
 
-  private _mapKeyIndex: Map<AnalyticUnitId, number>;
+  private _mapIdIndex: Map<AnalyticUnitId, number>;
   private _items: AnalyticUnit[];
 
   constructor(private _panelObject: any[]) {
     if(_panelObject === undefined) {
       throw new Error('panel object can`t be undefined');
     }
-    this._mapKeyIndex = new Map<AnalyticUnitId, number>();
+    this._mapIdIndex = new Map<AnalyticUnitId, number>();
     this._items = _panelObject.map(p => new AnalyticUnit(p));
     this._rebuildIndex();
   }
 
   get items() { return this._items; }
 
-  addAnomalyType(anomalyType: AnalyticUnit) {
-    this._panelObject.push(anomalyType.panelObject);
-    this._mapKeyIndex[anomalyType.name] = this._items.length;
-    this._items.push(anomalyType);
+  addItem(item: AnalyticUnit) {
+    this._panelObject.push(item.panelObject);
+    this._mapIdIndex[item.name] = this._items.length;
+    this._items.push(item);
   }
 
-  removeAnomalyType(key: AnalyticUnitId) {
-    var index = this._mapKeyIndex[key];
+  removeItem(id: AnalyticUnitId) {
+    var index = this._mapIdIndex[id];
     this._panelObject.splice(index, 1);
     this._items.splice(index, 1);
     this._rebuildIndex();
@@ -147,12 +147,12 @@ export class AnalyticUnitsSet {
 
   _rebuildIndex() {
     this._items.forEach((a, i) => {
-      this._mapKeyIndex[a.key] = i;
+      this._mapIdIndex[a.key] = i;
     });
   }
 
-  byKey(key: AnalyticUnitId): AnalyticUnit {
-    return this._items[this._mapKeyIndex[key]];
+  byId(id: AnalyticUnitId): AnalyticUnit {
+    return this._items[this._mapIdIndex[id]];
   }
 
   byIndex(index: number): AnalyticUnit {
