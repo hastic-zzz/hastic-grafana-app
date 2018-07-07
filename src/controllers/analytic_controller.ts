@@ -187,7 +187,7 @@ export class AnalyticController {
     if(!_.isNumber(+to)) {
       throw new Error('to isn`t number');
     }
-    var allSegmentsList = await this._analyticService.getSegments(anomalyType.key, from, to);
+    var allSegmentsList = await this._analyticService.getSegments(anomalyType.id, from, to);
     var allSegmentsSet = new SegmentArray(allSegmentsList);
     if(anomalyType.selected) {
       this._labelingDataAddedSegments.getSegments().forEach(s => allSegmentsSet.addSegment(s));
@@ -210,7 +210,7 @@ export class AnalyticController {
     }
 
     return this._analyticService.updateSegments(
-      anomaly.key, this._labelingDataAddedSegments, this._labelingDataDeletedSegments
+      anomaly.id, this._labelingDataAddedSegments, this._labelingDataDeletedSegments
     );
   }
 
@@ -286,14 +286,14 @@ export class AnalyticController {
       throw new Error('anomalyType not defined');
     }
 
-    if(this._statusRunners.has(anomalyType.key)) {
+    if(this._statusRunners.has(anomalyType.id)) {
       return;
     }
 
-    this._statusRunners.add(anomalyType.key);
+    this._statusRunners.add(anomalyType.id);
 
     var statusGenerator = this._analyticService.getAnomalyTypeStatusGenerator(
-      anomalyType.key, 1000
+      anomalyType.id, 1000
     );
 
     for await (const data of statusGenerator) {
@@ -311,11 +311,11 @@ export class AnalyticController {
       }
     }
 
-    this._statusRunners.delete(anomalyType.key);
+    this._statusRunners.delete(anomalyType.id);
   }
 
   async runEnabledWaiter(anomalyType: AnalyticUnit) {
-    var enabled = await this._analyticService.getAlertEnabled(anomalyType.key);
+    var enabled = await this._analyticService.getAlertEnabled(anomalyType.id);
     if(anomalyType.alertEnabled !== enabled) {
       anomalyType.alertEnabled = enabled;
       this._emitter.emit('anomaly-type-alert-change', anomalyType);
@@ -325,7 +325,7 @@ export class AnalyticController {
   async toggleAnomalyTypeAlertEnabled(anomalyType: AnalyticUnit) {
     var enabled = anomalyType.alertEnabled;
     anomalyType.alertEnabled = undefined;
-    await this._analyticService.setAlertEnabled(anomalyType.key, enabled);
+    await this._analyticService.setAlertEnabled(anomalyType.id, enabled);
     anomalyType.alertEnabled = enabled;
     this._emitter.emit('anomaly-type-alert-change', anomalyType);
   }

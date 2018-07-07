@@ -19,7 +19,7 @@ export class AnalyticService {
     return this._backendSrv.post(
       this._backendURL + '/analyticUnits', 
       {
-        name: newItem.name,
+        name: newItem.id,
         metric: metric.toJSON(),
         panelUrl: window.location.origin + window.location.pathname + `?panelId=${panelId}&fullscreen`,
         datasource: datasourceRequest,

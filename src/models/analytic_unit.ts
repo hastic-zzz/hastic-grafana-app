@@ -42,7 +42,7 @@ export class AnalyticUnit {
     //this._metric = new Metric(_panelObject.metric);
   }
 
-  get key(): AnalyticUnitId { return this.name; }
+  get id(): AnalyticUnitId { return this._panelObject.id; }
 
   set name(value: string) { this._panelObject.name = value; }
   get name(): string { return this._panelObject.name; }
@@ -147,7 +147,7 @@ export class AnalyticUnitsSet {
 
   _rebuildIndex() {
     this._items.forEach((a, i) => {
-      this._mapIdIndex[a.key] = i;
+      this._mapIdIndex[a.id] = i;
     });
   }
 
