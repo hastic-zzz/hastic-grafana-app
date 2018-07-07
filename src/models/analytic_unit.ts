@@ -1,6 +1,6 @@
 import { SegmentsSet } from './segment_set';
 import { SegmentArray } from './segment_array';
-import { Segment, SegmentKey } from './segment';
+import { Segment, SegmentId } from './segment';
 import { Metric } from './metric';
 
 import _ from 'lodash';
@@ -11,7 +11,7 @@ export type AnalyticSegmentsSearcher = (point: number, rangeDist: number) => Ana
 export type AnalyticUnitId = string;
 
 export class AnalyticSegment extends Segment {
-  constructor(public labeled: boolean, key: SegmentKey, from: number, to: number) {
+  constructor(public labeled: boolean, key: SegmentId, from: number, to: number) {
     super(key, from, to);
     if(!_.isBoolean(labeled)) {
       throw new Error('labeled value is not boolean');
@@ -36,7 +36,7 @@ export class AnalyticUnit {
       this._panelObject = {};
     }
     _.defaults(this._panelObject, {
-      name: 'anomaly_name', confidence: 0.2, color: 'red', pattern: 'General'
+      name: 'analytcUnitName', confidence: 0.2, color: 'red', pattern: 'General'
     });
 
     //this._metric = new Metric(_panelObject.metric);
@@ -75,7 +75,7 @@ export class AnalyticUnit {
   get metric() { return this._metric; }
 
   addLabeledSegment(segment: Segment): AnalyticSegment {
-    var asegment = new AnalyticSegment(true, segment.key, segment.from, segment.to);
+    var asegment = new AnalyticSegment(true, segment.id, segment.from, segment.to);
     this._segmentSet.addSegment(asegment);
     return asegment;
   }

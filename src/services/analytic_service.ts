@@ -1,4 +1,4 @@
-import { Segment, SegmentKey } from '../models/segment';
+import { Segment, SegmentId } from '../models/segment';
 import { MetricExpanded } from '../models/metric';
 import { DatasourceRequest } from '../models/datasource';
 import { SegmentsSet } from '../models/segment_set';
@@ -12,15 +12,18 @@ export class AnalyticService {
   constructor(private _backendURL: string, private _backendSrv: BackendSrv) {
   }
 
-  async postNewAnalyticUnit(metric: MetricExpanded, datasourceRequest: DatasourceRequest, newAnomalyType: AnalyticUnit, panelId: number) {
+  async postNewItem(
+    metric: MetricExpanded, datasourceRequest: DatasourceRequest, 
+    newItem: AnalyticUnit, panelId: number
+  ) {
     return this._backendSrv.post(
-      this._backendURL + '/anomalies', 
+      this._backendURL + '/analyticUnits', 
       {
-        name: newAnomalyType.name,
+        name: newItem.name,
         metric: metric.toJSON(),
         panelUrl: window.location.origin + window.location.pathname + `?panelId=${panelId}&fullscreen`,
         datasource: datasourceRequest,
-        pattern: newAnomalyType.pattern
+        pattern: newItem.pattern
       }
     )
   };
@@ -36,7 +39,7 @@ export class AnalyticService {
    
   async updateSegments(
     key: AnalyticUnitId, addedSegments: SegmentsSet<Segment>, removedSegments: SegmentsSet<Segment>
-  ): Promise<SegmentKey[]> {
+  ): Promise<SegmentId[]> {
 
     const getJSONs = (segs: SegmentsSet<Segment>) => segs.getSegments().map(segment => ({
       "start": segment.from,
@@ -45,20 +48,20 @@ export class AnalyticService {
 
     var payload = {
       name: key,
-      added_segments: getJSONs(addedSegments),
-      removed_segments: removedSegments.getSegments().map(s => s.key)
+      addedSegments: getJSONs(addedSegments),
+      removedSegments: removedSegments.getSegments().map(s => s.id)
     }
 
     var data = await this._backendSrv.patch(this._backendURL + '/segments', payload);
-    if(data.added_ids === undefined) {
+    if(data.addedIds === undefined) {
       throw new Error('Server didn`t send added_ids');
     }
 
-    return data.added_ids as SegmentKey[];
+    return data.addedIds as SegmentId[];
   }
 
-  async getSegments(key: AnalyticUnitId, from?: number, to?: number): Promise<AnalyticSegment[]> {
-    var payload: any = { predictor_id: key };
+  async getSegments(id: AnalyticUnitId, from?: number, to?: number): Promise<AnalyticSegment[]> {
+    var payload: any = { id };
     if(from !== undefined) {
       payload['from'] = from;
     }
@@ -79,7 +82,7 @@ export class AnalyticService {
   async * getAnomalyTypeStatusGenerator(key: AnalyticUnitId, duration: number) {
     let statusCheck = async () => {
       var data = await this._backendSrv.get(
-        this._backendURL + '/anomalies/status', { name: key }
+        this._backendURL + '/analyticUnits/status', { name: key }
       );
       return data;
     }
@@ -95,17 +98,17 @@ export class AnalyticService {
     
   }
 
-  async getAlertEnabled(key: AnalyticUnitId): Promise<boolean> {
+  async getAlertEnabled(id: AnalyticUnitId): Promise<boolean> {
     var data = await this._backendSrv.get(
-      this._backendURL + '/alerts', { predictor_id: key }
+      this._backendURL + '/alerts', { id }
     );
     return data.enable as boolean;
 
   }
 
-  async setAlertEnabled(key: AnalyticUnitId, value: boolean): Promise<void> {
+  async setAlertEnabled(id: AnalyticUnitId, enabled: boolean): Promise<void> {
     return this._backendSrv.post(
-      this._backendURL + '/alerts', { predictor_id: key, enable: value }
+      this._backendURL + '/alerts', { id, enabled }
     );
   }
 

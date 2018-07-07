@@ -8,7 +8,7 @@ import {
 } from '../models/analytic_unit';
 import { MetricExpanded } from '../models/metric';
 import { DatasourceRequest } from '../models/datasource';
-import { Segment, SegmentKey } from '../models/segment';
+import { Segment, SegmentId } from '../models/segment';
 import { SegmentsSet } from '../models/segment_set';
 import { SegmentArray } from '../models/segment_array';
 
@@ -72,7 +72,7 @@ export class AnalyticController {
 
   async saveNew(metricExpanded: MetricExpanded, datasourceRequest: DatasourceRequest, panelId: number) {
     this._savingNewAnalyticUnit = true;
-    await this._analyticService.postNewAnalyticUnit(metricExpanded, datasourceRequest, this._newAnalyticUnitType, panelId);
+    await this._analyticService.postNewItem(metricExpanded, datasourceRequest, this._newAnalyticUnitType, panelId);
     this._analyticUnitsSet.addItem(this._newAnalyticUnitType);
     this._creatingNewAnalyticType = false;
     this._savingNewAnalyticUnit = false;
@@ -114,7 +114,7 @@ export class AnalyticController {
     this.labelingAnomaly.saving = true;
     var newIds = await this._saveLabelingData();
     this._labelingDataAddedSegments.getSegments().forEach((s, i) => {
-      this.labelingAnomaly.segments.updateKey(s.key, newIds[i]);
+      this.labelingAnomaly.segments.updateId(s.id, newIds[i]);
     })
     this.labelingAnomaly.saving = false;
     
@@ -125,7 +125,7 @@ export class AnalyticController {
 
   undoLabeling() {
     this._labelingDataAddedSegments.getSegments().forEach(s => {
-      this.labelingAnomaly.segments.remove(s.key);
+      this.labelingAnomaly.segments.remove(s.id);
     });
     this._labelingDataDeletedSegments.getSegments().forEach(s => {
       this.labelingAnomaly.segments.addSegment(s);
@@ -191,12 +191,12 @@ export class AnalyticController {
     var allSegmentsSet = new SegmentArray(allSegmentsList);
     if(anomalyType.selected) {
       this._labelingDataAddedSegments.getSegments().forEach(s => allSegmentsSet.addSegment(s));
-      this._labelingDataDeletedSegments.getSegments().forEach(s => allSegmentsSet.remove(s.key));
+      this._labelingDataDeletedSegments.getSegments().forEach(s => allSegmentsSet.remove(s.id));
     }
     anomalyType.segments = allSegmentsSet;
   }
 
-  private async _saveLabelingData(): Promise<SegmentKey[]> {
+  private async _saveLabelingData(): Promise<SegmentId[]> {
     var anomaly = this.labelingAnomaly;
     if(anomaly === null) {
       throw new Error('anomaly is not selected');
@@ -260,7 +260,7 @@ export class AnalyticController {
   deleteLabelingAnomalySegmentsInRange(from: number, to: number) {
     var allRemovedSegs = this.labelingAnomaly.removeSegmentsInRange(from, to);
     allRemovedSegs.forEach(s => {
-      if(!this._labelingDataAddedSegments.has(s.key)) {
+      if(!this._labelingDataAddedSegments.has(s.id)) {
         this._labelingDataDeletedSegments.addSegment(s);
       }
     });
