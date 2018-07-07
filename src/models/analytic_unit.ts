@@ -36,7 +36,7 @@ export class AnalyticUnit {
       this._panelObject = {};
     }
     _.defaults(this._panelObject, {
-      name: 'analytcUnitName', confidence: 0.2, color: 'red', pattern: 'General'
+      name: 'AnalyticUnitName', confidence: 0.2, color: 'red', pattern: 'General'
     });
 
     //this._metric = new Metric(_panelObject.metric);
