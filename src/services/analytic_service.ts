@@ -2,17 +2,17 @@ import { Segment, SegmentKey } from '../model/segment';
 import { MetricExpanded } from '../model/metric';
 import { DatasourceRequest } from '../model/datasource';
 import { SegmentsSet } from '../model/segment_set';
-import { AnomalyKey, AnomalyType, AnomalySegment } from '../model/anomaly';
+import { AnalyticUnitKey, AnalyticUnit, AnalyticSegment } from '../model/analytic_unit';
 
 import { BackendSrv } from 'grafana/app/core/services/backend_srv';
 
 
 
-export class AnomalyService {
+export class AnalyticService {
   constructor(private _backendURL: string, private _backendSrv: BackendSrv) {
   }
 
-  async postNewAnomalyType(metric: MetricExpanded, datasourceRequest: DatasourceRequest, newAnomalyType: AnomalyType, panelId: number) {
+  async postNewAnalyticUnit(metric: MetricExpanded, datasourceRequest: DatasourceRequest, newAnomalyType: AnalyticUnit, panelId: number) {
     return this._backendSrv.post(
       this._backendURL + '/anomalies', 
       {
@@ -35,7 +35,7 @@ export class AnomalyService {
   }
    
   async updateSegments(
-    key: AnomalyKey, addedSegments: SegmentsSet<Segment>, removedSegments: SegmentsSet<Segment>
+    key: AnalyticUnitKey, addedSegments: SegmentsSet<Segment>, removedSegments: SegmentsSet<Segment>
   ): Promise<SegmentKey[]> {
 
     const getJSONs = (segs: SegmentsSet<Segment>) => segs.getSegments().map(segment => ({
@@ -57,7 +57,7 @@ export class AnomalyService {
     return data.added_ids as SegmentKey[];
   }
 
-  async getSegments(key: AnomalyKey, from?: number, to?: number): Promise<AnomalySegment[]> {
+  async getSegments(key: AnalyticUnitKey, from?: number, to?: number): Promise<AnalyticSegment[]> {
     var payload: any = { predictor_id: key };
     if(from !== undefined) {
       payload['from'] = from;
@@ -73,10 +73,10 @@ export class AnomalyService {
       throw new Error('Server didn`t return segments array');
     }
     var segments = data.segments as { id: number, start: number, finish: number, labeled: boolean }[];
-    return segments.map(s => new AnomalySegment(s.labeled, s.id, s.start, s.finish));
+    return segments.map(s => new AnalyticSegment(s.labeled, s.id, s.start, s.finish));
   }
 
-  async * getAnomalyTypeStatusGenerator(key: AnomalyKey, duration: number) {
+  async * getAnomalyTypeStatusGenerator(key: AnalyticUnitKey, duration: number) {
     let statusCheck = async () => {
       var data = await this._backendSrv.get(
         this._backendURL + '/anomalies/status', { name: key }
@@ -95,7 +95,7 @@ export class AnomalyService {
     
   }
 
-  async getAlertEnabled(key: AnomalyKey): Promise<boolean> {
+  async getAlertEnabled(key: AnalyticUnitKey): Promise<boolean> {
     var data = await this._backendSrv.get(
       this._backendURL + '/alerts', { predictor_id: key }
     );
@@ -103,7 +103,7 @@ export class AnomalyService {
 
   }
 
-  async setAlertEnabled(key: AnomalyKey, value: boolean): Promise<void> {
+  async setAlertEnabled(key: AnalyticUnitKey, value: boolean): Promise<void> {
     return this._backendSrv.post(
       this._backendURL + '/alerts', { predictor_id: key, enable: value }
     );

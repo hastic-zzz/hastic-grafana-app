@@ -1,9 +1,9 @@
-import { AnomalyService } from '../services/anomaly_service'
+import { AnalyticService } from '../services/analytic_service'
 
 import {
-  AnomalyKey, AnomalyType,
-  AnomalyTypesSet, AnomalySegment, AnomalySegmentsSearcher, AnomalySermentPair
-} from '../model/anomaly';
+  AnalyticUnitKey, AnalyticUnit,
+  AnalyticUnitsSet, AnalyticSegment, AnalyticSegmentsSearcher, AnalyticSegmentPair
+} from '../model/analytic_unit';
 import { MetricExpanded } from '../model/metric';
 import { DatasourceRequest } from '../model/datasource';
 import { Segment, SegmentKey } from '../model/segment';
@@ -13,45 +13,46 @@ import { Emitter } from 'grafana/app/core/utils/emitter'
 
 import _ from 'lodash';
 
+
 export const REGION_FILL_ALPHA = 0.7;
 export const REGION_STROKE_ALPHA = 0.9;
 export const REGION_DELETE_COLOR_LIGHT = '#d1d1d1';
 export const REGION_DELETE_COLOR_DARK = 'white';
 
 
-export class AnomalyController {
+export class AnalyticController {
 
-  private _anomalyTypesSet: AnomalyTypesSet;
-  private _selectedAnomalyKey: AnomalyKey = null;
+  private _analyticUnitsSet: AnalyticUnitsSet;
+  private _selectedAnalyticUnitKey: AnalyticUnitKey = null;
 
-  private _labelingDataAddedSegments: SegmentsSet<AnomalySegment>;
-  private _labelingDataDeletedSegments: SegmentsSet<AnomalySegment>;
-  private _newAnomalyType: AnomalyType = null;
-  private _creatingNewAnomalyType: boolean = false;
-  private _savingNewAnomalyType: boolean = false;
+  private _labelingDataAddedSegments: SegmentsSet<AnalyticSegment>;
+  private _labelingDataDeletedSegments: SegmentsSet<AnalyticSegment>;
+  private _newAnalyticUnitType: AnalyticUnit = null;
+  private _creatingNewAnalyticType: boolean = false;
+  private _savingNewAnalyticUnit: boolean = false;
   private _tempIdCounted = -1;
   private _graphLocked = false;
 
-  private _statusRunners: Set<AnomalyKey> = new Set<AnomalyKey>();
+  private _statusRunners: Set<AnalyticUnitKey> = new Set<AnalyticUnitKey>();
 
 
-  constructor(private _panelObject: any, private _anomalyService: AnomalyService, private _emitter: Emitter) {
+  constructor(private _panelObject: any, private _analyticService: AnalyticService, private _emitter: Emitter) {
     if(_panelObject.anomalyTypes === undefined) {
       _panelObject.anomalyTypes = [];
     }
-    this._labelingDataAddedSegments = new SegmentArray<AnomalySegment>();
-    this._labelingDataDeletedSegments = new SegmentArray<AnomalySegment>();
-    this._anomalyTypesSet = new AnomalyTypesSet(this._panelObject.anomalyTypes);
-    this.anomalyTypes.forEach(a => this.runAnomalyTypeAlertEnabledWaiter(a));
+    this._labelingDataAddedSegments = new SegmentArray<AnalyticSegment>();
+    this._labelingDataDeletedSegments = new SegmentArray<AnalyticSegment>();
+    this._analyticUnitsSet = new AnalyticUnitsSet(this._panelObject.anomalyTypes);
+    this.analyticUnits.forEach(a => this.runEnabledWaiter(a));
   }
 
-  getAnomalySegmentsSearcher(): AnomalySegmentsSearcher {
-    return this._anomalySegmentsSearcher.bind(this);
+  getSegmentsSearcher(): AnalyticSegmentsSearcher {
+    return this._segmentsSearcher.bind(this);
   }
 
-  private _anomalySegmentsSearcher(point: number, rangeDist: number): AnomalySermentPair[] {
-    var result: AnomalySermentPair[] = [];
-    this._anomalyTypesSet.anomalyTypes.forEach(at => {
+  private _segmentsSearcher(point: number, rangeDist: number): AnalyticSegmentPair[] {
+    var result: AnalyticSegmentPair[] = [];
+    this._analyticUnitsSet.items.forEach(at => {
       var segs = at.segments.findSegments(point, rangeDist);
       segs.forEach(s => {
         result.push({ anomalyType: at, segment: s });
@@ -60,53 +61,51 @@ export class AnomalyController {
     return result;
   }
 
-  createAnomalyType() {
-    this._newAnomalyType = new AnomalyType();
-    this._creatingNewAnomalyType = true;
-    this._savingNewAnomalyType = false;
+  createNew() {
+    this._newAnalyticUnitType = new AnalyticUnit();
+    this._creatingNewAnalyticType = true;
+    this._savingNewAnalyticUnit = false;
   }
 
-  async saveNewAnomalyType(metricExpanded: MetricExpanded, datasourceRequest: DatasourceRequest, panelId: number) {
-    this._savingNewAnomalyType = true;
-    await this._anomalyService.postNewAnomalyType(metricExpanded, datasourceRequest, this._newAnomalyType, panelId);
-    this._anomalyTypesSet.addAnomalyType(this._newAnomalyType);
-    this._creatingNewAnomalyType = false;
-    this._savingNewAnomalyType = false;
-    this.runAnomalyTypeAlertEnabledWaiter(this._newAnomalyType);
-    this._runAnomalyTypeStatusWaiter(this._newAnomalyType);
+  async saveNew(metricExpanded: MetricExpanded, datasourceRequest: DatasourceRequest, panelId: number) {
+    this._savingNewAnalyticUnit = true;
+    await this._analyticService.postNewAnalyticUnit(metricExpanded, datasourceRequest, this._newAnalyticUnitType, panelId);
+    this._analyticUnitsSet.addAnomalyType(this._newAnalyticUnitType);
+    this._creatingNewAnalyticType = false;
+    this._savingNewAnalyticUnit = false;
+    this.runEnabledWaiter(this._newAnalyticUnitType);
+    this._runStatusWaiter(this._newAnalyticUnitType);
   }
 
-  get creatingAnomalyType() { return this._creatingNewAnomalyType; }
-  get savingAnomalyType() { return this._savingNewAnomalyType; }
-  get newAnomalyType(): AnomalyType { return this._newAnomalyType; }
+  get creatingNew() { return this._creatingNewAnalyticType; }
+  get saving() { return this._savingNewAnalyticUnit; }
+  get newAnalyticUnit(): AnalyticUnit { return this._newAnalyticUnitType; }
 
   get graphLocked() { return this._graphLocked; }
-  set graphLocked(value) {
-    this._graphLocked = value;
-  }
+  set graphLocked(value) { this._graphLocked = value; }
 
-  get labelingAnomaly(): AnomalyType {
-    if(this._selectedAnomalyKey === null) {
+  get labelingAnomaly(): AnalyticUnit {
+    if(this._selectedAnalyticUnitKey === null) {
       return null;
     }
-    return this._anomalyTypesSet.byKey(this._selectedAnomalyKey);
+    return this._analyticUnitsSet.byKey(this._selectedAnalyticUnitKey);
   }
 
-  async toggleAnomalyTypeLabelingMode(key: AnomalyKey) {
+  async toggleAnomalyTypeLabelingMode(key: AnalyticUnitKey) {
     if(this.labelingAnomaly && this.labelingAnomaly.saving) {
       throw new Error('Can`t toggel during saving');
     }
-    if(this._selectedAnomalyKey === key) {
-      return this.disableAnomalyLabeling();
+    if(this._selectedAnalyticUnitKey === key) {
+      return this.disableLabeling();
     }
-    await this.disableAnomalyLabeling();
-    this._selectedAnomalyKey = key;
+    await this.disableLabeling();
+    this._selectedAnalyticUnitKey = key;
     this.labelingAnomaly.selected = true;
-    this.toggleAnomalyVisibility(key, true);
+    this.toggleVisibility(key, true);
   }
 
-  async disableAnomalyLabeling() {
-    if(this._selectedAnomalyKey === null) {
+  async disableLabeling() {
+    if(this._selectedAnalyticUnitKey === null) {
       return;
     }
     this.labelingAnomaly.saving = true;
@@ -118,7 +117,7 @@ export class AnomalyController {
     
     var anomaly = this.labelingAnomaly;
     this.dropLabeling();
-    this._runAnomalyTypeStatusWaiter(anomaly);
+    this._runStatusWaiter(anomaly);
   }
 
   undoLabeling() {
@@ -135,12 +134,12 @@ export class AnomalyController {
     this._labelingDataAddedSegments.clear();
     this._labelingDataDeletedSegments.clear();
     this.labelingAnomaly.selected = false;
-    this._selectedAnomalyKey = null;
+    this._selectedAnalyticUnitKey = null;
     this._tempIdCounted = -1;
   }
 
   get labelingMode(): boolean {
-    return this._selectedAnomalyKey !== null;
+    return this._selectedAnalyticUnitKey !== null;
   }
 
   get labelingDeleteMode(): boolean {
@@ -155,37 +154,37 @@ export class AnomalyController {
     this._labelingDataAddedSegments.addSegment(asegment);
   }
 
-  get anomalyTypes(): AnomalyType[] {
-    return this._anomalyTypesSet.anomalyTypes;
+  get analyticUnits(): AnalyticUnit[] {
+    return this._analyticUnitsSet.items;
   }
 
-  onAnomalyColorChange(key: AnomalyKey, value) {
-    this._anomalyTypesSet.byKey(key).color = value;
+  onAnomalyColorChange(key: AnalyticUnitKey, value) {
+    this._analyticUnitsSet.byKey(key).color = value;
   }
 
   fetchAnomalyTypesStatuses() {
-    this.anomalyTypes.forEach(a => this._runAnomalyTypeStatusWaiter(a));
+    this.analyticUnits.forEach(a => this._runStatusWaiter(a));
   }
 
   async fetchAnomalyTypesSegments(from: number, to: number) {
-    if(!_.isNumber(from)) {
+    if(!_.isNumber(+from)) {
       throw new Error('from isn`t number');
     }
     if(!_.isNumber(+to)) {
       throw new Error('to isn`t number');
     }
-    var tasks = this.anomalyTypes.map(a => this.fetchSegments(a, from, to));
+    var tasks = this.analyticUnits.map(a => this.fetchSegments(a, from, to));
     return Promise.all(tasks);
   }
 
-  async fetchSegments(anomalyType: AnomalyType, from: number, to: number): Promise<void> {
-    if(!_.isNumber(from)) {
+  async fetchSegments(anomalyType: AnalyticUnit, from: number, to: number): Promise<void> {
+    if(!_.isNumber(+from)) {
       throw new Error('from isn`t number');
     }
     if(!_.isNumber(+to)) {
       throw new Error('to isn`t number');
     }
-    var allSegmentsList = await this._anomalyService.getSegments(anomalyType.key, from, to);
+    var allSegmentsList = await this._analyticService.getSegments(anomalyType.key, from, to);
     var allSegmentsSet = new SegmentArray(allSegmentsList);
     if(anomalyType.selected) {
       this._labelingDataAddedSegments.getSegments().forEach(s => allSegmentsSet.addSegment(s));
@@ -207,7 +206,7 @@ export class AnomalyController {
       return [];
     }
 
-    return this._anomalyService.updateSegments(
+    return this._analyticService.updateSegments(
       anomaly.key, this._labelingDataAddedSegments, this._labelingDataDeletedSegments
     );
   }
@@ -218,8 +217,8 @@ export class AnomalyController {
       options.markings = [];
     }
 
-    for(var i = 0; i < this.anomalyTypes.length; i++) {
-      var anomalyType = this.anomalyTypes[i];
+    for(var i = 0; i < this.analyticUnits.length; i++) {
+      var anomalyType = this.analyticUnits[i];
       var borderColor = addAlphaToRGB(anomalyType.color, REGION_STROKE_ALPHA);
       var fillColor = addAlphaToRGB(anomalyType.color, REGION_FILL_ALPHA);
       var segments = anomalyType.segments.getSegments();
@@ -273,13 +272,13 @@ export class AnomalyController {
   }
 
   removeAnomalyType(key) {
-    if(key === this._selectedAnomalyKey) {
+    if(key === this._selectedAnalyticUnitKey) {
       this.dropLabeling();
     }
-    this._anomalyTypesSet.removeAnomalyType(key);
+    this._analyticUnitsSet.removeAnomalyType(key);
   }
 
-  private async _runAnomalyTypeStatusWaiter(anomalyType: AnomalyType) {
+  private async _runStatusWaiter(anomalyType: AnalyticUnit) {
     if(anomalyType === undefined || anomalyType === null) {
       throw new Error('anomalyType not defined');
     }
@@ -290,7 +289,7 @@ export class AnomalyController {
 
     this._statusRunners.add(anomalyType.key);
 
-    var statusGenerator = this._anomalyService.getAnomalyTypeStatusGenerator(
+    var statusGenerator = this._analyticService.getAnomalyTypeStatusGenerator(
       anomalyType.key, 1000
     );
 
@@ -312,18 +311,18 @@ export class AnomalyController {
     this._statusRunners.delete(anomalyType.key);
   }
 
-  async runAnomalyTypeAlertEnabledWaiter(anomalyType: AnomalyType) {
-    var enabled = await this._anomalyService.getAlertEnabled(anomalyType.key);
+  async runEnabledWaiter(anomalyType: AnalyticUnit) {
+    var enabled = await this._analyticService.getAlertEnabled(anomalyType.key);
     if(anomalyType.alertEnabled !== enabled) {
       anomalyType.alertEnabled = enabled;
       this._emitter.emit('anomaly-type-alert-change', anomalyType);
     }
   }
 
-  async toggleAnomalyTypeAlertEnabled(anomalyType: AnomalyType) {
+  async toggleAnomalyTypeAlertEnabled(anomalyType: AnalyticUnit) {
     var enabled = anomalyType.alertEnabled;
     anomalyType.alertEnabled = undefined;
-    await this._anomalyService.setAlertEnabled(anomalyType.key, enabled);
+    await this._analyticService.setAlertEnabled(anomalyType.key, enabled);
     anomalyType.alertEnabled = enabled;
     this._emitter.emit('anomaly-type-alert-change', anomalyType);
   }
@@ -333,8 +332,8 @@ export class AnomalyController {
     return this._tempIdCounted;
   }
 
-  public toggleAnomalyVisibility(key: AnomalyKey, value?: boolean) {
-    var anomaly = this._anomalyTypesSet.byKey(key);
+  public toggleVisibility(key: AnalyticUnitKey, value?: boolean) {
+    var anomaly = this._analyticUnitsSet.byKey(key);
     if(value !== undefined) {
       anomaly.visible = value;
     } else {

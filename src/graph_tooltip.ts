@@ -1,4 +1,4 @@
-import { AnomalyType, AnomalySegment, AnomalySegmentsSearcher } from "model/anomaly";
+import { AnalyticSegmentsSearcher } from "model/analytic_unit";
 
 export class GraphTooltip {
 
@@ -11,7 +11,7 @@ export class GraphTooltip {
   constructor(
     private $elem: JQuery<HTMLElement>, private dashboard, 
     private scope, private getSeriesFn,
-    private _anomalySegmentsSearcher: AnomalySegmentsSearcher
+    private _anomalySegmentsSearcher: AnalyticSegmentsSearcher
   ) {
     this.ctrl = scope.ctrl;
     this.panel = this.ctrl.panel;

@@ -6,11 +6,11 @@ import template from './template';
 import { GraphRenderer } from './graph_renderer';
 import { GraphLegend } from './graph_legend';
 import { DataProcessor } from './data_processor';
-import { Metric, MetricExpanded } from './model/metric';
+import { MetricExpanded } from './model/metric';
 import { DatasourceRequest } from './model/datasource';
-import { AnomalyKey, AnomalyType } from './model/anomaly';
-import { AnomalyService } from './services/anomaly_service';
-import { AnomalyController } from './controllers/anomaly_controller';
+import { AnalyticUnitKey, AnalyticUnit } from './model/analytic_unit';
+import { AnalyticService } from './services/analytic_service';
+import { AnalyticController } from './controllers/analytic_controller';
 
 import { axesEditorComponent } from './axes_editor';
 
@@ -34,6 +34,7 @@ class GraphCtrl extends MetricsPanelCtrl {
   alertState: any;
 
   _panelPath: any;
+  _renderError: boolean = false;
 
   annotationsPromise: any;
   dataWarning: any;
@@ -44,7 +45,7 @@ class GraphCtrl extends MetricsPanelCtrl {
   datasourceRequest: DatasourceRequest;
   patterns: Array<String> = ['General', 'Drops', 'Peaks', 'Jumps'];
   anomalyTypes = []; // TODO: remove it later. Only for alert tab
-  anomalyController: AnomalyController;
+  analyticsController: AnalyticController;
 
   _graphRenderer: GraphRenderer;
   _graphLegend: GraphLegend;
@@ -151,11 +152,11 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.processor = new DataProcessor(this.panel);
 
     
-    var anomalyService = new AnomalyService(this.backendURL, backendSrv as BackendSrv);
+    var anomalyService = new AnalyticService(this.backendURL, backendSrv as BackendSrv);
     
     this.runBackendConnectivityCheck();
 
-    this.anomalyController = new AnomalyController(this.panel, anomalyService, this.events);
+    this.analyticsController = new AnalyticController(this.panel, anomalyService, this.events);
     this.anomalyTypes = this.panel.anomalyTypes;
     keybindingSrv.bind('d', this.onDKey.bind(this));
 
@@ -168,12 +169,12 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.events.on('anomaly-type-alert-change', () => {
       this.$scope.$digest()
     });
-    this.events.on('anomaly-type-status-change', async (anomalyType: AnomalyType) => {
+    this.events.on('anomaly-type-status-change', async (anomalyType: AnalyticUnit) => {
       if(anomalyType === undefined) {
         throw new Error('anomalyType is undefined');
       }
       if(anomalyType.status === 'ready') {
-        await this.anomalyController.fetchSegments(anomalyType, +this.range.from, +this.range.to);
+        await this.analyticsController.fetchSegments(anomalyType, +this.range.from, +this.range.to);
       }
       this.render(this.seriesList);
       this.$scope.$digest();
@@ -189,7 +190,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       };
     });
 
-    this.anomalyController.fetchAnomalyTypesStatuses();
+    this.analyticsController.fetchAnomalyTypesStatuses();
 
   }
 
@@ -210,7 +211,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       return;
     }
 
-    var as = new AnomalyService(this.backendURL, this.backendSrv);
+    var as = new AnalyticService(this.backendURL, this.backendSrv);
     var isOK = await as.isBackendOk();
     if(!isOK) {
       this.alertSrv.set(
@@ -307,7 +308,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     var loadTasks = [
       this.annotationsPromise,
-      this.anomalyController.fetchAnomalyTypesSegments(+this.range.from, +this.range.to)
+      this.analyticsController.fetchAnomalyTypesSegments(+this.range.from, +this.range.to)
     ];
 
     var results =  await Promise.all(loadTasks);
@@ -382,7 +383,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       }
     }
 
-    if(!this.anomalyController.graphLocked) {
+    if(!this.analyticsController.graphLocked) {
       this._graphLegend.render();
       this._graphRenderer.render(data);
     }
@@ -509,13 +510,13 @@ class GraphCtrl extends MetricsPanelCtrl {
     return this._panelPath;
   }
 
-  createNewAnomalyType() {
-    this.anomalyController.createAnomalyType();
+  createNew() {
+    this.analyticsController.createNew();
   }
 
-  async saveAnomalyType() {
+  async saveNew() {
     this.refresh();
-    await this.anomalyController.saveNewAnomalyType(
+    await this.analyticsController.saveNew(
       new MetricExpanded(this.panel.datasource, this.panel.targets),
       this.datasourceRequest,
       this.panel.id
@@ -524,17 +525,17 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.render(this.seriesList);
   }
 
-  onAnomalyColorChange(key: AnomalyKey, value) {
-    this.anomalyController.onAnomalyColorChange(key, value);
+  onColorChange(key: AnalyticUnitKey, value) {
+    this.analyticsController.onAnomalyColorChange(key, value);
     this.render();
   }
 
-  onAnomalyRemove(key) {
-    this.anomalyController.removeAnomalyType(key as string);
+  onRemove(key) {
+    this.analyticsController.removeAnomalyType(key as string);
     this.render();
   }
 
-  onAnomalyCancelLabeling(key) {
+  onCancelLabeling(key) {
     this.$scope.$root.appEvent('confirm-modal', {
       title: 'Clear anomaly labeling',
       text2: 'Your changes will be lost.',
@@ -542,36 +543,39 @@ class GraphCtrl extends MetricsPanelCtrl {
       icon: 'fa-warning',
       altActionText: 'Save',
       onAltAction: () => {
-        this.onToggleAnomalyTypeLabelingMode(key);
+        this.onToggleLabelingMode(key);
       },
       onConfirm: () => {
-        this.anomalyController.undoLabeling();
+        this.analyticsController.undoLabeling();
         this.render();
       },
     });
   }
 
- async  onToggleAnomalyTypeLabelingMode(key) {
-    await this.anomalyController.toggleAnomalyTypeLabelingMode(key as AnomalyKey);
+ async onToggleLabelingMode(key) {
+    await this.analyticsController.toggleAnomalyTypeLabelingMode(key as AnalyticUnitKey);
     this.$scope.$digest();
     this.render();
   }
 
   onDKey() {
-    if(!this.anomalyController.labelingMode) {
+    if(!this.analyticsController.labelingMode) {
       return;
     }
-    this.anomalyController.toggleDeleteMode();
+    this.analyticsController.toggleDeleteMode();
   }
 
-  onAnomalyAlertChange(anomalyType: AnomalyType) {
-    this.anomalyController.toggleAnomalyTypeAlertEnabled(anomalyType);
+  onAnomalyAlertChange(anomalyType: AnalyticUnit) {
+    this.analyticsController.toggleAnomalyTypeAlertEnabled(anomalyType);
   }
 
-  onAnomalyToggleVisibility(key: AnomalyKey) {
-    this.anomalyController.toggleAnomalyVisibility(key);
+  onToggleVisibility(key: AnalyticUnitKey) {
+    this.analyticsController.toggleVisibility(key);
     this.render();
   }
+
+  get renderError(): boolean { return this._renderError; }
+  set renderError(value: boolean) { this._renderError = value; }
 }
 
 export { GraphCtrl, GraphCtrl as PanelCtrl };

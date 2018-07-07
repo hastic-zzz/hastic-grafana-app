@@ -5,12 +5,12 @@ import { Metric } from './metric';
 
 import _ from 'lodash';
 
-export type AnomalySermentPair = { anomalyType: AnomalyType, segment: AnomalySegment };
-export type AnomalySegmentsSearcher = (point: number, rangeDist: number) => AnomalySermentPair[];
+export type AnalyticSegmentPair = { anomalyType: AnalyticUnit, segment: AnalyticSegment };
+export type AnalyticSegmentsSearcher = (point: number, rangeDist: number) => AnalyticSegmentPair[];
 
-export type AnomalyKey = string;
+export type AnalyticUnitKey = string;
 
-export class AnomalySegment extends Segment {
+export class AnalyticSegment extends Segment {
   constructor(public labeled: boolean, key: SegmentKey, from: number, to: number) {
     super(key, from, to);
     if(!_.isBoolean(labeled)) {
@@ -19,12 +19,12 @@ export class AnomalySegment extends Segment {
   }
 }
 
-export class AnomalyType {
+export class AnalyticUnit {
 
   private _selected: boolean = false;
   private _deleteMode: boolean = false;
   private _saving: boolean = false;
-  private _segmentSet = new SegmentArray<AnomalySegment>();
+  private _segmentSet = new SegmentArray<AnalyticSegment>();
   private _status: string;
   private _error: string;
   private _metric: Metric;
@@ -42,7 +42,7 @@ export class AnomalyType {
     //this._metric = new Metric(_panelObject.metric);
   }
 
-  get key(): AnomalyKey { return this.name; }
+  get key(): AnalyticUnitKey { return this.name; }
 
   set name(value: string) { this._panelObject.name = value; }
   get name(): string { return this._panelObject.name; }
@@ -74,18 +74,18 @@ export class AnomalyType {
 
   get metric() { return this._metric; }
 
-  addLabeledSegment(segment: Segment): AnomalySegment {
-    var asegment = new AnomalySegment(true, segment.key, segment.from, segment.to);
+  addLabeledSegment(segment: Segment): AnalyticSegment {
+    var asegment = new AnalyticSegment(true, segment.key, segment.from, segment.to);
     this._segmentSet.addSegment(asegment);
     return asegment;
   }
 
-  removeSegmentsInRange(from: number, to: number): AnomalySegment[] {
+  removeSegmentsInRange(from: number, to: number): AnalyticSegment[] {
     return this._segmentSet.removeInRange(from, to);
   }
 
-  get segments(): SegmentsSet<AnomalySegment> { return this._segmentSet; }
-  set segments(value: SegmentsSet<AnomalySegment>) {
+  get segments(): SegmentsSet<AnalyticSegment> { return this._segmentSet; }
+  set segments(value: SegmentsSet<AnalyticSegment>) {
     this._segmentSet.setSegments(value.getSegments());
   }
   
@@ -111,56 +111,51 @@ export class AnomalyType {
 
   get panelObject() { return this._panelObject; }
 
-  get alertEnabled(): boolean {
-    return this._alertEnabled;
-  }
-
-  set alertEnabled(value) {
-    this._alertEnabled = value;
-  }
+  get alertEnabled(): boolean { return this._alertEnabled; }
+  set alertEnabled(value) { this._alertEnabled = value;}
 
 }
 
-export class AnomalyTypesSet {
+export class AnalyticUnitsSet {
 
-  private _mapAnomalyKeyIndex: Map<AnomalyKey, number>;
-  private _anomalyTypes: AnomalyType[];
+  private _mapKeyIndex: Map<AnalyticUnitKey, number>;
+  private _items: AnalyticUnit[];
 
   constructor(private _panelObject: any[]) {
     if(_panelObject === undefined) {
       throw new Error('panel object can`t be undefined');
     }
-    this._mapAnomalyKeyIndex = new Map<AnomalyKey, number>();
-    this._anomalyTypes = _panelObject.map(p => new AnomalyType(p));
+    this._mapKeyIndex = new Map<AnalyticUnitKey, number>();
+    this._items = _panelObject.map(p => new AnalyticUnit(p));
     this._rebuildIndex();
   }
 
-  get anomalyTypes() { return this._anomalyTypes; }
+  get items() { return this._items; }
 
-  addAnomalyType(anomalyType: AnomalyType) {
+  addAnomalyType(anomalyType: AnalyticUnit) {
     this._panelObject.push(anomalyType.panelObject);
-    this._mapAnomalyKeyIndex[anomalyType.name] = this._anomalyTypes.length;
-    this._anomalyTypes.push(anomalyType);
+    this._mapKeyIndex[anomalyType.name] = this._items.length;
+    this._items.push(anomalyType);
   }
 
-  removeAnomalyType(key: AnomalyKey) {
-    var index = this._mapAnomalyKeyIndex[key];
+  removeAnomalyType(key: AnalyticUnitKey) {
+    var index = this._mapKeyIndex[key];
     this._panelObject.splice(index, 1);
-    this._anomalyTypes.splice(index, 1);
+    this._items.splice(index, 1);
     this._rebuildIndex();
   }
 
   _rebuildIndex() {
-    this._anomalyTypes.forEach((a, i) => {
-      this._mapAnomalyKeyIndex[a.key] = i;
+    this._items.forEach((a, i) => {
+      this._mapKeyIndex[a.key] = i;
     });
   }
 
-  byKey(key: AnomalyKey): AnomalyType {
-    return this._anomalyTypes[this._mapAnomalyKeyIndex[key]];
+  byKey(key: AnalyticUnitKey): AnalyticUnit {
+    return this._items[this._mapKeyIndex[key]];
   }
 
-  byIndex(index: number): AnomalyType {
-    return this._anomalyTypes[index];
+  byIndex(index: number): AnalyticUnit {
+    return this._items[index];
   }
 }
