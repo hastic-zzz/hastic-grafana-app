@@ -298,7 +298,7 @@ export class AnalyticController {
 
     this._statusRunners.add(anomalyType.id);
 
-    var statusGenerator = this._analyticService.getAnomalyTypeStatusGenerator(
+    var statusGenerator = this._analyticService.getStatusGenerator(
       anomalyType.id, 1000
     );
 

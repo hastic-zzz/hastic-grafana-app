@@ -79,7 +79,7 @@ export class AnalyticService {
     return segments.map(s => new AnalyticSegment(s.labeled, s.id, s.start, s.finish));
   }
 
-  async * getAnomalyTypeStatusGenerator(id: AnalyticUnitId, duration: number) {
+  async * getStatusGenerator(id: AnalyticUnitId, duration: number) {
     if(id === undefined) {
       throw new Error('id is undefined');
     }
@@ -108,7 +108,10 @@ export class AnalyticService {
     var data = await this._backendSrv.get(
       this._backendURL + '/alerts', { id }
     );
-    return data.enable as boolean;
+    if(data.enabled === undefined) {
+      throw new Error('Server didn`t return "enabled"');
+    }
+    return data.enabled as boolean;
 
   }
 

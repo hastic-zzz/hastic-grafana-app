@@ -5924,7 +5924,7 @@ var AnalyticController = /** @class */ (function () {
                             return [2 /*return*/];
                         }
                         this._statusRunners.add(anomalyType.id);
-                        statusGenerator = this._analyticService.getAnomalyTypeStatusGenerator(anomalyType.id, 1000);
+                        statusGenerator = this._analyticService.getStatusGenerator(anomalyType.id, 1000);
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 7, 8, 13]);
@@ -9023,8 +9023,8 @@ var AnalyticService = /** @class */ (function () {
             });
         });
     };
-    AnalyticService.prototype.getAnomalyTypeStatusGenerator = function (id, duration) {
-        return __asyncGenerator(this, arguments, function getAnomalyTypeStatusGenerator_1() {
+    AnalyticService.prototype.getStatusGenerator = function (id, duration) {
+        return __asyncGenerator(this, arguments, function getStatusGenerator_1() {
             var _this = this;
             var statusCheck, timeout;
             return __generator(this, function (_a) {
@@ -9077,7 +9077,10 @@ var AnalyticService = /** @class */ (function () {
                         return [4 /*yield*/, this._backendSrv.get(this._backendURL + '/alerts', { id: id })];
                     case 1:
                         data = _a.sent();
-                        return [2 /*return*/, data.enable];
+                        if (data.enabled === undefined) {
+                            throw new Error('Server didn`t return "enabled"');
+                        }
+                        return [2 /*return*/, data.enabled];
                 }
             });
         });
