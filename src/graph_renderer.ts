@@ -52,7 +52,7 @@ export class GraphRenderer {
   // private eventManager;
   private flotOptions: any = {}
   private $elem: JQuery<HTMLElement>;
-  private annotations: any[];
+  // private annotations: any[];
   private contextSrv: any;
   private popoverSrv: any;
   private scope: any;
@@ -78,7 +78,7 @@ export class GraphRenderer {
     }
     
     
-    this.annotations = [];
+    // this.annotations = [];
     this.panelWidth = 0;
     
     // this.eventManager = new EventManager(this.ctrl);
@@ -202,7 +202,7 @@ export class GraphRenderer {
     if (!this.data) {
       return;
     }
-    this.annotations = this.ctrl.annotations || [];
+    // this.annotations = this.ctrl.annotations || [];
     this._buildFlotPairs(this.data);
     updateLegendValues(this.data, this.panel);
     this._renderPanel();

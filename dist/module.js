@@ -6578,7 +6578,7 @@ var GraphRenderer = /** @class */ (function () {
         if (this._ananlyticController === undefined) {
             throw new Error('ananlyticController is undefined');
         }
-        this.annotations = [];
+        // this.annotations = [];
         this.panelWidth = 0;
         // this.eventManager = new EventManager(this.ctrl);
         this.flotOptions = {};
@@ -6678,7 +6678,7 @@ var GraphRenderer = /** @class */ (function () {
         if (!this.data) {
             return;
         }
-        this.annotations = this.ctrl.annotations || [];
+        // this.annotations = this.ctrl.annotations || [];
         this._buildFlotPairs(this.data);
         updateLegendValues(this.data, this.panel);
         this._renderPanel();
@@ -8169,7 +8169,6 @@ var GraphCtrl = /** @class */ (function (_super) {
         _this.hiddenSeries = {};
         _this.seriesList = [];
         _this.dataList = [];
-        _this.annotations = [];
         _this._renderError = false;
         _this.colors = [];
         _this.anomalyTypes = []; // TODO: remove it later. Only for alert tab
@@ -8362,27 +8361,27 @@ var GraphCtrl = /** @class */ (function (_super) {
         actions.push({ text: 'Toggle legend', click: 'ctrl.toggleLegend()' });
     };
     GraphCtrl.prototype.issueQueries = function (datasource) {
-        this.annotationsPromise = this.annotationsSrv.getAnnotations({
-            dashboard: this.dashboard,
-            panel: this.panel,
-            range: this.range,
-        });
+        // this.annotationsPromise = this.annotationsSrv.getAnnotations({
+        //   dashboard: this.dashboard,
+        //   panel: this.panel,
+        //   range: this.range,
+        // });
         return _super.prototype.issueQueries.call(this, datasource);
     };
     GraphCtrl.prototype.zoomOut = function (evt) {
         this.publishAppEvent('zoom-out', 2);
     };
     GraphCtrl.prototype.onDataSnapshotLoad = function (snapshotData) {
-        this.annotationsPromise = this.annotationsSrv.getAnnotations({
-            dashboard: this.dashboard,
-            panel: this.panel,
-            range: this.range,
-        });
+        // this.annotationsPromise = this.annotationsSrv.getAnnotations({
+        //   dashboard: this.dashboard,
+        //   panel: this.panel,
+        //   range: this.range,
+        // });
         this.onDataReceived(snapshotData);
     };
     GraphCtrl.prototype.onDataError = function (err) {
         this.seriesList = [];
-        this.annotations = [];
+        // this.annotations = [];
         this.render([]);
     };
     GraphCtrl.prototype.onDataReceived = function (dataList) {
@@ -8418,15 +8417,14 @@ var GraphCtrl = /** @class */ (function (_super) {
                             }
                         }
                         loadTasks = [
-                            this.annotationsPromise,
+                            // this.annotationsPromise,
                             this.analyticsController.fetchAnomalyTypesSegments(+this.range.from, +this.range.to)
                         ];
                         return [4 /*yield*/, Promise.all(loadTasks)];
                     case 1:
                         results = _b.sent();
                         this.loading = false;
-                        this.alertState = results[0].alertState;
-                        this.annotations = results[0].annotations;
+                        // this.annotations = results[0].annotations;
                         this.render(this.seriesList);
                         return [2 /*return*/];
                 }
@@ -8583,34 +8581,27 @@ var GraphCtrl = /** @class */ (function (_super) {
             modalClass: 'modal--narrow',
         });
     };
-    GraphCtrl.prototype.getAnnotationsByTag = function (tag) {
-        var res = [];
-        for (var _i = 0, _a = this.annotations; _i < _a.length; _i++) {
-            var annotation = _a[_i];
-            if (annotation.tags.indexOf(tag) >= 0) {
-                res.push(annotation);
-            }
-        }
-        return res;
-    };
-    Object.defineProperty(GraphCtrl.prototype, "annotationTags", {
-        get: function () {
-            var res = [];
-            for (var _i = 0, _a = this.annotations; _i < _a.length; _i++) {
-                var annotation = _a[_i];
-                for (var _b = 0, _c = annotation.tags; _b < _c.length; _b++) {
-                    var tag = _c[_b];
-                    if (res.indexOf(tag) < 0) {
-                        res.push(tag);
-                    }
-                }
-            }
-            return res;
-        },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(GraphCtrl.prototype, "panelPath", {
+        // getAnnotationsByTag(tag) {
+        //   var res = [];
+        //   for (var annotation of this.annotations) {
+        //     if (annotation.tags.indexOf(tag) >= 0) {
+        //       res.push(annotation);
+        //     }
+        //   }
+        //   return res;
+        // }
+        // get annotationTags() {
+        //   var res = [];
+        //   for (var annotation of this.annotations) {
+        //     for (var tag of annotation.tags) {
+        //       if (res.indexOf(tag) < 0) {
+        //         res.push(tag);
+        //       }
+        //     }
+        //   }
+        //   return res;
+        // }
         get: function () {
             if (this._panelPath === undefined) {
                 this._panelPath = '/public/plugins/' + this.pluginId + '/';

@@ -31,13 +31,13 @@ class GraphCtrl extends MetricsPanelCtrl {
   hiddenSeries: any = {};
   seriesList: any = [];
   dataList: any = [];
-  annotations: any = [];
-  alertState: any;
+  // annotations: any = [];
+
 
   _panelPath: any;
   _renderError: boolean = false;
 
-  annotationsPromise: any;
+  // annotationsPromise: any;
   dataWarning: any;
   colors: any = [];
   subTabIndex: number;
@@ -250,11 +250,11 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   issueQueries(datasource) {
-    this.annotationsPromise = this.annotationsSrv.getAnnotations({
-      dashboard: this.dashboard,
-      panel: this.panel,
-      range: this.range,
-    });
+    // this.annotationsPromise = this.annotationsSrv.getAnnotations({
+    //   dashboard: this.dashboard,
+    //   panel: this.panel,
+    //   range: this.range,
+    // });
     return super.issueQueries(datasource);
   }
 
@@ -263,17 +263,17 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   onDataSnapshotLoad(snapshotData) {
-    this.annotationsPromise = this.annotationsSrv.getAnnotations({
-      dashboard: this.dashboard,
-      panel: this.panel,
-      range: this.range,
-    });
+    // this.annotationsPromise = this.annotationsSrv.getAnnotations({
+    //   dashboard: this.dashboard,
+    //   panel: this.panel,
+    //   range: this.range,
+    // });
     this.onDataReceived(snapshotData);
   }
 
   onDataError(err) {
     this.seriesList = [];
-    this.annotations = [];
+    // this.annotations = [];
     this.render([]);
   }
 
@@ -308,14 +308,13 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
 
     var loadTasks = [
-      this.annotationsPromise,
+      // this.annotationsPromise,
       this.analyticsController.fetchAnomalyTypesSegments(+this.range.from, +this.range.to)
     ];
 
     var results =  await Promise.all(loadTasks);
     this.loading = false;
-    this.alertState = results[0].alertState;
-    this.annotations = results[0].annotations;
+    // this.annotations = results[0].annotations;
     this.render(this.seriesList);
 
   }
@@ -482,27 +481,27 @@ class GraphCtrl extends MetricsPanelCtrl {
     });
   }
 
-  getAnnotationsByTag(tag) {
-    var res = [];
-    for (var annotation of this.annotations) {
-      if (annotation.tags.indexOf(tag) >= 0) {
-        res.push(annotation);
-      }
-    }
-    return res;
-  }
+  // getAnnotationsByTag(tag) {
+  //   var res = [];
+  //   for (var annotation of this.annotations) {
+  //     if (annotation.tags.indexOf(tag) >= 0) {
+  //       res.push(annotation);
+  //     }
+  //   }
+  //   return res;
+  // }
 
-  get annotationTags() {
-    var res = [];
-    for (var annotation of this.annotations) {
-      for (var tag of annotation.tags) {
-        if (res.indexOf(tag) < 0) {
-          res.push(tag);
-        }
-      }
-    }
-    return res;
-  }
+  // get annotationTags() {
+  //   var res = [];
+  //   for (var annotation of this.annotations) {
+  //     for (var tag of annotation.tags) {
+  //       if (res.indexOf(tag) < 0) {
+  //         res.push(tag);
+  //       }
+  //     }
+  //   }
+  //   return res;
+  // }
 
   get panelPath() {
     if (this._panelPath === undefined) {
