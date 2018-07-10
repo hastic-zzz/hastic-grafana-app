@@ -7644,7 +7644,7 @@ var AnalyticUnit = /** @class */ (function () {
             this._panelObject = {};
         }
         lodash__WEBPACK_IMPORTED_MODULE_2___default.a.defaults(this._panelObject, {
-            name: 'AnalyticUnitName', confidence: 0.2, color: 'red', type: 'General'
+            name: 'AnalyticUnitName', confidence: 0.2, color: 'red', type: 'general'
         });
         //this._metric = new Metric(_panelObject.metric);
     }
@@ -8165,7 +8165,12 @@ var GraphCtrl = /** @class */ (function (_super) {
         _this.popoverSrv = popoverSrv;
         _this.contextSrv = contextSrv;
         _this.alertSrv = alertSrv;
-        _this.ANALYTIC_TYPES = ['General', 'Drops', 'Peaks'];
+        _this.ANALYTIC_TYPES = [
+            { name: 'General', value: 'general' },
+            { name: 'Peaks', value: 'peak' },
+            { name: 'Jumps', value: 'jump' },
+            { name: 'Drops', value: 'drop' }
+        ];
         _this.hiddenSeries = {};
         _this.seriesList = [];
         _this.dataList = [];

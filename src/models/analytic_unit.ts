@@ -5,6 +5,7 @@ import { Metric } from './metric';
 
 import _ from 'lodash';
 
+
 export type AnalyticSegmentPair = { anomalyType: AnalyticUnit, segment: AnalyticSegment };
 export type AnalyticSegmentsSearcher = (point: number, rangeDist: number) => AnalyticSegmentPair[];
 
@@ -36,7 +37,7 @@ export class AnalyticUnit {
       this._panelObject = {};
     }
     _.defaults(this._panelObject, {
-      name: 'AnalyticUnitName', confidence: 0.2, color: 'red', type: 'General'
+      name: 'AnalyticUnitName', confidence: 0.2, color: 'red', type: 'general'
     });
 
     //this._metric = new Metric(_panelObject.metric);

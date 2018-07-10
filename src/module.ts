@@ -26,7 +26,12 @@ const BACKEND_VARIABLE_NAME = 'HASTIC_SERVER_URL';
 
 class GraphCtrl extends MetricsPanelCtrl {
   static template = template;
-  ANALYTIC_TYPES: Array<String> = ['General', 'Drops', 'Peaks'];
+  ANALYTIC_TYPES: Array<{name: string, value: string}> = [
+    { name: 'General', value: 'general' },
+    { name: 'Peaks', value: 'peak' },
+    { name: 'Jumps', value: 'jump' },
+    { name: 'Drops', value: 'drop' }
+  ];
 
   hiddenSeries: any = {};
   seriesList: any = [];
