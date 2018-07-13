@@ -4,6 +4,7 @@ import { Segment, SegmentId } from './segment';
 import { Metric } from './metric';
 
 import _ from 'lodash';
+import { ANALYTIC_UNIT_COLORS } from '../colors';
 
 
 export type AnalyticSegmentPair = { anomalyType: AnalyticUnit, segment: AnalyticSegment };
@@ -32,12 +33,12 @@ export class AnalyticUnit {
 
   private _alertEnabled?: boolean;
 
-  constructor(private _panelObject?: any, color?: string) {
+  constructor(private _panelObject?: any) {
     if(_panelObject === undefined) {
       this._panelObject = {};
     }
     _.defaults(this._panelObject, {
-      name: 'AnalyticUnitName', confidence: 0.2, color, type: 'general'
+      name: 'AnalyticUnitName', confidence: 0.2, color: ANALYTIC_UNIT_COLORS[0], type: 'general'
     });
 
     //this._metric = new Metric(_panelObject.metric);

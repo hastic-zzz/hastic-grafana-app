@@ -68,9 +68,10 @@ export class AnalyticController {
   }
 
   createNew() {
-    this._newAnalyticUnit = new AnalyticUnit(undefined, ANALYTIC_UNIT_COLORS[this._currentColorIndex]);
+    this._newAnalyticUnit = new AnalyticUnit();
     this._creatingNewAnalyticType = true;
     this._savingNewAnalyticUnit = false;
+    this._newAnalyticUnit.color = ANALYTIC_UNIT_COLORS[this._currentColorIndex];
     this._currentColorIndex++;
     this._currentColorIndex %= ANALYTIC_UNIT_COLORS.length;
   }
