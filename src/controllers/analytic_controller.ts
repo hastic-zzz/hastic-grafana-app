@@ -14,6 +14,7 @@ import { SegmentArray } from '../models/segment_array';
 
 import { Emitter } from 'grafana/app/core/utils/emitter'
 
+import { ANALYTIC_UNIT_COLORS } from '../colors';
 import _ from 'lodash';
 
 
@@ -35,6 +36,7 @@ export class AnalyticController {
   private _savingNewAnalyticUnit: boolean = false;
   private _tempIdCounted = -1;
   private _graphLocked = false;
+  private _currentColorIndex = 0;
 
   private _statusRunners: Set<AnalyticUnitId> = new Set<AnalyticUnitId>();
 
@@ -47,6 +49,7 @@ export class AnalyticController {
     this._labelingDataDeletedSegments = new SegmentArray<AnalyticSegment>();
     this._analyticUnitsSet = new AnalyticUnitsSet(this._panelObject.anomalyTypes);
     this.analyticUnits.forEach(a => this.runEnabledWaiter(a));
+    this._currentColorIndex = this._panelObject.anomalyTypes.length % ANALYTIC_UNIT_COLORS.length;
   }
 
   getSegmentsSearcher(): AnalyticSegmentsSearcher {
@@ -65,9 +68,11 @@ export class AnalyticController {
   }
 
   createNew() {
-    this._newAnalyticUnit = new AnalyticUnit();
+    this._newAnalyticUnit = new AnalyticUnit(undefined, ANALYTIC_UNIT_COLORS[this._currentColorIndex]);
     this._creatingNewAnalyticType = true;
     this._savingNewAnalyticUnit = false;
+    this._currentColorIndex++;
+    this._currentColorIndex %= ANALYTIC_UNIT_COLORS.length;
   }
 
   async saveNew(metricExpanded: MetricExpanded, datasourceRequest: DatasourceRequest, panelId: number) {
