@@ -34,9 +34,9 @@ export class AnalyticController {
   private _newAnalyticUnit: AnalyticUnit = null;
   private _creatingNewAnalyticType: boolean = false;
   private _savingNewAnalyticUnit: boolean = false;
-  private _tempIdCounted = -1;
-  private _graphLocked = false;
-  private _currentColorIndex = 0;
+  private _tempIdCounted: number = -1;
+  private _graphLocked: boolean = false;
+  private _currentColorIndex: number = 0;
 
   private _statusRunners: Set<AnalyticUnitId> = new Set<AnalyticUnitId>();
 

@@ -3,9 +3,7 @@ import { SegmentArray } from './segment_array';
 import { Segment, SegmentId } from './segment';
 import { Metric } from './metric';
 
-import { ANALYTIC_UNIT_COLORS } from '../colors';
 import _ from 'lodash';
-import { AnalyticController } from 'controllers/analytic_controller';
 
 
 export type AnalyticSegmentPair = { anomalyType: AnalyticUnit, segment: AnalyticSegment };
@@ -31,7 +29,6 @@ export class AnalyticUnit {
   private _status: string;
   private _error: string;
   private _metric: Metric;
-  private _color: string;
 
   private _alertEnabled?: boolean;
 
