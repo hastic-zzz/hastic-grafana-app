@@ -15,6 +15,7 @@ import { SegmentArray } from '../models/segment_array';
 import { Emitter } from 'grafana/app/core/utils/emitter'
 
 import { ANALYTIC_UNIT_COLORS } from '../colors';
+
 import _ from 'lodash';
 
 
