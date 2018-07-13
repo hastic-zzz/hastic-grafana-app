@@ -1,4 +1,4 @@
-import { AnomalyType, AnomalySegment, AnomalySegmentsSearcher } from "model/anomaly";
+import { AnalyticSegmentsSearcher } from "models/analytic_unit";
 
 export class GraphTooltip {
 
@@ -11,7 +11,7 @@ export class GraphTooltip {
   constructor(
     private $elem: JQuery<HTMLElement>, private dashboard, 
     private scope, private getSeriesFn,
-    private _anomalySegmentsSearcher: AnomalySegmentsSearcher
+    private _anomalySegmentsSearcher: AnalyticSegmentsSearcher
   ) {
     this.ctrl = scope.ctrl;
     this.panel = this.ctrl.panel;
@@ -203,7 +203,7 @@ export class GraphTooltip {
         <div class="graph-tooltip-list-item">
           <div class="graph-tooltip-series-name">
             <i class="fa fa-exclamation" style="color:${s.anomalyType.color}"></i>
-            ${s.anomalyType.name}:
+            ${s.anomalyType.id}:
           </div>
           <div class="graph-tooltip-value">
             <i class="fa ${ s.segment.labeled ? "fa-thumb-tack" : "fa-search-plus" }" aria-hidden="true"></i>

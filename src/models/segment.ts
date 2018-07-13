@@ -1,8 +1,8 @@
-export type SegmentKey = number;
+export type SegmentId = number;
 
 export class Segment {
-  constructor(private _key: SegmentKey, public from: number, public to: number) {
-    if(isNaN(this._key)) {
+  constructor(private _id: SegmentId, public from: number, public to: number) {
+    if(isNaN(this._id)) {
       throw new Error('Key can`t be NaN');
     }
     if(isNaN(+from)) {
@@ -13,8 +13,8 @@ export class Segment {
     }
   }
   
-  get key(): SegmentKey { return this._key; }
-  set key(value) { this._key = value; }
+  get id(): SegmentId { return this._id; }
+  set id(value) { this._id = value; }
 
   get middle() { return (this.from + this.to) / 2; }
 
@@ -27,10 +27,10 @@ export class Segment {
     var q = Math.round(this.middle + allDist * portion / 2);
     p = Math.min(p, this.from);
     q = Math.max(q, this.to);
-    return new Segment(this._key, p, q);
+    return new Segment(this._id, p, q);
   }
 
   equals(segment: Segment) {
-    return this._key === segment._key;
+    return this._id === segment._id;
   }
 }

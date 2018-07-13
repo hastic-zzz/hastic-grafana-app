@@ -1,15 +1,16 @@
-import { Segment } from './model/segment';
+import { Segment } from './models/segment';
 import { GraphTooltip } from './graph_tooltip';
 import { ThresholdManager } from './threshold_manager';
 import { convertValuesToHistogram, getSeriesValues } from './histogram';
 import {
-  AnomalyController,
+  AnalyticController,
   REGION_FILL_ALPHA as ANOMALY_REGION_FILL_ALPHA,
   REGION_STROKE_ALPHA as ANOMALY_REGION_STROKE_ALPHA,
   REGION_DELETE_COLOR_LIGHT as ANOMALY_REGION_DELETE_COLOR_LIGHT,
   REGION_DELETE_COLOR_DARK as ANOMALY_REGION_DELETE_COLOR_DARK
-} from './controllers/anomaly_controller';
+} from './controllers/analytic_controller';
 
+import { GraphCtrl } from './module';
 
 import './vendor/flot/jquery.flot';
 import './vendor/flot/jquery.flot.time';
@@ -38,20 +39,20 @@ const COLOR_SELECTION = '#666';
 
 export class GraphRenderer {
 
-  private _anomalyController: AnomalyController;
+  private _ananlyticController: AnalyticController;
   private data: any;
   private tooltip: GraphTooltip;
   private thresholdManager: ThresholdManager;
   private panelWidth: number;
   private plot: any;
   private sortedSeries: any;
-  private ctrl: any;
+  private ctrl: GraphCtrl;
   private dashboard: any;
   private panel: any;
   // private eventManager;
   private flotOptions: any = {}
   private $elem: JQuery<HTMLElement>;
-  private annotations: any[];
+  // private annotations: any[];
   private contextSrv: any;
   private popoverSrv: any;
   private scope: any;
@@ -71,13 +72,13 @@ export class GraphRenderer {
     this.contextSrv = contextSrv;
     this.scope = scope;
 
-    this._anomalyController = this.ctrl.anomalyController;
-    if(this._anomalyController === undefined) {
-      throw new Error('anomalyController is undefined');
+    this._ananlyticController = this.ctrl.analyticsController;
+    if(this._ananlyticController === undefined) {
+      throw new Error('ananlyticController is undefined');
     }
     
     
-    this.annotations = [];
+    // this.annotations = [];
     this.panelWidth = 0;
     
     // this.eventManager = new EventManager(this.ctrl);
@@ -85,7 +86,7 @@ export class GraphRenderer {
     this.thresholdManager = new ThresholdManager(this.ctrl);
     this.tooltip = new GraphTooltip(
       $elem, this.dashboard, scope, () => this.sortedSeries,
-      this._anomalyController.getAnomalySegmentsSearcher()
+      this._ananlyticController.getSegmentsSearcher()
     );
 
     // panel events
@@ -111,18 +112,18 @@ export class GraphRenderer {
 
       if(this._isAnomalyEvent(selectionEvent)) {
         this.plot.clearSelection();
-        var id = this._anomalyController.getIdForNewLabelSegment()
+        var id = this._ananlyticController.getIdForNewLabelSegment()
         var segment = new Segment(
           id,
           Math.round(selectionEvent.xaxis.from),
           Math.round(selectionEvent.xaxis.to)
         );
-        if(this._anomalyController.labelingDeleteMode) {
-          this._anomalyController.deleteLabelingAnomalySegmentsInRange(
+        if(this._ananlyticController.labelingDeleteMode) {
+          this._ananlyticController.deleteLabelingAnomalySegmentsInRange(
             segment.from, segment.to
           );
         } else {
-          this._anomalyController.addLabelSegment(segment);
+          this._ananlyticController.addLabelSegment(segment);
         }
         this._renderPanel();
         return;
@@ -186,12 +187,12 @@ export class GraphRenderer {
     });
 
     $elem.mousedown(e => {
-      this._anomalyController.graphLocked = true;
+      this._ananlyticController.graphLocked = true;
       this._chooseSelectionColor(e);
     });
 
     $(document).mouseup(e => {
-      this._anomalyController.graphLocked = false;
+      this._ananlyticController.graphLocked = false;
     })
 
   }
@@ -201,7 +202,7 @@ export class GraphRenderer {
     if (!this.data) {
       return;
     }
-    this.annotations = this.ctrl.annotations || [];
+    // this.annotations = this.ctrl.annotations || [];
     this._buildFlotPairs(this.data);
     updateLegendValues(this.data, this.panel);
     this._renderPanel();
@@ -336,7 +337,7 @@ export class GraphRenderer {
     this._configureYAxisOptions(this.data);
     this.thresholdManager.addFlotOptions(this.flotOptions, this.panel);
     // this.eventManager.addFlotEvents(this.annotations, this.flotOptions);
-    this._anomalyController.updateFlotEvents(this.contextSrv.isEditor, this.flotOptions);
+    this._ananlyticController.updateFlotEvents(this.contextSrv.isEditor, this.flotOptions);
 
     this.sortedSeries = this._sortSeries(this.data, this.panel);
     this._callPlot(true);
@@ -347,12 +348,12 @@ export class GraphRenderer {
     var fillAlpha = 0.4;
     var strokeAlpha = 0.4;
     if(this._isAnomalyEvent(e)) {
-      if(this._anomalyController.labelingDeleteMode) {
+      if(this._ananlyticController.labelingDeleteMode) {
         color = this.contextSrv.user.lightTheme ? 
           ANOMALY_REGION_DELETE_COLOR_LIGHT :
           ANOMALY_REGION_DELETE_COLOR_DARK;
       } else {
-        color = this._anomalyController.labelingAnomaly.color;
+        color = this._ananlyticController.labelingAnomaly.color;
       }
       fillAlpha = ANOMALY_REGION_FILL_ALPHA;
       strokeAlpha = ANOMALY_REGION_STROKE_ALPHA;
@@ -814,7 +815,7 @@ export class GraphRenderer {
   private _isAnomalyEvent(obj: any) {
     return (obj.ctrlKey || obj.metaKey) &&
            this.contextSrv.isEditor &&
-           this._anomalyController.labelingMode;
+           this._ananlyticController.labelingMode;
   }
 
 }

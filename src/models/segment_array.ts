@@ -1,12 +1,12 @@
 import { SegmentsSet } from './segment_set';
-import { Segment, SegmentKey } from './segment';
+import { Segment, SegmentId } from './segment';
 
 import _ from 'lodash';
 
 
 export class SegmentArray<T extends Segment> implements SegmentsSet<T> {
   private _segments: T[];
-  private _keyToSegment: Map<SegmentKey, T> = new Map<SegmentKey, T>();
+  private _keyToSegment: Map<SegmentId, T> = new Map<SegmentId, T>();
 
   constructor(private segments?: T[]) {
     this.setSegments(segments);
@@ -40,10 +40,10 @@ export class SegmentArray<T extends Segment> implements SegmentsSet<T> {
   }
 
   addSegment(segment: T) {
-    if(this.has(segment.key)) {
-      throw new Error(`Segment with key ${segment.key} exists in set`);
+    if(this.has(segment.id)) {
+      throw new Error(`Segment with key ${segment.id} exists in set`);
     }
-    this._keyToSegment.set(segment.key, segment);
+    this._keyToSegment.set(segment.id, segment);
     this._segments.push(segment);
   }
 
@@ -60,7 +60,7 @@ export class SegmentArray<T extends Segment> implements SegmentsSet<T> {
     for(var i = 0; i < this._segments.length; i++) {
       var s = this._segments[i];
       if(from <= s.from && s.to <= to) {
-        this._keyToSegment.delete(s.key);
+        this._keyToSegment.delete(s.id);
         deleted.push(s);
       } else {
         newSegments.push(s);
@@ -79,26 +79,25 @@ export class SegmentArray<T extends Segment> implements SegmentsSet<T> {
     this._keyToSegment.clear();
   }
 
-  has(key: SegmentKey): boolean {
+  has(key: SegmentId): boolean {
     return this._keyToSegment.has(key);
   }
 
-  remove(key: SegmentKey): boolean {
+  remove(key: SegmentId): boolean {
     if(!this.has(key)) {
       return false;
     }
-    var index = this._segments.findIndex(s => s.key === key);
+    var index = this._segments.findIndex(s => s.id === key);
     this._segments.splice(index, 1);
     this._keyToSegment.delete(key);
     return true;
   }
 
-  updateKey(fromKey: SegmentKey, toKey: SegmentKey) {
+  updateId(fromKey: SegmentId, toKey: SegmentId) {
     var segment = this._keyToSegment.get(fromKey);
     this._keyToSegment.delete(fromKey);
-    segment.key = toKey;
+    segment.id = toKey;
     this._keyToSegment.set(toKey, segment);
-    
   }
 
 }

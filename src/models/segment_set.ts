@@ -1,4 +1,4 @@
-import { Segment, SegmentKey } from './segment'
+import { Segment, SegmentId } from './segment'
 
 export interface SegmentsSet<T extends Segment> {
   getSegments(from?: number, to?: number): T[];
@@ -6,9 +6,9 @@ export interface SegmentsSet<T extends Segment> {
   addSegment(segment: T): void;
   findSegments(point: number, rangeDist: number): T[];
   removeInRange(from: number, to: number): T[];
-  remove(key: SegmentKey): boolean;
-  has(key: SegmentKey): boolean;
+  remove(id: SegmentId): boolean;
+  has(id: SegmentId): boolean;
   clear(): void;
-  updateKey(fromKey: SegmentKey, toKey: SegmentKey): void;
+  updateId(fromId: SegmentId, toId: SegmentId): void;
   length: number;
 }
