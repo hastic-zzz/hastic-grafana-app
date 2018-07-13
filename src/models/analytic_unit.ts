@@ -3,8 +3,9 @@ import { SegmentArray } from './segment_array';
 import { Segment, SegmentId } from './segment';
 import { Metric } from './metric';
 
-import _ from 'lodash';
 import { ANALYTIC_UNIT_COLORS } from '../colors';
+
+import _ from 'lodash';
 
 
 export type AnalyticSegmentPair = { anomalyType: AnalyticUnit, segment: AnalyticSegment };
