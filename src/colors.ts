@@ -67,7 +67,17 @@ let colors = [
   '#F9D9F9',
   '#DEDAF7',
 ];
+let LABEL_COLORS = [
+  '#FF99FF',
+  '#71b1f9',
+  '#aee9fb',
+  '#9ce677',
+  '#f88990',
+  '#f9e26e',
+  '#f8c171',
+];
 
+export { LABEL_COLORS };
 
 export function hexToHsl(color) {
   return tinycolor(color).toHsl();
