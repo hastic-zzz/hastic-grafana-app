@@ -68,6 +68,15 @@ let colors = [
   '#DEDAF7',
 ];
 
+export const ANALYTIC_UNIT_COLORS = [
+  '#FF99FF',
+  '#71b1f9',
+  '#aee9fb',
+  '#9ce677',
+  '#f88990',
+  '#f9e26e',
+  '#f8c171',
+];
 
 export function hexToHsl(color) {
   return tinycolor(color).toHsl();

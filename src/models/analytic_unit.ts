@@ -3,6 +3,8 @@ import { SegmentArray } from './segment_array';
 import { Segment, SegmentId } from './segment';
 import { Metric } from './metric';
 
+import { ANALYTIC_UNIT_COLORS } from '../colors';
+
 import _ from 'lodash';
 
 
@@ -37,7 +39,7 @@ export class AnalyticUnit {
       this._panelObject = {};
     }
     _.defaults(this._panelObject, {
-      name: 'AnalyticUnitName', confidence: 0.2, color: 'red', type: 'general'
+      name: 'AnalyticUnitName', confidence: 0.2, color: ANALYTIC_UNIT_COLORS[0], type: 'general'
     });
 
     //this._metric = new Metric(_panelObject.metric);
