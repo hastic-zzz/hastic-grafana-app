@@ -28,7 +28,7 @@ export const REGION_DELETE_COLOR_DARK = 'white';
 export class AnalyticController {
 
   private _analyticUnitsSet: AnalyticUnitsSet;
-  private _selectedAnalyticUnitKey: AnalyticUnitId = null;
+  private _selectedAnalyticUnitId: AnalyticUnitId = null;
 
   private _labelingDataAddedSegments: SegmentsSet<AnalyticSegment>;
   private _labelingDataDeletedSegments: SegmentsSet<AnalyticSegment>;
@@ -97,27 +97,27 @@ export class AnalyticController {
   set graphLocked(value) { this._graphLocked = value; }
 
   get labelingAnomaly(): AnalyticUnit {
-    if(this._selectedAnalyticUnitKey === null) {
+    if(this._selectedAnalyticUnitId === null) {
       return null;
     }
-    return this._analyticUnitsSet.byId(this._selectedAnalyticUnitKey);
+    return this._analyticUnitsSet.byId(this._selectedAnalyticUnitId);
   }
 
   async toggleAnomalyTypeLabelingMode(key: AnalyticUnitId) {
     if(this.labelingAnomaly && this.labelingAnomaly.saving) {
       throw new Error('Can`t toggel during saving');
     }
-    if(this._selectedAnalyticUnitKey === key) {
+    if(this._selectedAnalyticUnitId === key) {
       return this.disableLabeling();
     }
     await this.disableLabeling();
-    this._selectedAnalyticUnitKey = key;
+    this._selectedAnalyticUnitId = key;
     this.labelingAnomaly.selected = true;
     this.toggleVisibility(key, true);
   }
 
   async disableLabeling() {
-    if(this._selectedAnalyticUnitKey === null) {
+    if(this._selectedAnalyticUnitId === null) {
       return;
     }
     this.labelingAnomaly.saving = true;
@@ -146,12 +146,12 @@ export class AnalyticController {
     this._labelingDataAddedSegments.clear();
     this._labelingDataDeletedSegments.clear();
     this.labelingAnomaly.selected = false;
-    this._selectedAnalyticUnitKey = null;
+    this._selectedAnalyticUnitId = null;
     this._tempIdCounted = -1;
   }
 
   get labelingMode(): boolean {
-    return this._selectedAnalyticUnitKey !== null;
+    return this._selectedAnalyticUnitId !== null;
   }
 
   get labelingDeleteMode(): boolean {
@@ -283,11 +283,11 @@ export class AnalyticController {
     this.labelingAnomaly.deleteMode = !this.labelingAnomaly.deleteMode;
   }
 
-  removeAnomalyType(key) {
-    if(key === this._selectedAnalyticUnitKey) {
+  removeAnalyticUnit(aid: AnalyticUnitId) {
+    if(aid === this._selectedAnalyticUnitId) {
       this.dropLabeling();
     }
-    this._analyticUnitsSet.removeItem(key);
+    this._analyticUnitsSet.removeItem(aid);
   }
 
   private async _runStatusWaiter(anomalyType: AnalyticUnit) {
