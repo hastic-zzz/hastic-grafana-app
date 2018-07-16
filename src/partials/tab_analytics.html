@@ -31,13 +31,13 @@
     <span class="gf-form-label">
       <color-picker
         color="analyticUnit.color"
-        onChange="ctrl.onAnomalyColorChange.bind(ctrl, analyticUnit.key)"
+        onChange="ctrl.onAnomalyColorChange.bind(ctrl, analyticUnit.id)"
       />
     </span>
 
     <label class="gf-form-label" ng-style="analyticUnit.status === 'learning' && { 'cursor': 'not-allowed' }">
       <a class="pointer" tabindex="1"
-        ng-click="ctrl.onToggleLabelingMode(analyticUnit.key)"
+        ng-click="ctrl.onToggleLabelingMode(analyticUnit.id)"
         ng-disabled="analyticUnit.status === 'learning'"
       >
         <i class="fa fa-bar-chart" ng-if="!analyticUnit.saving"></i>
@@ -71,7 +71,7 @@
         ng-if="analyticUnit.visible"
         ng-disabled="analyticUnit.selected"
         bs-tooltip="'Hide. It`s visible now.'"
-        ng-click="ctrl.onToggleVisibility(analyticUnit.key)"
+        ng-click="ctrl.onToggleVisibility(analyticUnit.id)"
         class="pointer"
       >
         <i class="fa fa-eye"></i>
@@ -81,7 +81,7 @@
         ng-if="!analyticUnit.visible"
         ng-disabled="analyticUnit.selected"
         bs-tooltip="'Show. It`s hidden now.'"
-        ng-click="ctrl.onToggleVisibility(analyticUnit.key)"
+        ng-click="ctrl.onToggleVisibility(analyticUnit.id)"
         class="pointer"
       >
         <i class="fa fa-eye-slash"></i>
@@ -91,7 +91,7 @@
     <label class="gf-form-label">
       <a
         ng-if="!analyticUnit.selected"
-        ng-click="ctrl.onRemove(analyticUnit.key)"
+        ng-click="ctrl.onRemove(analyticUnit.id)"
         class="pointer"
       >
         <i class="fa fa-trash"></i>
@@ -99,7 +99,7 @@
 
       <a
         ng-if="analyticUnit.selected"
-        ng-click="ctrl.onCancelLabeling(analyticUnit.key)"
+        ng-click="ctrl.onCancelLabeling(analyticUnit.id)"
         class="pointer"
       >
         <i class="fa fa-ban"></i>

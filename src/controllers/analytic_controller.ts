@@ -28,7 +28,7 @@ export const REGION_DELETE_COLOR_DARK = 'white';
 export class AnalyticController {
 
   private _analyticUnitsSet: AnalyticUnitsSet;
-  private _selectedAnalyticUnitKey: AnalyticUnitId = null;
+  private _selectedAnalyticUnitId: AnalyticUnitId = null;
 
   private _labelingDataAddedSegments: SegmentsSet<AnalyticSegment>;
   private _labelingDataDeletedSegments: SegmentsSet<AnalyticSegment>;
@@ -97,27 +97,27 @@ export class AnalyticController {
   set graphLocked(value) { this._graphLocked = value; }
 
   get labelingAnomaly(): AnalyticUnit {
-    if(this._selectedAnalyticUnitKey === null) {
+    if(this._selectedAnalyticUnitId === null) {
       return null;
     }
-    return this._analyticUnitsSet.byId(this._selectedAnalyticUnitKey);
+    return this._analyticUnitsSet.byId(this._selectedAnalyticUnitId);
   }
 
-  async toggleAnomalyTypeLabelingMode(key: AnalyticUnitId) {
+  async toggleAnomalyTypeLabelingMode(id: AnalyticUnitId) {
     if(this.labelingAnomaly && this.labelingAnomaly.saving) {
       throw new Error('Can`t toggel during saving');
     }
-    if(this._selectedAnalyticUnitKey === key) {
+    if(this._selectedAnalyticUnitId === id) {
       return this.disableLabeling();
     }
     await this.disableLabeling();
-    this._selectedAnalyticUnitKey = key;
+    this._selectedAnalyticUnitId = id;
     this.labelingAnomaly.selected = true;
-    this.toggleVisibility(key, true);
+    this.toggleVisibility(id, true);
   }
 
   async disableLabeling() {
-    if(this._selectedAnalyticUnitKey === null) {
+    if(this._selectedAnalyticUnitId === null) {
       return;
     }
     this.labelingAnomaly.saving = true;
@@ -146,12 +146,12 @@ export class AnalyticController {
     this._labelingDataAddedSegments.clear();
     this._labelingDataDeletedSegments.clear();
     this.labelingAnomaly.selected = false;
-    this._selectedAnalyticUnitKey = null;
+    this._selectedAnalyticUnitId = null;
     this._tempIdCounted = -1;
   }
 
   get labelingMode(): boolean {
-    return this._selectedAnalyticUnitKey !== null;
+    return this._selectedAnalyticUnitId !== null;
   }
 
   get labelingDeleteMode(): boolean {
@@ -170,8 +170,8 @@ export class AnalyticController {
     return this._analyticUnitsSet.items;
   }
 
-  onAnomalyColorChange(key: AnalyticUnitId, value) {
-    this._analyticUnitsSet.byId(key).color = value;
+  onAnomalyColorChange(id: AnalyticUnitId, value) {
+    this._analyticUnitsSet.byId(id).color = value;
   }
 
   fetchAnomalyTypesStatuses() {
@@ -283,11 +283,11 @@ export class AnalyticController {
     this.labelingAnomaly.deleteMode = !this.labelingAnomaly.deleteMode;
   }
 
-  removeAnomalyType(key) {
-    if(key === this._selectedAnalyticUnitKey) {
+  removeAnalyticUnit(id: AnalyticUnitId) {
+    if(id === this._selectedAnalyticUnitId) {
       this.dropLabeling();
     }
-    this._analyticUnitsSet.removeItem(key);
+    this._analyticUnitsSet.removeItem(id);
   }
 
   private async _runStatusWaiter(anomalyType: AnalyticUnit) {
@@ -348,8 +348,8 @@ export class AnalyticController {
     return this._tempIdCounted;
   }
 
-  public toggleVisibility(key: AnalyticUnitId, value?: boolean) {
-    var anomaly = this._analyticUnitsSet.byId(key);
+  public toggleVisibility(id: AnalyticUnitId, value?: boolean) {
+    var anomaly = this._analyticUnitsSet.byId(id);
     if(value !== undefined) {
       anomaly.visible = value;
     } else {

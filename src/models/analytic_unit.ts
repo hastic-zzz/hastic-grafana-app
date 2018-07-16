@@ -14,8 +14,8 @@ export type AnalyticSegmentsSearcher = (point: number, rangeDist: number) => Ana
 export type AnalyticUnitId = string;
 
 export class AnalyticSegment extends Segment {
-  constructor(public labeled: boolean, key: SegmentId, from: number, to: number) {
-    super(key, from, to);
+  constructor(public labeled: boolean, id: SegmentId, from: number, to: number) {
+    super(id, from, to);
     if(!_.isBoolean(labeled)) {
       throw new Error('labeled value is not boolean');
     }
@@ -138,7 +138,7 @@ export class AnalyticUnitsSet {
 
   addItem(item: AnalyticUnit) {
     this._panelObject.push(item.panelObject);
-    this._mapIdIndex[item.name] = this._items.length;
+    this._mapIdIndex[item.id] = this._items.length;
     this._items.push(item);
   }
 
