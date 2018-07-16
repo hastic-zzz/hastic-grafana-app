@@ -22,7 +22,7 @@ wget [PLACEHOLDER]
 
 - Unpack downloaded files
 ```
-tar [PLACEHOLDER]
+tar -zxvf [PLACEHOLDER]
 ```
 
 # Installation from source
