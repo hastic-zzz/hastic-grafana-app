@@ -13,7 +13,7 @@ A better version of Grafana's default Graph Panel. Able to render Anomalies & mo
 
 # Installation
 
-- Navigate to your working folder
+- Navigate to /plugins directory in <GRAFANA_PATH>/data/plugins
 
 - Download hastic graph panel
 ```
