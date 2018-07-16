@@ -103,17 +103,17 @@ export class AnalyticController {
     return this._analyticUnitsSet.byId(this._selectedAnalyticUnitId);
   }
 
-  async toggleAnomalyTypeLabelingMode(key: AnalyticUnitId) {
+  async toggleAnomalyTypeLabelingMode(id: AnalyticUnitId) {
     if(this.labelingAnomaly && this.labelingAnomaly.saving) {
       throw new Error('Can`t toggel during saving');
     }
-    if(this._selectedAnalyticUnitId === key) {
+    if(this._selectedAnalyticUnitId === id) {
       return this.disableLabeling();
     }
     await this.disableLabeling();
-    this._selectedAnalyticUnitId = key;
+    this._selectedAnalyticUnitId = id;
     this.labelingAnomaly.selected = true;
-    this.toggleVisibility(key, true);
+    this.toggleVisibility(id, true);
   }
 
   async disableLabeling() {
@@ -170,8 +170,8 @@ export class AnalyticController {
     return this._analyticUnitsSet.items;
   }
 
-  onAnomalyColorChange(key: AnalyticUnitId, value) {
-    this._analyticUnitsSet.byId(key).color = value;
+  onAnomalyColorChange(id: AnalyticUnitId, value) {
+    this._analyticUnitsSet.byId(id).color = value;
   }
 
   fetchAnomalyTypesStatuses() {
@@ -348,8 +348,8 @@ export class AnalyticController {
     return this._tempIdCounted;
   }
 
-  public toggleVisibility(key: AnalyticUnitId, value?: boolean) {
-    var anomaly = this._analyticUnitsSet.byId(key);
+  public toggleVisibility(id: AnalyticUnitId, value?: boolean) {
+    var anomaly = this._analyticUnitsSet.byId(id);
     if(value !== undefined) {
       anomaly.visible = value;
     } else {

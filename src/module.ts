@@ -580,8 +580,8 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.analyticsController.toggleAlertEnabled(anomalyType);
   }
 
-  onToggleVisibility(key: AnalyticUnitId) {
-    this.analyticsController.toggleVisibility(key);
+  onToggleVisibility(id: AnalyticUnitId) {
+    this.analyticsController.toggleVisibility(id);
     this.render();
   }
 
