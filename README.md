@@ -11,12 +11,14 @@ A better version of Grafana's default Graph Panel. Able to render Anomalies & mo
 * [hastic-server](https://github.com/hastic/hastic-server)
 * [Grafana >= 5.1.1](https://grafana.com/grafana/download)
 
-# Installation
+# Installation from source
 
 **Note, that <GRAFANA_PATH>/data/plugins directory will NOT be present until grafana-server was started at least once!**
 
 **Also possible to create directory manually by typing:**
-```mkdir -p data/plugins```
+```
+mkdir -p data/plugins
+```
 
 - Navigate to /plugins directory in <GRAFANA_PATH>/data/plugins
 ```
@@ -26,6 +28,21 @@ cd $GRAFANA_PATH/data/plugins
 - Clone the repository
 ```
 git clone https://github.com/hastic/hastic-grafana-graph-panel.git
+```
+
+- Navigate to /hastic-grafana-graph-panel directory
+```
+cd $GRAFANA_PATH/data/plugins/hastic-grafana-graph-panel
+```
+
+- Install necessary dependencies
+```
+npm install
+```
+
+- Build hastic graph panel
+```
+npm run build
 ```
 
 - Restart grafana-server
