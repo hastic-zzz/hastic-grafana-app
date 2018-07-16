@@ -138,7 +138,7 @@ export class AnalyticUnitsSet {
 
   addItem(item: AnalyticUnit) {
     this._panelObject.push(item.panelObject);
-    this._mapIdIndex[item.name] = this._items.length;
+    this._mapIdIndex[item.id] = this._items.length;
     this._items.push(item);
   }
 
