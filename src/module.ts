@@ -530,19 +530,19 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.render(this.seriesList);
   }
 
-  onColorChange(aid: AnalyticUnitId, value) {
-    if(aid === undefined) {
-      throw new Error('aid is undefined');
+  onColorChange(id: AnalyticUnitId, value) {
+    if(id === undefined) {
+      throw new Error('id is undefined');
     }
-    this.analyticsController.onAnomalyColorChange(aid, value);
+    this.analyticsController.onAnomalyColorChange(id, value);
     this.render();
   }
 
-  onRemove(aid: AnalyticUnitId) {
-    if(aid === undefined) {
-      throw new Error('aid is undefined');
+  onRemove(id: AnalyticUnitId) {
+    if(id === undefined) {
+      throw new Error('id is undefined');
     }
-    this.analyticsController.removeAnalyticUnit(aid);
+    this.analyticsController.removeAnalyticUnit(id);
     this.render();
   }
 
