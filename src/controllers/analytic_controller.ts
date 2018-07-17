@@ -171,6 +171,9 @@ export class AnalyticController {
   }
 
   onAnalyticUnitColorChange(id: AnalyticUnitId, value: string) {
+    if(id === undefined) {
+      throw new Error('id is undefined');
+    }
     this._analyticUnitsSet.byId(id).color = value;
   }
 
