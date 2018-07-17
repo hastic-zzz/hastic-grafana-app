@@ -17,13 +17,21 @@ A better version of Grafana's default Graph Panel. Able to render Anomalies & mo
 
 - Download hastic graph panel
 ```
-wget [PLACEHOLDER]
+wget https://github.com/hastic/hastic-grafana-graph-panel/releases/download/0.1.0/hastic-graph-panel-0.1.0.tar.gz
 ```
 
 - Unpack downloaded files
 ```
-tar -zxvf [PLACEHOLDER]
+tar -zxvf hastic-graph-panel-0.1.0.tar.gz
 ```
+
+- Restart grafana-server
+  - For grafana installed via Standalone Linux Binaries:
+    - Stop any running instances of grafana-server
+    - Start grafana-server by:
+      ```$GRAFANA_PATH/bin/grafana-server```
+  - For grafana installed via Package Manager:
+    - type in ```systemctl restart grafana-server```
 
 # Installation from source
 
@@ -106,10 +114,13 @@ npm run build
 
 # Changelog
 
-[Improvements]
-
-* You can zoom during update
-
+### [0.1.0] - 2018-07-17
+#### Changed
+- Supports only hastic-server of versions **0.2.0-alpha or greater**
+#### Fixed
+- Choosing custom color for analytic unit [#31](https://github.com/hastic/hastic-grafana-graph-panel/issues/31)
+- Deleting any analytic unit only deletes the first one [#33](https://github.com/hastic/hastic-grafana-graph-panel/issues/33)
+- Problems with Singlestat and Piechart panels [#42](https://github.com/hastic/hastic-grafana-graph-panel/issues/42)
 
 # Credits
 
