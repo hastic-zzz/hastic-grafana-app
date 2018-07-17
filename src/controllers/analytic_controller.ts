@@ -170,7 +170,7 @@ export class AnalyticController {
     return this._analyticUnitsSet.items;
   }
 
-  onAnomalyColorChange(id: AnalyticUnitId, value) {
+  onAnalyticUnitColorChange(id: AnalyticUnitId, value: string) {
     this._analyticUnitsSet.byId(id).color = value;
   }
 
