@@ -12,15 +12,17 @@ import {
 
 import { GraphCtrl } from './module';
 
-import './vendor/flot/jquery.flot';
-import './vendor/flot/jquery.flot.time';
-import './vendor/flot/jquery.flot.selection';
-import './vendor/flot/jquery.flot.stack';
-import './vendor/flot/jquery.flot.stackpercent';
-import './vendor/flot/jquery.flot.fillbelow';
-import './vendor/flot/jquery.flot.crosshair';
-import './vendor/flot/jquery.flot.dashes';
-import './vendor/flot/jquery.flot.events';
+import 'grafana/vendor/flot/jquery.flot.js';
+import 'grafana/vendor/flot/jquery.flot.time.js';
+import 'grafana/vendor/flot/jquery.flot.selection.js';
+import 'grafana/vendor/flot/jquery.flot.stack.js';
+import 'grafana/vendor/flot/jquery.flot.stackpercent.js';
+import 'grafana/vendor/flot/jquery.flot.fillbelow.js';
+import 'grafana/vendor/flot/jquery.flot.crosshair.js';
+import 'grafana/vendor/flot/jquery.flot.dashes.js';
+import 'grafana/vendor/flot/jquery.flot.gauge.js';
+import 'grafana/vendor/flot/jquery.flot.pie.js';
+import './vendor/flot/jquery.flot.events.js';
 
 // import { EventManager } from 'grafana/app/features/annotations/event_manager';
 import TimeSeries from 'grafana/app/core/time_series2';
@@ -76,11 +78,11 @@ export class GraphRenderer {
     if(this._ananlyticController === undefined) {
       throw new Error('ananlyticController is undefined');
     }
-    
-    
+
+
     // this.annotations = [];
     this.panelWidth = 0;
-    
+
     // this.eventManager = new EventManager(this.ctrl);
     this.flotOptions = {}
     this.thresholdManager = new ThresholdManager(this.ctrl);
@@ -349,7 +351,7 @@ export class GraphRenderer {
     var strokeAlpha = 0.4;
     if(this._isAnomalyEvent(e)) {
       if(this._ananlyticController.labelingDeleteMode) {
-        color = this.contextSrv.user.lightTheme ? 
+        color = this.contextSrv.user.lightTheme ?
           ANOMALY_REGION_DELETE_COLOR_LIGHT :
           ANOMALY_REGION_DELETE_COLOR_DARK;
       } else {
@@ -841,4 +843,3 @@ function updateLegendValues(data: TimeSeries[], panel) {
     }
   }
 }
-

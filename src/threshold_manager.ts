@@ -1,4 +1,4 @@
-import './vendor/flot/jquery.flot';
+import 'grafana/vendor/flot/jquery.flot.js';
 import * as $ from 'jquery';
 import _ from 'lodash';
 
