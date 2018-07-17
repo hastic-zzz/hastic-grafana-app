@@ -24,11 +24,10 @@ import 'grafana/vendor/flot/jquery.flot.gauge.js';
 import 'grafana/vendor/flot/jquery.flot.pie.js';
 import './vendor/flot/jquery.flot.events.js';
 
-// import { EventManager } from 'grafana/app/features/annotations/event_manager';
-import TimeSeries from 'grafana/app/core/time_series2';
-import { getFlotTickDecimals } from 'grafana/app/core/utils/ticks';
-import { tickStep } from 'grafana/app/core/utils/ticks';
-import { appEvents, coreModule } from 'grafana/app/core/core';
+// import { EventManager } from './vendor/grafana/event_manager';
+import { updateLegendValues } from './vendor/grafana/time_series2';
+import { tickStep } from './vendor/grafana/ticks';
+import { appEvents } from 'grafana/app/core/core';
 import kbn from 'grafana/app/core/utils/kbn';
 
 import * as $ from 'jquery';
@@ -820,26 +819,4 @@ export class GraphRenderer {
            this._ananlyticController.labelingMode;
   }
 
-}
-
-function updateLegendValues(data: TimeSeries[], panel) {
-  for (let i = 0; i < data.length; i++) {
-    let series = data[i];
-    let yaxes = panel.yaxes;
-    const seriesYAxis = series.yaxis || 1;
-    let axis = yaxes[seriesYAxis - 1];
-    let { tickDecimals, scaledDecimals } = getFlotTickDecimals(data, axis);
-    let formater = kbn.valueFormats[panel.yaxes[seriesYAxis - 1].format];
-
-    // decimal override
-    if (_.isNumber(panel.decimals)) {
-      series.updateLegendValues(formater, panel.decimals, null);
-    } else {
-      // auto decimals
-      // legend and tooltip gets one more decimal precision
-      // than graph legend ticks
-      tickDecimals = (tickDecimals || -1) + 1;
-      series.updateLegendValues(formater, tickDecimals, scaledDecimals + 2);
-    }
-  }
 }
