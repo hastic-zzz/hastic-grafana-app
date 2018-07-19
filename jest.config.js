@@ -13,5 +13,8 @@ module.exports = {
     "ts",
     "js",
     "json"
+  ],
+  "setupFiles": [
+    "<rootDir>/tests/setup_tests.ts"
   ]
 };
