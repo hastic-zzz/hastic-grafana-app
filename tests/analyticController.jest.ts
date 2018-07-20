@@ -3,6 +3,7 @@ import { MetricExpanded } from '../src/models/metric';
 import { DatasourceRequest } from '../src/models/datasource';
 
 import { analyticController } from './setup_tests';
+import { AnalyticUnit } from '../src/models/analytic_unit';
 
 
 describe('AnalyticController', function () {
@@ -23,6 +24,21 @@ describe('AnalyticController', function () {
     for (let analyticUnit of analyticController.analyticUnits) {
       expect(analyticUnit.id).not.toBe('2');
     }
+  });
+
+  it('should set different color to newly created Analytic Unit, afer NOT last AU was deleted', async function() {
+    let auArray = analyticController.analyticUnits;
+    analyticController.createNew();
+    await analyticController.saveNew({} as MetricExpanded, {} as DatasourceRequest, 1);
+    expect(auArray[auArray.length - 2].panelObject.color).not.toBe(auArray[auArray.length - 1].panelObject.color);
+  });
+
+  it('should set different color to newly created Analytic Unit, afer LAST AU was deleted', async function () {
+    let auArray = analyticController.analyticUnits;
+    auArray.splice(-1, 1);
+    analyticController.createNew();
+    await analyticController.saveNew({} as MetricExpanded, {} as DatasourceRequest, 1);
+    expect(auArray[auArray.length - 2].panelObject.color).not.toBe(auArray[auArray.length - 1].panelObject.color);
   });
 
   it('should change color on choosing from palette', function () {
