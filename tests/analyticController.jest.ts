@@ -26,7 +26,7 @@ describe('AnalyticController', function () {
     }
   });
 
-  it('should set different color to newly created Analytic Unit, afer random AU was deleted', async function() {
+  it('should set different color to newly created Analytic Unit, afer NOT last AU was deleted', async function() {
     let auArray = analyticController.analyticUnits;
     analyticController.createNew();
     await analyticController.saveNew({} as MetricExpanded, {} as DatasourceRequest, 1);
