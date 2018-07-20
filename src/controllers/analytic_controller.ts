@@ -39,7 +39,6 @@ export class AnalyticController {
   private _graphLocked: boolean = false;
   private _statusRunners: Set<AnalyticUnitId> = new Set<AnalyticUnitId>();
 
-  
   constructor(private _panelObject: any, private _analyticService: AnalyticService, private _emitter: Emitter) {
     if(_panelObject.anomalyTypes === undefined) {
       _panelObject.anomalyTypes = [];
@@ -72,7 +71,7 @@ export class AnalyticController {
     if (this.analyticUnits.length === 0) {
       this._newAnalyticUnit.color = ANALYTIC_UNIT_COLORS[0];
     } else {
-      var colorIndex = ANALYTIC_UNIT_COLORS.indexOf(_.last(this.analyticUnits).color) + 1;
+      let colorIndex = ANALYTIC_UNIT_COLORS.indexOf(_.last(this.analyticUnits).color) + 1;
       colorIndex %= ANALYTIC_UNIT_COLORS.length;
       this._newAnalyticUnit.color = ANALYTIC_UNIT_COLORS[colorIndex];
     }
