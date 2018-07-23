@@ -1,3 +1,7 @@
+<p align="center">
+  <img width="180" height="75" src="https://github.com/sankerust/hello-world/blob/master/hastic_logo_sm_alpha.png?raw=true">
+</p>
+
 # Hastic Graph Panel
 
 A better version of Grafana's default Graph Panel. Able to render Anomalies & more.
