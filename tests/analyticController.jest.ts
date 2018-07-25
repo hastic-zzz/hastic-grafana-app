@@ -3,7 +3,6 @@ import { MetricExpanded } from '../src/models/metric';
 import { DatasourceRequest } from '../src/models/datasource';
 
 import { analyticController } from './setup_tests';
-import { AnalyticUnit } from '../src/models/analytic_unit';
 
 
 describe('AnalyticController', function () {
