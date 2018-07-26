@@ -1,10 +1,4 @@
-define([
-  'jquery',
-  'lodash',
-  'angular',
-  'tether-drop',
-],
-function ($, _, angular, Drop) {
+(function ($, _, angular, Drop) {
   'use strict';
 
   function createAnnotationToolip(element, event, plot) {
@@ -12,11 +6,11 @@ function ($, _, angular, Drop) {
     var content = document.createElement('div');
     content.innerHTML = '<annotation-tooltip event="event" on-edit="onEdit()"></annotation-tooltip>';
 
-    injector.invoke(["$compile", "$rootScope", function($compile, $rootScope) {
+    injector.invoke(["$compile", "$rootScope", function ($compile, $rootScope) {
       var eventManager = plot.getOptions().events.manager;
       var tmpScope = $rootScope.$new(true);
       tmpScope.event = event;
-      tmpScope.onEdit = function() {
+      tmpScope.onEdit = function () {
         eventManager.editEvent(event);
       };
 
@@ -32,14 +26,14 @@ function ($, _, angular, Drop) {
         openOn: 'hover',
         hoverCloseDelay: 200,
         tetherOptions: {
-          constraints: [{to: 'window', pin: true, attachment: "both"}]
+          constraints: [{ to: 'window', pin: true, attachment: "both" }]
         }
       });
 
       drop.open();
 
-      drop.on('close', function() {
-        setTimeout(function() {
+      drop.on('close', function () {
+        setTimeout(function () {
           drop.destroy();
         });
       });
@@ -52,30 +46,30 @@ function ($, _, angular, Drop) {
     var eventManager = plot.getOptions().events.manager;
     if (eventManager.editorOpen) {
       // update marker element to attach to (needed in case of legend on the right
-      // when there is a double render pass and the inital marker element is removed)
+      // when there is a double render pass and the initial marker element is removed)
       markerElementToAttachTo = element;
       return;
     }
 
     // mark as openend
     eventManager.editorOpened();
-    // set marker elment to attache to
+    // set marker element to attache to
     markerElementToAttachTo = element;
 
     // wait for element to be attached and positioned
-    setTimeout(function() {
+    setTimeout(function () {
 
       var injector = angular.element(document).injector();
       var content = document.createElement('div');
       content.innerHTML = '<event-editor panel-ctrl="panelCtrl" event="event" close="close()"></event-editor>';
 
-      injector.invoke(["$compile", "$rootScope", function($compile, $rootScope) {
+      injector.invoke(["$compile", "$rootScope", function ($compile, $rootScope) {
         var scope = $rootScope.$new(true);
         var drop;
 
         scope.event = event;
         scope.panelCtrl = eventManager.panelCtrl;
-        scope.close = function() {
+        scope.close = function () {
           drop.close();
         };
 
@@ -89,16 +83,16 @@ function ($, _, angular, Drop) {
           classes: 'drop-popover drop-popover--form',
           openOn: 'click',
           tetherOptions: {
-            constraints: [{to: 'window', pin: true, attachment: "both"}]
+            constraints: [{ to: 'window', pin: true, attachment: "both" }]
           }
         });
 
         drop.open();
         eventManager.editorOpened();
 
-        drop.on('close', function() {
+        drop.on('close', function () {
           // need timeout here in order call drop.destroy
-          setTimeout(function() {
+          setTimeout(function () {
             eventManager.editorClosed();
             scope.$destroy();
             drop.destroy();
@@ -110,39 +104,39 @@ function ($, _, angular, Drop) {
   }
 
   /*
-   * jquery.flot.events
-   *
-   * description: Flot plugin for adding events/markers to the plot
-   * version: 0.2.5
-   * authors:
-   *    Alexander Wunschik <alex@wunschik.net>
-   *    Joel Oughton <joeloughton@gmail.com>
-   *    Nicolas Joseph <www.nicolasjoseph.com>
-   *
-   * website: https://github.com/mojoaxel/flot-events
-   *
-   * released under MIT License and GPLv2+
-   */
+    * jquery.flot.events
+    *
+    * description: Flot plugin for adding events/markers to the plot
+    * version: 0.2.5
+    * authors:
+    *    Alexander Wunschik <alex@wunschik.net>
+    *    Joel Oughton <joeloughton@gmail.com>
+    *    Nicolas Joseph <www.nicolasjoseph.com>
+    *
+    * website: https://github.com/mojoaxel/flot-events
+    *
+    * released under MIT License and GPLv2+
+    */
 
   /**
    * A class that allows for the drawing an remove of some object
    */
-  var DrawableEvent = function(object, drawFunc, clearFunc, moveFunc, left, top, width, height) {
+  var DrawableEvent = function (object, drawFunc, clearFunc, moveFunc, left, top, width, height) {
     var _object = object;
-    var	_drawFunc = drawFunc;
-    var	_clearFunc = clearFunc;
-    var	_moveFunc = moveFunc;
-    var	_position = { left: left, top: top };
-    var	_width = width;
-    var	_height = height;
+    var _drawFunc = drawFunc;
+    var _clearFunc = clearFunc;
+    var _moveFunc = moveFunc;
+    var _position = { left: left, top: top };
+    var _width = width;
+    var _height = height;
 
-    this.width = function() { return _width; };
-    this.height = function() { return _height; };
-    this.position = function() { return _position; };
-    this.draw = function() { _drawFunc(_object); };
-    this.clear = function() { _clearFunc(_object); };
-    this.getObject = function() { return _object; };
-    this.moveTo = function(position) {
+    this.width = function () { return _width; };
+    this.height = function () { return _height; };
+    this.position = function () { return _position; };
+    this.draw = function () { _drawFunc(_object); };
+    this.clear = function () { _clearFunc(_object); };
+    this.getObject = function () { return _object; };
+    this.moveTo = function (position) {
       _position = position;
       _moveFunc(_object, _position);
     };
@@ -151,48 +145,48 @@ function ($, _, angular, Drop) {
   /**
    * Event class that stores options (eventType, min, max, title, description) and the object to draw.
    */
-  var VisualEvent = function(options, drawableEvent) {
+  var VisualEvent = function (options, drawableEvent) {
     var _parent;
     var _options = options;
     var _drawableEvent = drawableEvent;
     var _hidden = false;
 
-    this.visual = function() { return _drawableEvent; };
-    this.getOptions = function() { return _options; };
-    this.getParent = function() { return _parent; };
-    this.isHidden = function() { return _hidden; };
-    this.hide = function() { _hidden = true; };
-    this.unhide = function() { _hidden = false; };
+    this.visual = function () { return _drawableEvent; };
+    this.getOptions = function () { return _options; };
+    this.getParent = function () { return _parent; };
+    this.isHidden = function () { return _hidden; };
+    this.hide = function () { _hidden = true; };
+    this.unhide = function () { _hidden = false; };
   };
 
   /**
    * A Class that handles the event-markers inside the given plot
    */
-  var EventMarkers = function(plot) {
+  var EventMarkers = function (plot) {
     var _events = [];
 
     this._types = [];
     this._plot = plot;
     this.eventsEnabled = false;
 
-    this.getEvents = function() {
+    this.getEvents = function () {
       return _events;
     };
 
-    this.setTypes = function(types) {
+    this.setTypes = function (types) {
       return this._types = types;
     };
 
     /**
      * create internal objects for the given events
      */
-    this.setupEvents = function(events) {
+    this.setupEvents = function (events) {
       var that = this;
       var parts = _.partition(events, 'isRegion');
       var regions = parts[0];
       events = parts[1];
 
-      $.each(events, function(index, event) {
+      $.each(events, function (index, event) {
         var ve = new VisualEvent(event, that._buildDiv(event));
         _events.push(ve);
       });
@@ -202,7 +196,7 @@ function ($, _, angular, Drop) {
         _events.push(vre);
       });
 
-      _events.sort(function(a, b) {
+      _events.sort(function (a, b) {
         var ao = a.getOptions(), bo = b.getOptions();
         if (ao.min > bo.min) { return 1; }
         if (ao.min < bo.min) { return -1; }
@@ -213,15 +207,15 @@ function ($, _, angular, Drop) {
     /**
      * draw the events to the plot
      */
-    this.drawEvents = function() {
+    this.drawEvents = function () {
       var that = this;
       // var o = this._plot.getPlotOffset();
 
-      $.each(_events, function(index, event) {
+      $.each(_events, function (index, event) {
         // check event is inside the graph range
         if (that._insidePlot(event.getOptions().min) && !event.isHidden()) {
           event.visual().draw();
-        }  else {
+        } else {
           event.visual().getObject().hide();
         }
       });
@@ -230,12 +224,12 @@ function ($, _, angular, Drop) {
     /**
      * update the position of the event-markers (e.g. after scrolling or zooming)
      */
-    this.updateEvents = function() {
+    this.updateEvents = function () {
       var that = this;
       var o = this._plot.getPlotOffset(), left, top;
       var xaxis = this._plot.getXAxes()[this._plot.getOptions().events.xaxis - 1];
 
-      $.each(_events, function(index, event) {
+      $.each(_events, function (index, event) {
         top = o.top + that._plot.height() - event.visual().height();
         left = xaxis.p2c(event.getOptions().min) + o.left - event.visual().width() / 2;
         event.visual().moveTo({ top: top, left: left });
@@ -245,8 +239,8 @@ function ($, _, angular, Drop) {
     /**
      * remove all events from the plot
      */
-    this._clearEvents = function() {
-      $.each(_events, function(index, val) {
+    this._clearEvents = function () {
+      $.each(_events, function (index, val) {
         val.visual().clear();
       });
       _events = [];
@@ -255,7 +249,7 @@ function ($, _, angular, Drop) {
     /**
      * create a DOM element for the given event
      */
-    this._buildDiv = function(event) {
+    this._buildDiv = function (event) {
       var that = this;
 
       var container = this._plot.getPlaceholder();
@@ -326,7 +320,7 @@ function ($, _, angular, Drop) {
         "border-left-color": color,
         "color": color
       })
-      .appendTo(container);
+        .appendTo(container);
 
       if (markerShow) {
         var marker = $('<div class="events_marker"></div>').css({
@@ -336,22 +330,22 @@ function ($, _, angular, Drop) {
           "line-height": 0,
           "width": 0,
           "height": 0,
-          "border-left": markerSize+"px solid transparent",
-          "border-right": markerSize+"px solid transparent"
+          "border-left": markerSize + "px solid transparent",
+          "border-right": markerSize + "px solid transparent"
         });
 
         marker.appendTo(line);
 
         if (this._types[eventTypeId] && this._types[eventTypeId].position && this._types[eventTypeId].position.toUpperCase() === 'BOTTOM') {
           marker.css({
-            "top": top-markerSize-8 +"px",
+            "top": top - markerSize - 8 + "px",
             "border-top": "none",
-            "border-bottom": markerSize+"px solid " + color
+            "border-bottom": markerSize + "px solid " + color
           });
         } else {
           marker.css({
             "top": "0px",
-            "border-top": markerSize+"px solid " + color,
+            "border-top": markerSize + "px solid " + color,
             "border-bottom": "none"
           });
         }
@@ -360,7 +354,7 @@ function ($, _, angular, Drop) {
           "event": event
         });
 
-        var mouseenter = function() {
+        var mouseenter = function () {
           createAnnotationToolip(marker, $(this).data("event"), that._plot);
         };
 
@@ -368,7 +362,7 @@ function ($, _, angular, Drop) {
           createEditPopover(marker, event.editModel, that._plot);
         }
 
-        var mouseleave = function() {
+        var mouseleave = function () {
           that._plot.clearSelection();
         };
 
@@ -381,8 +375,8 @@ function ($, _, angular, Drop) {
       var drawableEvent = new DrawableEvent(
         line,
         function drawFunc(obj) { obj.show(); },
-        function(obj) { obj.remove(); },
-        function(obj, position) {
+        function (obj) { obj.remove(); },
+        function (obj, position) {
           obj.css({
             top: position.top,
             left: position.left
@@ -449,7 +443,7 @@ function ($, _, angular, Drop) {
       var right = xaxis.p2c(timeTo) + o.left;
       regionWidth = right - left;
 
-      _.each([left, right], function(position) {
+      _.each([left, right], function (position) {
         var line = $('<div class="events_line flot-temp-elem"></div>').css({
           "position": "absolute",
           "opacity": 0.8,
@@ -521,7 +515,7 @@ function ($, _, angular, Drop) {
     /**
      * check if the event is inside visible range
      */
-    this._insidePlot = function(x) {
+    this._insidePlot = function (x) {
       var xaxis = this._plot.getXAxes()[this._plot.getOptions().events.xaxis - 1];
       var xc = xaxis.p2c(x);
       return xc > 0 && xc < xaxis.p2c(xaxis.max);
@@ -536,19 +530,19 @@ function ($, _, angular, Drop) {
     var that = this;
     var eventMarkers = new EventMarkers(plot);
 
-    plot.getEvents = function() {
+    plot.getEvents = function () {
       return eventMarkers._events;
     };
 
-    plot.hideEvents = function() {
-      $.each(eventMarkers._events, function(index, event) {
+    plot.hideEvents = function () {
+      $.each(eventMarkers._events, function (index, event) {
         event.visual().getObject().hide();
       });
     };
 
-    plot.showEvents = function() {
+    plot.showEvents = function () {
       plot.hideEvents();
-      $.each(eventMarkers._events, function(index, event) {
+      $.each(eventMarkers._events, function (index, event) {
         event.hide();
       });
 
@@ -556,20 +550,20 @@ function ($, _, angular, Drop) {
     };
 
     // change events on an existing plot
-    plot.setEvents = function(events) {
+    plot.setEvents = function (events) {
       if (eventMarkers.eventsEnabled) {
         eventMarkers.setupEvents(events);
       }
     };
 
-    plot.hooks.processOptions.push(function(plot, options) {
+    plot.hooks.processOptions.push(function (plot, options) {
       // enable the plugin
       if (options.events.data != null) {
         eventMarkers.eventsEnabled = true;
       }
     });
 
-    plot.hooks.draw.push(function(plot) {
+    plot.hooks.draw.push(function (plot) {
       var options = plot.getOptions();
 
       if (eventMarkers.eventsEnabled) {
@@ -601,4 +595,4 @@ function ($, _, angular, Drop) {
     name: "events",
     version: "0.2.5"
   });
-});
+})(jQuery, lodash, angular, tetherDrop);

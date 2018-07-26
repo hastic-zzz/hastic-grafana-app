@@ -12,16 +12,15 @@ import {
 
 import { GraphCtrl } from './module';
 
-import 'grafana/vendor/flot/jquery.flot.js';
-import 'grafana/vendor/flot/jquery.flot.time.js';
-import 'grafana/vendor/flot/jquery.flot.selection.js';
-import 'grafana/vendor/flot/jquery.flot.stack.js';
-import 'grafana/vendor/flot/jquery.flot.stackpercent.js';
-import 'grafana/vendor/flot/jquery.flot.fillbelow.js';
-import 'grafana/vendor/flot/jquery.flot.crosshair.js';
-import 'grafana/vendor/flot/jquery.flot.dashes.js';
-import 'grafana/vendor/flot/jquery.flot.gauge.js';
-import 'grafana/vendor/flot/jquery.flot.pie.js';
+import 'jquery';
+import './vendor/flot/jquery.flot.js';
+import './vendor/flot/jquery.flot.selection.js';
+import './vendor/flot/jquery.flot.time.js';
+import './vendor/flot/jquery.flot.stack.js';
+import './vendor/flot/jquery.flot.stackpercent.js';
+import './vendor/flot/jquery.flot.fillbelow.js';
+import './vendor/flot/jquery.flot.crosshair.js';
+import './vendor/flot/jquery.flot.dashes.js';
 import './vendor/flot/jquery.flot.events.js';
 
 // import { EventManager } from './vendor/grafana/event_manager';
@@ -30,7 +29,6 @@ import { tickStep } from './vendor/grafana/ticks';
 import { appEvents } from 'grafana/app/core/core';
 import kbn from 'grafana/app/core/utils/kbn';
 
-import * as $ from 'jquery';
 import _ from 'lodash';
 import moment from 'moment';
 
