@@ -1,5 +1,4 @@
-import 'grafana/vendor/flot/jquery.flot.js';
-import * as $ from 'jquery';
+import 'jquery';
 import _ from 'lodash';
 
 export class ThresholdManager {

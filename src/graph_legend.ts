@@ -1,6 +1,6 @@
 import PerfectScrollbar from 'perfect-scrollbar';
-import * as $ from 'jquery';
 import _ from 'lodash';
+import 'jquery';
 
 
 export class GraphLegend {
