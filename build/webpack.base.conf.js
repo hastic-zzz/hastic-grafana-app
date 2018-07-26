@@ -11,13 +11,13 @@ module.exports = {
   context: resolve('src'),
   entry: './module.ts',
   output: {
-    filename: "module.js",
+    filename: 'module.js',
     path: resolve('dist'),
-    libraryTarget: "amd"
+    libraryTarget: 'amd'
   },
   externals: [
     // remove the line below if you don't want to use buildin versions
-    'jquery', 'lodash', 'moment', 'angular',
+    'lodash', 'moment', 'angular',
     function(context, request, callback) {
       var prefix = 'grafana/';
       if (request.indexOf(prefix) === 0) {
@@ -35,16 +35,28 @@ module.exports = {
     ])
   ],
   resolve: {
-    extensions: [".ts", ".js"],
+    extensions: ['.ts', '.js'],
   },
   module: {
     rules: [
       {
         test: /\.tsx?$/, 
         loaders: [
-          "ts-loader"
+          'ts-loader'
         ],
         exclude: /node_modules/,
+      },
+      {
+        test: /jquery\.flot\.(?!events)/,
+        loaders: [
+          'imports-loader?jQuery=jquery'
+        ]
+      },
+      {
+        test: /jquery\.flot\.events/,
+        loaders: [
+          'imports-loader?jQuery=jquery,lodash=lodash,angular=angular,tetherDrop=tether-drop'
+        ]
       }
     ]
   }
