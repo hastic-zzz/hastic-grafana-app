@@ -30,7 +30,8 @@ class GraphCtrl extends MetricsPanelCtrl {
     { name: 'General', value: 'general' },
     { name: 'Peaks', value: 'peak' },
     { name: 'Jumps', value: 'jump' },
-    { name: 'Drops', value: 'drop' }
+    { name: 'Drops', value: 'drop' },
+    { name: 'Custom', value: 'custom' }
   ];
 
   hiddenSeries: any = {};
