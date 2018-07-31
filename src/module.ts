@@ -180,7 +180,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       if(anomalyType === undefined) {
         throw new Error('anomalyType is undefined');
       }
-      if(anomalyType.status === 'ready') {
+      if(anomalyType.status === 'READY') {
         await this.analyticsController.fetchSegments(anomalyType, +this.range.from, +this.range.to);
       }
       this.render(this.seriesList);
