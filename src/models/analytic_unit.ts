@@ -39,7 +39,7 @@ export class AnalyticUnit {
       this._panelObject = {};
     }
     _.defaults(this._panelObject, {
-      name: 'AnalyticUnitName', confidence: 0.2, color: ANALYTIC_UNIT_COLORS[0], type: 'general'
+      name: 'AnalyticUnitName', confidence: 0.2, color: ANALYTIC_UNIT_COLORS[0], type: 'GENERAL'
     });
 
     //this._metric = new Metric(_panelObject.metric);
@@ -96,10 +96,10 @@ export class AnalyticUnit {
   get status() { return this._status; }
   set status(value) {
     if(
-      value !== 'ready' &&
-      value !== 'learning' &&
-      value !== 'pending' &&
-      value !== 'failed'
+      value !== 'READY' &&
+      value !== 'LEARNING' &&
+      value !== 'PENDING' &&
+      value !== 'FAILED'
     ) {
       throw new Error('Unsupported status value: ' + value);
     }
@@ -110,7 +110,7 @@ export class AnalyticUnit {
   set error(value) { this._error = value; }
 
   get isActiveStatus() {
-    return this.status !== 'ready' && this.status !== 'failed';
+    return this.status !== 'READY' && this.status !== 'FAILED';
   }
 
   get panelObject() { return this._panelObject; }

@@ -1,8 +1,6 @@
 import { SegmentsSet } from './segment_set';
 import { Segment, SegmentId } from './segment';
 
-import _ from 'lodash';
-
 
 export class SegmentArray<T extends Segment> implements SegmentsSet<T> {
   private _segments: T[];

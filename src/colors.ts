@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import tinycolor from 'tinycolor2';
 
 export const PALETTE_ROWS = 4;
