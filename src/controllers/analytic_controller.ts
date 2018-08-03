@@ -17,7 +17,7 @@ import { ANALYTIC_UNIT_COLORS } from '../colors';
 import { Emitter } from 'grafana/app/core/utils/emitter';
 
 import _ from 'lodash';
-
+import * as tinycolor from 'tinycolor2';
 
 export const REGION_FILL_ALPHA = 0.7;
 export const REGION_STROKE_ALPHA = 0.9;

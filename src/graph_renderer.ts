@@ -619,13 +619,13 @@ export class GraphRenderer {
   }
 
   private _addXTableAxis() {
-    var ticks = _.map(this.data, function(series: any, seriesIndex) {
+    var ticks = _.map(this.data, function(series: any, seriesIndex: any) {
       return _.map(series.datapoints, function(point, pointIndex) {
         var tickIndex = seriesIndex * series.datapoints.length + pointIndex;
         return [tickIndex + 1, point[1]];
       });
     });
-    ticks = _.flatten(ticks, true);
+    ticks = _.flatten(ticks); 
 
     this.flotOptions.xaxis = {
       timezone: this.dashboard.getTimezone(),
