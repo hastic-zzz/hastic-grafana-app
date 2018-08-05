@@ -18,11 +18,11 @@ export class AnalyticService {
     return this._backendSrv.post(
       this._backendURL + '/analyticUnits', 
       {
+        panelUrl: window.location.origin + window.location.pathname + `?panelId=${panelId}&fullscreen`,
+        type: newItem.type,
         name: newItem.name,
         metric: metric.toJSON(),
-        panelUrl: window.location.origin + window.location.pathname + `?panelId=${panelId}&fullscreen`,
-        datasource: datasourceRequest,
-        type: newItem.type
+        datasource: datasourceRequest
       }
     ).then(res => res.id as AnalyticUnitId);
   };
@@ -75,7 +75,7 @@ export class AnalyticService {
     if(data.segments === undefined) {
       throw new Error('Server didn`t return segments array');
     }
-    var segments = data.segments as { id: number, start: number, finish: number, labeled: boolean }[];
+    var segments = data.segments as { id: SegmentId, start: number, finish: number, labeled: boolean }[];
     return segments.map(s => new AnalyticSegment(s.labeled, s.id, s.start, s.finish));
   }
 

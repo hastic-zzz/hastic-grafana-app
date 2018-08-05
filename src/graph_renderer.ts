@@ -111,7 +111,7 @@ export class GraphRenderer {
 
       if(this._isAnomalyEvent(selectionEvent)) {
         this.plot.clearSelection();
-        var id = this._ananlyticController.getIdForNewLabelSegment()
+        var id = this._ananlyticController.getNewTempSegmentId();
         var segment = new Segment(
           id,
           Math.round(selectionEvent.xaxis.from),

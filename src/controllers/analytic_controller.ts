@@ -346,9 +346,9 @@ export class AnalyticController {
     this._emitter.emit('anomaly-type-alert-change', anomalyType);
   }
 
-  public getIdForNewLabelSegment() {
+  public getNewTempSegmentId(): SegmentId {
     this._tempIdCounted--;
-    return this._tempIdCounted;
+    return this._tempIdCounted.toString();
   }
 
   public toggleVisibility(id: AnalyticUnitId, value?: boolean) {

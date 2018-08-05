@@ -1,9 +1,9 @@
-export type SegmentId = number;
+export type SegmentId = string;
 
 export class Segment {
   constructor(private _id: SegmentId, public from: number, public to: number) {
-    if(isNaN(this._id)) {
-      throw new Error('Key can`t be NaN');
+    if(this._id === undefined) {
+      throw new Error('id is undefined');
     }
     if(isNaN(+from)) {
       throw new Error('from can`t be NaN');
