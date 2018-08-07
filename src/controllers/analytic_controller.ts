@@ -46,7 +46,7 @@ export class AnalyticController {
     this._labelingDataAddedSegments = new SegmentArray<AnalyticSegment>();
     this._labelingDataDeletedSegments = new SegmentArray<AnalyticSegment>();
     this._analyticUnitsSet = new AnalyticUnitsSet(this._panelObject.anomalyTypes);
-    this.analyticUnits.forEach(a => this.runEnabledWaiter(a));
+    // this.analyticUnits.forEach(a => this.runEnabledWaiter(a));
   }
 
   getSegmentsSearcher(): AnalyticSegmentsSearcher {
@@ -85,7 +85,7 @@ export class AnalyticController {
     this._analyticUnitsSet.addItem(this._newAnalyticUnit);
     this._creatingNewAnalyticType = false;
     this._savingNewAnalyticUnit = false;
-    this.runEnabledWaiter(this._newAnalyticUnit);
+    // this.runEnabledWaiter(this._newAnalyticUnit);
     this._runStatusWaiter(this._newAnalyticUnit);
   }
 
@@ -330,13 +330,13 @@ export class AnalyticController {
     this._statusRunners.delete(anomalyType.id);
   }
 
-  async runEnabledWaiter(anomalyType: AnalyticUnit) {
-    var enabled = await this._analyticService.getAlertEnabled(anomalyType.id);
-    if(anomalyType.alertEnabled !== enabled) {
-      anomalyType.alertEnabled = enabled;
-      this._emitter.emit('anomaly-type-alert-change', anomalyType);
-    }
-  }
+  // async runEnabledWaiter(anomalyType: AnalyticUnit) {
+  //   var enabled = await this._analyticService.getAlertEnabled(anomalyType.id);
+  //   if(anomalyType.alertEnabled !== enabled) {
+  //     anomalyType.alertEnabled = enabled;
+  //     this._emitter.emit('anomaly-type-alert-change', anomalyType);
+  //   }
+  // }
 
   async toggleAlertEnabled(anomalyType: AnalyticUnit) {
     var enabled = anomalyType.alertEnabled;
