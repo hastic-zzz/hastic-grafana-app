@@ -204,7 +204,7 @@ export class GraphTooltip {
         <div class="graph-tooltip-list-item">
           <div class="graph-tooltip-series-name">
             <i class="fa fa-exclamation" style="color:${s.anomalyType.color}"></i>
-            ${s.anomalyType.id}:
+            ${s.anomalyType.name}:
           </div>
           <div class="graph-tooltip-value">
             <i class="fa ${ s.segment.labeled ? "fa-thumb-tack" : "fa-search-plus" }" aria-hidden="true"></i>
