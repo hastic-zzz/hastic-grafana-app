@@ -9,8 +9,8 @@
       "url": "https://github.com/hastic/hastic-grafana-graph-panel"
     },
     "logos": {
-      "small": "img/icn-graph-panel.svg",
-      "large": "img/icn-graph-panel.svg"
+      "small": "img/icn-graph-panel.png",
+      "large": "img/icn-graph-panel.png"
     }
   },
 
