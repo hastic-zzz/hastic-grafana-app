@@ -29,7 +29,7 @@ class GraphCtrl extends MetricsPanelCtrl {
   ANALYTIC_TYPES: Array<{name: string, value: string}> = [
     { name: 'General', value: 'GENERAL' },
     { name: 'Peaks', value: 'PEAK' },
-    { name: 'Reverse Peaks', value: 'REVERSE_PEAK' },
+    { name: 'Troughs', value: 'TROUGH' },
     { name: 'Jumps', value: 'JUMP' },
     { name: 'Drops', value: 'DROP' },
     { name: 'Custom', value: 'CUSTOM' }
