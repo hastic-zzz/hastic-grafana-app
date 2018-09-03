@@ -118,9 +118,15 @@ npm run build
 
 # Changelog
 
+### [0.2.0] - 2018-09-03
+> Supports only hastic-server of versions **0.2.0-alpha or greater**
+#### Fixed
+- Wrong colors order [#49](https://github.com/hastic/hastic-grafana-graph-panel/issues/49)
+- No crosshair [#50](https://github.com/hastic/hastic-grafana-graph-panel/issues/50)
+- Analytic unit ID in tooltip instead of name [#56](https://github.com/hastic/hastic-grafana-graph-panel/issues/56)
+
 ### [0.1.0] - 2018-07-17
-#### Changed
-- Supports only hastic-server of versions **0.2.0-alpha or greater**
+> Supports only hastic-server of versions **0.2.0-alpha or greater**
 #### Fixed
 - Choosing custom color for analytic unit [#31](https://github.com/hastic/hastic-grafana-graph-panel/issues/31)
 - Deleting any analytic unit only deletes the first one [#33](https://github.com/hastic/hastic-grafana-graph-panel/issues/33)
