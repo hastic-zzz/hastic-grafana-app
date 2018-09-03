@@ -21,12 +21,12 @@ A better version of Grafana's default Graph Panel. Able to render Anomalies & mo
 
 - Download hastic graph panel
 ```
-wget https://github.com/hastic/hastic-grafana-graph-panel/releases/download/0.1.0/hastic-graph-panel-0.1.0.tar.gz
+wget https://github.com/hastic/hastic-grafana-graph-panel/releases/download/0.2.0/hastic-graph-panel-0.2.0.tar.gz
 ```
 
 - Unpack downloaded files
 ```
-tar -zxvf hastic-graph-panel-0.1.0.tar.gz
+tar -zxvf hastic-graph-panel-0.2.0.tar.gz
 ```
 
 - Restart grafana-server
