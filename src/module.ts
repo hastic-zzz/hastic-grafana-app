@@ -26,14 +26,6 @@ const BACKEND_VARIABLE_NAME = 'HASTIC_SERVER_URL';
 
 class GraphCtrl extends MetricsPanelCtrl {
   static template = template;
-  ANALYTIC_TYPES: Array<{name: string, value: string}> = [
-    { name: 'General', value: 'GENERAL' },
-    { name: 'Peaks', value: 'PEAK' },
-    { name: 'Troughs', value: 'TROUGH' },
-    { name: 'Jumps', value: 'JUMP' },
-    { name: 'Drops', value: 'DROP' },
-    { name: 'Custom', value: 'CUSTOM' }
-  ];
 
   hiddenSeries: any = {};
   seriesList: any = [];
@@ -141,6 +133,14 @@ class GraphCtrl extends MetricsPanelCtrl {
     seriesOverrides: [],
     thresholds: [],
     anomalyType: '',
+    analyticUnitTypes: [
+      { name: 'General', value: 'GENERAL' },
+      { name: 'Peaks', value: 'PEAK' },
+      { name: 'Troughs', value: 'TROUGH' },
+      { name: 'Jumps', value: 'JUMP' },
+      { name: 'Drops', value: 'DROP' },
+      { name: 'Custom', value: 'CUSTOM' }
+    ]
   };
 
   /** @ngInject */
@@ -158,8 +158,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     _.defaults(this.panel.xaxis, this.panelDefaults.xaxis);
 
     this.processor = new DataProcessor(this.panel);
-
-    
+  
     var anomalyService = new AnalyticService(this.backendURL, backendSrv as BackendSrv);
     
     this.runBackendConnectivityCheck();
