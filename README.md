@@ -1,6 +1,8 @@
 <p align="center">
+  <a href=#>
   <img width="auto" align="middle" height="120px" src="https://github.com/hastic/hastic-grafana-graph-panel/blob/master/src/img/hastic_graph.png" />
   <img hspace="50" align="middle" width="30%" height="30%" src="https://github.com/hastic/hastic-grafana-graph-panel/blob/master/src/img/hastic_logo.png" />
+  </a>
 </p>
 
 # Hastic Graph Panel
