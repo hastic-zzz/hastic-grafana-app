@@ -43,7 +43,7 @@ class GraphCtrl extends MetricsPanelCtrl {
   processor: DataProcessor;
 
   datasourceRequest: DatasourceRequest;
-  
+
   anomalyTypes = []; // TODO: remove it later. Only for alert tab
   analyticsController: AnalyticController;
 
@@ -158,9 +158,10 @@ class GraphCtrl extends MetricsPanelCtrl {
     _.defaults(this.panel.xaxis, this.panelDefaults.xaxis);
 
     this.processor = new DataProcessor(this.panel);
-  
+
+
     var anomalyService = new AnalyticService(this.backendURL, backendSrv as BackendSrv);
-    
+
     this.runBackendConnectivityCheck();
 
     this.analyticsController = new AnalyticController(this.panel, anomalyService, this.events);
@@ -211,8 +212,8 @@ class GraphCtrl extends MetricsPanelCtrl {
   async runBackendConnectivityCheck() {
     if(this.backendURL === '' || this.backendURL === undefined) {
       this.alertSrv.set(
-        `Dashboard variable $${BACKEND_VARIABLE_NAME} is missing`, 
-        `Please set $${BACKEND_VARIABLE_NAME}`, 
+        `Dashboard variable $${BACKEND_VARIABLE_NAME} is missing`,
+        `Please set $${BACKEND_VARIABLE_NAME}`,
         'warning', 4000
       );
       return;
@@ -224,7 +225,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       this.alertSrv.set(
         'Can`t connect to Hastic server', `Hastic server: "${this.backendURL}"`, 'warning', 4000
       );
-    } 
+    }
   }
 
   link(scope, elem, attrs, ctrl) {
