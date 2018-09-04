@@ -1,6 +1,6 @@
 <p align="left">
-  <img  width="auto" height="78px" src="https://github.com/hastic/hastic-grafana-graph-panel/blob/master/src/img/hastic_graph.png?raw=true" />
-  <img width="30%" height="30%" src="https://github.com/sankerust/hello-world/blob/master/hastic_logo_669x200.png?raw=true" />
+  <img width="auto" align="middle" height="120px" src="https://github.com/hastic/hastic-grafana-graph-panel/blob/master/src/img/hastic_graph.png?raw=true" />
+  <img hspace="50" align="middle" width="30%" height="30%" src="https://github.com/sankerust/hello-world/blob/master/hastic_logo_669x200.png?raw=true" />
 </p>
 
 # Hastic Graph Panel
