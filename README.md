@@ -24,12 +24,12 @@ A better version of Grafana's default Graph Panel. Able to render Anomalies & mo
 
 - Download hastic graph panel
 ```
-wget https://github.com/hastic/hastic-grafana-graph-panel/releases/download/0.2.0/hastic-graph-panel-0.2.0.tar.gz
+wget https://github.com/hastic/hastic-grafana-graph-panel/releases/download/0.2.1/hastic-graph-panel-0.2.1.tar.gz
 ```
 
 - Unpack downloaded files
 ```
-tar -zxvf hastic-graph-panel-0.2.0.tar.gz
+tar -zxvf hastic-graph-panel-0.2.1.tar.gz
 ```
 
 - Restart grafana-server
@@ -120,6 +120,11 @@ npm run build
 
 
 # Changelog
+
+### [0.2.1] - 2018-09-04
+> Supports only hastic-server of versions **0.2.0-alpha or greater**
+#### Changed
+- Move analytic unit types to panel.json
 
 ### [0.2.0] - 2018-09-03
 > Supports only hastic-server of versions **0.2.0-alpha or greater**
