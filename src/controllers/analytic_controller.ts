@@ -23,6 +23,7 @@ export const REGION_FILL_ALPHA = 0.7;
 export const REGION_STROKE_ALPHA = 0.9;
 export const REGION_DELETE_COLOR_LIGHT = '#d1d1d1';
 export const REGION_DELETE_COLOR_DARK = 'white';
+const LABELED_SEGMENT_BORDER_COLOR = 'black';
 
 
 export class AnalyticController {
@@ -250,7 +251,17 @@ export class AnalyticController {
       }
 
       var rangeDist = +options.xaxis.max - +options.xaxis.min;
+      
+      let labeledSegmentBorderColor = tinycolor(LABELED_SEGMENT_BORDER_COLOR).toRgbString();
+      labeledSegmentBorderColor = addAlphaToRGB(labeledSegmentBorderColor, REGION_STROKE_ALPHA);
       segments.forEach(s => {
+        let segmentBorderColor;
+        if(s.labeled) {
+          segmentBorderColor = labeledSegmentBorderColor;
+        } else {
+          segmentBorderColor = fillColor;
+        }
+
         var expanded = s.expandDist(rangeDist, 0.01);
         options.grid.markings.push({
           xaxis: { from: expanded.from, to: expanded.to },
@@ -258,11 +269,11 @@ export class AnalyticController {
         });
         options.grid.markings.push({
           xaxis: { from: expanded.from, to: expanded.from },
-          color: borderColor
+          color: segmentBorderColor
         });
         options.grid.markings.push({
           xaxis: { from: expanded.to, to: expanded.to },
-          color: borderColor
+          color: segmentBorderColor
         });
       });
     }
