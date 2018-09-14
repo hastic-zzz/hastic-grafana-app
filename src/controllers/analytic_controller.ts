@@ -23,6 +23,7 @@ export const REGION_FILL_ALPHA = 0.7;
 export const REGION_STROKE_ALPHA = 0.9;
 export const REGION_DELETE_COLOR_LIGHT = '#d1d1d1';
 export const REGION_DELETE_COLOR_DARK = 'white';
+const LABELED_SEGMENT_BORDER_COLOR = 'black';
 
 
 export class AnalyticController {
@@ -105,7 +106,7 @@ export class AnalyticController {
 
   async toggleAnomalyTypeLabelingMode(id: AnalyticUnitId) {
     if(this.labelingAnomaly && this.labelingAnomaly.saving) {
-      throw new Error('Can`t toggel during saving');
+      throw new Error('Can`t toggle during saving');
     }
     if(this._selectedAnalyticUnitId === id) {
       return this.disableLabeling();
@@ -192,20 +193,20 @@ export class AnalyticController {
     return Promise.all(tasks);
   }
 
-  async fetchSegments(anomalyType: AnalyticUnit, from: number, to: number): Promise<void> {
+  async fetchSegments(analyticUnit: AnalyticUnit, from: number, to: number): Promise<void> {
     if(!_.isNumber(+from)) {
       throw new Error('from isn`t number');
     }
     if(!_.isNumber(+to)) {
       throw new Error('to isn`t number');
     }
-    var allSegmentsList = await this._analyticService.getSegments(anomalyType.id, from, to);
+    var allSegmentsList = await this._analyticService.getSegments(analyticUnit.id, from, to);
     var allSegmentsSet = new SegmentArray(allSegmentsList);
-    if(anomalyType.selected) {
+    if(analyticUnit.selected) {
       this._labelingDataAddedSegments.getSegments().forEach(s => allSegmentsSet.addSegment(s));
       this._labelingDataDeletedSegments.getSegments().forEach(s => allSegmentsSet.remove(s.id));
     }
-    anomalyType.segments = allSegmentsSet;
+    analyticUnit.segments = allSegmentsSet;
   }
 
   private async _saveLabelingData(): Promise<SegmentId[]> {
@@ -233,15 +234,15 @@ export class AnalyticController {
     }
 
     for(var i = 0; i < this.analyticUnits.length; i++) {
-      var anomalyType = this.analyticUnits[i];
-      var borderColor = addAlphaToRGB(anomalyType.color, REGION_STROKE_ALPHA);
-      var fillColor = addAlphaToRGB(anomalyType.color, REGION_FILL_ALPHA);
-      var segments = anomalyType.segments.getSegments();
-      if(!anomalyType.visible) {
+      var analyticUnit = this.analyticUnits[i];
+      var borderColor = addAlphaToRGB(analyticUnit.color, REGION_STROKE_ALPHA);
+      var fillColor = addAlphaToRGB(analyticUnit.color, REGION_FILL_ALPHA);
+      var segments = analyticUnit.segments.getSegments();
+      if(!analyticUnit.visible) {
         continue;
       }
       if(isEditMode && this.labelingMode) {
-        if(anomalyType.selected) {
+        if(analyticUnit.selected) {
           borderColor = addAlphaToRGB(borderColor, 0.7);
           fillColor = addAlphaToRGB(borderColor, 0.7);
         } else {
@@ -250,7 +251,17 @@ export class AnalyticController {
       }
 
       var rangeDist = +options.xaxis.max - +options.xaxis.min;
+      
+      let labeledSegmentBorderColor = tinycolor(LABELED_SEGMENT_BORDER_COLOR).toRgbString();
+      labeledSegmentBorderColor = addAlphaToRGB(labeledSegmentBorderColor, REGION_STROKE_ALPHA);
       segments.forEach(s => {
+        let segmentBorderColor;
+        if(s.labeled) {
+          segmentBorderColor = labeledSegmentBorderColor;
+        } else {
+          segmentBorderColor = fillColor;
+        }
+
         var expanded = s.expandDist(rangeDist, 0.01);
         options.grid.markings.push({
           xaxis: { from: expanded.from, to: expanded.to },
@@ -258,11 +269,11 @@ export class AnalyticController {
         });
         options.grid.markings.push({
           xaxis: { from: expanded.from, to: expanded.from },
-          color: borderColor
+          color: segmentBorderColor
         });
         options.grid.markings.push({
           xaxis: { from: expanded.to, to: expanded.to },
-          color: borderColor
+          color: segmentBorderColor
         });
       });
     }
@@ -293,57 +304,57 @@ export class AnalyticController {
     this._analyticUnitsSet.removeItem(id);
   }
 
-  private async _runStatusWaiter(anomalyType: AnalyticUnit) {
-    if(anomalyType === undefined || anomalyType === null) {
-      throw new Error('anomalyType not defined');
+  private async _runStatusWaiter(analyticUnit: AnalyticUnit) {
+    if(analyticUnit === undefined || analyticUnit === null) {
+      throw new Error('analyticUnit not defined');
     }
 
-    if(anomalyType.id === undefined) {
-      throw new Error('anomalyType.id is undefined');
+    if(analyticUnit.id === undefined) {
+      throw new Error('analyticUnit.id is undefined');
     }
 
-    if(this._statusRunners.has(anomalyType.id)) {
+    if(this._statusRunners.has(analyticUnit.id)) {
       return;
     }
 
-    this._statusRunners.add(anomalyType.id);
+    this._statusRunners.add(analyticUnit.id);
 
     var statusGenerator = this._analyticService.getStatusGenerator(
-      anomalyType.id, 1000
+      analyticUnit.id, 1000
     );
 
     for await (const data of statusGenerator) {
       let status = data.status;
       let error = data.errorMessage;
-      if(anomalyType.status !== status) {
-        anomalyType.status = status;
+      if(analyticUnit.status !== status) {
+        analyticUnit.status = status;
         if(error !== undefined) {
-          anomalyType.error = error;
+          analyticUnit.error = error;
         }
-        this._emitter.emit('anomaly-type-status-change', anomalyType);
+        this._emitter.emit('anomaly-type-status-change', analyticUnit);
       }
-      if(!anomalyType.isActiveStatus) {
+      if(!analyticUnit.isActiveStatus) {
         break;
       }
     }
 
-    this._statusRunners.delete(anomalyType.id);
+    this._statusRunners.delete(analyticUnit.id);
   }
 
-  // async runEnabledWaiter(anomalyType: AnalyticUnit) {
-  //   var enabled = await this._analyticService.getAlertEnabled(anomalyType.id);
-  //   if(anomalyType.alertEnabled !== enabled) {
-  //     anomalyType.alertEnabled = enabled;
-  //     this._emitter.emit('anomaly-type-alert-change', anomalyType);
+  // async runEnabledWaiter(analyticUnit: AnalyticUnit) {
+  //   var enabled = await this._analyticService.getAlertEnabled(analyticUnit.id);
+  //   if(analyticUnit.alertEnabled !== enabled) {
+  //     analyticUnit.alertEnabled = enabled;
+  //     this._emitter.emit('anomaly-type-alert-change', analyticUnit);
   //   }
   // }
 
-  async toggleAlertEnabled(anomalyType: AnalyticUnit) {
-    var enabled = anomalyType.alertEnabled;
-    anomalyType.alertEnabled = undefined;
-    await this._analyticService.setAlertEnabled(anomalyType.id, enabled);
-    anomalyType.alertEnabled = enabled;
-    this._emitter.emit('anomaly-type-alert-change', anomalyType);
+  async toggleAlertEnabled(analyticUnit: AnalyticUnit) {
+    var enabled = analyticUnit.alertEnabled;
+    analyticUnit.alertEnabled = undefined;
+    await this._analyticService.setAlertEnabled(analyticUnit.id, enabled);
+    analyticUnit.alertEnabled = enabled;
+    this._emitter.emit('anomaly-type-alert-change', analyticUnit);
   }
 
   public getNewTempSegmentId(): SegmentId {
@@ -352,11 +363,11 @@ export class AnalyticController {
   }
 
   public toggleVisibility(id: AnalyticUnitId, value?: boolean) {
-    var anomaly = this._analyticUnitsSet.byId(id);
+    var analyticUnit = this._analyticUnitsSet.byId(id);
     if(value !== undefined) {
-      anomaly.visible = value;
+      analyticUnit.visible = value;
     } else {
-      anomaly.visible = !anomaly.visible;
+      analyticUnit.visible = !analyticUnit.visible;
     }
   }
 
