@@ -6,6 +6,9 @@
 </p>
 
 # Hastic Graph Panel
+[Website](https://hastic.io) |
+[Twitter](https://twitter.com/hasticio) | 
+[IRC](https://webchat.freenode.net/?channels=#hastic)
 
 A better version of Grafana's default Graph Panel. Able to render Anomalies & more.
 
