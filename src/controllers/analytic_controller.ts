@@ -259,7 +259,7 @@ export class AnalyticController {
         if(s.labeled) {
           segmentBorderColor = labeledSegmentBorderColor;
         } else {
-          segmentBorderColor = fillColor;
+          segmentBorderColor = borderColor;
         }
 
         var expanded = s.expandDist(rangeDist, 0.01);
@@ -281,6 +281,7 @@ export class AnalyticController {
   }
 
   deleteLabelingAnomalySegmentsInRange(from: number, to: number) {
+    console.log('deleteLabelingAnomalySegmentsInRange was called')
     var allRemovedSegs = this.labelingAnomaly.removeSegmentsInRange(from, to);
     allRemovedSegs.forEach(s => {
       if(!this._labelingDataAddedSegments.has(s.id)) {
