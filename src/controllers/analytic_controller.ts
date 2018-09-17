@@ -258,6 +258,8 @@ export class AnalyticController {
         let segmentBorderColor;
         if(s.labeled) {
           segmentBorderColor = labeledSegmentBorderColor;
+        } else if (s.deleted && this.labelingDeleteMode) {
+          segmentBorderColor = tinycolor("green").toRgbString();
         } else {
           segmentBorderColor = borderColor;
         }

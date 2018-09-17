@@ -14,7 +14,7 @@ export type AnalyticSegmentsSearcher = (point: number, rangeDist: number) => Ana
 export type AnalyticUnitId = string;
 
 export class AnalyticSegment extends Segment {
-  constructor(public labeled: boolean, id: SegmentId, from: number, to: number) {
+  constructor(public labeled: boolean, id: SegmentId, from: number, to: number, public deleted = false) {
     super(id, from, to);
     if(!_.isBoolean(labeled)) {
       throw new Error('labeled value is not boolean');
@@ -85,7 +85,11 @@ export class AnalyticUnit {
   }
 
   removeSegmentsInRange(from: number, to: number): AnalyticSegment[] {
-    return this._segmentSet.removeInRange(from, to);
+    let deletedSegments = this._segmentSet.removeInRange(from, to);
+    deletedSegments.forEach(function(s) {
+      s.deleted = true
+    })
+    return deletedSegments;
   }
 
   get segments(): SegmentsSet<AnalyticSegment> { return this._segmentSet; }
