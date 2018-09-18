@@ -576,6 +576,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       return;
     }
     this.analyticsController.toggleDeleteMode();
+    this.refresh();
   }
 
   onAnomalyAlertChange(anomalyType: AnalyticUnit) {

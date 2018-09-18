@@ -8,7 +8,7 @@ import { ANALYTIC_UNIT_COLORS } from '../colors';
 import _ from 'lodash';
 
 
-export type AnalyticSegmentPair = { anomalyType: AnalyticUnit, segment: AnalyticSegment };
+export type AnalyticSegmentPair = { analyticUnit: AnalyticUnit, segment: AnalyticSegment };
 export type AnalyticSegmentsSearcher = (point: number, rangeDist: number) => AnalyticSegmentPair[];
 
 export type AnalyticUnitId = string;
@@ -86,9 +86,9 @@ export class AnalyticUnit {
 
   removeSegmentsInRange(from: number, to: number): AnalyticSegment[] {
     let deletedSegments = this._segmentSet.removeInRange(from, to);
-    deletedSegments.forEach(function(s) {
-      s.deleted = true
-    })
+    deletedSegments.forEach(s => {
+      s.deleted = true;
+    });
     return deletedSegments;
   }
 
