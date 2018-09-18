@@ -24,6 +24,8 @@ export const REGION_STROKE_ALPHA = 0.9;
 export const REGION_DELETE_COLOR_LIGHT = '#d1d1d1';
 export const REGION_DELETE_COLOR_DARK = 'white';
 const LABELED_SEGMENT_BORDER_COLOR = 'black';
+const DELETED_SEGMENT_FILL_COLOR = 'black';
+const DELETED_SEGMENT_BORDER_COLOR = 'black';
 
 
 export class AnalyticController {
@@ -59,7 +61,7 @@ export class AnalyticController {
     this._analyticUnitsSet.items.forEach(at => {
       var segs = at.segments.findSegments(point, rangeDist);
       segs.forEach(s => {
-        result.push({ anomalyType: at, segment: s });
+        result.push({ analyticUnit: at, segment: s });
       })
     })
     return result;
@@ -125,7 +127,8 @@ export class AnalyticController {
     var newIds = await this._saveLabelingData();
     this._labelingDataAddedSegments.getSegments().forEach((s, i) => {
       this.labelingAnomaly.segments.updateId(s.id, newIds[i]);
-    })
+    });
+
     this.labelingAnomaly.saving = false;
     
     var anomaly = this.labelingAnomaly;
@@ -138,7 +141,7 @@ export class AnalyticController {
       this.labelingAnomaly.segments.remove(s.id);
     });
     this._labelingDataDeletedSegments.getSegments().forEach(s => {
-      this.labelingAnomaly.segments.addSegment(s);
+      s.deleted = false;
     });
     this.dropLabeling();
   }
@@ -254,18 +257,32 @@ export class AnalyticController {
       
       let labeledSegmentBorderColor = tinycolor(LABELED_SEGMENT_BORDER_COLOR).toRgbString();
       labeledSegmentBorderColor = addAlphaToRGB(labeledSegmentBorderColor, REGION_STROKE_ALPHA);
+      let deletedSegmentFillColor = tinycolor(DELETED_SEGMENT_FILL_COLOR).toRgbString();
+      deletedSegmentFillColor = addAlphaToRGB(deletedSegmentFillColor, REGION_STROKE_ALPHA);
+      let deletedSegmentBorderColor = tinycolor(DELETED_SEGMENT_BORDER_COLOR).toRgbString();
+      deletedSegmentBorderColor = addAlphaToRGB(deletedSegmentBorderColor, REGION_STROKE_ALPHA);
+
       segments.forEach(s => {
         let segmentBorderColor;
+        let segmentFillColor = fillColor;
+
         if(s.labeled) {
           segmentBorderColor = labeledSegmentBorderColor;
         } else {
           segmentBorderColor = borderColor;
         }
 
+        if(this.labelingDeleteMode) {
+          if(s.deleted) {
+            segmentBorderColor = deletedSegmentBorderColor;
+            segmentFillColor = deletedSegmentFillColor;
+          }
+        }
+
         var expanded = s.expandDist(rangeDist, 0.01);
         options.grid.markings.push({
           xaxis: { from: expanded.from, to: expanded.to },
-          color: fillColor
+          color: segmentFillColor
         });
         options.grid.markings.push({
           xaxis: { from: expanded.from, to: expanded.from },
@@ -281,7 +298,6 @@ export class AnalyticController {
   }
 
   deleteLabelingAnomalySegmentsInRange(from: number, to: number) {
-    console.log('deleteLabelingAnomalySegmentsInRange was called')
     var allRemovedSegs = this.labelingAnomaly.removeSegmentsInRange(from, to);
     allRemovedSegs.forEach(s => {
       if(!this._labelingDataAddedSegments.has(s.id)) {

@@ -10,7 +10,7 @@ export class GraphTooltip {
   private _lastItem = undefined;
 
   constructor(
-    private $elem: JQuery<HTMLElement>, private dashboard, 
+    private $elem: JQuery<HTMLElement>, private dashboard,
     private scope, private getSeriesFn,
     private _anomalySegmentsSearcher: AnalyticSegmentsSearcher
   ) {
@@ -53,7 +53,7 @@ export class GraphTooltip {
       }
       pos.pageX = this.$elem.offset().left + pointOffset.left;
       pos.pageY = this.$elem.offset().top + this.$elem.height() * pos.panelRelY;
-      var isVisible = pos.pageY >= $(window).scrollTop() && 
+      var isVisible = pos.pageY >= $(window).scrollTop() &&
         pos.pageY <= $(window).innerHeight() + $(window).scrollTop();
       if (!isVisible) {
         this.clear(plot);
@@ -148,7 +148,7 @@ export class GraphTooltip {
     }
   };
 
-  
+
   destroy() {
     this._visible = false;
     this.$tooltip.remove();
@@ -199,21 +199,31 @@ export class GraphTooltip {
     segments.forEach(s => {
       var from = this.dashboard.formatDate(s.segment.from, 'HH:mm:ss.SSS');
       var to = this.dashboard.formatDate(s.segment.to, 'HH:mm:ss.SSS');
-      
+
+      if(s.segment.deleted && !s.analyticUnit.deleteMode) {
+        return;
+      }
+
+      let icon;
+      if (s.segment.labeled) {
+        icon = 'fa-thumb-tack';
+      } else if (s.segment.deleted) {
+        icon = 'fa-trash';
+      } else {
+        icon = 'fa-search-plus';
+      }
       result += `
         <div class="graph-tooltip-list-item">
           <div class="graph-tooltip-series-name">
-            <i class="fa fa-exclamation" style="color:${s.anomalyType.color}"></i>
-            ${s.anomalyType.name}:
+            <i class="fa fa-exclamation" style="color:${s.analyticUnit.color}"></i>
+            ${s.analyticUnit.name}:
           </div>
           <div class="graph-tooltip-value">
-            <i class="fa ${ s.segment.labeled ? "fa-thumb-tack" : "fa-search-plus" }" aria-hidden="true"></i>
+            <i class="fa ${ icon }" aria-hidden="true"></i>
             ${from} — ${to}
           </div>
         </div>
       `;
-
-       
     });
     return result;
   }

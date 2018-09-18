@@ -42,15 +42,15 @@ export class AnalyticService {
   ): Promise<SegmentId[]> {
 
     const getJSONs = (segs: SegmentsSet<Segment>) => segs.getSegments().map(segment => ({
-      "from": segment.from,
-      "to": segment.to
+      from: segment.from,
+      to: segment.to
     }));
 
     var payload = {
       id,
       addedSegments: getJSONs(addedSegments),
       removedSegments: removedSegments.getSegments().map(s => s.id)
-    }
+    };
 
     var data = await this._backendSrv.patch(this._backendURL + '/segments', payload);
     if(data.addedIds === undefined) {
@@ -75,8 +75,8 @@ export class AnalyticService {
     if(data.segments === undefined) {
       throw new Error('Server didn`t return segments array');
     }
-    var segments = data.segments as { id: SegmentId, from: number, to: number, labeled: boolean }[];
-    return segments.map(s => new AnalyticSegment(s.labeled, s.id, s.from, s.to));
+    var segments = data.segments as { id: SegmentId, from: number, to: number, labeled: boolean, deleted: boolean }[];
+    return segments.map(s => new AnalyticSegment(s.labeled, s.id, s.from, s.to, s.deleted));
   }
 
   async * getStatusGenerator(id: AnalyticUnitId, duration: number) {
