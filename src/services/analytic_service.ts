@@ -15,6 +15,9 @@ export class AnalyticService {
     metric: MetricExpanded, datasourceRequest: DatasourceRequest, 
     newItem: AnalyticUnit, panelId: number
   ): Promise<AnalyticUnitId> {
+    let datasource = await this._backendSrv.get(`/api/datasources/name/${metric.datasource}`);
+    datasourceRequest.type = datasource.type;
+
     return this._backendSrv.post(
       this._backendURL + '/analyticUnits', 
       {

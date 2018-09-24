@@ -187,14 +187,16 @@ class GraphCtrl extends MetricsPanelCtrl {
       this.render(this.seriesList);
       this.$scope.$digest();
     });
+
     appEvents.on('ds-request-response', data => {
       let requestConfig = data.config;
+
       this.datasourceRequest = {
         url: requestConfig.url,
-        type: requestConfig.inspect.type,
         method: requestConfig.method,
         data: requestConfig.data,
-        params: requestConfig.params
+        params: requestConfig.params,
+        type: undefined
       };
     });
 
