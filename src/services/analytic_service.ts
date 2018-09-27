@@ -114,6 +114,7 @@ export class AnalyticService {
     if(data.enabled === undefined) {
       throw new Error('Server didn`t return "enabled"');
     }
+    console.log(`Try to enable alerts, got ${data.enabled as boolean}`);
     return data.enabled as boolean;
 
   }
@@ -122,6 +123,7 @@ export class AnalyticService {
     if(id === undefined) {
       throw new Error('id is undefined');
     }
+    console.log(`Enable alert url:${this._backendURL + '/alerts'} id:${id} enabled:${enabled}`);
     return this._backendSrv.post(
       this._backendURL + '/alerts', { id, enabled }
     );
