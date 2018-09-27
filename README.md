@@ -27,12 +27,12 @@ A better version of Grafana's default Graph Panel. Able to render Anomalies & mo
 
 - Download hastic graph panel
 ```
-wget https://github.com/hastic/hastic-grafana-graph-panel/releases/download/0.2.1/hastic-graph-panel-0.2.1.tar.gz
+wget https://github.com/hastic/hastic-grafana-graph-panel/releases/download/0.2.3/hastic-graph-panel-0.2.3.tar.gz
 ```
 
 - Unpack downloaded files
 ```
-tar -zxvf hastic-graph-panel-0.2.1.tar.gz
+tar -zxvf hastic-graph-panel-0.2.3.tar.gz
 ```
 
 - Restart grafana-server
@@ -52,7 +52,7 @@ tar -zxvf hastic-graph-panel-0.2.1.tar.gz
 mkdir -p data/plugins
 ```
 
-- Navigate to /plugins directory in <GRAFANA_PATH>/data/plugins
+- Navigate to `/plugins` directory in `<GRAFANA_PATH>/data`
 ```
 cd $GRAFANA_PATH/data/plugins
 ```
@@ -123,6 +123,16 @@ npm run build
 
 
 # Changelog
+
+### [0.2.3] - 2018-09-27
+> Supports only hastic-server of versions **0.2.3-alpha or greater**
+#### Added
+- Highlight segments that were used in learning process [#63](https://github.com/hastic/hastic-grafana-graph-panel/issues/63)
+- Display anti-segments [#66](https://github.com/hastic/hastic-grafana-graph-panel/issues/66)
+
+#### Fixed
+- Property 'type' of undefined in elasticsearch [#69](https://github.com/hastic/hastic-grafana-graph-panel/issues/69)
+- Get datasource type from Grafana API [#70](https://github.com/hastic/hastic-grafana-graph-panel/issues/70)
 
 ### [0.2.1] - 2018-09-04
 > Supports only hastic-server of versions **0.2.0-alpha or greater**
