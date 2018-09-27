@@ -359,7 +359,7 @@ export class AnalyticController {
   }
 
   async runEnabledWaiter(analyticUnit: AnalyticUnit) {
-    var enabled = await this._analyticService.getAlertEnabled(analyticUnit.id);
+    let enabled = await this._analyticService.getAlertEnabled(analyticUnit.id);
     if(analyticUnit.alertEnabled !== enabled) {
       analyticUnit.alertEnabled = enabled;
       this._emitter.emit('anomaly-type-alert-change', analyticUnit);
