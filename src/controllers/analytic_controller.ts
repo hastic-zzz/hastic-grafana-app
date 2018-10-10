@@ -265,7 +265,7 @@ export class AnalyticController {
       segments.forEach(s => {
         let segmentBorderColor;
         let segmentFillColor = fillColor;
-        
+
         if(this.labelingDeleteMode) {
           if(s.deleted) {
             segmentBorderColor = deletedSegmentBorderColor;
@@ -326,7 +326,6 @@ export class AnalyticController {
   }
 
   private async _runStatusWaiter(analyticUnit: AnalyticUnit) {
-    console.log(analyticUnit)
     if(analyticUnit === undefined || analyticUnit === null) {
       throw new Error('analyticUnit not defined');
     }
