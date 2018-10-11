@@ -16,6 +16,16 @@ A better version of Grafana's default Graph Panel. Able to render Anomalies & mo
 
 <img src="https://hastic.io/images/cpu_white.gif" />
 
+
+See also:
+* [Wiki](https://github.com/hastic/hastic-grafana-graph-panel/wiki)
+* [FAQ](https://github.com/hastic/hastic-grafana-graph-panel/wiki/FAQ)
+* [Installation from source](https://github.com/hastic/hastic-grafana-graph-panel/wiki/Installation-from-source)
+* [Usage](https://github.com/hastic/hastic-grafana-graph-panel/wiki/Usage)
+* [Changelog](https://github.com/hastic/hastic-grafana-graph-panel/wiki/Changelog)
+* [Hastic-server](https://github.com/hastic/hastic-server)
+
+
 # Prerequisites
 
 * [hastic-server](https://github.com/hastic/hastic-server)
@@ -43,83 +53,6 @@ tar -zxvf hastic-graph-panel-0.2.3.tar.gz
   - For grafana installed via Package Manager:
     - type in ```systemctl restart grafana-server```
 
-# Installation from source
-
-**Note, that <GRAFANA_PATH>/data/plugins directory will NOT be present until grafana-server was started at least once!**
-
-**Also possible to create directory manually by typing:**
-```
-mkdir -p data/plugins
-```
-
-- Navigate to `/plugins` directory in `<GRAFANA_PATH>/data`
-```
-cd $GRAFANA_PATH/data/plugins
-```
-
-- Clone the repository
-```
-git clone https://github.com/hastic/hastic-grafana-graph-panel.git
-```
-
-- Navigate to /hastic-grafana-graph-panel directory
-```
-cd $GRAFANA_PATH/data/plugins/hastic-grafana-graph-panel
-```
-
-- Install necessary dependencies
-```
-npm install
-```
-
-- Build hastic graph panel
-```
-npm run build
-```
-
-- Restart grafana-server
-  - For grafana installed via Standalone Linux Binaries:
-    - Stop any running instances of grafana-server
-    - Start grafana-server by:
-      ```$GRAFANA_PATH/bin/grafana-server```
-  - For grafana installed via Package Manager:
-    - type in ```systemctl restart grafana-server```
-
-# Usage
-
-[hastic-server](https://github.com/hastic/hastic-server) should be running in order to use anomaly detection.
-
-- Open new dasboard where you want to see Hastic panel
-- Open Dashboard `Settings` (top right corner) and then navigate to `Variables` 
-- Add new [variable](http://docs.grafana.org/reference/templating/#variable-types) 
-  - set `type` to `Constant`
-  - set `name` to `HASTIC_SERVER_URL` 
-  - set `value` to URL of your hastic-server instance in your dashboard (e.g. `http://localhost:8000`)
-- Save settings and close Settings window
-- Open panel edit mode (click `panel title`menu or press "e" hotkey)
-- Navigate to `Metrics` tab. Set metrics. Only one metric suported
-- Navigate to `Analytics tab`
-  - Push `Add an Anomaly Type` button
-  - Set name of the anomaly and choose a pattern type
-  - Press `create`
-- Label your data:
-  - Click button with chart icon
-  - Highlight anomalies on graph holding `Ctrl` button on Windows or `Cmd` on Mac
-  - When you have finished labeling - click the button with the chart icon once more. `saving...` status should appear.
-- `Learning` status should appear while hastic-server is learning (first learning can take a while).
-- When `Learning` status dissapears - the anomalies should become labeled in your graph
-- <img src="assets/mag_icon_light.png" /> this icon means that the anomaly was marked by the server
-- <img src="assets/pin_icon_light.png" /> this icon means that the anomaly was marked by the user
-
-
-# Development
-
-## Build
-
-```
-npm install
-npm run build
-```
 
 # Credits
 
