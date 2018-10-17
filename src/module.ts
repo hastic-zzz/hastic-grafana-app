@@ -240,14 +240,16 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   onInitEditMode() {
-    var partialPath = this.panelPath + 'partials';
+    this.analyticsController.updateServerInfo();
+
+    const partialPath = this.panelPath + 'partials';
     this.addEditorTab('Analytics', `${partialPath}/tab_analytics.html`, 2);
     this.addEditorTab('Axes', axesEditorComponent, 3);
     this.addEditorTab('Legend', `${partialPath}/tab_legend.html`, 4);
     this.addEditorTab('Display', `${partialPath}/tab_display.html`, 5);
     this.addEditorTab('Plugin info', `${partialPath}/tab_info.html`, 6);
 
-    if (config.alertingEnabled) {
+    if(config.alertingEnabled) {
       this.addEditorTab('Alert', alertTab, 6);
     }
 

@@ -11,6 +11,7 @@ import { DatasourceRequest } from '../models/datasource';
 import { Segment, SegmentId } from '../models/segment';
 import { SegmentsSet } from '../models/segment_set';
 import { SegmentArray } from '../models/segment_array';
+import { ServerInfo } from '../models/server_info';
 
 import { ANALYTIC_UNIT_COLORS } from '../colors';
 
@@ -41,6 +42,7 @@ export class AnalyticController {
   private _tempIdCounted: number = -1;
   private _graphLocked: boolean = false;
   private _statusRunners: Set<AnalyticUnitId> = new Set<AnalyticUnitId>();
+  private _serverInfo: ServerInfo;
 
   constructor(private _panelObject: any, private _analyticService: AnalyticService, private _emitter: Emitter) {
     if(_panelObject.anomalyTypes === undefined) {
@@ -390,6 +392,14 @@ export class AnalyticController {
     } else {
       analyticUnit.visible = !analyticUnit.visible;
     }
+  }
+
+  public async updateServerInfo() {
+    this._serverInfo = await this._analyticService.getServerInfo();
+  }
+
+  public get serverInfo() {
+    return this._serverInfo;
   }
 
 }
