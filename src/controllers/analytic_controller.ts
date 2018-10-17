@@ -11,7 +11,7 @@ import { DatasourceRequest } from '../models/datasource';
 import { Segment, SegmentId } from '../models/segment';
 import { SegmentsSet } from '../models/segment_set';
 import { SegmentArray } from '../models/segment_array';
-import { ServerInfo } from '../models/server_info';
+import { ServerInfo } from '../models/info';
 
 import { ANALYTIC_UNIT_COLORS } from '../colors';
 

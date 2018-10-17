@@ -1,7 +1,10 @@
 <div class="editor-row">
 	<div class="section gf-form-group">
 		<h5>Panel</h5>
-    <label class="gf-form-label width-9">12 </label>
+    <div class="gf-form-inline" ng-repeat="(key, value) in ctrl.panelInfo">
+      <label class="gf-form-label width-10">{{ key }}</label>
+      <label class="gf-form-label width-15">{{ value }}</label>
+    </div>
   </div>
   <div class="section gf-form-group">
     <h5>Server</h5>

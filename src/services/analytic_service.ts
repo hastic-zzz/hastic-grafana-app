@@ -3,7 +3,7 @@ import { MetricExpanded } from '../models/metric';
 import { DatasourceRequest } from '../models/datasource';
 import { SegmentsSet } from '../models/segment_set';
 import { AnalyticUnitId, AnalyticUnit, AnalyticSegment } from '../models/analytic_unit';
-import { ServerInfo } from '../models/server_info';
+import { ServerInfo } from '../models/info';
 
 import { BackendSrv } from 'grafana/app/core/services/backend_srv';
 

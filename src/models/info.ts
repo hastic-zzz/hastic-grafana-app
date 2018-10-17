@@ -8,3 +8,10 @@ export type ServerInfo = {
   gitBranch: string,
   gitCommitHash: string
 }
+
+export type PanelInfo = {
+  grafanaVersion: string,
+  grafanaUrl: string,
+  datasourceType: string,
+  hasticServerUrl: string
+}
