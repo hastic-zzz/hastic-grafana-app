@@ -245,6 +245,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.addEditorTab('Axes', axesEditorComponent, 3);
     this.addEditorTab('Legend', `${partialPath}/tab_legend.html`, 4);
     this.addEditorTab('Display', `${partialPath}/tab_display.html`, 5);
+    this.addEditorTab('Plugin info', `${partialPath}/tab_info.html`, 6);
 
     if (config.alertingEnabled) {
       this.addEditorTab('Alert', alertTab, 6);
