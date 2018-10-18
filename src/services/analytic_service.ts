@@ -3,6 +3,7 @@ import { MetricExpanded } from '../models/metric';
 import { DatasourceRequest } from '../models/datasource';
 import { SegmentsSet } from '../models/segment_set';
 import { AnalyticUnitId, AnalyticUnit, AnalyticSegment } from '../models/analytic_unit';
+import { ServerInfo } from '../models/info';
 
 import { BackendSrv } from 'grafana/app/core/services/backend_srv';
 
@@ -125,6 +126,20 @@ export class AnalyticService {
     return this._backendSrv.post(
       this._backendURL + '/alerts', { id, enabled }
     );
+  }
+
+  async getServerInfo(): Promise<ServerInfo> {
+    let data = await this._backendSrv.get(this._backendURL);
+    return {
+      nodeVersion: data.nodeVersion,
+      packageVersion: data.packageVersion,
+      npmUserAgent: data.npmUserAgent,
+      docker: data.docker,
+      zmqConectionString: data.zmqConectionString,
+      serverPort: data.serverPort,
+      gitBranch: data.git.branch,
+      gitCommitHash: data.git.commitHash
+    };
   }
 
 }

@@ -11,6 +11,7 @@ import { DatasourceRequest } from './models/datasource';
 import { AnalyticUnitId, AnalyticUnit } from './models/analytic_unit';
 import { AnalyticService } from './services/analytic_service';
 import { AnalyticController } from './controllers/analytic_controller';
+import { PanelInfo } from './models/info';
 
 import { axesEditorComponent } from './axes_editor';
 
@@ -49,6 +50,8 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   _graphRenderer: GraphRenderer;
   _graphLegend: GraphLegend;
+
+  _panelInfo: PanelInfo;
 
   panelDefaults = {
     // datasource name, null = default datasource
@@ -240,13 +243,17 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   onInitEditMode() {
-    var partialPath = this.panelPath + 'partials';
+    this._updatePanelInfo();
+    this.analyticsController.updateServerInfo();
+
+    const partialPath = this.panelPath + 'partials';
     this.addEditorTab('Analytics', `${partialPath}/tab_analytics.html`, 2);
     this.addEditorTab('Axes', axesEditorComponent, 3);
     this.addEditorTab('Legend', `${partialPath}/tab_legend.html`, 4);
     this.addEditorTab('Display', `${partialPath}/tab_display.html`, 5);
+    this.addEditorTab('Plugin info', `${partialPath}/tab_info.html`, 6);
 
-    if (config.alertingEnabled) {
+    if(config.alertingEnabled) {
       this.addEditorTab('Alert', alertTab, 6);
     }
 
@@ -588,6 +595,21 @@ class GraphCtrl extends MetricsPanelCtrl {
   onToggleVisibility(id: AnalyticUnitId) {
     this.analyticsController.toggleVisibility(id);
     this.render();
+  }
+
+  private async _updatePanelInfo() {
+    const datasource = await this.backendSrv.get(`/api/datasources/name/${this.panel.datasource}`);
+
+    this._panelInfo = {
+      grafanaVersion: this.contextSrv.version,
+      grafanaUrl: window.location.host,
+      datasourceType: datasource.type,
+      hasticServerUrl: this.backendURL
+    }
+  }
+
+  get panelInfo() {
+    return this._panelInfo;
   }
 
   get renderError(): boolean { return this._renderError; }
