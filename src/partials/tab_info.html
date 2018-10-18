@@ -1,14 +1,32 @@
 <div class="editor-row">
   <div class="section gf-form-group">
-    <h5>Panel</h5>
-    <div class="gf-form-inline" ng-repeat="(key, value) in ctrl.panelInfo">
+    <h5>
+      Panel
+      <a ng-click="ctrl.updatePanelInfo()"><i class="fa fa-refresh"></i></a>
+    </h5>
+    <div class="gf-form-inline" ng-show="ctrl.panelInfo === undefined">
+      <i class="fa fa-spinner fa-spin"></i>
+    </div>
+    <div class="gf-form-inline"
+      ng-show="ctrl.panelInfo !== undefined"
+      ng-repeat="(key, value) in ctrl.panelInfo"
+    >
       <label class="gf-form-label width-10">{{ key }}</label>
       <label class="gf-form-label width-15">{{ value }}</label>
     </div>
   </div>
   <div class="section gf-form-group">
-    <h5>Server</h5>
-    <div class="gf-form-inline" ng-repeat="(key, value) in ctrl.analyticsController.serverInfo">
+    <h5>
+      Server
+      <a ng-click="ctrl.analyticsController.updateServerInfo()"><i class="fa fa-refresh"></i></a>
+    </h5>
+    <div class="gf-form-inline" ng-show="ctrl.analyticsController.serverInfo === undefined">
+      <i class="fa fa-spinner fa-spin"></i>
+    </div>
+    <div class="gf-form-inline"
+      ng-show="ctrl.analyticsController.serverInfo !== undefined"
+      ng-repeat="(key, value) in ctrl.analyticsController.serverInfo"
+    >
       <label class="gf-form-label width-10">{{ key }}</label>
       <label class="gf-form-label width-15">{{ value }}</label>
     </div>
