@@ -532,11 +532,19 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   async saveNew() {
     this.refresh();
-    await this.analyticsController.saveNew(
-      new MetricExpanded(this.panel.datasource, this.panel.targets),
-      this.datasourceRequest,
-      this.panel.id
-    );
+    try {
+      await this.analyticsController.saveNew(
+        new MetricExpanded(this.panel.datasource, this.panel.targets),
+        this.datasourceRequest,
+        this.panel.id
+      );
+    } catch(e) {
+      this.alertSrv.set(
+        'Error while saving analytic unit',
+        e.message,
+        'error', 7000
+      );
+    }
     this.$scope.$digest();
     this.render(this.seriesList);
   }

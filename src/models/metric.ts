@@ -37,6 +37,9 @@ export class Metric {
 export class MetricExpanded {
   private _targets: Target[];
   constructor(public datasource: string, targets: any[]) {
+    if(targets.length > 1) {
+      throw new Error('Multiple metrics are not supported currently');
+    }
     this._targets = targets.map(t => new Target(t));
   }
 
