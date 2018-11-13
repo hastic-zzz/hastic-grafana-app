@@ -37,10 +37,11 @@ export class Metric {
 export class MetricExpanded {
   private _targets: Target[];
   constructor(public datasource: string, targets: any[]) {
-    if(targets.length > 1) {
+    const visibleTargets = targets.filter(target => !target.hide);
+    if(visibleTargets.length > 1) {
       throw new Error('Multiple metrics are not supported currently');
     }
-    this._targets = targets.map(t => new Target(t));
+    this._targets = visibleTargets.map(t => new Target(t));
   }
 
   toJSON(): any {
