@@ -28,6 +28,7 @@ const BACKEND_VARIABLE_NAME = 'HASTIC_SERVER_URL';
 class GraphCtrl extends MetricsPanelCtrl {
   static template = template;
 
+  anomalyService: AnalyticService;
   hiddenSeries: any = {};
   seriesList: any = [];
   dataList: any = [];
@@ -148,7 +149,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   /** @ngInject */
   constructor(
-    $scope, $injector, private annotationsSrv,
+    $scope, $injector, $http, private annotationsSrv,
     private keybindingSrv, private backendSrv,
     private popoverSrv, private contextSrv,
     private alertSrv
@@ -163,11 +164,12 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.processor = new DataProcessor(this.panel);
 
 
-    var anomalyService = new AnalyticService(this.backendURL, backendSrv as BackendSrv);
+    this.anomalyService = new AnalyticService(this.backendURL, backendSrv as BackendSrv, $http);
 
     this.runBackendConnectivityCheck();
+    setInterval(this.runBackendConnectivityCheck.bind(this),100);
 
-    this.analyticsController = new AnalyticController(this.panel, anomalyService, this.events);
+    this.analyticsController = new AnalyticController(this.panel, this.anomalyService, this.events);
     this.anomalyTypes = this.panel.anomalyTypes;
     keybindingSrv.bind('d', this.onDKey.bind(this));
 
@@ -215,6 +217,7 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   async runBackendConnectivityCheck() {
+    console.log(this.anomalyService.noConnection)
     if(this.backendURL === '' || this.backendURL === undefined) {
       this.alertSrv.set(
         `Dashboard variable $${BACKEND_VARIABLE_NAME} is missing`,
@@ -224,12 +227,21 @@ class GraphCtrl extends MetricsPanelCtrl {
       return;
     }
 
-    var as = new AnalyticService(this.backendURL, this.backendSrv);
-    var isOK = await as.isBackendOk();
-    if(!isOK) {
+    let connected = await this.anomalyService.isBackendOk();
+    if (connected && this.anomalyService.noConnection) {
+      this.anomalyService.noConnection = false;
       this.alertSrv.set(
-        'Can`t connect to Hastic server', `Hastic server: "${this.backendURL}"`, 'warning', 4000
+        'Connected to Hastic server',
+        `Hastic server: "${this.backendURL}"`,
+        'success', 4000
       );
+    } else if(!connected) {
+      this.alertSrv.set(
+        'Can`t connect to Hastic server',
+        `Hastic server: "${this.backendURL}"`,
+        'warning', 4000
+      );
+      this.anomalyService.noConnection = true;
     }
   }
 

@@ -1,148 +1,160 @@
-<h5> Analytic Units </h5>
-<div class="editor-row">
-  <div class="gf-form" ng-repeat="analyticUnit in ctrl.analyticsController.analyticUnits">
+<div class="gf-form-button-row" ng-if="ctrl.analyticsController.serverStatus === false">
+  <h1>Hastic server is not responding. Please start Hastic server.</h1>
+  <!--<button class="btn btn-inverse" ng-click="ctrl.runBackendConnectivityCheck()">
+    <i class="fa fa-plug"></i>
+    Reconnect to Hastic server
+  </button> -->
+</div>
 
-    <label class="gf-form-label width-4"> Name </label>
-    <input
-      type="text" class="gf-form-input max-width-15"
-      ng-model="analyticUnit.name"
-      ng-disabled="true"
-    >
+<div ng-if="ctrl.analyticsController.serverStatus === true">
+  <h5> Analytic Units </h5>
+  <div class="editor-row">
+    <div class="gf-form" ng-repeat="analyticUnit in ctrl.analyticsController.analyticUnits">
 
-    <label class="gf-form-label width-8"> Type </label>
-    <div class="gf-form-select-wrapper">
-      <select class="gf-form-input width-12"
-        ng-model="analyticUnit.type"
-        ng-options="type.value as type.name for type in ctrl.panel.analyticUnitTypes"
+      <label class="gf-form-label width-4"> Name </label>
+      <input
+        type="text" class="gf-form-input max-width-15"
+        ng-model="analyticUnit.name"
         ng-disabled="true"
+      >
+
+      <label class="gf-form-label width-8"> Type </label>
+      <div class="gf-form-select-wrapper">
+        <select class="gf-form-input width-12"
+          ng-model="analyticUnit.type"
+          ng-options="type.value as type.name for type in ctrl.panel.analyticUnitTypes"
+          ng-disabled="true"
+        />
+      </div>
+
+      <!--
+      <label class="gf-form-label width-6"> Confidence </label>
+      <input
+        type="number" class="gf-form-input width-5 ng-valid ng-scope ng-empty ng-dirty ng-valid-number ng-touched"
+        placeholder="auto" bs-tooltip="'Override automatic decimal precision for legend and tooltips'"
+        data-placement="right" ng-model="ctrl.panel.decimals" ng-change="ctrl.render()" ng-model-onblur="" data-original-title="" title=""
       />
+      -->
+
+      <label class="gf-form-label width-6"> Color </label>
+      <span class="gf-form-label">
+        <color-picker
+          color="analyticUnit.color"
+          onChange="ctrl.onColorChange.bind(ctrl, analyticUnit.id)"
+        />
+      </span>
+
+      <label class="gf-form-label" ng-style="analyticUnit.status === 'LEARNING' && { 'cursor': 'not-allowed' }">
+        <a class="pointer" tabindex="1"
+          ng-click="ctrl.onToggleLabelingMode(analyticUnit.id)"
+          ng-disabled="analyticUnit.status === 'LEARNING'"
+        >
+          <i class="fa fa-bar-chart" ng-if="!analyticUnit.saving"></i>
+          <i class="fa fa-spinner fa-spin" ng-if="analyticUnit.saving"></i>
+          <b ng-if="analyticUnit.selected && !analyticUnit.deleteMode && !analyticUnit.saving"> labeling </b>
+          <b ng-if="analyticUnit.selected && analyticUnit.deleteMode && !analyticUnit.saving"> deleting </b>
+          <b ng-if="analyticUnit.saving" ng-disabled="true"> saving... </b>
+        </a>
+      </label>
+
+
+      <!-- <label class="gf-form-label"> Alerts: </label>
+      <label
+        class="gf-form-label text-center"
+        style="width: 4rem"
+        ng-if="analyticUnit.alertEnabled === undefined"
+        bs-tooltip="'Alarting status isn`t available. Wait please.'"
+      >
+        <i class="fa fa-spinner fa-spin"></i>
+      </label> -->
+
+      <gf-form-switch
+        ng-if="analyticUnit.alertEnabled !== undefined"
+        on-change="ctrl.onAnomalyAlertChange(analyticUnit)"
+        checked="analyticUnit.alertEnabled"
+        style="height: 36px;"
+      />
+
+      <label class="gf-form-label">
+        <a
+          ng-if="analyticUnit.visible"
+          ng-disabled="analyticUnit.selected"
+          bs-tooltip="'Hide. It`s visible now.'"
+          ng-click="ctrl.onToggleVisibility(analyticUnit.id)"
+          class="pointer"
+        >
+          <i class="fa fa-eye"></i>
+        </a>
+
+        <a
+          ng-if="!analyticUnit.visible"
+          ng-disabled="analyticUnit.selected"
+          bs-tooltip="'Show. It`s hidden now.'"
+          ng-click="ctrl.onToggleVisibility(analyticUnit.id)"
+          class="pointer"
+        >
+          <i class="fa fa-eye-slash"></i>
+        </a>
+      </label>
+
+      <label class="gf-form-label">
+        <a
+          ng-if="!analyticUnit.selected"
+          ng-click="ctrl.onRemove(analyticUnit.id)"
+          class="pointer"
+        >
+          <i class="fa fa-trash"></i>
+        </a>
+
+        <a
+          ng-if="analyticUnit.selected"
+          ng-click="ctrl.onCancelLabeling(analyticUnit.id)"
+          class="pointer"
+        >
+          <i class="fa fa-ban"></i>
+        </a>
+      </label>
+
+      <label>
+        <i ng-if="analyticUnit.status === 'LEARNING'" class="grafana-tip fa fa-leanpub ng-scope" bs-tooltip="'Learning'"></i>
+        <i ng-if="analyticUnit.status === 'PENDING'" class="grafana-tip fa fa-list-ul ng-scope" bs-tooltip="'Pending'"></i>
+        <i ng-if="analyticUnit.status === 'FAILED'" class="grafana-tip fa fa-exclamation-circle ng-scope" bs-tooltip="'Error: ' + analyticUnit.error"></i>
+      </label>
+
     </div>
+  </div>
 
-    <!--
-    <label class="gf-form-label width-6"> Confidence </label>
-    <input
-      type="number" class="gf-form-input width-5 ng-valid ng-scope ng-empty ng-dirty ng-valid-number ng-touched"
-      placeholder="auto" bs-tooltip="'Override automatic decimal precision for legend and tooltips'"
-      data-placement="right" ng-model="ctrl.panel.decimals" ng-change="ctrl.render()" ng-model-onblur="" data-original-title="" title=""
-    />
-    -->
-
-    <label class="gf-form-label width-6"> Color </label>
-    <span class="gf-form-label">
-      <color-picker
-        color="analyticUnit.color"
-        onChange="ctrl.onColorChange.bind(ctrl, analyticUnit.id)"
-      />
-    </span>
-
-    <label class="gf-form-label" ng-style="analyticUnit.status === 'LEARNING' && { 'cursor': 'not-allowed' }">
-      <a class="pointer" tabindex="1"
-        ng-click="ctrl.onToggleLabelingMode(analyticUnit.id)"
-        ng-disabled="analyticUnit.status === 'LEARNING'"
+  <div class="editor-row" ng-if="ctrl.analyticsController.creatingNew">
+    <div class="gf-form">
+      <label class="gf-form-label width-4"> Name </label>
+      <input
+        type="text" class="gf-form-input max-width-15"
+        ng-model="ctrl.analyticsController.newAnalyticUnit.name"
       >
-        <i class="fa fa-bar-chart" ng-if="!analyticUnit.saving"></i>
-        <i class="fa fa-spinner fa-spin" ng-if="analyticUnit.saving"></i>
-        <b ng-if="analyticUnit.selected && !analyticUnit.deleteMode && !analyticUnit.saving"> labeling </b>
-        <b ng-if="analyticUnit.selected && analyticUnit.deleteMode && !analyticUnit.saving"> deleting </b>
-        <b ng-if="analyticUnit.saving" ng-disabled="true"> saving... </b>
-      </a>
-    </label>
 
+      <label class="gf-form-label width-8"> Type </label>
+      <div class="gf-form-select-wrapper">
+        <select class="gf-form-input width-12"
+          ng-model="ctrl.analyticsController.newAnalyticUnit.type"
+          ng-options="type.value as type.name for type in ctrl.panel.analyticUnitTypes"
+        />
+      </div>
 
-    <!-- <label class="gf-form-label"> Alerts: </label>
-    <label
-      class="gf-form-label text-center"
-      style="width: 4rem"
-      ng-if="analyticUnit.alertEnabled === undefined"
-      bs-tooltip="'Alarting status isn`t available. Wait please.'"
-    >
-      <i class="fa fa-spinner fa-spin"></i>
-    </label> -->
+      <label class="gf-form-label">
+        <a class="pointer" tabindex="1" ng-click="ctrl.saveNew()">
+          <b ng-if="!ctrl.analyticsController.saving"> create </b>
+          <b ng-if="ctrl.analyticsController.saving" ng-disabled="true"> saving... </b>
+        </a>
+      </label>
+    </div>
+  </div>
 
-    <gf-form-switch
-      ng-if="analyticUnit.alertEnabled !== undefined"
-      on-change="ctrl.onAnomalyAlertChange(analyticUnit)"
-      checked="analyticUnit.alertEnabled"
-      style="height: 36px;"
-    />
-
-    <label class="gf-form-label">
-      <a
-        ng-if="analyticUnit.visible"
-        ng-disabled="analyticUnit.selected"
-        bs-tooltip="'Hide. It`s visible now.'"
-        ng-click="ctrl.onToggleVisibility(analyticUnit.id)"
-        class="pointer"
-      >
-        <i class="fa fa-eye"></i>
-      </a>
-
-      <a
-        ng-if="!analyticUnit.visible"
-        ng-disabled="analyticUnit.selected"
-        bs-tooltip="'Show. It`s hidden now.'"
-        ng-click="ctrl.onToggleVisibility(analyticUnit.id)"
-        class="pointer"
-      >
-        <i class="fa fa-eye-slash"></i>
-      </a>
-    </label>
-
-    <label class="gf-form-label">
-      <a
-        ng-if="!analyticUnit.selected"
-        ng-click="ctrl.onRemove(analyticUnit.id)"
-        class="pointer"
-      >
-        <i class="fa fa-trash"></i>
-      </a>
-
-      <a
-        ng-if="analyticUnit.selected"
-        ng-click="ctrl.onCancelLabeling(analyticUnit.id)"
-        class="pointer"
-      >
-        <i class="fa fa-ban"></i>
-      </a>
-    </label>
-
-    <label>
-      <i ng-if="analyticUnit.status === 'LEARNING'" class="grafana-tip fa fa-leanpub ng-scope" bs-tooltip="'Learning'"></i>
-      <i ng-if="analyticUnit.status === 'PENDING'" class="grafana-tip fa fa-list-ul ng-scope" bs-tooltip="'Pending'"></i>
-      <i ng-if="analyticUnit.status === 'FAILED'" class="grafana-tip fa fa-exclamation-circle ng-scope" bs-tooltip="'Error: ' + analyticUnit.error"></i>
-    </label>
-
+  <div class="gf-form-button-row" ng-if="!ctrl.analyticsController.creatingAnalyticUnit">
+    <button class="btn btn-inverse" ng-click="ctrl.createNew()">
+      <i class="fa fa-plus"></i>
+      Add Analytic Unit
+    </button>
+    
   </div>
 </div>
 
-<div class="editor-row" ng-if="ctrl.analyticsController.creatingNew">
-  <div class="gf-form">
-    <label class="gf-form-label width-4"> Name </label>
-    <input
-      type="text" class="gf-form-input max-width-15"
-      ng-model="ctrl.analyticsController.newAnalyticUnit.name"
-    >
-
-    <label class="gf-form-label width-8"> Type </label>
-    <div class="gf-form-select-wrapper">
-      <select class="gf-form-input width-12"
-        ng-model="ctrl.analyticsController.newAnalyticUnit.type"
-        ng-options="type.value as type.name for type in ctrl.panel.analyticUnitTypes"
-      />
-    </div>
-
-    <label class="gf-form-label">
-      <a class="pointer" tabindex="1" ng-click="ctrl.saveNew()">
-        <b ng-if="!ctrl.analyticsController.saving"> create </b>
-        <b ng-if="ctrl.analyticsController.saving" ng-disabled="true"> saving... </b>
-      </a>
-    </label>
-  </div>
-</div>
-
-<div class="gf-form-button-row" ng-if="!ctrl.analyticsController.creatingAnalyticUnit">
-  <button class="btn btn-inverse" ng-click="ctrl.createNew()">
-    <i class="fa fa-plus"></i>
-    Add Analytic Unit
-  </button>
-</div>
