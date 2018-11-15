@@ -405,11 +405,6 @@ export class AnalyticController {
   public get serverStatus() {
     return this._analyticService.isUp
   }
-
-  public checkServerStatus() {
-    this._analyticService.isBackendOk();
-  }
-
 }
 
 function addAlphaToRGB(colorString: string, alpha: number): string {
