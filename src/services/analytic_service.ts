@@ -181,7 +181,7 @@ export class AnalyticService {
       return response.data;
     } catch (error) {
       this.alertSrv.set(
-        'lost connection to Hastic server',
+        'No connection to Hastic server',
         `Hastic server: "${this._backendURL}"`,
         'warning', 4000
       );
