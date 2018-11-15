@@ -11,9 +11,8 @@ import { BackendSrv } from 'grafana/app/core/services/backend_srv';
 export class AnalyticService {
   public isUp: boolean = false;
 
-  constructor(private _backendURL: string, private _backendSrv: BackendSrv, public $http) {
+  constructor(private _backendURL: string, private _backendSrv: BackendSrv, public $http, public alertSrv) {
     this.isBackendOk();
-    
   }
 
   async postNewItem(
@@ -130,6 +129,7 @@ export class AnalyticService {
 
   async getServerInfo(): Promise<ServerInfo> {
     let data = await this.get(this._backendURL);
+    console.log(data)
     return {
       nodeVersion: data.nodeVersion,
       packageVersion: data.packageVersion,
@@ -148,6 +148,11 @@ export class AnalyticService {
       this.isUp = true;
       return response.data;
     } catch (error) {
+      this.alertSrv.set(
+        'lost connection to Hastic server',
+        `Hastic server: "${this._backendURL}"`,
+        'warning', 4000
+      );
       console.log(error);
       this.isUp = false
     } 
@@ -159,6 +164,11 @@ export class AnalyticService {
       this.isUp = true;
       return response.data;
     } catch (error) {
+      this.alertSrv.set(
+        'lost connection to Hastic server',
+        `Hastic server: "${this._backendURL}"`,
+        'warning', 4000
+      );
       console.log(error);
       this.isUp = false;
     } 
@@ -170,6 +180,11 @@ export class AnalyticService {
       this.isUp = true;
       return response.data;
     } catch (error) {
+      this.alertSrv.set(
+        'lost connection to Hastic server',
+        `Hastic server: "${this._backendURL}"`,
+        'warning', 4000
+      );
       console.log(error);
       this.isUp = false;
     }
