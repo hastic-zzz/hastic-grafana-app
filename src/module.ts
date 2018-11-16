@@ -231,12 +231,6 @@ class GraphCtrl extends MetricsPanelCtrl {
         `Hastic server: "${this.backendURL}"`,
         'success', 4000
       );
-    } else if(!connected) {
-      this.alertSrv.set(
-        'Can`t connect to Hastic server',
-        `Hastic server: "${this.backendURL}"`,
-        'warning', 4000
-      );
     }
   }
 

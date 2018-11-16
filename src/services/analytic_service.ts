@@ -7,7 +7,7 @@ import { ServerInfo } from '../models/info';
 
 
 export class AnalyticService {
-  private _isUp: boolean = false;
+  private _isUp = false;
 
   constructor(private _backendURL: string, private $http, private alertSrv) {
     this.isBackendOk();
