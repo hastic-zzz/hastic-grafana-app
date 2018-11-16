@@ -132,7 +132,7 @@ export class AnalyticController {
     });
 
     this.labelingAnomaly.saving = false;
-    
+
     var anomaly = this.labelingAnomaly;
     this.dropLabeling();
     this._runStatusWaiter(anomaly);
@@ -256,7 +256,7 @@ export class AnalyticController {
       }
 
       var rangeDist = +options.xaxis.max - +options.xaxis.min;
-      
+
       let labeledSegmentBorderColor = tinycolor(LABELED_SEGMENT_BORDER_COLOR).toRgbString();
       labeledSegmentBorderColor = addAlphaToRGB(labeledSegmentBorderColor, REGION_STROKE_ALPHA);
       let deletedSegmentFillColor = tinycolor(DELETED_SEGMENT_FILL_COLOR).toRgbString();
@@ -402,6 +402,9 @@ export class AnalyticController {
     return this._serverInfo;
   }
 
+  public get serverStatus() {
+    return this._analyticService.isUp;
+  }
 }
 
 function addAlphaToRGB(colorString: string, alpha: number): string {
