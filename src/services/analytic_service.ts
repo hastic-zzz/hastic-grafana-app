@@ -9,7 +9,7 @@ import { BackendSrv } from 'grafana/app/core/services/backend_srv';
 
 
 export class AnalyticService {
-  public isUp: boolean = false;
+  private _isUp: boolean = false;
 
   constructor(private _backendURL: string, private _backendSrv: BackendSrv, public $http, public alertSrv) {
     this.isBackendOk();
@@ -37,15 +37,15 @@ export class AnalyticService {
     try { 
       let response = await this.$http({ method: 'GET', url: this._backendURL }); 
       if(response.status !== -1) {
-        this.isUp = true;
+        this._isUp = true;
         return true;
       } else {
-        this.isUp = false;
+        this._isUp = false;
         return false;
       }
       // TODO: check version
     } catch(e) {
-      this.isUp = false;
+      this._isUp = false;
       return false;
     }
   }
@@ -145,7 +145,7 @@ export class AnalyticService {
   private async get(url, params?) {
     try {
       let response = await this.$http({ method: 'GET', url: url, params: params });
-      this.isUp = true;
+      this._isUp = true;
       return response.data;
     } catch (error) {
       this.alertSrv.set(
@@ -154,14 +154,14 @@ export class AnalyticService {
         'warning', 4000
       );
       console.log(error);
-      this.isUp = false
+      this._isUp = false
     } 
   }
 
   private async post(url, data) {
     try {
       let response = await this.$http({ method: 'POST', url: url, data: data });
-      this.isUp = true;
+      this._isUp = true;
       return response.data;
     } catch (error) {
       this.alertSrv.set(
@@ -170,14 +170,14 @@ export class AnalyticService {
         'warning', 4000
       );
       console.log(error);
-      this.isUp = false;
+      this._isUp = false;
     } 
   }
 
   private async patch(url, data) {
     try {
       let response = await this.$http({ method: 'PATCH', url: url, data: data });
-      this.isUp = true;
+      this._isUp = true;
       return response.data;
     } catch (error) {
       this.alertSrv.set(
@@ -186,7 +186,11 @@ export class AnalyticService {
         'warning', 4000
       );
       console.log(error);
-      this.isUp = false;
+      this._isUp = false;
     }
+  }
+
+  public get isUp() {
+    return this._isUp;
   }
 }
