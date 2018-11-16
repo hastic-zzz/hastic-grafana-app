@@ -16,7 +16,6 @@ import { PanelInfo } from './models/info';
 import { axesEditorComponent } from './axes_editor';
 
 import { MetricsPanelCtrl, alertTab } from 'grafana/app/plugins/sdk';
-import { BackendSrv } from 'grafana/app/core/services/backend_srv';
 import { appEvents } from 'grafana/app/core/core'
 import config from 'grafana/app/core/config';
 
@@ -164,7 +163,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.processor = new DataProcessor(this.panel);
 
 
-    this.anomalyService = new AnalyticService(this.backendURL, backendSrv as BackendSrv, $http, alertSrv);
+    this.anomalyService = new AnalyticService(this.backendURL, $http, this.alertSrv);
 
     this.runBackendConnectivityCheck();
 

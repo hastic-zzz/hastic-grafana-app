@@ -5,13 +5,11 @@ import { SegmentsSet } from '../models/segment_set';
 import { AnalyticUnitId, AnalyticUnit, AnalyticSegment } from '../models/analytic_unit';
 import { ServerInfo } from '../models/info';
 
-import { BackendSrv } from 'grafana/app/core/services/backend_srv';
-
 
 export class AnalyticService {
   private _isUp: boolean = false;
 
-  constructor(private _backendURL: string, private _backendSrv: BackendSrv, public $http, public alertSrv) {
+  constructor(private _backendURL: string, private $http, private alertSrv) {
     this.isBackendOk();
   }
 
