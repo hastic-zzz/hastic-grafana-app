@@ -134,13 +134,9 @@ export class AnalyticService {
       let response = await this.$http({ method: 'GET', url, params });
       this._isUp = true;
       return response.data;
-    } catch (error) {
-      this.alertSrv.set(
-        'No connection to Hastic server',
-        `Hastic server: "${this._backendURL}"`,
-        'warning', 4000
-      );
-      console.log(error);
+    } catch(error) {
+      this.displayConnectionAlert();
+      console.error(error);
       this._isUp = false
     } 
   }
@@ -150,13 +146,9 @@ export class AnalyticService {
       let response = await this.$http({ method: 'POST', url, data });
       this._isUp = true;
       return response.data;
-    } catch (error) {
-      this.alertSrv.set(
-        'No connection to Hastic server',
-        `Hastic server: "${this._backendURL}"`,
-        'warning', 4000
-      );
-      console.log(error);
+    } catch(error) {
+      this.displayConnectionAlert();
+      console.error(error);
       this._isUp = false;
     } 
   }
@@ -166,15 +158,19 @@ export class AnalyticService {
       let response = await this.$http({ method: 'PATCH', url, data });
       this._isUp = true;
       return response.data;
-    } catch (error) {
-      this.alertSrv.set(
-        'No connection to Hastic server',
-        `Hastic server: "${this._backendURL}"`,
-        'warning', 4000
-      );
-      console.log(error);
+    } catch(error) {
+      this.displayConnectionAlert();
+      console.error(error);
       this._isUp = false;
     }
+  }
+
+  private displayConnectionAlert() {
+    this.alertSrv.set(
+      'No connection to Hastic server',
+      `Hastic server: "${this._backendURL}"`,
+      'warning', 4000
+    );
   }
 
   public get isUp() {
