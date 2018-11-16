@@ -20,32 +20,21 @@ export class AnalyticService {
       let datasource = await this.get(`/api/datasources/name/${metric.datasource}`);
       datasourceRequest.type = datasource.type;
 
-      return this.post(this._backendURL + '/analyticUnits', {
-          panelUrl: window.location.origin + window.location.pathname + `?panelId=${panelId}&fullscreen`,
-          type: newItem.type,
-          name: newItem.name,
-          metric: metric.toJSON(),
-          datasource: datasourceRequest
-        }
-      )
-        .then(res => res.id as AnalyticUnitId);
+      const response = await this.post(this._backendURL + '/analyticUnits', {
+        panelUrl: window.location.origin + window.location.pathname + `?panelId=${panelId}&fullscreen`,
+        type: newItem.type,
+        name: newItem.name,
+        metric: metric.toJSON(),
+        datasource: datasourceRequest
+      });
+      
+      return response.id as AnalyticUnitId;
     }
 
   async isBackendOk(): Promise<boolean> {
-    try { 
-      let response = await this.$http({ method: 'GET', url: this._backendURL }); 
-      if(response.status !== -1) {
-        this._isUp = true;
-        return true;
-      } else {
-        this._isUp = false;
-        return false;
-      }
-      // TODO: check version
-    } catch(e) {
-      this._isUp = false;
-      return false;
-    }
+    await this.get(this._backendURL);
+
+    return this._isUp;
   }
 
   async updateSegments(
@@ -63,25 +52,25 @@ export class AnalyticService {
     };
 
     var data = await this.patch(this._backendURL + '/segments', payload);
-    if (data.addedIds === undefined) {
+    if(data.addedIds === undefined) {
       throw new Error('Server didn`t send addedIds');
     }
     return data.addedIds as SegmentId[];
   }
 
   async getSegments(id: AnalyticUnitId, from?: number, to?: number): Promise<AnalyticSegment[]> {
-    if (id === undefined) {
+    if(id === undefined) {
       throw new Error('id is undefined');
     }
     var payload: any = { id };
-    if (from !== undefined) {
+    if(from !== undefined) {
       payload['from'] = from;
     }
-    if (to !== undefined) {
+    if(to !== undefined) {
       payload['to'] = to;
     }
     var data = await this.get(this._backendURL + '/segments', payload);
-    if (data.segments === undefined) {
+    if(data.segments === undefined) {
       throw new Error('Server didn`t return segments array');
     }
     var segments = data.segments as { id: SegmentId, from: number, to: number, labeled: boolean, deleted: boolean }[];
@@ -89,7 +78,7 @@ export class AnalyticService {
   }
 
   async * getStatusGenerator(id: AnalyticUnitId, duration: number) {
-    if (id === undefined) {
+    if(id === undefined) {
       throw new Error('id is undefined');
     }
     let statusCheck = async () => {
@@ -108,18 +97,18 @@ export class AnalyticService {
   }
 
   async getAlertEnabled(id: AnalyticUnitId): Promise<boolean> {
-    if (id === undefined) {
+    if(id === undefined) {
       throw new Error('id is undefined');
     }
     var data = await this.get(this._backendURL + '/alerts', { id });
-    if (data.enabled === undefined) {
+    if(data.enabled === undefined) {
       throw new Error('Server didn`t return "enabled"');
     }
     return data.enabled as boolean;
   }
 
   async setAlertEnabled(id: AnalyticUnitId, enabled: boolean): Promise<void> {
-    if (id === undefined) {
+    if(id === undefined) {
       throw new Error('id is undefined');
     }
     return await this.post(this._backendURL + '/alerts', { id, enabled });
@@ -142,7 +131,7 @@ export class AnalyticService {
 
   private async get(url, params?) {
     try {
-      let response = await this.$http({ method: 'GET', url: url, params: params });
+      let response = await this.$http({ method: 'GET', url, params });
       this._isUp = true;
       return response.data;
     } catch (error) {
@@ -158,7 +147,7 @@ export class AnalyticService {
 
   private async post(url, data) {
     try {
-      let response = await this.$http({ method: 'POST', url: url, data: data });
+      let response = await this.$http({ method: 'POST', url, data });
       this._isUp = true;
       return response.data;
     } catch (error) {
@@ -174,7 +163,7 @@ export class AnalyticService {
 
   private async patch(url, data) {
     try {
-      let response = await this.$http({ method: 'PATCH', url: url, data: data });
+      let response = await this.$http({ method: 'PATCH', url, data });
       this._isUp = true;
       return response.data;
     } catch (error) {
