@@ -17,19 +17,19 @@ export class AnalyticService {
     metric: MetricExpanded, datasourceRequest: DatasourceRequest, 
     newItem: AnalyticUnit, panelId: number
   ): Promise<AnalyticUnitId> {
-      let datasource = await this.get(`/api/datasources/name/${metric.datasource}`);
-      datasourceRequest.type = datasource.type;
+    let datasource = await this.get(`/api/datasources/name/${metric.datasource}`);
+    datasourceRequest.type = datasource.type;
 
-      const response = await this.post(this._backendURL + '/analyticUnits', {
-        panelUrl: window.location.origin + window.location.pathname + `?panelId=${panelId}&fullscreen`,
-        type: newItem.type,
-        name: newItem.name,
-        metric: metric.toJSON(),
-        datasource: datasourceRequest
-      });
-      
-      return response.id as AnalyticUnitId;
-    }
+    const response = await this.post(this._backendURL + '/analyticUnits', {
+      panelUrl: window.location.origin + window.location.pathname + `?panelId=${panelId}&fullscreen`,
+      type: newItem.type,
+      name: newItem.name,
+      metric: metric.toJSON(),
+      datasource: datasourceRequest
+    });
+    
+    return response.id as AnalyticUnitId;
+  }
 
   async isBackendOk(): Promise<boolean> {
     await this.get(this._backendURL);
