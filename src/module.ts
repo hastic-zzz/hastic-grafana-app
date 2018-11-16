@@ -26,7 +26,6 @@ const BACKEND_VARIABLE_NAME = 'HASTIC_SERVER_URL';
 
 class GraphCtrl extends MetricsPanelCtrl {
   static template = template;
-  private _lostConnection = true;
 
   analyticService: AnalyticService;
   hiddenSeries: any = {};
@@ -214,7 +213,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
     return this.templateSrv.index[BACKEND_VARIABLE_NAME].current.value;
   }
-  
+
   async runBackendConnectivityCheck() {
     if(this.backendURL === '' || this.backendURL === undefined) {
       this.alertSrv.set(
@@ -226,20 +225,18 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
 
     let connected = await this.analyticService.isBackendOk();
-    if(connected && this._lostConnection) {
+    if(connected) {
       this.alertSrv.set(
         'Connected to Hastic server',
         `Hastic server: "${this.backendURL}"`,
         'success', 4000
       );
-      this._lostConnection = false;
     } else if(!connected) {
       this.alertSrv.set(
         'Can`t connect to Hastic server',
         `Hastic server: "${this.backendURL}"`,
         'warning', 4000
       );
-      this._lostConnection = true;
     }
   }
 
