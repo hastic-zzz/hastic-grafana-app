@@ -90,7 +90,7 @@ export class AnalyticService {
       resolve => setTimeout(resolve, duration)
     );
 
-    while (true) {
+    while(true) {
       yield await statusCheck();
       await timeout();
     }
@@ -116,7 +116,7 @@ export class AnalyticService {
 
   async getServerInfo(): Promise<ServerInfo> {
     let data = await this.get(this._backendURL);
-    console.log(data)
+    console.log(data);
     return {
       nodeVersion: data.nodeVersion,
       packageVersion: data.packageVersion,
@@ -137,7 +137,7 @@ export class AnalyticService {
     } catch(error) {
       this.displayConnectionAlert();
       console.error(error);
-      this._isUp = false
+      this._isUp = false;
     } 
   }
 
