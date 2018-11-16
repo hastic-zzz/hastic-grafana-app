@@ -403,7 +403,7 @@ export class AnalyticController {
   }
 
   public get serverStatus() {
-    return this._analyticService.isUp
+    return this._analyticService.isUp;
   }
 }
 
