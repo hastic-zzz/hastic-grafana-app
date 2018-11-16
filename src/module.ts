@@ -26,8 +26,9 @@ const BACKEND_VARIABLE_NAME = 'HASTIC_SERVER_URL';
 
 class GraphCtrl extends MetricsPanelCtrl {
   static template = template;
+  private _lostConnection = true;
 
-  anomalyService: AnalyticService;
+  analyticService: AnalyticService;
   hiddenSeries: any = {};
   seriesList: any = [];
   dataList: any = [];
@@ -163,11 +164,11 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.processor = new DataProcessor(this.panel);
 
 
-    this.anomalyService = new AnalyticService(this.backendURL, $http, this.alertSrv);
+    this.analyticService = new AnalyticService(this.backendURL, $http, this.alertSrv);
 
     this.runBackendConnectivityCheck();
 
-    this.analyticsController = new AnalyticController(this.panel, this.anomalyService, this.events);
+    this.analyticsController = new AnalyticController(this.panel, this.analyticService, this.events);
     this.anomalyTypes = this.panel.anomalyTypes;
     keybindingSrv.bind('d', this.onDKey.bind(this));
 
@@ -224,8 +225,8 @@ class GraphCtrl extends MetricsPanelCtrl {
       return;
     }
 
-    let connected = await this.anomalyService.isBackendOk();
-    if (connected) {
+    let connected = await this.analyticService.isBackendOk();
+    if(connected && this._lostConnection) {
       this.alertSrv.set(
         'Connected to Hastic server',
         `Hastic server: "${this.backendURL}"`,
