@@ -1,6 +1,6 @@
 {
   "name": "hastic-graph-panel",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Hastic default panel for rendering graph and anomalies",
   "main": "dist/module",
   "scripts": {
