@@ -219,7 +219,10 @@ class GraphCtrl extends MetricsPanelCtrl {
     if(this.templateSrv.index[BACKEND_VARIABLE_NAME] === undefined) {
       return undefined;
     }
-    return this.templateSrv.index[BACKEND_VARIABLE_NAME].current.value;
+    let val = this.templateSrv.index[BACKEND_VARIABLE_NAME].current.value;
+    val = val.replace(/\/+$/, "");
+    console.log('FUCK');
+    return val;
   }
 
   async runBackendConnectivityCheck() {
