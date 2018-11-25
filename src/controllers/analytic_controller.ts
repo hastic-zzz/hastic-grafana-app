@@ -45,12 +45,12 @@ export class AnalyticController {
   private _serverInfo: ServerInfo;
 
   constructor(private _panelObject: any, private _analyticService: AnalyticService, private _emitter: Emitter) {
-    if(_panelObject.anomalyTypes === undefined) {
-      _panelObject.anomalyTypes = [];
+    if(_panelObject.analyticUnits === undefined) {
+      _panelObject.analyticUnits = _panelObject.anomalyTypes || [];
     }
     this._labelingDataAddedSegments = new SegmentArray<AnalyticSegment>();
     this._labelingDataDeletedSegments = new SegmentArray<AnalyticSegment>();
-    this._analyticUnitsSet = new AnalyticUnitsSet(this._panelObject.anomalyTypes);
+    this._analyticUnitsSet = new AnalyticUnitsSet(this._panelObject.analyticUnits);
     // this.analyticUnits.forEach(a => this.runEnabledWaiter(a));
   }
 
@@ -101,15 +101,15 @@ export class AnalyticController {
   get graphLocked() { return this._graphLocked; }
   set graphLocked(value) { this._graphLocked = value; }
 
-  get labelingAnomaly(): AnalyticUnit {
+  get labelingUnit(): AnalyticUnit {
     if(this._selectedAnalyticUnitId === null) {
       return null;
     }
     return this._analyticUnitsSet.byId(this._selectedAnalyticUnitId);
   }
 
-  async toggleAnomalyTypeLabelingMode(id: AnalyticUnitId) {
-    if(this.labelingAnomaly && this.labelingAnomaly.saving) {
+  async toggleUnitTypeLabelingMode(id: AnalyticUnitId) {
+    if(this.labelingUnit && this.labelingUnit.saving) {
       throw new Error('Can`t toggle during saving');
     }
     if(this._selectedAnalyticUnitId === id) {
@@ -117,7 +117,7 @@ export class AnalyticController {
     }
     await this.disableLabeling();
     this._selectedAnalyticUnitId = id;
-    this.labelingAnomaly.selected = true;
+    this.labelingUnit.selected = true;
     this.toggleVisibility(id, true);
   }
 
@@ -125,22 +125,22 @@ export class AnalyticController {
     if(this._selectedAnalyticUnitId === null) {
       return;
     }
-    this.labelingAnomaly.saving = true;
+    this.labelingUnit.saving = true;
     var newIds = await this._saveLabelingData();
     this._labelingDataAddedSegments.getSegments().forEach((s, i) => {
-      this.labelingAnomaly.segments.updateId(s.id, newIds[i]);
+      this.labelingUnit.segments.updateId(s.id, newIds[i]);
     });
 
-    this.labelingAnomaly.saving = false;
+    this.labelingUnit.saving = false;
 
-    var anomaly = this.labelingAnomaly;
+    var anomaly = this.labelingUnit;
     this.dropLabeling();
     this._runStatusWaiter(anomaly);
   }
 
   undoLabeling() {
     this._labelingDataAddedSegments.getSegments().forEach(s => {
-      this.labelingAnomaly.segments.remove(s.id);
+      this.labelingUnit.segments.remove(s.id);
     });
     this._labelingDataDeletedSegments.getSegments().forEach(s => {
       s.deleted = false;
@@ -151,7 +151,7 @@ export class AnalyticController {
   dropLabeling() {
     this._labelingDataAddedSegments.clear();
     this._labelingDataDeletedSegments.clear();
-    this.labelingAnomaly.selected = false;
+    this.labelingUnit.selected = false;
     this._selectedAnalyticUnitId = null;
     this._tempIdCounted = -1;
   }
@@ -164,11 +164,11 @@ export class AnalyticController {
     if(!this.labelingMode) {
       return false;
     }
-    return this.labelingAnomaly.deleteMode;
+    return this.labelingUnit.deleteMode;
   }
 
   addLabelSegment(segment: Segment) {
-    var asegment = this.labelingAnomaly.addLabeledSegment(segment);
+    var asegment = this.labelingUnit.addLabeledSegment(segment);
     this._labelingDataAddedSegments.addSegment(asegment);
   }
 
@@ -183,11 +183,11 @@ export class AnalyticController {
     this._analyticUnitsSet.byId(id).color = value;
   }
 
-  fetchAnomalyTypesStatuses() {
+  fetchAnalyticUnitsStatuses() {
     this.analyticUnits.forEach(a => this._runStatusWaiter(a));
   }
 
-  async fetchAnomalyTypesSegments(from: number, to: number) {
+  async fetchAnalyticUnitsSegments(from: number, to: number) {
     if(!_.isNumber(+from)) {
       throw new Error('from isn`t number');
     }
@@ -215,9 +215,9 @@ export class AnalyticController {
   }
 
   private async _saveLabelingData(): Promise<SegmentId[]> {
-    var anomaly = this.labelingAnomaly;
-    if(anomaly === null) {
-      throw new Error('anomaly is not selected');
+    var unit = this.labelingUnit;
+    if(unit === null) {
+      throw new Error('analytic unit is not selected');
     }
 
     if(
@@ -228,7 +228,7 @@ export class AnalyticController {
     }
 
     return this._analyticService.updateSegments(
-      anomaly.id, this._labelingDataAddedSegments, this._labelingDataDeletedSegments
+      unit.id, this._labelingDataAddedSegments, this._labelingDataDeletedSegments
     );
   }
 
@@ -304,7 +304,7 @@ export class AnalyticController {
   }
 
   deleteLabelingAnomalySegmentsInRange(from: number, to: number) {
-    var allRemovedSegs = this.labelingAnomaly.removeSegmentsInRange(from, to);
+    var allRemovedSegs = this.labelingUnit.removeSegmentsInRange(from, to);
     allRemovedSegs.forEach(s => {
       if(!this._labelingDataAddedSegments.has(s.id)) {
         this._labelingDataDeletedSegments.addSegment(s);
@@ -317,7 +317,7 @@ export class AnalyticController {
     if(!this.labelingMode) {
       throw new Error('Cant enter delete mode is labeling mode disabled');
     }
-    this.labelingAnomaly.deleteMode = !this.labelingAnomaly.deleteMode;
+    this.labelingUnit.deleteMode = !this.labelingUnit.deleteMode;
   }
 
   async removeAnalyticUnit(id: AnalyticUnitId) {

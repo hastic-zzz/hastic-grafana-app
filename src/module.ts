@@ -203,7 +203,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       };
     });
 
-    this.analyticsController.fetchAnomalyTypesStatuses();
+    this.analyticsController.fetchAnalyticUnitsStatuses();
 
   }
 
@@ -326,7 +326,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     var loadTasks = [
       // this.annotationsPromise,
-      this.analyticsController.fetchAnomalyTypesSegments(+this.range.from, +this.range.to)
+      this.analyticsController.fetchAnalyticUnitsSegments(+this.range.from, +this.range.to)
     ];
 
     var results =  await Promise.all(loadTasks);
@@ -584,7 +584,7 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
  async onToggleLabelingMode(key) {
-    await this.analyticsController.toggleAnomalyTypeLabelingMode(key as AnalyticUnitId);
+    await this.analyticsController.toggleUnitTypeLabelingMode(key as AnalyticUnitId);
     this.$scope.$digest();
     this.render();
   }

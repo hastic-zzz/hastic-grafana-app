@@ -20,7 +20,7 @@ export class AnalyticService {
     let datasource = await this.get(`/api/datasources/name/${metric.datasource}`);
     datasourceRequest.type = datasource.type;
 
-    const response = await this.post(this._backendURL + '/analyticUnits', {
+    const response = await this.post('/analyticUnits', {
       panelUrl: window.location.origin + window.location.pathname + `?panelId=${panelId}&fullscreen`,
       type: newItem.type,
       name: newItem.name,
@@ -32,12 +32,11 @@ export class AnalyticService {
   }
 
   async removeAnalyticUnit(id: AnalyticUnitId) {
-    return this.delete(this._backendURL + '/analyticUnits', { id });
+    return this.delete('/analyticUnits', { id });
   }
 
   async isBackendOk(): Promise<boolean> {
-    await this.get(this._backendURL);
-
+    await this.get('/');
     return this._isUp;
   }
 
@@ -55,7 +54,7 @@ export class AnalyticService {
       removedSegments: removedSegments.getSegments().map(s => s.id)
     };
 
-    var data = await this.patch(this._backendURL + '/segments', payload);
+    var data = await this.patch('/segments', payload);
     if(data.addedIds === undefined) {
       throw new Error('Server didn`t send addedIds');
     }
@@ -73,7 +72,7 @@ export class AnalyticService {
     if(to !== undefined) {
       payload['to'] = to;
     }
-    var data = await this.get(this._backendURL + '/segments', payload);
+    var data = await this.get('/segments', payload);
     if(data.segments === undefined) {
       throw new Error('Server didn`t return segments array');
     }
@@ -86,7 +85,7 @@ export class AnalyticService {
       throw new Error('id is undefined');
     }
     let statusCheck = async () => {
-      var data = await this.get(this._backendURL + '/analyticUnits/status', { id });
+      var data = await this.get('/analyticUnits/status', { id });
       return data;
     }
 
@@ -104,7 +103,7 @@ export class AnalyticService {
     if(id === undefined) {
       throw new Error('id is undefined');
     }
-    var data = await this.get(this._backendURL + '/alerts', { id });
+    var data = await this.get('/alerts', { id });
     if(data.enabled === undefined) {
       throw new Error('Server didn`t return "enabled"');
     }
@@ -115,11 +114,11 @@ export class AnalyticService {
     if(id === undefined) {
       throw new Error('id is undefined');
     }
-    return await this.post(this._backendURL + '/alerts', { id, enabled });
+    return await this.post('/alerts', { id, enabled });
   }
 
   async getServerInfo(): Promise<ServerInfo> {
-    let data = await this.get(this._backendURL);
+    let data = await this.get('/');
     console.log(data);
     return {
       nodeVersion: data.nodeVersion,
@@ -135,8 +134,9 @@ export class AnalyticService {
 
   private async _analyticRequest(method: string, url: string, data?) {
     try {
-      let requestObject: any = { method, url };
       method = method.toLocaleUpperCase();
+      url = this._backendURL + url;
+      let requestObject: any = { method, url };
       if(method === 'GET' || method === 'DELETE') {
         requestObject.params = data;
       } else {
@@ -146,10 +146,14 @@ export class AnalyticService {
       this._isUp = true;
       return response.data;
     } catch(error) {
-      this.displayConnectionAlert();
-      console.error(error);
-      this._isUp = false;
-    }
+      if(error.xhrStatus === 'error') {
+        this.displayConnectionAlert();
+        this._isUp = false;
+      } else {
+        this._isUp = true;
+      }
+      throw error;
+    } 
   }
 
   private async get(url, params?) {
