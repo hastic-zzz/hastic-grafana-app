@@ -14,7 +14,7 @@ export class AnalyticService {
   }
 
   async postNewItem(
-    metric: MetricExpanded, datasourceRequest: DatasourceRequest, 
+    metric: MetricExpanded, datasourceRequest: DatasourceRequest,
     newItem: AnalyticUnit, panelId: number
   ): Promise<AnalyticUnitId> {
     let datasource = await this.get(`/api/datasources/name/${metric.datasource}`);
@@ -27,7 +27,7 @@ export class AnalyticService {
       metric: metric.toJSON(),
       datasource: datasourceRequest
     });
-    
+
     return response.id as AnalyticUnitId;
   }
 
@@ -129,33 +129,9 @@ export class AnalyticService {
     };
   }
 
-  private async get(url, params?) {
+  private async _analyticRequest(method: string, url: string, params?) {
     try {
-      let response = await this.$http({ method: 'GET', url, params });
-      this._isUp = true;
-      return response.data;
-    } catch(error) {
-      this.displayConnectionAlert();
-      console.error(error);
-      this._isUp = false;
-    } 
-  }
-
-  private async post(url, data) {
-    try {
-      let response = await this.$http({ method: 'POST', url, data });
-      this._isUp = true;
-      return response.data;
-    } catch(error) {
-      this.displayConnectionAlert();
-      console.error(error);
-      this._isUp = false;
-    } 
-  }
-
-  private async patch(url, data) {
-    try {
-      let response = await this.$http({ method: 'PATCH', url, data });
+      let response = await this.$http({ method: method, url, params });
       this._isUp = true;
       return response.data;
     } catch(error) {
@@ -163,6 +139,22 @@ export class AnalyticService {
       console.error(error);
       this._isUp = false;
     }
+  }
+
+  private async get(url, params?) {
+    return this._analyticRequest('GET', url, params);
+  }
+
+  private async post(url, params?) {
+    return this._analyticRequest('POST', url, params);
+  }
+
+  private async patch(url, params?) {
+    return this._analyticRequest('PATCH', url, params);
+  }
+
+  private async delete(url, params?) {
+    return this._analyticRequest('DELETE', url, params);
   }
 
   private displayConnectionAlert() {
