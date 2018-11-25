@@ -558,11 +558,11 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.render();
   }
 
-  onRemove(id: AnalyticUnitId) {
+  async onRemove(id: AnalyticUnitId) {
     if(id === undefined) {
       throw new Error('id is undefined');
     }
-    this.analyticsController.removeAnalyticUnit(id);
+    await this.analyticsController.removeAnalyticUnit(id);
     this.render();
   }
 

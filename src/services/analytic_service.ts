@@ -31,6 +31,10 @@ export class AnalyticService {
     return response.id as AnalyticUnitId;
   }
 
+  async removeAnalyticUnit(id: AnalyticUnitId) {
+    return this.delete(this._backendURL + '/analyticUnits', { id });
+  }
+
   async isBackendOk(): Promise<boolean> {
     await this.get(this._backendURL);
 
@@ -129,9 +133,16 @@ export class AnalyticService {
     };
   }
 
-  private async _analyticRequest(method: string, url: string, params?) {
+  private async _analyticRequest(method: string, url: string, data?) {
     try {
-      let response = await this.$http({ method: method, url, params });
+      let requestObject: any = { method, url };
+      method = method.toLocaleUpperCase();
+      if(method === 'GET' || method === 'DELETE') {
+        requestObject.params = data;
+      } else {
+        requestObject.data = data;
+      }
+      let response = await this.$http(requestObject);
       this._isUp = true;
       return response.data;
     } catch(error) {
@@ -145,16 +156,18 @@ export class AnalyticService {
     return this._analyticRequest('GET', url, params);
   }
 
-  private async post(url, params?) {
-    return this._analyticRequest('POST', url, params);
+  private async post(url, data?) {
+    return this._analyticRequest('POST', url, data);
   }
 
-  private async patch(url, params?) {
-    return this._analyticRequest('PATCH', url, params);
+  private async patch(url, data?) {
+    return this._analyticRequest('PATCH', url, data);
   }
 
-  private async delete(url, params?) {
-    return this._analyticRequest('DELETE', url, params);
+  private async delete(url, data?) {
+    console.log('DEETEREA');
+    console.log(data);
+    return this._analyticRequest('DELETE', url, data);
   }
 
   private displayConnectionAlert() {

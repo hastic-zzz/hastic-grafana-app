@@ -320,10 +320,11 @@ export class AnalyticController {
     this.labelingAnomaly.deleteMode = !this.labelingAnomaly.deleteMode;
   }
 
-  removeAnalyticUnit(id: AnalyticUnitId) {
+  async removeAnalyticUnit(id: AnalyticUnitId) {
     if(id === this._selectedAnalyticUnitId) {
       this.dropLabeling();
     }
+    await this._analyticService.removeAnalyticUnit(id);
     this._analyticUnitsSet.removeItem(id);
   }
 
