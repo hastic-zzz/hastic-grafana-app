@@ -324,10 +324,10 @@ export class AnalyticController {
     if(id === this._selectedAnalyticUnitId) {
       this.dropLabeling();
     }
+    this._analyticUnitsSet.removeItem(id);
     if(!silent) {
       await this._analyticService.removeAnalyticUnit(id);
     }
-    this._analyticUnitsSet.removeItem(id);
   }
 
   private async _runStatusWaiter(analyticUnit: AnalyticUnit) {
