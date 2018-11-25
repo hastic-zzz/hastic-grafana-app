@@ -320,11 +320,13 @@ export class AnalyticController {
     this.labelingUnit.deleteMode = !this.labelingUnit.deleteMode;
   }
 
-  async removeAnalyticUnit(id: AnalyticUnitId) {
+  async removeAnalyticUnit(id: AnalyticUnitId, silent: boolean = false) {
     if(id === this._selectedAnalyticUnitId) {
       this.dropLabeling();
     }
-    await this._analyticService.removeAnalyticUnit(id);
+    if(!silent) {
+      await this._analyticService.removeAnalyticUnit(id);
+    }
     this._analyticUnitsSet.removeItem(id);
   }
 
@@ -355,7 +357,7 @@ export class AnalyticController {
         if(error !== undefined) {
           analyticUnit.error = error;
         }
-        this._emitter.emit('anomaly-type-status-change', analyticUnit);
+        this._emitter.emit('analytic-unit-status-change', analyticUnit);
       }
       if(!analyticUnit.isActiveStatus) {
         break;

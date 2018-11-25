@@ -80,13 +80,21 @@ export class AnalyticService {
     return segments.map(s => new AnalyticSegment(s.labeled, s.id, s.from, s.to, s.deleted));
   }
 
-  async * getStatusGenerator(id: AnalyticUnitId, duration: number) {
+  async * getStatusGenerator(id: AnalyticUnitId, duration: number): 
+    AsyncIterableIterator<{ status: string, errorMessage?: string }> {
+
     if(id === undefined) {
       throw new Error('id is undefined');
     }
     let statusCheck = async () => {
-      var data = await this.get('/analyticUnits/status', { id });
-      return data;
+      try {
+        return await this.get('/analyticUnits/status', { id });
+      } catch(error) {
+        if(error.status === 404) {
+          return { status: '404' };
+        }
+        throw error;
+      }
     }
 
     let timeout = async () => new Promise(

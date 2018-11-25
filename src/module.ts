@@ -180,12 +180,15 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.events.on('anomaly-type-alert-change', () => {
       this.$scope.$digest()
     });
-    this.events.on('anomaly-type-status-change', async (anomalyType: AnalyticUnit) => {
-      if(anomalyType === undefined) {
-        throw new Error('anomalyType is undefined');
+    this.events.on('analytic-unit-status-change', async (analyticUnit: AnalyticUnit) => {
+      if(analyticUnit === undefined) {
+        throw new Error('analyticUnit is undefined');
       }
-      if(anomalyType.status === 'READY') {
-        await this.analyticsController.fetchSegments(anomalyType, +this.range.from, +this.range.to);
+      if(analyticUnit.status === '404') {
+        await this.analyticsController.removeAnalyticUnit(analyticUnit.id, true);
+      }
+      if(analyticUnit.status === 'READY') {
+        await this.analyticsController.fetchSegments(analyticUnit, +this.range.from, +this.range.to);
       }
       this.render(this.seriesList);
       this.$scope.$digest();

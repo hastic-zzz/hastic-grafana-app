@@ -100,6 +100,7 @@ export class AnalyticUnit {
   get status() { return this._status; }
   set status(value) {
     if(
+      value !== '404' &&
       value !== 'READY' &&
       value !== 'LEARNING' &&
       value !== 'PENDING' &&
@@ -114,7 +115,13 @@ export class AnalyticUnit {
   set error(value) { this._error = value; }
 
   get isActiveStatus() {
-    return this.status !== 'READY' && this.status !== 'FAILED';
+    switch(this.status) {
+      case '404':
+      case 'READY':
+      case 'FAILED':
+        return false;
+    }
+    return true;
   }
 
   get panelObject() { return this._panelObject; }
