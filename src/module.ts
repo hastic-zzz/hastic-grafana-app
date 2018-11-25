@@ -17,6 +17,9 @@ import { axesEditorComponent } from './axes_editor';
 
 import { MetricsPanelCtrl, alertTab } from 'grafana/app/plugins/sdk';
 import { appEvents } from 'grafana/app/core/core'
+import { BackendSrv } from 'grafana/app/core/services/backend_srv';
+import { AlertSrv } from 'grafana/app/core/services/alert_srv';
+
 import config from 'grafana/app/core/config';
 
 import _ from 'lodash';
@@ -148,10 +151,13 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   /** @ngInject */
   constructor(
-    $scope, $injector, $http, private annotationsSrv,
-    private keybindingSrv, private backendSrv,
-    private popoverSrv, private contextSrv,
-    private alertSrv
+    $scope, $injector, $http, 
+    private annotationsSrv,
+    private keybindingSrv, 
+    private backendSrv: BackendSrv,
+    private popoverSrv, 
+    private contextSrv,
+    private alertSrv: AlertSrv
 ) {
     super($scope, $injector);
 
@@ -162,8 +168,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     this.processor = new DataProcessor(this.panel);
 
-
-    this.analyticService = new AnalyticService(this.backendURL, $http, this.alertSrv);
+    this.analyticService = new AnalyticService(this.backendURL, $http, this.backendSrv, this.alertSrv);
 
     this.runBackendConnectivityCheck();
 
