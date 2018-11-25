@@ -352,7 +352,7 @@ export class GraphRenderer {
           ANOMALY_REGION_DELETE_COLOR_LIGHT :
           ANOMALY_REGION_DELETE_COLOR_DARK;
       } else {
-        color = this._analyticController.labelingAnomaly.color;
+        color = this._analyticController.labelingUnit.color;
       }
       fillAlpha = ANOMALY_REGION_FILL_ALPHA;
       strokeAlpha = ANOMALY_REGION_STROKE_ALPHA;

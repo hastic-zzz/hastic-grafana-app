@@ -4,36 +4,45 @@ import { DatasourceRequest } from '../models/datasource';
 import { SegmentsSet } from '../models/segment_set';
 import { AnalyticUnitId, AnalyticUnit, AnalyticSegment } from '../models/analytic_unit';
 import { ServerInfo } from '../models/info';
+import { BackendSrv } from 'grafana/app/core/services/backend_srv';
+import { AlertSrv } from 'grafana/app/core/services/alert_srv';
 
 
 export class AnalyticService {
   private _isUp = false;
 
-  constructor(private _backendURL: string, private $http, private alertSrv) {
+  constructor(
+    private _backendURL: string, private $http,
+    private _backendSrv: BackendSrv,
+    private _alertSrv: AlertSrv
+  ) {
     this.isBackendOk();
   }
 
   async postNewItem(
-    metric: MetricExpanded, datasourceRequest: DatasourceRequest, 
+    metric: MetricExpanded, datasourceRequest: DatasourceRequest,
     newItem: AnalyticUnit, panelId: number
   ): Promise<AnalyticUnitId> {
-    let datasource = await this.get(`/api/datasources/name/${metric.datasource}`);
+    let datasource = await this._backendSrv.get(`/api/datasources/name/${metric.datasource}`);
     datasourceRequest.type = datasource.type;
 
-    const response = await this.post(this._backendURL + '/analyticUnits', {
+    const response = await this.post('/analyticUnits', {
       panelUrl: window.location.origin + window.location.pathname + `?panelId=${panelId}&fullscreen`,
       type: newItem.type,
       name: newItem.name,
       metric: metric.toJSON(),
       datasource: datasourceRequest
     });
-    
+
     return response.id as AnalyticUnitId;
   }
 
-  async isBackendOk(): Promise<boolean> {
-    await this.get(this._backendURL);
+  async removeAnalyticUnit(id: AnalyticUnitId) {
+    return this.delete('/analyticUnits', { id });
+  }
 
+  async isBackendOk(): Promise<boolean> {
+    await this.get('/');
     return this._isUp;
   }
 
@@ -51,7 +60,7 @@ export class AnalyticService {
       removedSegments: removedSegments.getSegments().map(s => s.id)
     };
 
-    var data = await this.patch(this._backendURL + '/segments', payload);
+    var data = await this.patch('/segments', payload);
     if(data.addedIds === undefined) {
       throw new Error('Server didn`t send addedIds');
     }
@@ -69,7 +78,7 @@ export class AnalyticService {
     if(to !== undefined) {
       payload['to'] = to;
     }
-    var data = await this.get(this._backendURL + '/segments', payload);
+    var data = await this.get('/segments', payload);
     if(data.segments === undefined) {
       throw new Error('Server didn`t return segments array');
     }
@@ -77,13 +86,21 @@ export class AnalyticService {
     return segments.map(s => new AnalyticSegment(s.labeled, s.id, s.from, s.to, s.deleted));
   }
 
-  async * getStatusGenerator(id: AnalyticUnitId, duration: number) {
+  async * getStatusGenerator(id: AnalyticUnitId, duration: number):
+    AsyncIterableIterator<{ status: string, errorMessage?: string }> {
+
     if(id === undefined) {
       throw new Error('id is undefined');
     }
     let statusCheck = async () => {
-      var data = await this.get(this._backendURL + '/analyticUnits/status', { id });
-      return data;
+      try {
+        return await this.get('/analyticUnits/status', { id });
+      } catch(error) {
+        if(error.status === 404) {
+          return { status: '404' };
+        }
+        throw error;
+      }
     }
 
     let timeout = async () => new Promise(
@@ -100,7 +117,7 @@ export class AnalyticService {
     if(id === undefined) {
       throw new Error('id is undefined');
     }
-    var data = await this.get(this._backendURL + '/alerts', { id });
+    var data = await this.get('/alerts', { id });
     if(data.enabled === undefined) {
       throw new Error('Server didn`t return "enabled"');
     }
@@ -111,12 +128,11 @@ export class AnalyticService {
     if(id === undefined) {
       throw new Error('id is undefined');
     }
-    return await this.post(this._backendURL + '/alerts', { id, enabled });
+    return await this.post('/alerts', { id, enabled });
   }
 
   async getServerInfo(): Promise<ServerInfo> {
-    let data = await this.get(this._backendURL);
-    console.log(data);
+    let data = await this.get('/');
     return {
       nodeVersion: data.nodeVersion,
       packageVersion: data.packageVersion,
@@ -129,44 +145,48 @@ export class AnalyticService {
     };
   }
 
-  private async get(url, params?) {
+  private async _analyticRequest(method: string, url: string, data?) {
     try {
-      let response = await this.$http({ method: 'GET', url, params });
+      method = method.toUpperCase();
+      url = this._backendURL + url;
+      let requestObject: any = { method, url };
+      if(method === 'GET' || method === 'DELETE') {
+        requestObject.params = data;
+      } else {
+        requestObject.data = data;
+      }
+      let response = await this.$http(requestObject);
       this._isUp = true;
       return response.data;
     } catch(error) {
-      this.displayConnectionAlert();
-      console.error(error);
-      this._isUp = false;
-    } 
-  }
-
-  private async post(url, data) {
-    try {
-      let response = await this.$http({ method: 'POST', url, data });
-      this._isUp = true;
-      return response.data;
-    } catch(error) {
-      this.displayConnectionAlert();
-      console.error(error);
-      this._isUp = false;
-    } 
-  }
-
-  private async patch(url, data) {
-    try {
-      let response = await this.$http({ method: 'PATCH', url, data });
-      this._isUp = true;
-      return response.data;
-    } catch(error) {
-      this.displayConnectionAlert();
-      console.error(error);
-      this._isUp = false;
+      if(error.xhrStatus === 'error') {
+        this.displayConnectionAlert();
+        this._isUp = false;
+      } else {
+        this._isUp = true;
+      }
+      throw error;
     }
   }
 
+  private async get(url, params?) {
+    return this._analyticRequest('GET', url, params);
+  }
+
+  private async post(url, data?) {
+    return this._analyticRequest('POST', url, data);
+  }
+
+  private async patch(url, data?) {
+    return this._analyticRequest('PATCH', url, data);
+  }
+
+  private async delete(url, data?) {
+    return this._analyticRequest('DELETE', url, data);
+  }
+
   private displayConnectionAlert() {
-    this.alertSrv.set(
+    this._alertSrv.set(
       'No connection to Hastic server',
       `Hastic server: "${this._backendURL}"`,
       'warning', 4000

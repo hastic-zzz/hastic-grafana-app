@@ -17,6 +17,9 @@ import { axesEditorComponent } from './axes_editor';
 
 import { MetricsPanelCtrl, alertTab } from 'grafana/app/plugins/sdk';
 import { appEvents } from 'grafana/app/core/core'
+import { BackendSrv } from 'grafana/app/core/services/backend_srv';
+import { AlertSrv } from 'grafana/app/core/services/alert_srv';
+
 import config from 'grafana/app/core/config';
 
 import _ from 'lodash';
@@ -148,10 +151,13 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   /** @ngInject */
   constructor(
-    $scope, $injector, $http, private annotationsSrv,
-    private keybindingSrv, private backendSrv,
-    private popoverSrv, private contextSrv,
-    private alertSrv
+    $scope, $injector, $http, 
+    private annotationsSrv,
+    private keybindingSrv, 
+    private backendSrv: BackendSrv,
+    private popoverSrv, 
+    private contextSrv,
+    private alertSrv: AlertSrv
 ) {
     super($scope, $injector);
 
@@ -162,8 +168,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     this.processor = new DataProcessor(this.panel);
 
-
-    this.analyticService = new AnalyticService(this.backendURL, $http, this.alertSrv);
+    this.analyticService = new AnalyticService(this.backendURL, $http, this.backendSrv, this.alertSrv);
 
     this.runBackendConnectivityCheck();
 
@@ -180,12 +185,15 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.events.on('anomaly-type-alert-change', () => {
       this.$scope.$digest()
     });
-    this.events.on('anomaly-type-status-change', async (anomalyType: AnalyticUnit) => {
-      if(anomalyType === undefined) {
-        throw new Error('anomalyType is undefined');
+    this.events.on('analytic-unit-status-change', async (analyticUnit: AnalyticUnit) => {
+      if(analyticUnit === undefined) {
+        throw new Error('analyticUnit is undefined');
       }
-      if(anomalyType.status === 'READY') {
-        await this.analyticsController.fetchSegments(anomalyType, +this.range.from, +this.range.to);
+      if(analyticUnit.status === '404') {
+        await this.analyticsController.removeAnalyticUnit(analyticUnit.id, true);
+      }
+      if(analyticUnit.status === 'READY') {
+        await this.analyticsController.fetchSegments(analyticUnit, +this.range.from, +this.range.to);
       }
       this.render(this.seriesList);
       this.$scope.$digest();
@@ -203,7 +211,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       };
     });
 
-    this.analyticsController.fetchAnomalyTypesStatuses();
+    this.analyticsController.fetchAnalyticUnitsStatuses();
 
   }
 
@@ -326,7 +334,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     var loadTasks = [
       // this.annotationsPromise,
-      this.analyticsController.fetchAnomalyTypesSegments(+this.range.from, +this.range.to)
+      this.analyticsController.fetchAnalyticUnitsSegments(+this.range.from, +this.range.to)
     ];
 
     var results =  await Promise.all(loadTasks);
@@ -558,11 +566,11 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.render();
   }
 
-  onRemove(id: AnalyticUnitId) {
+  async onRemove(id: AnalyticUnitId) {
     if(id === undefined) {
       throw new Error('id is undefined');
     }
-    this.analyticsController.removeAnalyticUnit(id);
+    await this.analyticsController.removeAnalyticUnit(id);
     this.render();
   }
 
@@ -584,7 +592,7 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
  async onToggleLabelingMode(key) {
-    await this.analyticsController.toggleAnomalyTypeLabelingMode(key as AnalyticUnitId);
+    await this.analyticsController.toggleUnitTypeLabelingMode(key as AnalyticUnitId);
     this.$scope.$digest();
     this.render();
   }
