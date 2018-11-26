@@ -221,7 +221,6 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
     let val = this.templateSrv.index[BACKEND_VARIABLE_NAME].current.value;
     val = val.replace(/\/+$/, "");
-    console.log('FUCK');
     return val;
   }
 
