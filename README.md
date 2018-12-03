@@ -37,12 +37,12 @@ See also:
 
 - Download hastic graph panel
 ```
-wget https://github.com/hastic/hastic-grafana-graph-panel/releases/download/0.2.4/hastic-graph-panel-0.2.4.tar.gz
+wget https://github.com/hastic/hastic-grafana-graph-panel/releases/download/0.2.5/hastic-graph-panel-0.2.5.tar.gz
 ```
 
 - Unpack downloaded files
 ```
-tar -zxvf hastic-graph-panel-0.2.4.tar.gz
+tar -zxvf hastic-graph-panel-0.2.5.tar.gz
 ```
 
 - Restart grafana-server
