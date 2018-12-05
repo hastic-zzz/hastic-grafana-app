@@ -154,7 +154,42 @@
       <i class="fa fa-plus"></i>
       Add Analytic Unit
     </button>
-    
   </div>
+  <div class="gf-form-button-row">
+    <button class="gf-form-label  width-10 pointer" ng-click="ctrl.showHelp = !ctrl.showHelp">
+      Show Help
+      <i class="fa fa-caret-down" ng-show="ctrl.showHelp"></i>
+      <i class="fa fa-caret-right" ng-hide="ctrl.showHelp"></i>
+    </button>
+  </div>
+
+<div class="gf-form" ng-show="ctrl.showHelp">
+  <pre class="gf-form-pre alert alert-info">
+    <b>Adding Analytic Units:</b>
+        1) Click on 'Add Analytic Unit' button to add an analytic unit.
+        2) Type in desired analytic unit name into provided 'Name' field.
+        3) Choose pattern type from the 'Type' dropdown menu. Pattern types explained below.
+        4) Click 'create' button.
+    <b>Labeling segments:</b>
+        1) Click on the chart symbol <img src="/img/chartSymbol.PNG"> to enter labeling mode.
+        2) Hold down 'Ctrl' button on your keyboard and hold down left mouse button while dragging to label segments manually. Release LMB to finish labeling the segment.
+        3) After all of the needed segments are labeled click on the chart symbol again to exit labeling mode.
+
+        <b>Hastic will now start learning, and after a short while you will see the results on your graph.</b>
+
+    <b>Available labeling patterns:</b>
+        1) General: description pending
+        <img src="../img/trough.PNG">
+        2) Peaks: description pending
+        <img src="../img/trough.PNG">
+        3) Troughs: description pending
+        <img src="../img/trough.PNG">
+        4) Jumps: description pending
+        <img src="../img/trough.PNG">
+        5) Drops: description pending
+        <img src="../img/trough.PNG">
+        6) Custom: description pending
+        <img src="../img/trough.PNG">
+      </pre>
 </div>
 
