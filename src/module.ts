@@ -161,6 +161,8 @@ class GraphCtrl extends MetricsPanelCtrl {
 ) {
     super($scope, $injector);
 
+    console.log('Hey hey');
+
     _.defaults(this.panel, this.panelDefaults);
     _.defaults(this.panel.tooltip, this.panelDefaults.tooltip);
     _.defaults(this.panel.legend, this.panelDefaults.legend);
@@ -182,9 +184,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.events.on('data-snapshot-load', this.onDataSnapshotLoad.bind(this));
     this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
     this.events.on('init-panel-actions', this.onInitPanelActions.bind(this));
-    this.events.on('anomaly-type-alert-change', () => {
-      this.$scope.$digest()
-    });
+
     this.events.on('analytic-unit-status-change', async (analyticUnit: AnalyticUnit) => {
       if(analyticUnit === undefined) {
         throw new Error('analyticUnit is undefined');
@@ -605,10 +605,6 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
     this.analyticsController.toggleDeleteMode();
     this.refresh();
-  }
-
-  onAnomalyAlertChange(anomalyType: AnalyticUnit) {
-    this.analyticsController.toggleAlertEnabled(anomalyType);
   }
 
   onToggleVisibility(id: AnalyticUnitId) {

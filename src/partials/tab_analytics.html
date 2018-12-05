@@ -68,13 +68,6 @@
         <i class="fa fa-spinner fa-spin"></i>
       </label> -->
 
-      <gf-form-switch
-        ng-if="analyticUnit.alertEnabled !== undefined"
-        on-change="ctrl.onAnomalyAlertChange(analyticUnit)"
-        checked="analyticUnit.alertEnabled"
-        style="height: 36px;"
-      />
-
       <label class="gf-form-label">
         <a
           ng-if="analyticUnit.visible"

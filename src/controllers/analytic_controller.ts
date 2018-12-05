@@ -367,22 +367,6 @@ export class AnalyticController {
     this._statusRunners.delete(analyticUnit.id);
   }
 
-  // async runEnabledWaiter(analyticUnit: AnalyticUnit) {
-  //   var enabled = await this._analyticService.getAlertEnabled(analyticUnit.id);
-  //   if(analyticUnit.alertEnabled !== enabled) {
-  //     analyticUnit.alertEnabled = enabled;
-  //     this._emitter.emit('anomaly-type-alert-change', analyticUnit);
-  //   }
-  // }
-
-  async toggleAlertEnabled(analyticUnit: AnalyticUnit) {
-    var enabled = analyticUnit.alertEnabled;
-    analyticUnit.alertEnabled = undefined;
-    await this._analyticService.setAlertEnabled(analyticUnit.id, enabled);
-    analyticUnit.alertEnabled = enabled;
-    this._emitter.emit('anomaly-type-alert-change', analyticUnit);
-  }
-
   public getNewTempSegmentId(): SegmentId {
     this._tempIdCounted--;
     return this._tempIdCounted.toString();

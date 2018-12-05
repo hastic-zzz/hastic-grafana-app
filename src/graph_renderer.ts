@@ -1,6 +1,6 @@
 import { Segment } from './models/segment';
 import { GraphTooltip } from './graph_tooltip';
-import { ThresholdManager } from './threshold_manager';
+
 import { convertValuesToHistogram, getSeriesValues } from './histogram';
 import {
   AnalyticController,
@@ -41,7 +41,6 @@ export class GraphRenderer {
   private _analyticController: AnalyticController;
   private data: any;
   private tooltip: GraphTooltip;
-  private thresholdManager: ThresholdManager;
   private panelWidth: number;
   private plot: any;
   private sortedSeries: any;
@@ -82,7 +81,7 @@ export class GraphRenderer {
 
     // this.eventManager = new EventManager(this.ctrl);
     this.flotOptions = {}
-    this.thresholdManager = new ThresholdManager(this.ctrl);
+    
     this.tooltip = new GraphTooltip(
       $elem, this.dashboard, scope, () => this.sortedSeries,
       this._analyticController.getSegmentsSearcher()
@@ -90,7 +89,6 @@ export class GraphRenderer {
 
     // panel events
     this.ctrl.events.on('panel-teardown', () => {
-      this.thresholdManager = null;
 
       if (this.plot) {
         this.plot.destroy();
@@ -265,7 +263,6 @@ export class GraphRenderer {
       $(`<div class="datapoints-warning flot-temp-elem">${this.ctrl.dataWarning.title}</div>`).appendTo(this.$elem);
     }
 
-    this.thresholdManager.draw(plot);
   }
 
   private _processOffsetHook(plot, gridMargin) {
@@ -324,8 +321,6 @@ export class GraphRenderer {
       return;
     }
 
-    // give space to alert editing
-    this.thresholdManager.prepare(this.$elem, this.data);
 
     // un-check dashes if lines are unchecked
     this.panel.dashes = this.panel.lines ? this.panel.dashes : false;
@@ -334,7 +329,6 @@ export class GraphRenderer {
     this._buildFlotOptions(this.panel);
     this._prepareXAxis(this.panel);
     this._configureYAxisOptions(this.data);
-    this.thresholdManager.addFlotOptions(this.flotOptions, this.panel);
     // this.eventManager.addFlotEvents(this.annotations, this.flotOptions);
     this._analyticController.updateFlotEvents(this.contextSrv.isEditor, this.flotOptions);
 
