@@ -254,10 +254,11 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     const partialPath = this.panelPath + 'partials';
     this.addEditorTab('Analytics', `${partialPath}/tab_analytics.html`, 2);
-    this.addEditorTab('Axes', axesEditorComponent, 3);
-    this.addEditorTab('Legend', `${partialPath}/tab_legend.html`, 4);
-    this.addEditorTab('Display', `${partialPath}/tab_display.html`, 5);
-    this.addEditorTab('Plugin info', `${partialPath}/tab_info.html`, 6);
+    this.addEditorTab('Webhooks', `${partialPath}/tab_webhooks.html`, 3);
+    this.addEditorTab('Axes', axesEditorComponent, 4);
+    this.addEditorTab('Legend', `${partialPath}/tab_legend.html`, 5);
+    this.addEditorTab('Display', `${partialPath}/tab_display.html`, 6);
+    this.addEditorTab('Plugin info', `${partialPath}/tab_info.html`, 7);
 
     this.subTabIndex = 0;
   }
@@ -303,8 +304,6 @@ class GraphCtrl extends MetricsPanelCtrl {
       range: this.range,
     });
 
-    //this.onPredictionReceived(this.seriesList);
-
     this.dataWarning = null;
     const hasSomePoint = this.seriesList.some(s => s.datapoints.length > 0);
 
@@ -335,41 +334,6 @@ class GraphCtrl extends MetricsPanelCtrl {
     // this.annotations = results[0].annotations;
     this.render(this.seriesList);
 
-  }
-
-  onPredictionReceived(spanList) {
-    var predictions = [];
-    for (var span of spanList) {
-      var predictionLow = {
-        target: '',
-        color: '',
-        datapoints: []
-      };
-      var predictionHigh = {
-        target: '',
-        color: '',
-        datapoints: []
-      };
-
-      for (var datapoint of span.datapoints) {
-        predictionHigh.datapoints.push([datapoint[0] + 2, datapoint[1]]);
-        predictionLow.datapoints.push([datapoint[0] - 2, datapoint[1]]);
-      }
-
-      predictionHigh.target = `${span.label} high`;
-      predictionLow.target = `${span.label} low`;
-      predictionHigh.color = span.color;
-      predictionLow.color = span.color;
-      predictions.push(predictionHigh, predictionLow);
-    }
-    var predictionSeries = this.processor.getSeriesList({
-      dataList: predictions,
-      range: this.range
-    });
-    for (var serie of predictionSeries) {
-      serie.prediction = true;
-      this.seriesList.push(serie);
-    }
   }
 
   onRender(data) {
@@ -549,6 +513,10 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
     this.$scope.$digest();
     this.render(this.seriesList);
+  }
+
+  onAnalyticUnitAlertChange(analyticUnit: AnalyticUnit) {
+    this.analyticsController.toggleAnalyticUnitAlert(analyticUnit);
   }
 
   onColorChange(id: AnalyticUnitId, value: string) {

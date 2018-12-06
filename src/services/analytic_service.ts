@@ -127,7 +127,14 @@ export class AnalyticService {
     };
   }
 
-  private async _analyticRequest(method: string, url: string, data?) {
+  async setAnalyticUnitAlert(analyticUnit: AnalyticUnit) {
+    return this.patch('/analyticUnits/alert', {
+      analyticUnitId: analyticUnit.id,
+      alert: analyticUnit.alert
+    });
+  }
+
+  private async _analyticRequest(method: string, url: string, data?: any) {
     try {
       method = method.toUpperCase();
       url = this._backendURL + url;

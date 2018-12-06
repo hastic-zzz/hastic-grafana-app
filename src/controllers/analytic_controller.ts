@@ -330,6 +330,11 @@ export class AnalyticController {
     }
   }
 
+  async toggleAnalyticUnitAlert(analyticUnit: AnalyticUnit) {
+    analyticUnit.alert = analyticUnit.alert ? true : false;
+    await this._analyticService.setAnalyticUnitAlert(analyticUnit);
+  }
+
   private async _runStatusWaiter(analyticUnit: AnalyticUnit) {
     if(analyticUnit === undefined || analyticUnit === null) {
       throw new Error('analyticUnit not defined');
