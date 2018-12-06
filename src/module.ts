@@ -254,10 +254,11 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     const partialPath = this.panelPath + 'partials';
     this.addEditorTab('Analytics', `${partialPath}/tab_analytics.html`, 2);
-    this.addEditorTab('Axes', axesEditorComponent, 3);
-    this.addEditorTab('Legend', `${partialPath}/tab_legend.html`, 4);
-    this.addEditorTab('Display', `${partialPath}/tab_display.html`, 5);
-    this.addEditorTab('Plugin info', `${partialPath}/tab_info.html`, 6);
+    this.addEditorTab('Webhooks', `${partialPath}/tab_webhooks.html`, 3);
+    this.addEditorTab('Axes', axesEditorComponent, 4);
+    this.addEditorTab('Legend', `${partialPath}/tab_legend.html`, 5);
+    this.addEditorTab('Display', `${partialPath}/tab_display.html`, 6);
+    this.addEditorTab('Plugin info', `${partialPath}/tab_info.html`, 7);
 
     this.subTabIndex = 0;
   }
@@ -549,6 +550,10 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
     this.$scope.$digest();
     this.render(this.seriesList);
+  }
+
+  onAnalyticUnitAlertChange(analyticUnit: AnalyticUnit) {
+    
   }
 
   onColorChange(id: AnalyticUnitId, value: string) {

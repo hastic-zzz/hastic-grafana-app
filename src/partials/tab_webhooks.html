@@ -1,0 +1,20 @@
+<div class="gf-form-button-row" ng-if="ctrl.analyticsController.serverStatus === false">
+  <h5>Hastic server at "{{ctrl.backendURL}}" is not available</h5>
+  <button class="btn btn-inverse" ng-click="ctrl.runBackendConnectivityCheck()">
+    <i class="fa fa-plug"></i>
+    Reconnect to Hastic server
+  </button>
+</div>
+
+<div ng-if="ctrl.analyticsController.serverStatus === true">
+  <h5> Enable webhooks </h5>
+  <div class="editor-row">
+    <div class="gf-form" ng-repeat="analyticUnit in ctrl.analyticsController.analyticUnits">
+      <label class="gf-form-label max-width-15"> {{ analyticUnit.name }} ({{ analyticUnit.type }}) </label>
+      <gf-form-switch
+        on-change="ctrl.onAnalyticUnitAlertChange(analyticUnit)"
+        checked="analyticUnit.alert"
+      />
+    </div>
+  </div>
+</div>
