@@ -37,7 +37,10 @@ export class AnalyticUnit {
       this._panelObject = {};
     }
     _.defaults(this._panelObject, {
-      name: 'AnalyticUnitName', confidence: 0.2, color: ANALYTIC_UNIT_COLORS[0], type: 'GENERAL'
+      name: 'AnalyticUnitName',
+      color: ANALYTIC_UNIT_COLORS[0],
+      type: 'GENERAL',
+      alert: false
     });
 
     //this._metric = new Metric(_panelObject.metric);
@@ -57,6 +60,9 @@ export class AnalyticUnit {
 
   set color(value: string) { this._panelObject.color = value; }
   get color(): string { return this._panelObject.color; }
+
+  set alert(value: boolean) { this._panelObject.alert = value; }
+  get alert(): boolean { return this._panelObject.alert; }
 
   get selected(): boolean { return this._selected; }
   set selected(value: boolean) { this._selected = value; }

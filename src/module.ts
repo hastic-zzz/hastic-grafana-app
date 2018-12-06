@@ -516,7 +516,7 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   onAnalyticUnitAlertChange(analyticUnit: AnalyticUnit) {
-
+    this.analyticsController.toggleAnalyticUnitAlert(analyticUnit);
   }
 
   onColorChange(id: AnalyticUnitId, value: string) {
