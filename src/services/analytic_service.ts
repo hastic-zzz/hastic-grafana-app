@@ -113,24 +113,6 @@ export class AnalyticService {
     }
   }
 
-  async getAlertEnabled(id: AnalyticUnitId): Promise<boolean> {
-    if(id === undefined) {
-      throw new Error('id is undefined');
-    }
-    var data = await this.get('/alerts', { id });
-    if(data.enabled === undefined) {
-      throw new Error('Server didn`t return "enabled"');
-    }
-    return data.enabled as boolean;
-  }
-
-  async setAlertEnabled(id: AnalyticUnitId, enabled: boolean): Promise<void> {
-    if(id === undefined) {
-      throw new Error('id is undefined');
-    }
-    return await this.post('/alerts', { id, enabled });
-  }
-
   async getServerInfo(): Promise<ServerInfo> {
     let data = await this.get('/');
     return {

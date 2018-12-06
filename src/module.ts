@@ -1,5 +1,4 @@
 import './series_overrides_ctrl';
-import './thresholds_form';
 
 import template from './template';
 
@@ -15,10 +14,10 @@ import { PanelInfo } from './models/info';
 
 import { axesEditorComponent } from './axes_editor';
 
-import { MetricsPanelCtrl, alertTab } from 'grafana/app/plugins/sdk';
+import { MetricsPanelCtrl } from 'grafana/app/plugins/sdk';
 import { appEvents } from 'grafana/app/core/core'
 import { BackendSrv } from 'grafana/app/core/services/backend_srv';
-import { AlertSrv } from 'grafana/app/core/services/alert_srv';
+import { AlertSrv } from 'grafana/app/core/services/alert_srv'
 
 import config from 'grafana/app/core/config';
 
@@ -48,7 +47,6 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   datasourceRequest: DatasourceRequest;
 
-  anomalyTypes = []; // TODO: remove it later. Only for alert tab
   analyticsController: AnalyticController;
 
   _graphRenderer: GraphRenderer;
@@ -155,13 +153,11 @@ class GraphCtrl extends MetricsPanelCtrl {
     private annotationsSrv,
     private keybindingSrv, 
     private backendSrv: BackendSrv,
-    private popoverSrv, 
+    private popoverSrv,
     private contextSrv,
     private alertSrv: AlertSrv
 ) {
     super($scope, $injector);
-
-    console.log('Hey hey');
 
     _.defaults(this.panel, this.panelDefaults);
     _.defaults(this.panel.tooltip, this.panelDefaults.tooltip);
@@ -175,7 +171,6 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.runBackendConnectivityCheck();
 
     this.analyticsController = new AnalyticController(this.panel, this.analyticService, this.events);
-    this.anomalyTypes = this.panel.anomalyTypes;
     keybindingSrv.bind('d', this.onDKey.bind(this));
 
     this.events.on('render', this.onRender.bind(this));
@@ -263,10 +258,6 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.addEditorTab('Legend', `${partialPath}/tab_legend.html`, 4);
     this.addEditorTab('Display', `${partialPath}/tab_display.html`, 5);
     this.addEditorTab('Plugin info', `${partialPath}/tab_info.html`, 6);
-
-    if(config.alertingEnabled) {
-      this.addEditorTab('Alert', alertTab, 6);
-    }
 
     this.subTabIndex = 0;
   }
