@@ -304,8 +304,6 @@ class GraphCtrl extends MetricsPanelCtrl {
       range: this.range,
     });
 
-    //this.onPredictionReceived(this.seriesList);
-
     this.dataWarning = null;
     const hasSomePoint = this.seriesList.some(s => s.datapoints.length > 0);
 
@@ -336,41 +334,6 @@ class GraphCtrl extends MetricsPanelCtrl {
     // this.annotations = results[0].annotations;
     this.render(this.seriesList);
 
-  }
-
-  onPredictionReceived(spanList) {
-    var predictions = [];
-    for (var span of spanList) {
-      var predictionLow = {
-        target: '',
-        color: '',
-        datapoints: []
-      };
-      var predictionHigh = {
-        target: '',
-        color: '',
-        datapoints: []
-      };
-
-      for (var datapoint of span.datapoints) {
-        predictionHigh.datapoints.push([datapoint[0] + 2, datapoint[1]]);
-        predictionLow.datapoints.push([datapoint[0] - 2, datapoint[1]]);
-      }
-
-      predictionHigh.target = `${span.label} high`;
-      predictionLow.target = `${span.label} low`;
-      predictionHigh.color = span.color;
-      predictionLow.color = span.color;
-      predictions.push(predictionHigh, predictionLow);
-    }
-    var predictionSeries = this.processor.getSeriesList({
-      dataList: predictions,
-      range: this.range
-    });
-    for (var serie of predictionSeries) {
-      serie.prediction = true;
-      this.seriesList.push(serie);
-    }
   }
 
   onRender(data) {
@@ -553,7 +516,7 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   onAnalyticUnitAlertChange(analyticUnit: AnalyticUnit) {
-    
+
   }
 
   onColorChange(id: AnalyticUnitId, value: string) {
