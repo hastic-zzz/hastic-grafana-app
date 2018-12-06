@@ -32,8 +32,6 @@ export class AnalyticUnit {
   private _error: string;
   private _metric: Metric;
 
-  private _alertEnabled?: boolean;
-
   constructor(private _panelObject?: any) {
     if(_panelObject === undefined) {
       this._panelObject = {};
@@ -125,9 +123,6 @@ export class AnalyticUnit {
   }
 
   get panelObject() { return this._panelObject; }
-
-  get alertEnabled(): boolean { return this._alertEnabled; }
-  set alertEnabled(value) { this._alertEnabled = value;}
 
 }
 

@@ -57,24 +57,6 @@
         </a>
       </label>
 
-
-      <!-- <label class="gf-form-label"> Alerts: </label>
-      <label
-        class="gf-form-label text-center"
-        style="width: 4rem"
-        ng-if="analyticUnit.alertEnabled === undefined"
-        bs-tooltip="'Alarting status isn`t available. Wait please.'"
-      >
-        <i class="fa fa-spinner fa-spin"></i>
-      </label> -->
-
-      <gf-form-switch
-        ng-if="analyticUnit.alertEnabled !== undefined"
-        on-change="ctrl.onAnomalyAlertChange(analyticUnit)"
-        checked="analyticUnit.alertEnabled"
-        style="height: 36px;"
-      />
-
       <label class="gf-form-label">
         <a
           ng-if="analyticUnit.visible"
