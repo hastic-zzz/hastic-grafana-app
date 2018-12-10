@@ -10,6 +10,8 @@
 [Twitter](https://twitter.com/hasticio) | 
 [IRC](https://webchat.freenode.net/?channels=#hastic)
 
+![Last master push status](https://travis-ci.org/hastic/hastic-grafana-graph-panel.svg?branch=master)
+
 A better version of Grafana's default Graph Panel. Able to render Anomalies & more.
 
 **Please note that we are still in alpha, so features are subject to change**
