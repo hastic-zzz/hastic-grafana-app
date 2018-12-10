@@ -5,7 +5,7 @@ node_js:
   before_script:
   - npm install
 
-  script: npm test
+script: npm test
 
 notifications:
   - email: false
