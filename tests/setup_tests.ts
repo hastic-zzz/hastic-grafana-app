@@ -5,6 +5,7 @@ import { MetricExpanded } from '../src/models/metric';
 import { DatasourceRequest } from '../src/models/datasource';
 
 import { BackendSrv } from 'grafana/app/core/services/backend_srv';
+import { AlertSrv } from 'grafana/app/core/services/alert_srv';
 import { Emitter } from 'grafana/app/core/utils/emitter';
 
 
@@ -13,7 +14,7 @@ import { Emitter } from 'grafana/app/core/utils/emitter';
 
 var id = 0;
 
-const analyticService = new AnalyticService('', new BackendSrv({}, {}, {}, {}, {}));
+const analyticService = new AnalyticService('', {} , new BackendSrv({}, {}, {}, {}, {}), new AlertSrv());
 analyticService.postNewItem = async function (
   metric: MetricExpanded, datasourceRequest: DatasourceRequest,
   newItem: AnalyticUnit, panelId: number
