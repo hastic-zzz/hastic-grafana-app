@@ -12,7 +12,8 @@ export class AnalyticService {
   private _isUp = false;
 
   constructor(
-    private _backendURL: string, private $http,
+    private _backendURL: string,
+    private $http,
     private _backendSrv: BackendSrv,
     private _alertSrv: AlertSrv
   ) {

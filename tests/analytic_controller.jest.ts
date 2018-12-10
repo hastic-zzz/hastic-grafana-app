@@ -19,7 +19,7 @@ describe('AnalyticController', function () {
   });
 
   it('should remove analytic unit with right id', async function () {
-    await analyticController.removeAnalyticUnit('2');
+    await analyticController.removeAnalyticUnit('2', true);
     for (let analyticUnit of analyticController.analyticUnits) {
       expect(analyticUnit.id).not.toBe('2');
     }
