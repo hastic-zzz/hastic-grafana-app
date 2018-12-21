@@ -54,6 +54,8 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   _panelInfo: PanelInfo;
 
+  analyticUnitTypes: any;
+
   panelDefaults = {
     // datasource name, null = default datasource
     datasource: null,
@@ -137,14 +139,6 @@ class GraphCtrl extends MetricsPanelCtrl {
     seriesOverrides: [],
     thresholds: [],
     anomalyType: '',
-    analyticUnitTypes: [
-      { name: 'General', value: 'GENERAL' },
-      { name: 'Peaks', value: 'PEAK' },
-      { name: 'Troughs', value: 'TROUGH' },
-      { name: 'Jumps', value: 'JUMP' },
-      { name: 'Drops', value: 'DROP' },
-      { name: 'Custom', value: 'CUSTOM' }
-    ]
   };
 
   /** @ngInject */
@@ -167,6 +161,8 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.processor = new DataProcessor(this.panel);
 
     this.analyticService = new AnalyticService(this.backendURL, $http, this.backendSrv, this.alertSrv);
+
+    this.awaitAnalyticUnitTypes();
 
     this.runBackendConnectivityCheck();
 
@@ -217,6 +213,11 @@ class GraphCtrl extends MetricsPanelCtrl {
     let val = this.templateSrv.index[BACKEND_VARIABLE_NAME].current.value;
     val = val.replace(/\/+$/, "");
     return val;
+  }
+
+  async awaitAnalyticUnitTypes(){
+    let analyticUnitTypes =  await this.analyticService.getAnalyticUnitTypes();
+    this.analyticUnitTypes = analyticUnitTypes;
   }
 
   async runBackendConnectivityCheck() {
