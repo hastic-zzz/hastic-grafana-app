@@ -21,12 +21,7 @@ export class AnalyticService {
   }
 
   async getAnalyticUnitTypes() {
-    try {
-      return await this.get('/analyticUnits/types');
-    } catch(error) {
-      console.log(error);
-      throw error;
-    }
+    return await this.get('/analyticUnits/types');
   }
 
   async postNewItem(

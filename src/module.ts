@@ -54,7 +54,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   _panelInfo: PanelInfo;
 
-  analyticUnitTypes: any;
+  private _analyticUnitTypes: any;
 
   panelDefaults = {
     // datasource name, null = default datasource
@@ -162,7 +162,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     this.analyticService = new AnalyticService(this.backendURL, $http, this.backendSrv, this.alertSrv);
 
-    this.awaitAnalyticUnitTypes();
+    this.updateAnalyticUnitTypes();
 
     this.runBackendConnectivityCheck();
 
@@ -215,9 +215,13 @@ class GraphCtrl extends MetricsPanelCtrl {
     return val;
   }
 
-  async awaitAnalyticUnitTypes(){
+  async updateAnalyticUnitTypes(){
     let analyticUnitTypes =  await this.analyticService.getAnalyticUnitTypes();
-    this.analyticUnitTypes = analyticUnitTypes;
+    this._analyticUnitTypes = analyticUnitTypes;
+  }
+
+  get analyticUnitTypes() {
+    return this._analyticUnitTypes
   }
 
   async runBackendConnectivityCheck() {
