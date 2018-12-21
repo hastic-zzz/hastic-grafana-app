@@ -22,7 +22,7 @@
       <div class="gf-form-select-wrapper">
         <select class="gf-form-input width-12"
           ng-model="analyticUnit.type"
-          ng-options="type.value as type.name for type in ctrl.panel.analyticUnitTypes"
+          ng-options="type.value as type.name for type in ctrl.analyticUnitTypes.pattern"
           ng-disabled="true"
         />
       </div>
@@ -118,7 +118,7 @@
       <div class="gf-form-select-wrapper">
         <select class="gf-form-input width-12"
           ng-model="ctrl.analyticsController.newAnalyticUnit.type"
-          ng-options="type.value as type.name for type in ctrl.panel.analyticUnitTypes"
+          ng-options="type.value as type.name for type in ctrl.analyticUnitTypes.pattern"
         />
       </div>
 

@@ -20,6 +20,10 @@ export class AnalyticService {
     this.isBackendOk();
   }
 
+  async getAnalyticUnitTypes() {
+    return await this.get('/analyticUnits/types');
+  }
+
   async postNewItem(
     metric: MetricExpanded, datasourceRequest: DatasourceRequest,
     newItem: AnalyticUnit, panelId: number
