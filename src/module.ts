@@ -221,7 +221,7 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   get analyticUnitTypes() {
-    return this._analyticUnitTypes
+    return this._analyticUnitTypes;
   }
 
   async runBackendConnectivityCheck() {
