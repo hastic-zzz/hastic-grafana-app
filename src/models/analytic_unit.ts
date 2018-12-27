@@ -39,6 +39,7 @@ export class AnalyticUnit {
     _.defaults(this._panelObject, {
       name: 'AnalyticUnitName',
       color: ANALYTIC_UNIT_COLORS[0],
+      detectorType: 'pattern',
       type: 'GENERAL',
       alert: false
     });
@@ -51,6 +52,9 @@ export class AnalyticUnit {
 
   set name(value: string) { this._panelObject.name = value; }
   get name(): string { return this._panelObject.name; }
+
+  set detectorType(value: string) { this._panelObject.detectorType = value; }
+  get detectorType(): string { return this._panelObject.detectorType; }
 
   set type(value: string) { this._panelObject.type = value; }
   get type(): string { return this._panelObject.type; }

@@ -227,7 +227,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     return this._analyticUnitTypes;
   }
 
-  get getAnalyticUnitDetectorTypes () {
+  get analyticUnitDetectorTypes () {
     return this._analyticUnitDetectorTypes;
   }
 
