@@ -10,7 +10,7 @@
 [Twitter](https://twitter.com/hasticio) | 
 [IRC](https://webchat.freenode.net/?channels=#hastic)
 
-[![Build Status](https://travis-ci.org/hastic/hastic-grafana-graph-panel.svg?branch=master)](https://travis-ci.org/hastic/hastic-grafana-graph-panel)
+[![Build Status](https://travis-ci.org/hastic/hastic-grafana-app.svg?branch=master)](https://travis-ci.org/hastic/hastic-grafana-app)
 
 A version of Grafana's default Graph Panel for rendering and labeling Hastic's patterns.
 
