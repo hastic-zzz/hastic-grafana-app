@@ -24,6 +24,15 @@ export class AnalyticService {
     return await this.get('/analyticUnits/types');
   }
 
+  async getAnalyticUnitDetectorTypes() {
+    let AnalyticUnitDetectorTypes = [];
+    let response = await this.getAnalyticUnitTypes();
+    for(let field in response) {
+      AnalyticUnitDetectorTypes.push(field)
+    }
+    return AnalyticUnitDetectorTypes;
+  }
+
   async postNewItem(
     metric: MetricExpanded, datasourceRequest: DatasourceRequest,
     newItem: AnalyticUnit, panelId: number

@@ -114,6 +114,13 @@
         ng-model="ctrl.analyticsController.newAnalyticUnit.name"
       >
 
+      <label class="gf-form-label width-8"> Detector Type </label>
+      <div class="gf-form-select-wrapper">
+        <select class="gf-form-input width-12" 
+        ng-model="ctrl.analyticUnitDetectorTypes" 
+        ng-options="analyticUnitDetectorTypes.name as analyticUnitDetectorTypes.name for analyticUnitDetectorType in ctrl.analyticUnitDetectorTypes" />
+      </div>
+
       <label class="gf-form-label width-8"> Type </label>
       <div class="gf-form-select-wrapper">
         <select class="gf-form-input width-12"
