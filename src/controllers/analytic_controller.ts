@@ -386,6 +386,10 @@ export class AnalyticController {
     }
   }
 
+  public onAnalyticUnitDetectorChange(analyticUnitTypes: any) {
+    this.newAnalyticUnit.type = analyticUnitTypes[this.newAnalyticUnit.detectorType][0].value;
+  }
+
   public async updateServerInfo() {
     this._serverInfo = await this._analyticService.getServerInfo();
   }
