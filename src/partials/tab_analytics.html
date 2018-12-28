@@ -22,7 +22,7 @@
       <div class="gf-form-select-wrapper">
         <select class="gf-form-input width-12"
           ng-model="analyticUnit.type"
-          ng-options="type.value as type.name for type in ctrl.analyticUnitTypes.pattern"
+          ng-options="type.value as type.name for type in ctrl.analyticUnitTypes[analyticUnit.detectorType]"
           ng-disabled="true"
         />
       </div>
@@ -44,7 +44,11 @@
         />
       </span>
 
-      <label class="gf-form-label" ng-style="analyticUnit.status === 'LEARNING' && { 'cursor': 'not-allowed' }">
+      <label
+        class="gf-form-label"
+        ng-if="analyticUnit.detectorType === 'pattern'"
+        ng-style="analyticUnit.status === 'LEARNING' && { 'cursor': 'not-allowed' }"
+      >
         <a class="pointer" tabindex="1"
           ng-click="ctrl.onToggleLabelingMode(analyticUnit.id)"
           ng-disabled="analyticUnit.status === 'LEARNING'"
@@ -56,6 +60,21 @@
           <b ng-if="analyticUnit.saving" ng-disabled="true"> saving... </b>
         </a>
       </label>
+
+      <select class="gf-form-input width-5"
+        ng-model="ctrl.analyticsController.getThreshold(analyticUnit.id).condition"
+        ng-options="type for type in ctrl.analyticsController.conditions"
+        ng-if="analyticUnit.detectorType === 'threshold'"
+        ng-blur="ctrl.analyticsController.saveThreshold(analyticUnit.id)"
+      />
+
+      <input
+        class="gf-form-input width-5"
+        type="number"
+        ng-model="ctrl.analyticsController.getThreshold(analyticUnit.id).value"
+        ng-if="analyticUnit.detectorType === 'threshold'"
+        ng-blur="ctrl.analyticsController.saveThreshold(analyticUnit.id)"
+      />
 
       <label class="gf-form-label">
         <a

@@ -17,9 +17,7 @@ import { axesEditorComponent } from './axes_editor';
 import { MetricsPanelCtrl } from 'grafana/app/plugins/sdk';
 import { appEvents } from 'grafana/app/core/core'
 import { BackendSrv } from 'grafana/app/core/services/backend_srv';
-import { AlertSrv } from 'grafana/app/core/services/alert_srv'
-
-import config from 'grafana/app/core/config';
+import { AlertSrv } from 'grafana/app/core/services/alert_srv';
 
 import _ from 'lodash';
 
@@ -143,9 +141,9 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   /** @ngInject */
   constructor(
-    $scope, $injector, $http, 
+    $scope, $injector, $http,
     private annotationsSrv,
-    private keybindingSrv, 
+    private keybindingSrv,
     private backendSrv: BackendSrv,
     private popoverSrv,
     private contextSrv,
@@ -161,8 +159,6 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.processor = new DataProcessor(this.panel);
 
     this.analyticService = new AnalyticService(this.backendURL, $http, this.backendSrv, this.alertSrv);
-
-    this.updateAnalyticUnitTypes();
 
     this.runBackendConnectivityCheck();
 
@@ -215,7 +211,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     return val;
   }
 
-  async updateAnalyticUnitTypes(){
+  async updateAnalyticUnitTypes() {
     const analyticUnitTypes = await this.analyticService.getAnalyticUnitTypes();
     this._analyticUnitTypes = analyticUnitTypes;
   }
@@ -240,6 +236,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     let connected = await this.analyticService.isBackendOk();
     if(connected) {
+      this.updateAnalyticUnitTypes();
       this.alertSrv.set(
         'Connected to Hastic server',
         `Hastic server: "${this.backendURL}"`,
