@@ -224,6 +224,10 @@ class GraphCtrl extends MetricsPanelCtrl {
     return this._analyticUnitTypes;
   }
 
+  get analyticUnitDetectorTypes () {
+    return _.keys(this._analyticUnitTypes);
+  }
+
   async runBackendConnectivityCheck() {
     if(this.backendURL === '' || this.backendURL === undefined) {
       this.alertSrv.set(

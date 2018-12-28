@@ -114,11 +114,23 @@
         ng-model="ctrl.analyticsController.newAnalyticUnit.name"
       >
 
+      <label class="gf-form-label width-8"> Detector Type </label>
+      <div class="gf-form-select-wrapper">
+        <select class="gf-form-input width-12"
+          ng-model="ctrl.analyticsController.newAnalyticUnit.detectorType"
+          ng-options="analyticUnitDetectorType for analyticUnitDetectorType in ctrl.analyticUnitDetectorTypes"
+          ng-change="ctrl.analyticsController.onAnalyticUnitDetectorChange(ctrl.analyticUnitTypes);"
+        />
+      </div>
+
       <label class="gf-form-label width-8"> Type </label>
       <div class="gf-form-select-wrapper">
         <select class="gf-form-input width-12"
           ng-model="ctrl.analyticsController.newAnalyticUnit.type"
-          ng-options="type.value as type.name for type in ctrl.analyticUnitTypes.pattern"
+          ng-options="
+            type.value as type.name
+            for type in ctrl.analyticUnitTypes[ctrl.analyticsController.newAnalyticUnit.detectorType]
+          "
         />
       </div>
 
@@ -179,7 +191,7 @@
 
       4) Jumps: increase to a certain value without returning to the original state.
       <img ng-src="{{ctrl.panelPath}}/img/jumps.jpg">
-    
+
       5) Drops: decrease to a certain value without returning to the original state.
       <img ng-src="{{ctrl.panelPath}}/img/drops.jpg">
 
