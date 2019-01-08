@@ -4,6 +4,7 @@ import { DatasourceRequest } from '../models/datasource';
 import { SegmentsSet } from '../models/segment_set';
 import { AnalyticUnitId, AnalyticUnit, AnalyticSegment } from '../models/analytic_unit';
 import { ServerInfo } from '../models/info';
+import { Threshold } from '../models/threshold';
 import { BackendSrv } from 'grafana/app/core/services/backend_srv';
 import { AlertSrv } from 'grafana/app/core/services/alert_srv';
 
@@ -22,6 +23,15 @@ export class AnalyticService {
 
   async getAnalyticUnitTypes() {
     return await this.get('/analyticUnits/types');
+  }
+
+  async getThresholds(ids: AnalyticUnitId[]) {
+    const resp = await this.get('/threshold', { ids: ids.join(',') });
+    return resp.thresholds.filter(t => t !== null);
+  }
+
+  async updateThreshold(threshold: Threshold) {
+    return await this.patch('/threshold', threshold);
   }
 
   async postNewItem(

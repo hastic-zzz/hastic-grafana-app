@@ -12,6 +12,7 @@ import { Segment, SegmentId } from '../models/segment';
 import { SegmentsSet } from '../models/segment_set';
 import { SegmentArray } from '../models/segment_array';
 import { ServerInfo } from '../models/info';
+import { Threshold, Condition } from '../models/threshold';
 
 import { ANALYTIC_UNIT_COLORS } from '../colors';
 
@@ -43,6 +44,7 @@ export class AnalyticController {
   private _graphLocked: boolean = false;
   private _statusRunners: Set<AnalyticUnitId> = new Set<AnalyticUnitId>();
   private _serverInfo: ServerInfo;
+  private _thresholds: Threshold[];
 
   constructor(private _panelObject: any, private _analyticService: AnalyticService, private _emitter: Emitter) {
     if(_panelObject.analyticUnits === undefined) {
@@ -51,6 +53,9 @@ export class AnalyticController {
     this._labelingDataAddedSegments = new SegmentArray<AnalyticSegment>();
     this._labelingDataDeletedSegments = new SegmentArray<AnalyticSegment>();
     this._analyticUnitsSet = new AnalyticUnitsSet(this._panelObject.analyticUnits);
+    this._thresholds = [];
+    this.updateThresholds();
+
     // this.analyticUnits.forEach(a => this.runEnabledWaiter(a));
   }
 
@@ -87,6 +92,9 @@ export class AnalyticController {
     this._newAnalyticUnit.id = await this._analyticService.postNewItem(
       metricExpanded, datasourceRequest, this._newAnalyticUnit, panelId
     );
+    if(this._newAnalyticUnit.detectorType === 'threshold') {
+      await this.saveThreshold(this._newAnalyticUnit.id);
+    }
     this._analyticUnitsSet.addItem(this._newAnalyticUnit);
     this._creatingNewAnalyticType = false;
     this._savingNewAnalyticUnit = false;
@@ -333,6 +341,41 @@ export class AnalyticController {
   async toggleAnalyticUnitAlert(analyticUnit: AnalyticUnit) {
     analyticUnit.alert = analyticUnit.alert ? true : false;
     await this._analyticService.setAnalyticUnitAlert(analyticUnit);
+  }
+
+  async updateThresholds() {
+    const ids = _.map(this._panelObject.analyticUnits, (analyticUnit: any) => analyticUnit.id);
+    const thresholds = await this._analyticService.getThresholds(ids);
+    console.log(thresholds)
+    this._thresholds = thresholds;
+  }
+
+  getThreshold(id: AnalyticUnitId) {
+    let threshold = _.find(this._thresholds, { id });
+    if(threshold === undefined) {
+      threshold = {
+        id,
+        value: 0,
+        condition: Condition.ABOVE
+      };
+      this._thresholds.push(threshold);
+    }
+    return threshold;
+  }
+
+  async saveThreshold(id: AnalyticUnitId) {
+    const threshold = this.getThreshold(id);
+    if(threshold.value === undefined) {
+      throw new Error('Cannot save threshold with undefined value');
+    }
+    if(threshold.condition === undefined) {
+      throw new Error('Cannot save threshold with undefined condition');
+    }
+    return this._analyticService.updateThreshold(threshold);
+  }
+
+  public get conditions() {
+    return _.values(Condition);
   }
 
   private async _runStatusWaiter(analyticUnit: AnalyticUnit) {
