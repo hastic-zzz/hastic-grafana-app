@@ -35,18 +35,15 @@ export class AnalyticService {
   }
 
   async postNewItem(
-    metric: MetricExpanded, datasourceRequest: DatasourceRequest,
-    newItem: AnalyticUnit, panelId: number
+    metric: MetricExpanded, datasource: DatasourceRequest,
+    newItem: AnalyticUnit, panelUrl: string
   ): Promise<AnalyticUnitId> {
-    let datasource = await this._backendSrv.get(`/api/datasources/name/${metric.datasource}`);
-    datasourceRequest.type = datasource.type;
-
     const response = await this.post('/analyticUnits', {
-      panelUrl: window.location.origin + window.location.pathname + `?panelId=${panelId}&fullscreen`,
+      panelUrl,
       type: newItem.type,
       name: newItem.name,
       metric: metric.toJSON(),
-      datasource: datasourceRequest
+      datasource
     });
 
     return response.id as AnalyticUnitId;

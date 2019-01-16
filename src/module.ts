@@ -43,8 +43,6 @@ class GraphCtrl extends MetricsPanelCtrl {
   subTabIndex: number;
   processor: DataProcessor;
 
-  datasourceRequest: DatasourceRequest;
-
   analyticsController: AnalyticController;
 
   _graphRenderer: GraphRenderer;
@@ -53,6 +51,9 @@ class GraphCtrl extends MetricsPanelCtrl {
   _panelInfo: PanelInfo;
 
   private _analyticUnitTypes: any;
+
+  private _datasourceRequests: any;
+  private _datasources: any;
 
   panelDefaults = {
     // datasource name, null = default datasource
@@ -186,16 +187,25 @@ class GraphCtrl extends MetricsPanelCtrl {
       this.$scope.$digest();
     });
 
-    appEvents.on('ds-request-response', data => {
-      let requestConfig = data.config;
+    this._datasourceRequests = {};
+    this._datasources = {};
 
-      this.datasourceRequest = {
+    appEvents.on('ds-request-response', data => {
+      const requestConfig = data.config;
+      const datasourceIdRegExp = requestConfig.url.match(/proxy\/(\d+)/);
+      if(datasourceIdRegExp === null) {
+        throw new Error(`Cannot find datasource id in url ${requestConfig.url}`);
+      }
+
+      const datasourceId = datasourceIdRegExp[1];
+
+      this._datasourceRequests[datasourceId] = {
         url: requestConfig.url,
         method: requestConfig.method,
         data: requestConfig.data,
         params: requestConfig.params,
         type: undefined
-      };
+      } as DatasourceRequest;
     });
 
     this.analyticsController.fetchAnalyticUnitsStatuses();
@@ -220,7 +230,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     return this._analyticUnitTypes;
   }
 
-  get analyticUnitDetectorTypes () {
+  get analyticUnitDetectorTypes() {
     return _.keys(this._analyticUnitTypes);
   }
 
@@ -505,10 +515,15 @@ class GraphCtrl extends MetricsPanelCtrl {
   async saveNew() {
     this.refresh();
     try {
+      const panelId = this.panel.id;
+      const panelUrl = window.location.origin + window.location.pathname + `?panelId=${panelId}`;
+
+      const datasourceRequest = await this._getDatasourceRequest();
+
       await this.analyticsController.saveNew(
         new MetricExpanded(this.panel.datasource, this.panel.targets),
-        this.datasourceRequest,
-        this.panel.id
+        datasourceRequest,
+        panelUrl
       );
     } catch(e) {
       this.alertSrv.set(
@@ -541,7 +556,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.render();
   }
 
-  onCancelLabeling(key) {
+  onCancelLabeling(key: AnalyticUnitId) {
     this.$scope.$root.appEvent('confirm-modal', {
       title: 'Clear anomaly labeling',
       text2: 'Your changes will be lost.',
@@ -558,8 +573,8 @@ class GraphCtrl extends MetricsPanelCtrl {
     });
   }
 
- async onToggleLabelingMode(key) {
-    await this.analyticsController.toggleUnitTypeLabelingMode(key as AnalyticUnitId);
+  async onToggleLabelingMode(key: AnalyticUnitId) {
+    await this.analyticsController.toggleUnitTypeLabelingMode(key);
     this.$scope.$digest();
     this.render();
   }
@@ -578,14 +593,38 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   private async _updatePanelInfo() {
-    const datasource = await this.backendSrv.get(`/api/datasources/name/${this.panel.datasource}`);
+    const datasource = await this._getDatasourceByName(this.panel.datasource);
 
     this._panelInfo = {
       grafanaVersion: this.contextSrv.version,
       grafanaUrl: window.location.host,
       datasourceType: datasource.type,
       hasticServerUrl: this.backendURL
+    };
+  }
+
+  private async _getDatasourceByName(name: string) {
+    if(this._datasources[name] === undefined) {
+      const datasource = await this.backendSrv.get(`/api/datasources/name/${name}`);
+      if(this._datasourceRequests[datasource.id] !== undefined) {
+        this._datasourceRequests[datasource.id].type = datasource.type;
+      }
+      return datasource;
+    } else {
+      return this._datasources[name];
     }
+  }
+
+  private async _getDatasourceRequest(): Promise<DatasourceRequest> {
+    const datasourceName = this.panel.datasource;
+    const datasource = await this._getDatasourceByName(datasourceName);
+    const datasourceId = datasource.id;
+    if(this._datasourceRequests[datasourceId] === undefined) {
+      appEvents.emit('alert-error', ['Error while exporting from datasource', `Datasource ${datasourceName} is not available`]);
+      throw new Error(`_datasourceRequests[${datasourceId}] is undefined`);
+    }
+
+    return this._datasourceRequests[datasourceId];
   }
 
   get panelInfo() {
