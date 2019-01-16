@@ -33,9 +33,11 @@ class GraphCtrl extends MetricsPanelCtrl {
   dataList: any = [];
   // annotations: any = [];
 
+  private _datasourceRequest: DatasourceRequest;
+  private _datasources: any; 
 
-  _panelPath: any;
-  _renderError: boolean = false;
+  private _panelPath: any;
+  private _renderError: boolean = false;
 
   // annotationsPromise: any;
   dataWarning: any;
@@ -51,9 +53,6 @@ class GraphCtrl extends MetricsPanelCtrl {
   _panelInfo: PanelInfo;
 
   private _analyticUnitTypes: any;
-
-  private _datasourceRequests: any;
-  private _datasources: any;
 
   panelDefaults = {
     // datasource name, null = default datasource
@@ -187,25 +186,18 @@ class GraphCtrl extends MetricsPanelCtrl {
       this.$scope.$digest();
     });
 
-    this._datasourceRequests = {};
     this._datasources = {};
 
     appEvents.on('ds-request-response', data => {
-      const requestConfig = data.config;
-      const datasourceIdRegExp = requestConfig.url.match(/proxy\/(\d+)/);
-      if(datasourceIdRegExp === null) {
-        throw new Error(`Cannot find datasource id in url ${requestConfig.url}`);
-      }
+      let requestConfig = data.config;
 
-      const datasourceId = datasourceIdRegExp[1];
-
-      this._datasourceRequests[datasourceId] = {
+      this._datasourceRequest = {
         url: requestConfig.url,
         method: requestConfig.method,
         data: requestConfig.data,
         params: requestConfig.params,
         type: undefined
-      } as DatasourceRequest;
+      };
     });
 
     this.analyticsController.fetchAnalyticUnitsStatuses();
@@ -603,28 +595,21 @@ class GraphCtrl extends MetricsPanelCtrl {
     };
   }
 
+  private async _getDatasourceRequest() {
+    if(this._datasourceRequest.type === undefined) {
+      const datasource = await this._getDatasourceByName(this.panel.datasource);
+      this._datasourceRequest.type = datasource.type;
+    }
+    return this._datasourceRequest;
+  }
+
   private async _getDatasourceByName(name: string) {
     if(this._datasources[name] === undefined) {
       const datasource = await this.backendSrv.get(`/api/datasources/name/${name}`);
-      if(this._datasourceRequests[datasource.id] !== undefined) {
-        this._datasourceRequests[datasource.id].type = datasource.type;
-      }
       return datasource;
     } else {
       return this._datasources[name];
     }
-  }
-
-  private async _getDatasourceRequest(): Promise<DatasourceRequest> {
-    const datasourceName = this.panel.datasource;
-    const datasource = await this._getDatasourceByName(datasourceName);
-    const datasourceId = datasource.id;
-    if(this._datasourceRequests[datasourceId] === undefined) {
-      appEvents.emit('alert-error', ['Error while exporting from datasource', `Datasource ${datasourceName} is not available`]);
-      throw new Error(`_datasourceRequests[${datasourceId}] is undefined`);
-    }
-
-    return this._datasourceRequests[datasourceId];
   }
 
   get panelInfo() {
