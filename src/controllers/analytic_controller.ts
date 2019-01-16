@@ -44,6 +44,8 @@ export class AnalyticController {
   private _graphLocked: boolean = false;
   private _statusRunners: Set<AnalyticUnitId> = new Set<AnalyticUnitId>();
   private _serverInfo: ServerInfo;
+  private _currentMetric: MetricExpanded;
+  private _currentDatasource: DatasourceRequest;
   private _thresholds: Threshold[];
 
   constructor(private _panelObject: any, private _analyticService: AnalyticService, private _emitter: Emitter) {
@@ -87,10 +89,10 @@ export class AnalyticController {
     }
   }
 
-  async saveNew(metricExpanded: MetricExpanded, datasourceRequest: DatasourceRequest, panelUrl: string) {
+  async saveNew(panelUrl: string) {
     this._savingNewAnalyticUnit = true;
     this._newAnalyticUnit.id = await this._analyticService.postNewItem(
-      metricExpanded, datasourceRequest, this._newAnalyticUnit, panelUrl
+      this._newAnalyticUnit, panelUrl
     );
     if(this._newAnalyticUnit.detectorType === 'threshold') {
       await this.saveThreshold(this._newAnalyticUnit.id);
@@ -116,7 +118,10 @@ export class AnalyticController {
     return this._analyticUnitsSet.byId(this._selectedAnalyticUnitId);
   }
 
-  async toggleUnitTypeLabelingMode(id: AnalyticUnitId) {
+  async toggleUnitTypeLabelingMode(id: AnalyticUnitId, metric: MetricExpanded, datasource: DatasourceRequest) {
+    this._currentMetric = metric;
+    this._currentDatasource = datasource;
+
     if(this.labelingUnit && this.labelingUnit.saving) {
       throw new Error('Can`t toggle during saving');
     }
@@ -134,16 +139,16 @@ export class AnalyticController {
       return;
     }
     this.labelingUnit.saving = true;
-    var newIds = await this._saveLabelingData();
+    const newIds = await this._saveLabelingData();
     this._labelingDataAddedSegments.getSegments().forEach((s, i) => {
       this.labelingUnit.segments.updateId(s.id, newIds[i]);
     });
 
     this.labelingUnit.saving = false;
 
-    var anomaly = this.labelingUnit;
+    let unit = this.labelingUnit;
     this.dropLabeling();
-    this._runStatusWaiter(anomaly);
+    this._runStatusWaiter(unit);
   }
 
   undoLabeling() {
@@ -223,7 +228,7 @@ export class AnalyticController {
   }
 
   private async _saveLabelingData(): Promise<SegmentId[]> {
-    var unit = this.labelingUnit;
+    let unit = this.labelingUnit;
     if(unit === null) {
       throw new Error('analytic unit is not selected');
     }
@@ -235,6 +240,8 @@ export class AnalyticController {
       return [];
     }
 
+
+    await this._analyticService.updateMetric(unit.id, this._currentMetric, this._currentDatasource);
     return this._analyticService.updateSegments(
       unit.id, this._labelingDataAddedSegments, this._labelingDataDeletedSegments
     );

@@ -505,18 +505,11 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   async saveNew() {
-    this.refresh();
     try {
       const panelId = this.panel.id;
       const panelUrl = window.location.origin + window.location.pathname + `?panelId=${panelId}`;
 
-      const datasourceRequest = await this._getDatasourceRequest();
-
-      await this.analyticsController.saveNew(
-        new MetricExpanded(this.panel.datasource, this.panel.targets),
-        datasourceRequest,
-        panelUrl
-      );
+      await this.analyticsController.saveNew(panelUrl);
     } catch(e) {
       this.alertSrv.set(
         'Error while saving analytic unit',
@@ -548,7 +541,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.render();
   }
 
-  onCancelLabeling(key: AnalyticUnitId) {
+  onCancelLabeling(id: AnalyticUnitId) {
     this.$scope.$root.appEvent('confirm-modal', {
       title: 'Clear anomaly labeling',
       text2: 'Your changes will be lost.',
@@ -556,7 +549,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       icon: 'fa-warning',
       altActionText: 'Save',
       onAltAction: () => {
-        this.onToggleLabelingMode(key);
+        this.onToggleLabelingMode(id);
       },
       onConfirm: () => {
         this.analyticsController.undoLabeling();
@@ -565,8 +558,11 @@ class GraphCtrl extends MetricsPanelCtrl {
     });
   }
 
-  async onToggleLabelingMode(key: AnalyticUnitId) {
-    await this.analyticsController.toggleUnitTypeLabelingMode(key);
+  async onToggleLabelingMode(id: AnalyticUnitId) {
+    this.refresh();
+    const datasource = await this._getDatasourceRequest();
+    const metric = new MetricExpanded(this.panel.datasource, this.panel.targets);
+    await this.analyticsController.toggleUnitTypeLabelingMode(id, metric, datasource);
     this.$scope.$digest();
     this.render();
   }

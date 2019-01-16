@@ -24,16 +24,6 @@ export class Target {
   }
 }
 
-export class Metric {
-  constructor(private _panelObj: any) {
-    if(_panelObj === undefined) {
-      throw new Error('_panelObj is undefined');
-    }
-  }
-  get datasource(): string { return this._panelObj.datasource; }
-  get targetHashs(): TargetHash[] { return this._panelObj.targetHashs; }
-}
-
 export class MetricExpanded {
   private _targets: Target[];
   constructor(public datasource: string, targets: any[]) {
@@ -49,14 +39,5 @@ export class MetricExpanded {
       datasource: this.datasource,
       targets: this._targets.map(t => t.getJSON())
     }
-  }
-}
-
-export class MetricMap {
-  private _cache: Map<TargetHash, Target> = new Map<TargetHash, Target>();
-  constructor(datasource: string, targets: Target[]) {
-    targets.forEach(t => {
-      this._cache.set(t.getHash(), t);
-    });
   }
 }

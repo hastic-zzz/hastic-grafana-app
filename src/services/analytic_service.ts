@@ -34,19 +34,22 @@ export class AnalyticService {
     return await this.patch('/threshold', threshold);
   }
 
-  async postNewItem(
-    metric: MetricExpanded, datasource: DatasourceRequest,
-    newItem: AnalyticUnit, panelUrl: string
-  ): Promise<AnalyticUnitId> {
+  async postNewItem(newItem: AnalyticUnit, panelUrl: string): Promise<AnalyticUnitId> {
     const response = await this.post('/analyticUnits', {
       panelUrl,
       type: newItem.type,
-      name: newItem.name,
-      metric: metric.toJSON(),
-      datasource
+      name: newItem.name
     });
 
     return response.id as AnalyticUnitId;
+  }
+
+  async updateMetric(analyticUnitId: AnalyticUnitId, metric: MetricExpanded, datasource: DatasourceRequest) {
+    await this.patch('/analyticUnits/metric', {
+      analyticUnitId,
+      metric: metric.toJSON(),
+      datasource
+    });
   }
 
   async removeAnalyticUnit(id: AnalyticUnitId) {
