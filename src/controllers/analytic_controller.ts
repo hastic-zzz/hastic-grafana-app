@@ -89,10 +89,10 @@ export class AnalyticController {
     }
   }
 
-  async saveNew(panelUrl: string) {
+  async saveNew(metric: MetricExpanded, datasource: DatasourceRequest, panelUrl: string) {
     this._savingNewAnalyticUnit = true;
     this._newAnalyticUnit.id = await this._analyticService.postNewItem(
-      this._newAnalyticUnit, panelUrl
+      this._newAnalyticUnit, metric, datasource, panelUrl
     );
     if(this._newAnalyticUnit.detectorType === 'threshold') {
       await this.saveThreshold(this._newAnalyticUnit.id);

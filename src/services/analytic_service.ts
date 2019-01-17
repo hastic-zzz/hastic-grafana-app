@@ -34,11 +34,18 @@ export class AnalyticService {
     return await this.patch('/threshold', threshold);
   }
 
-  async postNewItem(newItem: AnalyticUnit, panelUrl: string): Promise<AnalyticUnitId> {
+  async postNewItem(
+    newItem: AnalyticUnit,
+    metric: MetricExpanded,
+    datasource: DatasourceRequest,
+    panelUrl: string
+  ): Promise<AnalyticUnitId> {
     const response = await this.post('/analyticUnits', {
       panelUrl,
       type: newItem.type,
-      name: newItem.name
+      name: newItem.name,
+      metric: metric.toJSON(),
+      datasource
     });
 
     return response.id as AnalyticUnitId;

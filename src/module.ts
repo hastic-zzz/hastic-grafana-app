@@ -34,7 +34,7 @@ class GraphCtrl extends MetricsPanelCtrl {
   // annotations: any = [];
 
   private _datasourceRequest: DatasourceRequest;
-  private _datasources: any; 
+  private _datasources: any;
 
   private _panelPath: any;
   private _renderError: boolean = false;
@@ -509,7 +509,13 @@ class GraphCtrl extends MetricsPanelCtrl {
       const panelId = this.panel.id;
       const panelUrl = window.location.origin + window.location.pathname + `?panelId=${panelId}`;
 
-      await this.analyticsController.saveNew(panelUrl);
+      const datasource = await this._getDatasourceRequest();
+
+      await this.analyticsController.saveNew(
+        new MetricExpanded(this.panel.datasource, this.panel.targets),
+        datasource,
+        panelUrl
+      );
     } catch(e) {
       this.alertSrv.set(
         'Error while saving analytic unit',
