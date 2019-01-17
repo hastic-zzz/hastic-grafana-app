@@ -33,17 +33,17 @@ class GraphCtrl extends MetricsPanelCtrl {
   dataList: any = [];
   // annotations: any = [];
 
+  private _datasourceRequest: DatasourceRequest;
+  private _datasources: any; 
 
-  _panelPath: any;
-  _renderError: boolean = false;
+  private _panelPath: any;
+  private _renderError: boolean = false;
 
   // annotationsPromise: any;
   dataWarning: any;
   colors: any = [];
   subTabIndex: number;
   processor: DataProcessor;
-
-  datasourceRequest: DatasourceRequest;
 
   analyticsController: AnalyticController;
 
@@ -186,10 +186,12 @@ class GraphCtrl extends MetricsPanelCtrl {
       this.$scope.$digest();
     });
 
+    this._datasources = {};
+
     appEvents.on('ds-request-response', data => {
       let requestConfig = data.config;
 
-      this.datasourceRequest = {
+      this._datasourceRequest = {
         url: requestConfig.url,
         method: requestConfig.method,
         data: requestConfig.data,
@@ -220,7 +222,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     return this._analyticUnitTypes;
   }
 
-  get analyticUnitDetectorTypes () {
+  get analyticUnitDetectorTypes() {
     return _.keys(this._analyticUnitTypes);
   }
 
@@ -503,13 +505,11 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   async saveNew() {
-    this.refresh();
     try {
-      await this.analyticsController.saveNew(
-        new MetricExpanded(this.panel.datasource, this.panel.targets),
-        this.datasourceRequest,
-        this.panel.id
-      );
+      const panelId = this.panel.id;
+      const panelUrl = window.location.origin + window.location.pathname + `?panelId=${panelId}`;
+
+      await this.analyticsController.saveNew(panelUrl);
     } catch(e) {
       this.alertSrv.set(
         'Error while saving analytic unit',
@@ -541,7 +541,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.render();
   }
 
-  onCancelLabeling(key) {
+  onCancelLabeling(id: AnalyticUnitId) {
     this.$scope.$root.appEvent('confirm-modal', {
       title: 'Clear anomaly labeling',
       text2: 'Your changes will be lost.',
@@ -549,7 +549,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       icon: 'fa-warning',
       altActionText: 'Save',
       onAltAction: () => {
-        this.onToggleLabelingMode(key);
+        this.onToggleLabelingMode(id);
       },
       onConfirm: () => {
         this.analyticsController.undoLabeling();
@@ -558,8 +558,11 @@ class GraphCtrl extends MetricsPanelCtrl {
     });
   }
 
- async onToggleLabelingMode(key) {
-    await this.analyticsController.toggleUnitTypeLabelingMode(key as AnalyticUnitId);
+  async onToggleLabelingMode(id: AnalyticUnitId) {
+    this.refresh();
+    const datasource = await this._getDatasourceRequest();
+    const metric = new MetricExpanded(this.panel.datasource, this.panel.targets);
+    await this.analyticsController.toggleUnitTypeLabelingMode(id, metric, datasource);
     this.$scope.$digest();
     this.render();
   }
@@ -578,13 +581,30 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   private async _updatePanelInfo() {
-    const datasource = await this.backendSrv.get(`/api/datasources/name/${this.panel.datasource}`);
+    const datasource = await this._getDatasourceByName(this.panel.datasource);
 
     this._panelInfo = {
       grafanaVersion: this.contextSrv.version,
       grafanaUrl: window.location.host,
       datasourceType: datasource.type,
       hasticServerUrl: this.backendURL
+    };
+  }
+
+  private async _getDatasourceRequest() {
+    if(this._datasourceRequest.type === undefined) {
+      const datasource = await this._getDatasourceByName(this.panel.datasource);
+      this._datasourceRequest.type = datasource.type;
+    }
+    return this._datasourceRequest;
+  }
+
+  private async _getDatasourceByName(name: string) {
+    if(this._datasources[name] === undefined) {
+      const datasource = await this.backendSrv.get(`/api/datasources/name/${name}`);
+      return datasource;
+    } else {
+      return this._datasources[name];
     }
   }
 

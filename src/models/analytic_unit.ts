@@ -1,7 +1,6 @@
 import { SegmentsSet } from './segment_set';
 import { SegmentArray } from './segment_array';
 import { Segment, SegmentId } from './segment';
-import { Metric } from './metric';
 
 import { ANALYTIC_UNIT_COLORS } from '../colors';
 
@@ -30,7 +29,6 @@ export class AnalyticUnit {
   private _segmentSet = new SegmentArray<AnalyticSegment>();
   private _status: string;
   private _error: string;
-  private _metric: Metric;
 
   constructor(private _panelObject?: any) {
     if(_panelObject === undefined) {
@@ -43,8 +41,6 @@ export class AnalyticUnit {
       type: 'GENERAL',
       alert: false
     });
-
-    //this._metric = new Metric(_panelObject.metric);
   }
 
   get id(): AnalyticUnitId { return this._panelObject.id; }
@@ -83,8 +79,6 @@ export class AnalyticUnit {
   set visible(value: boolean) {
     this._panelObject.visible = value;
   }
-
-  get metric() { return this._metric; }
 
   addLabeledSegment(segment: Segment): AnalyticSegment {
     var asegment = new AnalyticSegment(true, segment.id, segment.from, segment.to);

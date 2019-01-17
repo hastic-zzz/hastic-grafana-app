@@ -34,22 +34,22 @@ export class AnalyticService {
     return await this.patch('/threshold', threshold);
   }
 
-  async postNewItem(
-    metric: MetricExpanded, datasourceRequest: DatasourceRequest,
-    newItem: AnalyticUnit, panelId: number
-  ): Promise<AnalyticUnitId> {
-    let datasource = await this._backendSrv.get(`/api/datasources/name/${metric.datasource}`);
-    datasourceRequest.type = datasource.type;
-
+  async postNewItem(newItem: AnalyticUnit, panelUrl: string): Promise<AnalyticUnitId> {
     const response = await this.post('/analyticUnits', {
-      panelUrl: window.location.origin + window.location.pathname + `?panelId=${panelId}&fullscreen`,
+      panelUrl,
       type: newItem.type,
-      name: newItem.name,
-      metric: metric.toJSON(),
-      datasource: datasourceRequest
+      name: newItem.name
     });
 
     return response.id as AnalyticUnitId;
+  }
+
+  async updateMetric(analyticUnitId: AnalyticUnitId, metric: MetricExpanded, datasource: DatasourceRequest) {
+    await this.patch('/analyticUnits/metric', {
+      analyticUnitId,
+      metric: metric.toJSON(),
+      datasource
+    });
   }
 
   async removeAnalyticUnit(id: AnalyticUnitId) {
