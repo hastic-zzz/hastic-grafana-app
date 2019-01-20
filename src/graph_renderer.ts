@@ -4,10 +4,10 @@ import { GraphTooltip } from './graph_tooltip';
 import { convertValuesToHistogram, getSeriesValues } from './histogram';
 import {
   AnalyticController,
-  REGION_FILL_ALPHA as ANOMALY_REGION_FILL_ALPHA,
-  REGION_STROKE_ALPHA as ANOMALY_REGION_STROKE_ALPHA,
-  REGION_DELETE_COLOR_LIGHT as ANOMALY_REGION_DELETE_COLOR_LIGHT,
-  REGION_DELETE_COLOR_DARK as ANOMALY_REGION_DELETE_COLOR_DARK
+  REGION_FILL_ALPHA,
+  REGION_STROKE_ALPHA,
+  REGION_DELETE_COLOR_LIGHT,
+  REGION_DELETE_COLOR_DARK
 } from './controllers/analytic_controller';
 
 import { GraphCtrl } from './module';
@@ -107,7 +107,7 @@ export class GraphRenderer {
         return;
       }
 
-      if(this._isAnomalyEvent(selectionEvent)) {
+      if(this._isHasticEvent(selectionEvent)) {
         this.plot.clearSelection();
         var id = this._analyticController.getNewTempSegmentId();
         var segment = new Segment(
@@ -116,7 +116,7 @@ export class GraphRenderer {
           Math.round(selectionEvent.xaxis.to)
         );
         if(this._analyticController.labelingDeleteMode) {
-          this._analyticController.deleteLabelingAnomalySegmentsInRange(
+          this._analyticController.deleteLabelingAnalyticUnitSegmentsInRange(
             segment.from, segment.to
           );
         } else {
@@ -147,7 +147,7 @@ export class GraphRenderer {
         return;
       }
 
-      if(this._isAnomalyEvent(flotEvent)) {
+      if(this._isHasticEvent(flotEvent)) {
         return;
       }
 
@@ -340,16 +340,16 @@ export class GraphRenderer {
     var color = COLOR_SELECTION;
     var fillAlpha = 0.4;
     var strokeAlpha = 0.4;
-    if(this._isAnomalyEvent(e)) {
+    if(this._isHasticEvent(e)) {
       if(this._analyticController.labelingDeleteMode) {
         color = this.contextSrv.user.lightTheme ?
-          ANOMALY_REGION_DELETE_COLOR_LIGHT :
-          ANOMALY_REGION_DELETE_COLOR_DARK;
+          REGION_DELETE_COLOR_LIGHT :
+          REGION_DELETE_COLOR_DARK;
       } else {
         color = this._analyticController.labelingUnit.color;
       }
-      fillAlpha = ANOMALY_REGION_FILL_ALPHA;
-      strokeAlpha = ANOMALY_REGION_STROKE_ALPHA;
+      fillAlpha = REGION_FILL_ALPHA;
+      strokeAlpha = REGION_STROKE_ALPHA;
     }
     this.plot.getOptions().selection.color = color
   }
@@ -805,7 +805,7 @@ export class GraphRenderer {
     return '%H:%M';
   }
 
-  private _isAnomalyEvent(obj: any) {
+  private _isHasticEvent(obj: any) {
     return (obj.ctrlKey || obj.metaKey) &&
            this.contextSrv.isEditor &&
            this._analyticController.labelingMode;

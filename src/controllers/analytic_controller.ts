@@ -318,7 +318,7 @@ export class AnalyticController {
 
   }
 
-  deleteLabelingAnomalySegmentsInRange(from: number, to: number) {
+  deleteLabelingAnalyticUnitSegmentsInRange(from: number, to: number) {
     var allRemovedSegs = this.labelingUnit.removeSegmentsInRange(from, to);
     allRemovedSegs.forEach(s => {
       if(!this._labelingDataAddedSegments.has(s.id)) {
