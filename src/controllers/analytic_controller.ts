@@ -350,6 +350,14 @@ export class AnalyticController {
     await this._analyticService.setAnalyticUnitAlert(analyticUnit);
   }
 
+  async fetchAnalyticUnitName(analyticUnit: AnalyticUnit) {
+    let updateObj = {
+      id: analyticUnit.id,
+      name: analyticUnit.name
+    }
+    await this._analyticService.updateAnalyticUnit(analyticUnit.id, updateObj);
+  }
+
   async updateThresholds() {
     const ids = _.map(this._panelObject.analyticUnits, (analyticUnit: any) => analyticUnit.id);
     const thresholds = await this._analyticService.getThresholds(ids);

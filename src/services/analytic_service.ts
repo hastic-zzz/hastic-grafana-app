@@ -156,6 +156,11 @@ export class AnalyticService {
     });
   }
 
+  async updateAnalyticUnit(id: AnalyticUnitId, updateObj: any) {
+    updateObj.id = id;
+    return this.patch('/analyticUnits', updateObj);
+  }
+
   private async _analyticRequest(method: string, url: string, data?: any) {
     try {
       method = method.toUpperCase();

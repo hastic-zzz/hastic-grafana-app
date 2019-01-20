@@ -135,8 +135,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     aliasColors: {},
     // other style overrides
     seriesOverrides: [],
-    thresholds: [],
-    anomalyType: '',
+    thresholds: []
   };
 
   /** @ngInject */
@@ -531,6 +530,10 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.analyticsController.toggleAnalyticUnitAlert(analyticUnit);
   }
 
+  onAnalyticUnitNameChange(analyticUnit: AnalyticUnit) {
+    this.analyticsController.fetchAnalyticUnitName(analyticUnit);
+  }
+
   onColorChange(id: AnalyticUnitId, value: string) {
     if(id === undefined) {
       throw new Error('id is undefined');
@@ -549,7 +552,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   onCancelLabeling(id: AnalyticUnitId) {
     this.$scope.$root.appEvent('confirm-modal', {
-      title: 'Clear anomaly labeling',
+      title: 'Clear labeling',
       text2: 'Your changes will be lost.',
       yesText: 'Clear',
       icon: 'fa-warning',
