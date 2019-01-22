@@ -1,5 +1,5 @@
 {
-  "name": "hastic-graph-panel",
+  "name": "hastic-grafana-app",
   "version": "0.2.7",
   "description": "Hastic default panel for rendering graph and anomalies",
   "main": "dist/module",
@@ -11,7 +11,7 @@
   "keywords": [],
   "author": "Alexey Velikiy",
   "license": "MIT",
-  "repository": "https://github.com/CorpGlory/hastic/hastic-grafana-graph-panel",
+  "repository": "https://github.com/CorpGlory/hastic/hastic-grafana-app",
   "devDependencies": {
     "@types/angular": "^1.6.43",
     "@types/flot": "0.0.31",
