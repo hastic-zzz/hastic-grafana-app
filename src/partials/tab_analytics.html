@@ -11,7 +11,10 @@
   <div class="editor-row">
     <div class="gf-form" ng-repeat="analyticUnit in ctrl.analyticsController.analyticUnits">
 
-      <label class="gf-form-label width-4"> Name </label>
+      <label class="gf-form-label width-6">
+        <i class="fa fa-info" bs-tooltip="'Analytic unit id: ' + analyticUnit.id"></i>
+        &nbsp; Name
+      </label>
       <input
         type="text" class="gf-form-input max-width-15"
         ng-model="analyticUnit.name"
