@@ -7,7 +7,9 @@
 </div>
 
 <div ng-if="ctrl.analyticsController.serverStatus === true">
-  <h5> Please create at least 1 analytic unit to enable webhooks </h5>
+  <div ng-if="!ctrl.analyticsController.analyticUnits.length">
+    <h5> Please create at least 1 analytic unit to enable webhooks </h5>
+  </div>
   <div class="editor-row">
     <div class="gf-form" ng-repeat="analyticUnit in ctrl.analyticsController.analyticUnits">
       <label class="gf-form-label max-width-15"> {{ analyticUnit.name }} ({{ analyticUnit.type }}) </label>
