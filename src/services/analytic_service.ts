@@ -5,8 +5,7 @@ import { SegmentsSet } from '../models/segment_set';
 import { AnalyticUnitId, AnalyticUnit, AnalyticSegment } from '../models/analytic_unit';
 import { ServerInfo } from '../models/info';
 import { Threshold } from '../models/threshold';
-import { BackendSrv } from 'grafana/app/core/services/backend_srv';
-import { AlertSrv } from 'grafana/app/core/services/alert_srv';
+import { appEvents } from 'grafana/app/core/core';
 
 
 export class AnalyticService {
@@ -14,9 +13,7 @@ export class AnalyticService {
 
   constructor(
     private _backendURL: string,
-    private $http,
-    private _backendSrv: BackendSrv,
-    private _alertSrv: AlertSrv
+    private $http
   ) {
     this.isBackendOk();
   }
@@ -202,10 +199,12 @@ export class AnalyticService {
   }
 
   private displayConnectionAlert() {
-    this._alertSrv.set(
-      'No connection to Hastic server',
-      `Hastic server: "${this._backendURL}"`,
-      'warning', 4000
+    appEvents.emit(
+      'alert-success',
+      [
+        'No connection to Hastic server',
+        `Hastic server: "${this._backendURL}"`,
+      ]
     );
   }
 
