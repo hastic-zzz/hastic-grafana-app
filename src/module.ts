@@ -494,7 +494,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   get panelPath() {
     if (this._panelPath === undefined) {
-      this._panelPath = '/public/plugins/' + this.pluginId + '/';
+      this._panelPath = 'public/plugins/' + this.pluginId + '/';
     }
     return this._panelPath;
   }
