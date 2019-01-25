@@ -145,8 +145,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     private keybindingSrv,
     private backendSrv: BackendSrv,
     private popoverSrv,
-    private contextSrv,
-    private alertSrv: AlertSrv
+    private contextSrv
 ) {
     super($scope, $injector);
 
@@ -157,7 +156,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     this.processor = new DataProcessor(this.panel);
 
-    this.analyticService = new AnalyticService(this.backendURL, $http, this.backendSrv, this.alertSrv);
+    this.analyticService = new AnalyticService(this.backendURL, $http);
 
     this.runBackendConnectivityCheck();
 
@@ -227,10 +226,12 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   async runBackendConnectivityCheck() {
     if(this.backendURL === '' || this.backendURL === undefined) {
-      this.alertSrv.set(
-        `Dashboard variable $${BACKEND_VARIABLE_NAME} is missing`,
-        `Please set $${BACKEND_VARIABLE_NAME}`,
-        'warning', 4000
+      appEvents.emit(
+        'alert-warning',
+        [
+          `Dashboard variable $${BACKEND_VARIABLE_NAME} is missing`,
+          `Please set $${BACKEND_VARIABLE_NAME}`
+        ]
       );
       return;
     }
@@ -238,10 +239,12 @@ class GraphCtrl extends MetricsPanelCtrl {
     let connected = await this.analyticService.isBackendOk();
     if(connected) {
       this.updateAnalyticUnitTypes();
-      this.alertSrv.set(
-        'Connected to Hastic server',
-        `Hastic server: "${this.backendURL}"`,
-        'success', 4000
+      appEvents.emit(
+        'alert-success',
+        [
+          'Connected to Hastic server',
+          `Hastic server: "${this.backendURL}"`
+        ]
       );
     }
   }
@@ -516,10 +519,12 @@ class GraphCtrl extends MetricsPanelCtrl {
         panelUrl
       );
     } catch(e) {
-      this.alertSrv.set(
-        'Error while saving analytic unit',
-        e.message,
-        'error', 7000
+      appEvents.emit(
+        'alert-error',
+        [
+          'Error while saving analytic unit',
+          e.message
+        ]
       );
     }
     this.$scope.$digest();
