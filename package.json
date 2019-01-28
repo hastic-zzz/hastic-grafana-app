@@ -1,7 +1,7 @@
 {
   "name": "hastic-grafana-app",
   "version": "0.2.7",
-  "description": "Hastic default panel for rendering graph and anomalies",
+  "description": "Hastic app: labeling and rendeting analytics from hastic-server",
   "main": "dist/module",
   "scripts": {
     "build": "webpack --config build/webpack.prod.conf.js",
@@ -9,7 +9,7 @@
     "test": "jest --config jest.config.js"
   },
   "keywords": [],
-  "author": "Alexey Velikiy",
+  "author": "CorpGlory Inc.",
   "license": "MIT",
   "repository": "https://github.com/CorpGlory/hastic/hastic-grafana-app",
   "devDependencies": {
