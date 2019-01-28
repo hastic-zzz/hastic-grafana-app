@@ -17,7 +17,6 @@ import { axesEditorComponent } from './axes_editor';
 import { MetricsPanelCtrl } from 'grafana/app/plugins/sdk';
 import { appEvents } from 'grafana/app/core/core'
 import { BackendSrv } from 'grafana/app/core/services/backend_srv';
-import { AlertSrv } from 'grafana/app/core/services/alert_srv';
 
 import _ from 'lodash';
 
