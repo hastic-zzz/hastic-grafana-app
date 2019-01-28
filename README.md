@@ -20,10 +20,10 @@ A version of Grafana's default Graph Panel for rendering and labeling Hastic's p
 
 
 See also:
+* [Getting started](https://github.com/hastic/hastic-grafana-app/wiki/Getting-started)
 * [Wiki](https://github.com/hastic/hastic-grafana-app/wiki)
 * [FAQ](https://github.com/hastic/hastic-grafana-app/wiki/FAQ)
 * [Installation from source](https://github.com/hastic/hastic-grafana-app/wiki/Installation-from-source)
-* [Usage](https://github.com/hastic/hastic-grafana-app/wiki/Usage)
 * [Changelog](https://github.com/hastic/hastic-grafana-app/wiki/Changelog)
 * [Hastic-server](https://github.com/hastic/hastic-server)
 
