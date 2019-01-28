@@ -18,6 +18,7 @@ import { MetricsPanelCtrl } from 'grafana/app/plugins/sdk';
 import { appEvents } from 'grafana/app/core/core'
 import { BackendSrv } from 'grafana/app/core/services/backend_srv';
 
+
 import _ from 'lodash';
 
 const BACKEND_VARIABLE_NAME = 'HASTIC_SERVER_URL';
@@ -160,7 +161,8 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.runBackendConnectivityCheck();
 
     this.analyticsController = new AnalyticController(this.panel, this.analyticService, this.events);
-    keybindingSrv.bind('d', this.onDKey.bind(this));
+
+    this.bindDKey();
 
     this.events.on('render', this.onRender.bind(this));
     this.events.on('data-received', this.onDataReceived.bind(this));
@@ -199,6 +201,15 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     this.analyticsController.fetchAnalyticUnitsStatuses();
 
+  }
+
+  bindDKey() {
+    this.keybindingSrv.bind('d', this.onDKey.bind(this));
+  }
+
+  editPanel() {
+    super.editPanel();
+    this.bindDKey();
   }
 
   get backendURL(): string {
