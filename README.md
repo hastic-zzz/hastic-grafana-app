@@ -33,28 +33,6 @@ See also:
 * [hastic-server](https://github.com/hastic/hastic-server)
 * [Grafana >= 5.1.1](https://grafana.com/grafana/download)
 
-# Installation
-
-- Navigate to /plugins directory in <GRAFANA_PATH>/data/plugins
-
-- Download hastic graph panel
-```
-wget https://github.com/hastic/hastic-grafana-app/releases/download/0.2.7/hastic-grafana-app-0.2.7.tar.gz
-```
-
-- Unpack downloaded files
-```
-tar -zxvf hastic-grafana-app-0.2.7.tar.gz
-```
-
-- Restart grafana-server
-  - For grafana installed via Standalone Linux Binaries:
-    - Stop any running instances of grafana-server
-    - Start grafana-server by:
-      ```$GRAFANA_PATH/bin/grafana-server```
-  - For grafana installed via Package Manager:
-    - type in ```systemctl restart grafana-server```
-
 
 # Credits
 
