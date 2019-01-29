@@ -1,12 +1,12 @@
 {
-  "type": "panel",
-  "name": "Hastic Graph",
-  "id": "hastic-graph-panel",
+  "type": "app",
+  "name": "Hastic App",
+  "id": "hastic-grafana-app",
 
   "info": {
     "author": {
-      "name": "Hastic.Core Team",
-      "url": "https://github.com/hastic/hastic-grafana-graph-panel"
+      "name": "CorpGlory Inc.",
+      "url": "https://github.com/hastic/hastic-grafana-app"
     },
     "logos": {
       "small": "img/icn-graph-panel.png",
