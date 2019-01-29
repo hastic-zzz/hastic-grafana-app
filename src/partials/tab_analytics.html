@@ -64,7 +64,7 @@
         </a>
       </label>
 
-      <select class="gf-form-input width-5"
+      <select class="gf-form-input width-7"
         ng-model="ctrl.analyticsController.getThreshold(analyticUnit.id).condition"
         ng-options="type for type in ctrl.analyticsController.conditions"
         ng-if="analyticUnit.detectorType === 'threshold'"
@@ -75,7 +75,7 @@
         class="gf-form-input width-5"
         type="number"
         ng-model="ctrl.analyticsController.getThreshold(analyticUnit.id).value"
-        ng-if="analyticUnit.detectorType === 'threshold'"
+        ng-if="analyticUnit.detectorType === 'threshold' && ctrl.analyticsController.getThreshold(analyticUnit.id).condition != 'No data'"
         ng-blur="ctrl.analyticsController.saveThreshold(analyticUnit.id)"
       />
 
