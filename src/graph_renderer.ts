@@ -122,7 +122,7 @@ export class GraphRenderer {
         } else {
           this._analyticController.addLabelSegment(segment);
         }
-        this._renderPanel();
+        this.renderPanel();
         return;
       }
 
@@ -202,7 +202,7 @@ export class GraphRenderer {
     // this.annotations = this.ctrl.annotations || [];
     this._buildFlotPairs(this.data);
     updateLegendValues(this.data, this.panel);
-    this._renderPanel();
+    this.renderPanel();
     if(this.tooltip.visible) {
       var pos = this.plot.c2p(this._graphMousePosition);
       var canvasOffset = this.$elem.find('.flot-overlay').offset();
@@ -314,7 +314,7 @@ export class GraphRenderer {
   }
 
   // Function for rendering panel
-  private _renderPanel() {
+  public renderPanel() {
 
     this.panelWidth = this.$elem.width();
     if (this._shouldAbortRender()) {
