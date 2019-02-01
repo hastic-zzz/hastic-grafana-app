@@ -14,7 +14,9 @@
     },
     "version": "0.2.7"
   },
-
+  "includes": [
+    {"type": "panel", "name": "Hastic Graph Panel"}
+  ],
   "dependencies": {
     "grafanaVersion": "5.4.x"
   }
