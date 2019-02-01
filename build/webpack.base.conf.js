@@ -31,7 +31,7 @@ module.exports = {
     new CopyWebpackPlugin([
       { from: 'plugin.json' },
       { from: 'img/*' },
-      { from: 'partials/*' }
+      { from: 'graph_panel/partials/*' }
     ])
   ],
   resolve: {

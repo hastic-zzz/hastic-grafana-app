@@ -272,7 +272,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     this._updatePanelInfo();
     this.analyticsController.updateServerInfo();
 
-    const partialPath = this.panelPath + 'partials';
+    const partialPath = this.panelPath + 'partials/graph_panel';
     this.addEditorTab('Analytics', `${partialPath}/tab_analytics.html`, 2);
     this.addEditorTab('Webhooks', `${partialPath}/tab_webhooks.html`, 3);
     this.addEditorTab('Axes', axesEditorComponent, 4);
