@@ -1,0 +1,11 @@
+{
+  "type": "panel",
+  "name": "Hastic Graph",
+  "id": "hastic-graph-panel",
+  "info": {
+    "logos": {
+      "small": "../hastic-app/img/icn-graph-panel.png",
+      "large": "../hastic-app/img/icn-graph-panel.png"
+    }
+  }
+}
