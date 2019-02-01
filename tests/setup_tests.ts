@@ -13,8 +13,7 @@ import { Emitter } from 'grafana/app/core/utils/emitter';
 var id = 0;
 
 function $http() {
-  return { data: { pattern: [], thresholds: [] }
-  }
+  return { data: { pattern: [], thresholds: [] } };
 } 
 
 const analyticService = new AnalyticService('', $http);
