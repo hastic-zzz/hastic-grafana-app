@@ -10,7 +10,7 @@ import {
   REGION_DELETE_COLOR_DARK
 } from './controllers/analytic_controller';
 
-import { GraphCtrl } from './module';
+import { GraphCtrl } from './graph_ctrl';
 
 import 'jquery';
 import './vendor/flot/jquery.flot.js';

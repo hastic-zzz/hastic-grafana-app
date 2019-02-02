@@ -9,9 +9,12 @@ function resolve(dir) {
 module.exports = {
   target: 'node',
   context: resolve('src'),
-  entry: './module.ts',
+  entry: {
+    './module': './module.ts',
+    './panel/graph_panel/module': './panel/graph_panel/graph_ctrl.ts'
+  },
   output: {
-    filename: 'module.js',
+    filename: '[name].js',
     path: resolve('dist'),
     libraryTarget: 'amd'
   },
@@ -31,7 +34,8 @@ module.exports = {
     new CopyWebpackPlugin([
       { from: 'plugin.json' },
       { from: 'img/*' },
-      { from: 'partials/*' }
+      { from: 'panel/graph_panel/plugin.json', to: 'panel/graph_panel/plugin.json' },
+      { from: 'panel/graph_panel/partials/*' }
     ])
   ],
   resolve: {

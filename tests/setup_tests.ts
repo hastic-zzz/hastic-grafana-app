@@ -1,8 +1,8 @@
-import { AnalyticController } from '../src/controllers/analytic_controller';
-import { AnalyticUnit, AnalyticUnitId } from '../src/models/analytic_unit';
-import { AnalyticService } from '../src/services/analytic_service';
-import { MetricExpanded } from '../src/models/metric';
-import { DatasourceRequest } from '../src/models/datasource';
+import { AnalyticController } from '../src/panel/graph_panel/controllers/analytic_controller';
+import { AnalyticUnit, AnalyticUnitId } from '../src/panel/graph_panel/models/analytic_unit';
+import { AnalyticService } from '../src/panel/graph_panel/services/analytic_service';
+import { MetricExpanded } from '../src/panel/graph_panel/models/metric';
+import { DatasourceRequest } from '../src/panel/graph_panel/models/datasource';
 
 import { Emitter } from 'grafana/app/core/utils/emitter';
 
