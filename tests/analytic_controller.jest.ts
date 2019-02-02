@@ -1,6 +1,6 @@
-import { ANALYTIC_UNIT_COLORS } from '../src/colors';
-import { MetricExpanded } from '../src/models/metric';
-import { DatasourceRequest } from '../src/models/datasource';
+import { ANALYTIC_UNIT_COLORS } from '../src/panel/graph_panel/colors';
+import { MetricExpanded } from '../src/panel/graph_panel/models/metric';
+import { DatasourceRequest } from '../src/panel/graph_panel/models/datasource';
 
 import { analyticController } from './setup_tests';
 
