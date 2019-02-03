@@ -11,6 +11,7 @@ module.exports = {
   context: resolve('src'),
   entry: {
     './module': './module.ts',
+    './config/module': './config/config_ctrl.ts',
     './panel/graph_panel/module': './panel/graph_panel/graph_ctrl.ts'
   },
   output: {
@@ -49,6 +50,10 @@ module.exports = {
           'ts-loader'
         ],
         exclude: /node_modules/,
+      },
+      {
+        test: /\.html$/,
+        use: 'raw-loader'
       },
       {
         test: /jquery\.flot\.(?!events)/,
