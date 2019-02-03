@@ -1,4 +1,4 @@
-import configTemplate from './config.html';
+import configTemplate from './template.html';
 
 
 class ConfigCtrl {
