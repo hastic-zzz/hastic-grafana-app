@@ -1,10 +1,13 @@
-import configTemplate from './template.html';
+import template from './template.html';
 
 
 class ConfigCtrl {
   static template;
+  appModel: any;
+  constructor() {
+  }
 }
 
-ConfigCtrl.template = configTemplate;
+ConfigCtrl.template = template;
 
 export { ConfigCtrl };
