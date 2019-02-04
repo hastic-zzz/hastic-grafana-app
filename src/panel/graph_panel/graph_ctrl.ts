@@ -1,6 +1,6 @@
 import './series_overrides_ctrl';
 
-import template from './template';
+import template from './template.html';
 
 import { GraphRenderer } from './graph_renderer';
 import { GraphLegend } from './graph_legend';
