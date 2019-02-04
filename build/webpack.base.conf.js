@@ -11,7 +11,6 @@ module.exports = {
   context: resolve('src'),
   entry: {
     './module': './module.ts',
-    './config/module': './config/config_ctrl.ts',
     './panel/graph_panel/module': './panel/graph_panel/graph_ctrl.ts'
   },
   output: {
