@@ -2,12 +2,13 @@ import template from './template.html';
 
 
 class ConfigCtrl {
-  static template;
+  static template = template;
   appModel: any;
   constructor() {
+    if (!this.appModel.jsonData) {
+      this.appModel.jsonData = {};
+    }
   }
 }
-
-ConfigCtrl.template = template;
 
 export { ConfigCtrl };
