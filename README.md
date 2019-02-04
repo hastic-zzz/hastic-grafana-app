@@ -31,7 +31,7 @@ See also:
 # Prerequisites
 
 * [hastic-server](https://github.com/hastic/hastic-server)
-* [Grafana >= 5.1.1](https://grafana.com/grafana/download)
+* [Grafana >= 5.4.0](https://grafana.com/grafana/download)
 
 
 # Credits

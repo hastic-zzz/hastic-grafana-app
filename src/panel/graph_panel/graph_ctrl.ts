@@ -272,7 +272,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     this._updatePanelInfo();
     this.analyticsController.updateServerInfo();
 
-    const partialPath = this.panelPath + 'partials/graph_panel';
+    const partialPath = this.panelPath + '/partials';
     this.addEditorTab('Analytics', `${partialPath}/tab_analytics.html`, 2);
     this.addEditorTab('Webhooks', `${partialPath}/tab_webhooks.html`, 3);
     this.addEditorTab('Axes', axesEditorComponent, 4);
@@ -508,7 +508,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   get panelPath() {
     if (this._panelPath === undefined) {
-      this._panelPath = 'public/plugins/' + this.pluginId + '/';
+      this._panelPath = 'public/plugins/hastic-app/panel/graph_panel';
     }
     return this._panelPath;
   }
