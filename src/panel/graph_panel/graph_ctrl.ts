@@ -179,7 +179,6 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
     let val = data.jsonData.hasticServerUrl;
     val = val.replace(/\/+$/, "");
-    console.log(val);
     return val;
   }
 
