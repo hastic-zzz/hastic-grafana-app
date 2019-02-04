@@ -200,7 +200,7 @@ export class AnalyticService {
 
   private displayConnectionAlert() {
     appEvents.emit(
-      'alert-success',
+      'alert-error',
       [
         'No connection to Hastic server',
         `Hastic server: "${this._backendURL}"`,
