@@ -51,6 +51,10 @@ module.exports = {
         exclude: /node_modules/,
       },
       {
+        test: /\.html$/,
+        use: 'raw-loader'
+      },
+      {
         test: /jquery\.flot\.(?!events)/,
         loaders: [
           'imports-loader?jQuery=jquery'

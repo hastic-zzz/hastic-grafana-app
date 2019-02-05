@@ -1,6 +1,6 @@
 import './series_overrides_ctrl';
 
-import template from './template';
+import template from './template.html';
 
 import { GraphRenderer } from './graph_renderer';
 import { GraphLegend } from './graph_legend';
@@ -31,6 +31,8 @@ class GraphCtrl extends MetricsPanelCtrl {
   hiddenSeries: any = {};
   seriesList: any = [];
   dataList: any = [];
+
+  _backendUrl: string = undefined;
   // annotations: any = [];
 
   private _datasourceRequest: DatasourceRequest;
@@ -140,7 +142,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   /** @ngInject */
   constructor(
-    $scope, $injector, $http,
+    $scope, $injector, private $http,
     private annotationsSrv,
     private keybindingSrv,
     private backendSrv: BackendSrv,
@@ -154,9 +156,80 @@ class GraphCtrl extends MetricsPanelCtrl {
     _.defaults(this.panel.legend, this.panelDefaults.legend);
     _.defaults(this.panel.xaxis, this.panelDefaults.xaxis);
 
+
+
+  }
+
+  bindDKey() {
+    this.keybindingSrv.bind('d', this.onDKey.bind(this));
+  }
+
+  editPanel() {
+    super.editPanel();
+    this.bindDKey();
+  }
+
+  async getBackendURL(): Promise<string> {
+    if(this._backendUrl !== undefined) {
+      return this._backendUrl;
+    }
+    var data = await this.backendSrv.get('/api/plugins/hastic-app/settings');
+    if(data.jsonData === undefined) {
+      return undefined;
+    }
+    let val = data.jsonData.hasticServerUrl;
+    if(val === undefined) {
+      return undefined;
+    }
+    val = val.replace(/\/+$/, "");
+    return val;
+  }
+
+  async updateAnalyticUnitTypes() {
+    const analyticUnitTypes = await this.analyticService.getAnalyticUnitTypes();
+    this._analyticUnitTypes = analyticUnitTypes;
+  }
+
+  get analyticUnitTypes() {
+    return this._analyticUnitTypes;
+  }
+
+  get analyticUnitDetectorTypes() {
+    return _.keys(this._analyticUnitTypes);
+  }
+
+  async runBackendConnectivityCheck() {
+    let backendURL = await this.getBackendURL();
+    if(backendURL === '' || backendURL === undefined) {
+      appEvents.emit(
+        'alert-warning',
+        [
+          `hasticServerUrl is missing`,
+          `Please set it in config`
+        ]
+      );
+      return;
+    }
+
+    let connected = await this.analyticService.isBackendOk();
+    if(connected) {
+      this.updateAnalyticUnitTypes();
+      appEvents.emit(
+        'alert-success',
+        [
+          'Connected to Hastic server',
+          `Hastic server: "${backendURL}"`
+        ]
+      );
+    }
+  }
+
+  async link(scope, elem, attrs, ctrl) {
+
     this.processor = new DataProcessor(this.panel);
 
-    this.analyticService = new AnalyticService(this.backendURL, $http);
+    let backendURL = await this.getBackendURL();
+    this.analyticService = new AnalyticService(backendURL, this.$http);
 
     this.runBackendConnectivityCheck();
 
@@ -201,69 +274,11 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     this.analyticsController.fetchAnalyticUnitsStatuses();
 
-  }
 
-  bindDKey() {
-    this.keybindingSrv.bind('d', this.onDKey.bind(this));
-  }
-
-  editPanel() {
-    super.editPanel();
-    this.bindDKey();
-  }
-
-  get backendURL(): string {
-    if(this.templateSrv.index[BACKEND_VARIABLE_NAME] === undefined) {
-      return undefined;
-    }
-    let val = this.templateSrv.index[BACKEND_VARIABLE_NAME].current.value;
-    val = val.replace(/\/+$/, "");
-    return val;
-  }
-
-  async updateAnalyticUnitTypes() {
-    const analyticUnitTypes = await this.analyticService.getAnalyticUnitTypes();
-    this._analyticUnitTypes = analyticUnitTypes;
-  }
-
-  get analyticUnitTypes() {
-    return this._analyticUnitTypes;
-  }
-
-  get analyticUnitDetectorTypes() {
-    return _.keys(this._analyticUnitTypes);
-  }
-
-  async runBackendConnectivityCheck() {
-    if(this.backendURL === '' || this.backendURL === undefined) {
-      appEvents.emit(
-        'alert-warning',
-        [
-          `Dashboard variable $${BACKEND_VARIABLE_NAME} is missing`,
-          `Please set $${BACKEND_VARIABLE_NAME}`
-        ]
-      );
-      return;
-    }
-
-    let connected = await this.analyticService.isBackendOk();
-    if(connected) {
-      this.updateAnalyticUnitTypes();
-      appEvents.emit(
-        'alert-success',
-        [
-          'Connected to Hastic server',
-          `Hastic server: "${this.backendURL}"`
-        ]
-      );
-    }
-  }
-
-  link(scope, elem, attrs, ctrl) {
     var $graphElem = $(elem[0]).find('#graphPanel');
     var $legendElem = $(elem[0]).find('#graphLegend');
     this._graphRenderer = new GraphRenderer(
-      $graphElem, this.timeSrv, this.popoverSrv, this.contextSrv,this.$scope
+      $graphElem, this.timeSrv, this.popoverSrv, this.contextSrv, this.$scope
     );
     this._graphLegend = new GraphLegend($legendElem, this.popoverSrv, this.$scope);
   }
@@ -607,12 +622,13 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   private async _updatePanelInfo() {
     const datasource = await this._getDatasourceByName(this.panel.datasource);
+    const backendUrl = await this.getBackendURL();
 
     this._panelInfo = {
       grafanaVersion: this.contextSrv.version,
       grafanaUrl: window.location.host,
       datasourceType: datasource.type,
-      hasticServerUrl: this.backendURL
+      hasticServerUrl: backendUrl
     };
   }
 
