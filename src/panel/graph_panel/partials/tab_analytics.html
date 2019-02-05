@@ -75,7 +75,10 @@
         class="gf-form-input width-5"
         type="number"
         ng-model="ctrl.analyticsController.getThreshold(analyticUnit.id).value"
-        ng-if="analyticUnit.detectorType === 'threshold' && ctrl.analyticsController.getThreshold(analyticUnit.id).condition != 'No data'"
+        ng-if="
+          analyticUnit.detectorType === 'threshold' &&
+          ctrl.analyticsController.getThreshold(analyticUnit.id).condition != 'NO_DATA'
+        "
         ng-blur="ctrl.analyticsController.saveThreshold(analyticUnit.id)"
       />
 

@@ -6,7 +6,7 @@ export enum Condition {
   EQUAL = '=',
   LESS_OR_EQUAL = '<=',
   LESS = '<',
-  NO_DATA = 'No data'
+  NO_DATA = 'NO_DATA'
 };
 
 export type Threshold = {
