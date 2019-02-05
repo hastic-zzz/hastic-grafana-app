@@ -178,6 +178,9 @@ class GraphCtrl extends MetricsPanelCtrl {
       return undefined;
     }
     let val = data.jsonData.hasticServerUrl;
+    if(val === undefined) {
+      return undefined;
+    }
     val = val.replace(/\/+$/, "");
     return val;
   }
