@@ -160,9 +160,9 @@ export class GraphRenderer {
 
     if ((selectionEvent.ctrlKey || selectionEvent.metaKey) && this.contextSrv.isEditor) {
       // Add annotation
-      setTimeout(() => {
-        // this.eventManager.updateTime(selectionEvent.xaxis);
-      }, 100);
+      // setTimeout(() => {
+      //   this.eventManager.updateTime(selectionEvent.xaxis);
+      // }, 100);
     } else {
       this.scope.$apply(function() {
         this.timeSrv.setTime({
@@ -185,12 +185,12 @@ export class GraphRenderer {
 
     if ((flotEvent.ctrlKey || flotEvent.metaKey) && this.contextSrv.isEditor) {
       // Skip if range selected (added in "plotselected" event handler)
-      let isRangeSelection = flotEvent.x !== flotEvent.x1;
-      if (!isRangeSelection) {
-        setTimeout(() => {
-          // this.eventManager.updateTime({ from: flotEvent.x, to: null });
-        }, 100);
-      }
+      // let isRangeSelection = flotEvent.x !== flotEvent.x1;
+      // if (!isRangeSelection) {
+      //   setTimeout(() => {
+      //     this.eventManager.updateTime({ from: flotEvent.x, to: null });
+      //   }, 100);
+      // }
     }
   }
 
