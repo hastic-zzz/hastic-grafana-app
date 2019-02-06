@@ -189,6 +189,7 @@ class GraphCtrl extends MetricsPanelCtrl {
   async updateAnalyticUnitTypes() {
     const analyticUnitTypes = await this.analyticService.getAnalyticUnitTypes();
     this._analyticUnitTypes = analyticUnitTypes;
+    this.$scope.$digest();
   }
 
   get analyticUnitTypes() {
