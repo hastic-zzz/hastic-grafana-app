@@ -199,9 +199,8 @@ class GraphCtrl extends MetricsPanelCtrl {
     return _.keys(this._analyticUnitTypes);
   }
 
-  async runBackendConnectivityCheck() {
-    let backendURL = await this.getBackendURL();
-    if(backendURL === '' || backendURL === undefined) {
+  private _checkBackendUrlOk(backendURL: string): boolean {
+    if(backendURL === undefined || backendURL === '') {
       appEvents.emit(
         'alert-warning',
         [
@@ -209,9 +208,16 @@ class GraphCtrl extends MetricsPanelCtrl {
           `Please set it in config`
         ]
       );
+      return false;
+    }
+    return true;
+  }
+
+  async runBackendConnectivityCheck() {
+    let backendURL = await this.getBackendURL();
+    if(!this._checkBackendUrlOk(backendURL)) {
       return;
     }
-
     let connected = await this.analyticService.isBackendOk();
     if(connected) {
       this.updateAnalyticUnitTypes();
@@ -230,6 +236,10 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.processor = new DataProcessor(this.panel);
 
     let backendURL = await this.getBackendURL();
+    if(!this._checkBackendUrlOk(backendURL)) {
+      return;
+    }
+
     this.analyticService = new AnalyticService(backendURL, this.$http);
 
     this.runBackendConnectivityCheck();
