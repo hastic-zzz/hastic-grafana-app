@@ -154,6 +154,7 @@ export class GraphRenderer {
       } else {
         this._analyticController.addLabelSegment(segment);
       }
+      this.renderPanel();
       return;
     }
 
