@@ -521,11 +521,12 @@ class GraphCtrl extends MetricsPanelCtrl {
   //   return res;
   // }
 
+  get pluginPath() {
+    return '/public/plugins/hastic-app';
+  }
+
   get panelPath() {
-    if (this._panelPath === undefined) {
-      this._panelPath = 'public/plugins/hastic-app/panel/graph_panel';
-    }
-    return this._panelPath;
+    return this.pluginPath + '/panel/graph_panel';
   }
 
   createNew() {
