@@ -288,7 +288,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     var $graphElem = $(elem[0]).find('#graphPanel');
     var $legendElem = $(elem[0]).find('#graphLegend');
     this._graphRenderer = new GraphRenderer(
-      $graphElem, this.timeSrv, this.popoverSrv, this.contextSrv, this.$scope
+      $graphElem, this.timeSrv, this.contextSrv, this.$scope
     );
     this._graphLegend = new GraphLegend($legendElem, this.popoverSrv, this.$scope);
 

@@ -52,12 +52,11 @@ export class GraphRenderer {
   private $elem: JQuery<HTMLElement>;
   // private annotations: any[];
   private contextSrv: any;
-  private popoverSrv: any;
   private scope: any;
   private timeSrv: any;
   private _graphMousePosition: any;
 
-  constructor ($elem: JQuery<HTMLElement>, timeSrv, popoverSrv, contextSrv, scope) {
+  constructor ($elem: JQuery<HTMLElement>, timeSrv, contextSrv, scope) {
 
     var self = this;
     this.$elem = $elem;
@@ -66,7 +65,6 @@ export class GraphRenderer {
     this.panel = this.ctrl.panel;
 
     this.timeSrv = timeSrv;
-    this.popoverSrv = popoverSrv;
     this.contextSrv = contextSrv;
     this.scope = scope;
 
@@ -89,7 +87,6 @@ export class GraphRenderer {
 
     // panel events
     this.ctrl.events.on('panel-teardown', () => {
-
       if (this.plot) {
         this.plot.destroy();
         this.plot = null;
@@ -100,66 +97,8 @@ export class GraphRenderer {
     appEvents.on('graph-hover', this._onGraphHover.bind(this), scope);
     appEvents.on('graph-hover-clear', this._onGraphHoverClear.bind(this), scope);
 
-    $elem.bind('plotselected', (event, selectionEvent) => {
-      if (this.panel.xaxis.mode !== 'time') {
-        // Skip if panel in histogram or series mode
-        this.plot.clearSelection();
-        return;
-      }
-
-      if(this._isHasticEvent(selectionEvent)) {
-        this.plot.clearSelection();
-        var id = this._analyticController.getNewTempSegmentId();
-        var segment = new Segment(
-          id,
-          Math.round(selectionEvent.xaxis.from),
-          Math.round(selectionEvent.xaxis.to)
-        );
-        if(this._analyticController.labelingDeleteMode) {
-          this._analyticController.deleteLabelingAnalyticUnitSegmentsInRange(
-            segment.from, segment.to
-          );
-        } else {
-          this._analyticController.addLabelSegment(segment);
-        }
-        return;
-      }
-
-      if ((selectionEvent.ctrlKey || selectionEvent.metaKey) && contextSrv.isEditor) {
-        // Add annotation
-        setTimeout(() => {
-          // this.eventManager.updateTime(selectionEvent.xaxis);
-        }, 100);
-      } else {
-        scope.$apply(function() {
-          timeSrv.setTime({
-            from: moment.utc(selectionEvent.xaxis.from),
-            to: moment.utc(selectionEvent.xaxis.to),
-          });
-        });
-      }
-    });
-
-    $elem.bind('plotclick', (event, flotEvent, item) => {
-      if (this.panel.xaxis.mode !== 'time') {
-        // Skip if panel in histogram or series mode
-        return;
-      }
-
-      if(this._isHasticEvent(flotEvent)) {
-        return;
-      }
-
-      if ((flotEvent.ctrlKey || flotEvent.metaKey) && contextSrv.isEditor) {
-        // Skip if range selected (added in "plotselected" event handler)
-        let isRangeSelection = flotEvent.x !== flotEvent.x1;
-        if (!isRangeSelection) {
-          setTimeout(() => {
-            // this.eventManager.updateTime({ from: flotEvent.x, to: null });
-          }, 100);
-        }
-      }
-    });
+    $elem.bind('plotselected', this._onPlotSelected.bind(this));
+    $elem.bind('plotclick', this._onPlotClick.bind(this));
 
     $elem.mouseleave(() => {
       if (this.panel.tooltip.shared) {
@@ -191,6 +130,68 @@ export class GraphRenderer {
       this._analyticController.graphLocked = false;
     })
 
+  }
+
+  private _onPlotSelected(event, selectionEvent) {
+    if (this.panel.xaxis.mode !== 'time') {
+      // Skip if panel in histogram or series mode
+      this.plot.clearSelection();
+      return;
+    }
+
+    if(this._isHasticEvent(selectionEvent)) {
+      this.plot.clearSelection();
+      var id = this._analyticController.getNewTempSegmentId();
+      var segment = new Segment(
+        id,
+        Math.round(selectionEvent.xaxis.from),
+        Math.round(selectionEvent.xaxis.to)
+      );
+      if(this._analyticController.labelingDeleteMode) {
+        this._analyticController.deleteLabelingAnalyticUnitSegmentsInRange(
+          segment.from, segment.to
+        );
+      } else {
+        this._analyticController.addLabelSegment(segment);
+      }
+      this.renderPanel();
+      return;
+    }
+
+    if ((selectionEvent.ctrlKey || selectionEvent.metaKey) && this.contextSrv.isEditor) {
+      // Add annotation
+      // setTimeout(() => {
+      //   this.eventManager.updateTime(selectionEvent.xaxis);
+      // }, 100);
+    } else {
+      this.scope.$apply(function() {
+        this.timeSrv.setTime({
+          from: moment.utc(selectionEvent.xaxis.from),
+          to: moment.utc(selectionEvent.xaxis.to),
+        });
+      });
+    }
+  }
+
+  private _onPlotClick(event, flotEvent, item) {
+    if (this.panel.xaxis.mode !== 'time') {
+      // Skip if panel in histogram or series mode
+      return;
+    }
+
+    if(this._isHasticEvent(flotEvent)) {
+      return;
+    }
+
+    if ((flotEvent.ctrlKey || flotEvent.metaKey) && this.contextSrv.isEditor) {
+      // Skip if range selected (added in "plotselected" event handler)
+      // let isRangeSelection = flotEvent.x !== flotEvent.x1;
+      // if (!isRangeSelection) {
+      //   setTimeout(() => {
+      //     this.eventManager.updateTime({ from: flotEvent.x, to: null });
+      //   }, 100);
+      // }
+    }
   }
 
   public render(renderData) {
