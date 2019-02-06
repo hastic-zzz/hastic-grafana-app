@@ -156,7 +156,8 @@ class GraphCtrl extends MetricsPanelCtrl {
     _.defaults(this.panel.legend, this.panelDefaults.legend);
     _.defaults(this.panel.xaxis, this.panelDefaults.xaxis);
 
-
+    // because of https://github.com/hastic/hastic-grafana-app/issues/162
+    this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
 
   }
 
@@ -241,7 +242,6 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.events.on('data-received', this.onDataReceived.bind(this));
     this.events.on('data-error', this.onDataError.bind(this));
     this.events.on('data-snapshot-load', this.onDataSnapshotLoad.bind(this));
-    this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
     this.events.on('init-panel-actions', this.onInitPanelActions.bind(this));
 
     this.events.on('analytic-unit-status-change', async (analyticUnit: AnalyticUnit) => {
@@ -281,11 +281,12 @@ class GraphCtrl extends MetricsPanelCtrl {
       $graphElem, this.timeSrv, this.popoverSrv, this.contextSrv, this.$scope
     );
     this._graphLegend = new GraphLegend($legendElem, this.popoverSrv, this.$scope);
+
+    this._updatePanelInfo();
+    this.analyticsController.updateServerInfo();
   }
 
   onInitEditMode() {
-    this._updatePanelInfo();
-    this.analyticsController.updateServerInfo();
 
     const partialPath = this.panelPath + '/partials';
     this.addEditorTab('Analytics', `${partialPath}/tab_analytics.html`, 2);
