@@ -56,7 +56,9 @@ export class GraphRenderer {
   private timeSrv: any;
   private _graphMousePosition: any;
 
-  constructor ($elem: JQuery<HTMLElement>, timeSrv, contextSrv, scope) {
+  constructor($elem: JQuery<HTMLElement>, timeSrv, contextSrv, scope) {
+
+    
 
     var self = this;
     this.$elem = $elem;
@@ -164,7 +166,7 @@ export class GraphRenderer {
       //   this.eventManager.updateTime(selectionEvent.xaxis);
       // }, 100);
     } else {
-      this.scope.$apply(function() {
+      this.scope.$apply(() => {
         this.timeSrv.setTime({
           from: moment.utc(selectionEvent.xaxis.from),
           to: moment.utc(selectionEvent.xaxis.to),
