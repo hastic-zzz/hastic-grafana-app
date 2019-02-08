@@ -57,9 +57,6 @@ export class GraphRenderer {
   private _graphMousePosition: any;
 
   constructor($elem: JQuery<HTMLElement>, timeSrv, contextSrv, scope) {
-
-    
-
     var self = this;
     this.$elem = $elem;
     this.ctrl = scope.ctrl;
