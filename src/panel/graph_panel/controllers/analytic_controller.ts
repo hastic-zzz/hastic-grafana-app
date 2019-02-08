@@ -76,6 +76,11 @@ export class AnalyticController {
     return result;
   }
 
+  async sendThresholdParamsToServer(id) {
+    await this.saveThreshold(id);
+    await this._runStatusWaiter(this._analyticUnitsSet.byId(id));
+  }
+
   createNew() {
     this._newAnalyticUnit = new AnalyticUnit();
     this._creatingNewAnalyticType = true;
