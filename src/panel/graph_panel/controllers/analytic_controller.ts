@@ -76,7 +76,7 @@ export class AnalyticController {
     return result;
   }
 
-  async sendThresholdParamsToServer(id) {
+  async sendThresholdParamsToServer(id: AnalyticUnitId) {
     await this.saveThreshold(id);
     await this._runStatusWaiter(this._analyticUnitsSet.byId(id));
   }
