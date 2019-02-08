@@ -175,11 +175,11 @@ class GraphCtrl extends MetricsPanelCtrl {
       return this._backendUrl;
     }
     var data = await this.backendSrv.get('/api/plugins/hastic-app/settings');
-    if(data.jsonData === undefined) {
+    if(data.jsonData === undefined || data.jsonData === null) {
       return undefined;
     }
     let val = data.jsonData.hasticServerUrl;
-    if(val === undefined) {
+    if(val === undefined || val === null) {
       return undefined;
     }
     val = val.replace(/\/+$/, "");
@@ -201,12 +201,12 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   private _checkBackendUrlOk(backendURL: string): boolean {
-    if(backendURL === undefined || backendURL === '') {
+    if(backendURL === null || backendURL === undefined || backendURL === '') {
       appEvents.emit(
         'alert-warning',
         [
           `hasticServerUrl is missing`,
-          `Please set it in config`
+          `Please set it in config. More info: https://github.com/hastic/hastic-grafana-app/wiki/Getting-started`
         ]
       );
       return false;
