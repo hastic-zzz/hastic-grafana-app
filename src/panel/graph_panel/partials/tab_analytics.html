@@ -68,9 +68,7 @@
         ng-model="ctrl.analyticsController.getThreshold(analyticUnit.id).condition"
         ng-options="type for type in ctrl.analyticsController.conditions"
         ng-if="analyticUnit.detectorType === 'threshold'"
-        ng-blur="ctrl.analyticsController.saveThreshold(analyticUnit.id)"
       />
-
       <input
         class="gf-form-input width-5"
         type="number"
@@ -79,8 +77,16 @@
           analyticUnit.detectorType === 'threshold' &&
           ctrl.analyticsController.getThreshold(analyticUnit.id).condition != 'NO_DATA'
         "
-        ng-blur="ctrl.analyticsController.saveThreshold(analyticUnit.id)"
       />
+      <!-- TODO set .saving flag to thresholds, when learning is in progress -->
+      <button 
+        class="btn btn-inverse" 
+        ng-if="analyticUnit.detectorType === 'threshold'" 
+        ng-click="ctrl.analyticsController.sendThresholdParamsToServer(analyticUnit.id)"
+        ng-disabled="analyticUnit.status === 'PENDING' || analyticUnit.status === 'LEARNING'"
+        >
+        Apply
+      </button>
 
       <label class="gf-form-label">
         <a
