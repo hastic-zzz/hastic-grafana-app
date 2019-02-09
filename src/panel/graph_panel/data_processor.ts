@@ -2,6 +2,7 @@ import _ from 'lodash';
 import TimeSeries from './vendor/grafana/time_series2';
 import colors from './vendor/grafana/colors';
 
+
 export class DataProcessor {
   constructor(private panel) {}
 

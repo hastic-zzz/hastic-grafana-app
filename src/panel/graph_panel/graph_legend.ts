@@ -1,6 +1,5 @@
 import PerfectScrollbar from 'perfect-scrollbar';
 import _ from 'lodash';
-import 'jquery';
 
 
 export class GraphLegend {
@@ -34,7 +33,7 @@ export class GraphLegend {
     var el = $(e.currentTarget).find('.fa-minus');
     var index = this.getSeriesIndexForElement(el);
     var series = this.seriesList[index];
-    
+
     this.popoverSrv.show({
       element: el[0],
       position: 'bottom left',
@@ -52,7 +51,7 @@ export class GraphLegend {
         },
       },
     });
-    
+
   }
 
   toggleSeries(e) {

@@ -18,10 +18,7 @@ import { MetricsPanelCtrl } from 'grafana/app/plugins/sdk';
 import { appEvents } from 'grafana/app/core/core'
 import { BackendSrv } from 'grafana/app/core/services/backend_srv';
 
-
 import _ from 'lodash';
-
-const BACKEND_VARIABLE_NAME = 'HASTIC_SERVER_URL';
 
 
 class GraphCtrl extends MetricsPanelCtrl {
