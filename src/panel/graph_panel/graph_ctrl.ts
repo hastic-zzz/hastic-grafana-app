@@ -158,13 +158,19 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   }
 
-  bindDKey() {
-    this.keybindingSrv.bind('d', this.onDKey.bind(this));
+  rebindDKey() {
+    $(document).off('keydown.hasticDKey');
+    $(document).on('keydown.hasticDKey', (e) => {
+      // 68 is 'd' key kode
+      if(e.keyCode === 68) {
+        this.onDKey();
+      }
+    });
   }
 
   editPanel() {
     super.editPanel();
-    this.bindDKey();
+    this.rebindDKey();
   }
 
   async getBackendURL(): Promise<string> {
@@ -244,7 +250,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     this.analyticsController = new AnalyticController(this.panel, this.analyticService, this.events);
 
-    this.bindDKey();
+    this.rebindDKey();
 
     this.events.on('render', this.onRender.bind(this));
     this.events.on('data-received', this.onDataReceived.bind(this));
