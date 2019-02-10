@@ -78,7 +78,7 @@ export class GraphRenderer {
 
     // this.eventManager = new EventManager(this.ctrl);
     this.flotOptions = {}
-    
+
     this.tooltip = new GraphTooltip(
       $elem, this.dashboard, scope, () => this.sortedSeries,
       this._analyticController.getSegmentsSearcher()
@@ -150,9 +150,11 @@ export class GraphRenderer {
         this._analyticController.deleteLabelingAnalyticUnitSegmentsInRange(
           segment.from, segment.to
         );
-      } else {
-        this._analyticController.addLabelSegment(segment);
       }
+      this._analyticController.addLabelSegment(
+        segment, this._analyticController.labelingDeleteMode
+      );
+
       this.renderPanel();
       return;
     }
@@ -194,6 +196,7 @@ export class GraphRenderer {
   }
 
   public render(renderData) {
+
     this.data = renderData || this.data;
     if (!this.data) {
       return;
@@ -615,7 +618,7 @@ export class GraphRenderer {
         return [tickIndex + 1, point[1]];
       });
     });
-    ticks = _.flatten(ticks); 
+    ticks = _.flatten(ticks);
 
     this.flotOptions.xaxis = {
       timezone: this.dashboard.getTimezone(),

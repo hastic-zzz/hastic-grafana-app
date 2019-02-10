@@ -80,8 +80,8 @@ export class AnalyticUnit {
     this._panelObject.visible = value;
   }
 
-  addLabeledSegment(segment: Segment): AnalyticSegment {
-    var asegment = new AnalyticSegment(true, segment.id, segment.from, segment.to);
+  addLabeledSegment(segment: Segment, deleted: boolean): AnalyticSegment {
+    var asegment = new AnalyticSegment(true, segment.id, segment.from, segment.to, deleted);
     this._segmentSet.addSegment(asegment);
     return asegment;
   }

@@ -155,7 +155,6 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     // because of https://github.com/hastic/hastic-grafana-app/issues/162
     this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
-
   }
 
   rebindDKey() {
