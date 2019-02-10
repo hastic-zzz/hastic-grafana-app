@@ -313,12 +313,10 @@ export class GraphRenderer {
 
   // Function for rendering panel
   public renderPanel() {
-
     this.panelWidth = this.$elem.width();
     if (this._shouldAbortRender()) {
       return;
     }
-
 
     // un-check dashes if lines are unchecked
     this.panel.dashes = this.panel.lines ? this.panel.dashes : false;

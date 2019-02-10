@@ -250,7 +250,6 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     this.analyticsController = new AnalyticController(this.panel, this.analyticService, this.events);
 
-    this.rebindDKey();
 
     this.events.on('render', this.onRender.bind(this));
     this.events.on('data-received', this.onDataReceived.bind(this));
@@ -301,6 +300,8 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   onInitEditMode() {
+
+    this.rebindDKey(); // a small hask: bind if we open page in edit mode
 
     const partialPath = this.panelPath + '/partials';
     this.addEditorTab('Analytics', `${partialPath}/tab_analytics.html`, 2);
