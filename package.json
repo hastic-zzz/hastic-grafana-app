@@ -1,6 +1,6 @@
 {
   "name": "hastic-grafana-app",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "Hastic app: labeling and rendeting analytics from hastic-server",
   "main": "dist/module",
   "scripts": {
