@@ -537,7 +537,7 @@ class GraphCtrl extends MetricsPanelCtrl {
   // }
 
   get pluginPath() {
-    return '/public/plugins/hastic-app';
+    return 'public/plugins/hastic-app';
   }
 
   get panelPath() {
