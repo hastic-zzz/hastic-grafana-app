@@ -1,7 +1,7 @@
 {
   "type": "panel",
   "name": "Hastic Graph",
-  "id": "hastic-graph-panel",
+  "id": "corpglory-hastic-graph-panel",
   "info": {
     "logos": {
       "small": "../hastic-app/img/icn-graph-panel.png",
