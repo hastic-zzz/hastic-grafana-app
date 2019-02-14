@@ -1,0 +1,6 @@
+{
+  "type": "datasource",
+  "name": "Hastic datasource",
+  "id": "corpglory-hastic-datasource",
+  "metrics": true
+}
