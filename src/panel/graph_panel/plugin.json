@@ -4,8 +4,8 @@
   "id": "corpglory-hastic-graph-panel",
   "info": {
     "logos": {
-      "small": "../hastic-app/img/icn-graph-panel.png",
-      "large": "../hastic-app/img/icn-graph-panel.png"
+      "small": "corpglory-hastic-app/img/icn-graph-panel.png",
+      "large": "corpglory-hastic-app/img/icn-graph-panel.png"
     }
   }
 }

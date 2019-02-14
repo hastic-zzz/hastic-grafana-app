@@ -176,7 +176,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     if(this._backendUrl !== undefined) {
       return this._backendUrl;
     }
-    var data = await this.backendSrv.get('/api/plugins/hastic-app/settings');
+    var data = await this.backendSrv.get('api/plugins/corpglory-hastic-app/settings');
     if(data.jsonData === undefined || data.jsonData === null) {
       return undefined;
     }
@@ -537,7 +537,7 @@ class GraphCtrl extends MetricsPanelCtrl {
   // }
 
   get pluginPath() {
-    return 'public/plugins/hastic-app';
+    return 'public/plugins/corpglory-hastic-app';
   }
 
   get panelPath() {
