@@ -26,7 +26,7 @@ export const REGION_STROKE_ALPHA = 0.9;
 export const REGION_DELETE_COLOR_LIGHT = '#d1d1d1';
 export const REGION_DELETE_COLOR_DARK = 'white';
 const LABELED_SEGMENT_BORDER_COLOR = 'black';
-const DELETED_SEGMENT_FILL_COLOR = 'black';
+const DELETED_SEGMENT_FILL_COLOR = '#00f0ff';
 const DELETED_SEGMENT_BORDER_COLOR = 'black';
 
 
@@ -185,7 +185,7 @@ export class AnalyticController {
     return this.labelingUnit.deleteMode;
   }
 
-  addLabelSegment(segment: Segment, deleted?: boolean) {
+  addLabelSegment(segment: Segment, deleted = false) {
     var asegment = this.labelingUnit.addLabeledSegment(segment, deleted);
     this._labelingDataAddedSegments.addSegment(asegment);
   }
@@ -288,21 +288,15 @@ export class AnalyticController {
         let segmentBorderColor;
         let segmentFillColor = fillColor;
 
-        if(this.labelingDeleteMode) {
-          if(s.deleted) {
-            segmentBorderColor = deletedSegmentBorderColor;
-            segmentFillColor = deletedSegmentFillColor;
-          }
+        if(s.deleted) {
+          segmentBorderColor = deletedSegmentBorderColor;
+          segmentFillColor = deletedSegmentFillColor;
         } else {
-          if(s.deleted) {
-            return;
+          if(s.labeled) {
+            segmentBorderColor = labeledSegmentBorderColor;
+          } else {
+            segmentBorderColor = borderColor;
           }
-        }
-
-        if(s.labeled) {
-          segmentBorderColor = labeledSegmentBorderColor;
-        } else {
-          segmentBorderColor = borderColor;
         }
 
         var expanded = s.expandDist(rangeDist, 0.01);
@@ -324,10 +318,11 @@ export class AnalyticController {
   }
 
   deleteLabelingAnalyticUnitSegmentsInRange(from: number, to: number) {
-    var allRemovedSegs = this.labelingUnit.removeSegmentsInRange(from, to);
+    let allRemovedSegs = this.labelingUnit.removeSegmentsInRange(from, to);
     allRemovedSegs.forEach(s => {
       if(!this._labelingDataAddedSegments.has(s.id)) {
         this._labelingDataDeletedSegments.addSegment(s);
+        this.labelingUnit.addLabeledSegment(s, true);
       }
     });
     this._labelingDataAddedSegments.removeInRange(from, to);
