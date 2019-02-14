@@ -21,8 +21,9 @@ import { Emitter } from 'grafana/app/core/utils/emitter';
 import _ from 'lodash';
 import * as tinycolor from 'tinycolor2';
 
-export const REGION_FILL_ALPHA = 0.7;
-export const REGION_STROKE_ALPHA = 0.9;
+export const REGION_FILL_ALPHA = 0.5;
+export const REGION_STROKE_ALPHA = 0.8;
+const LABELING_MODE_ALPHA = 0.7;
 export const REGION_DELETE_COLOR_LIGHT = '#d1d1d1';
 export const REGION_DELETE_COLOR_DARK = 'white';
 const LABELED_SEGMENT_BORDER_COLOR = 'black';
@@ -253,39 +254,39 @@ export class AnalyticController {
   }
 
   // TODO: move to renderer
-  updateFlotEvents(isEditMode, options) {
+  updateFlotEvents(isEditMode: boolean, options: any) {
     if(options.grid.markings === undefined) {
       options.markings = [];
     }
 
     for(var i = 0; i < this.analyticUnits.length; i++) {
-      var analyticUnit = this.analyticUnits[i];
-      var borderColor = addAlphaToRGB(analyticUnit.color, REGION_STROKE_ALPHA);
-      var fillColor = addAlphaToRGB(analyticUnit.color, REGION_FILL_ALPHA);
-      var segments = analyticUnit.segments.getSegments();
+      const analyticUnit = this.analyticUnits[i];
       if(!analyticUnit.visible) {
         continue;
       }
-      if(isEditMode && this.labelingMode) {
-        if(analyticUnit.selected) {
-          borderColor = addAlphaToRGB(borderColor, 0.7);
-          fillColor = addAlphaToRGB(borderColor, 0.7);
-        } else {
-          continue;
-        }
-      }
 
-      var rangeDist = +options.xaxis.max - +options.xaxis.min;
-
+      let borderColor = addAlphaToRGB(analyticUnit.color, REGION_STROKE_ALPHA);
+      let fillColor = addAlphaToRGB(analyticUnit.color, REGION_FILL_ALPHA);
       let labeledSegmentBorderColor = tinycolor(LABELED_SEGMENT_BORDER_COLOR).toRgbString();
       labeledSegmentBorderColor = addAlphaToRGB(labeledSegmentBorderColor, REGION_STROKE_ALPHA);
       let deletedSegmentFillColor = tinycolor(DELETED_SEGMENT_FILL_COLOR).toRgbString();
-      deletedSegmentFillColor = addAlphaToRGB(deletedSegmentFillColor, REGION_STROKE_ALPHA);
+      deletedSegmentFillColor = addAlphaToRGB(deletedSegmentFillColor, REGION_FILL_ALPHA);
       let deletedSegmentBorderColor = tinycolor(DELETED_SEGMENT_BORDER_COLOR).toRgbString();
       deletedSegmentBorderColor = addAlphaToRGB(deletedSegmentBorderColor, REGION_STROKE_ALPHA);
 
+      if(isEditMode && this.labelingMode && analyticUnit.selected) {
+        borderColor = addAlphaToRGB(borderColor, LABELING_MODE_ALPHA);
+        fillColor = addAlphaToRGB(fillColor, LABELING_MODE_ALPHA);
+        labeledSegmentBorderColor = addAlphaToRGB(labeledSegmentBorderColor, LABELING_MODE_ALPHA);
+        deletedSegmentFillColor = addAlphaToRGB(deletedSegmentFillColor, LABELING_MODE_ALPHA);
+        deletedSegmentBorderColor = addAlphaToRGB(deletedSegmentBorderColor, LABELING_MODE_ALPHA);
+      }
+
+      const segments = analyticUnit.segments.getSegments();
+      const rangeDist = +options.xaxis.max - +options.xaxis.min;
+
       segments.forEach(s => {
-        let segmentBorderColor;
+        let segmentBorderColor = borderColor;
         let segmentFillColor = fillColor;
 
         if(s.deleted) {
@@ -294,8 +295,6 @@ export class AnalyticController {
         } else {
           if(s.labeled) {
             segmentBorderColor = labeledSegmentBorderColor;
-          } else {
-            segmentBorderColor = borderColor;
           }
         }
 
