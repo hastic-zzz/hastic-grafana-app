@@ -21,12 +21,13 @@ import { Emitter } from 'grafana/app/core/utils/emitter';
 import _ from 'lodash';
 import * as tinycolor from 'tinycolor2';
 
-export const REGION_FILL_ALPHA = 0.7;
-export const REGION_STROKE_ALPHA = 0.9;
+export const REGION_FILL_ALPHA = 0.5;
+export const REGION_STROKE_ALPHA = 0.8;
+const LABELING_MODE_ALPHA = 0.7;
 export const REGION_DELETE_COLOR_LIGHT = '#d1d1d1';
 export const REGION_DELETE_COLOR_DARK = 'white';
 const LABELED_SEGMENT_BORDER_COLOR = 'black';
-const DELETED_SEGMENT_FILL_COLOR = 'black';
+const DELETED_SEGMENT_FILL_COLOR = '#00f0ff';
 const DELETED_SEGMENT_BORDER_COLOR = 'black';
 
 
@@ -185,8 +186,8 @@ export class AnalyticController {
     return this.labelingUnit.deleteMode;
   }
 
-  addLabelSegment(segment: Segment, deleted?: boolean) {
-    var asegment = this.labelingUnit.addLabeledSegment(segment, deleted);
+  addLabelSegment(segment: Segment, deleted = false) {
+    const asegment = this.labelingUnit.addLabeledSegment(segment, deleted);
     this._labelingDataAddedSegments.addSegment(asegment);
   }
 
@@ -253,56 +254,48 @@ export class AnalyticController {
   }
 
   // TODO: move to renderer
-  updateFlotEvents(isEditMode, options) {
+  updateFlotEvents(isEditMode: boolean, options: any) {
     if(options.grid.markings === undefined) {
       options.markings = [];
     }
 
     for(var i = 0; i < this.analyticUnits.length; i++) {
-      var analyticUnit = this.analyticUnits[i];
-      var borderColor = addAlphaToRGB(analyticUnit.color, REGION_STROKE_ALPHA);
-      var fillColor = addAlphaToRGB(analyticUnit.color, REGION_FILL_ALPHA);
-      var segments = analyticUnit.segments.getSegments();
+      const analyticUnit = this.analyticUnits[i];
       if(!analyticUnit.visible) {
         continue;
       }
-      if(isEditMode && this.labelingMode) {
-        if(analyticUnit.selected) {
-          borderColor = addAlphaToRGB(borderColor, 0.7);
-          fillColor = addAlphaToRGB(borderColor, 0.7);
-        } else {
-          continue;
-        }
-      }
 
-      var rangeDist = +options.xaxis.max - +options.xaxis.min;
-
+      let borderColor = addAlphaToRGB(analyticUnit.color, REGION_STROKE_ALPHA);
+      let fillColor = addAlphaToRGB(analyticUnit.color, REGION_FILL_ALPHA);
       let labeledSegmentBorderColor = tinycolor(LABELED_SEGMENT_BORDER_COLOR).toRgbString();
       labeledSegmentBorderColor = addAlphaToRGB(labeledSegmentBorderColor, REGION_STROKE_ALPHA);
       let deletedSegmentFillColor = tinycolor(DELETED_SEGMENT_FILL_COLOR).toRgbString();
-      deletedSegmentFillColor = addAlphaToRGB(deletedSegmentFillColor, REGION_STROKE_ALPHA);
+      deletedSegmentFillColor = addAlphaToRGB(deletedSegmentFillColor, REGION_FILL_ALPHA);
       let deletedSegmentBorderColor = tinycolor(DELETED_SEGMENT_BORDER_COLOR).toRgbString();
       deletedSegmentBorderColor = addAlphaToRGB(deletedSegmentBorderColor, REGION_STROKE_ALPHA);
 
+      if(isEditMode && this.labelingMode && analyticUnit.selected) {
+        borderColor = addAlphaToRGB(borderColor, LABELING_MODE_ALPHA);
+        fillColor = addAlphaToRGB(fillColor, LABELING_MODE_ALPHA);
+        labeledSegmentBorderColor = addAlphaToRGB(labeledSegmentBorderColor, LABELING_MODE_ALPHA);
+        deletedSegmentFillColor = addAlphaToRGB(deletedSegmentFillColor, LABELING_MODE_ALPHA);
+        deletedSegmentBorderColor = addAlphaToRGB(deletedSegmentBorderColor, LABELING_MODE_ALPHA);
+      }
+
+      const segments = analyticUnit.segments.getSegments();
+      const rangeDist = +options.xaxis.max - +options.xaxis.min;
+
       segments.forEach(s => {
-        let segmentBorderColor;
+        let segmentBorderColor = borderColor;
         let segmentFillColor = fillColor;
 
-        if(this.labelingDeleteMode) {
-          if(s.deleted) {
-            segmentBorderColor = deletedSegmentBorderColor;
-            segmentFillColor = deletedSegmentFillColor;
-          }
+        if(s.deleted) {
+          segmentBorderColor = deletedSegmentBorderColor;
+          segmentFillColor = deletedSegmentFillColor;
         } else {
-          if(s.deleted) {
-            return;
+          if(s.labeled) {
+            segmentBorderColor = labeledSegmentBorderColor;
           }
-        }
-
-        if(s.labeled) {
-          segmentBorderColor = labeledSegmentBorderColor;
-        } else {
-          segmentBorderColor = borderColor;
         }
 
         var expanded = s.expandDist(rangeDist, 0.01);
@@ -324,10 +317,11 @@ export class AnalyticController {
   }
 
   deleteLabelingAnalyticUnitSegmentsInRange(from: number, to: number) {
-    var allRemovedSegs = this.labelingUnit.removeSegmentsInRange(from, to);
+    let allRemovedSegs = this.labelingUnit.removeSegmentsInRange(from, to);
     allRemovedSegs.forEach(s => {
       if(!this._labelingDataAddedSegments.has(s.id)) {
         this._labelingDataDeletedSegments.addSegment(s);
+        this.labelingUnit.addLabeledSegment(s, true);
       }
     });
     this._labelingDataAddedSegments.removeInRange(from, to);

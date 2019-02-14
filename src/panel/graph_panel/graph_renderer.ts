@@ -150,10 +150,9 @@ export class GraphRenderer {
         this._analyticController.deleteLabelingAnalyticUnitSegmentsInRange(
           segment.from, segment.to
         );
+      } else {
+        this._analyticController.addLabelSegment(segment);
       }
-      this._analyticController.addLabelSegment(
-        segment, this._analyticController.labelingDeleteMode
-      );
 
       this.renderPanel();
       return;

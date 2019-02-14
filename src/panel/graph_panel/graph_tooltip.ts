@@ -200,12 +200,8 @@ export class GraphTooltip {
       var from = this.dashboard.formatDate(s.segment.from, 'HH:mm:ss.SSS');
       var to = this.dashboard.formatDate(s.segment.to, 'HH:mm:ss.SSS');
 
-      if(s.segment.deleted && !s.analyticUnit.deleteMode) {
-        return;
-      }
-
       let icon;
-      if (s.segment.labeled) {
+      if(s.segment.labeled) {
         icon = 'fa-thumb-tack';
       } else if (s.segment.deleted) {
         icon = 'fa-trash';
