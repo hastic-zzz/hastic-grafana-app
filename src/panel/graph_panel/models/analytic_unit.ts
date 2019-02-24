@@ -36,7 +36,8 @@ export class AnalyticUnit {
     }
     _.defaults(this._panelObject, {
       name: 'AnalyticUnitName',
-      color: ANALYTIC_UNIT_COLORS[0],
+      labeledColor: ANALYTIC_UNIT_COLORS[0],
+      deletedColor: '#00f0ff',
       detectorType: 'pattern',
       type: 'GENERAL',
       alert: false
@@ -58,8 +59,11 @@ export class AnalyticUnit {
   set confidence(value: number) { this._panelObject.confidence = value; }
   get confidence(): number { return this._panelObject.confidence; }
 
-  set color(value: string) { this._panelObject.color = value; }
-  get color(): string { return this._panelObject.color; }
+  set labeledColor(value: string) { this._panelObject.labeledColor = value; }
+  get labeledColor(): string { return this._panelObject.labeledColor; }
+
+  set deletedColor(value: string) { this._panelObject.deletedColor = value; }
+  get deletedColor(): string { return this._panelObject.deletedColor; }
 
   set alert(value: boolean) { this._panelObject.alert = value; }
   get alert(): boolean { return this._panelObject.alert; }

@@ -580,11 +580,11 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.analyticsController.fetchAnalyticUnitName(analyticUnit);
   }
 
-  onColorChange(id: AnalyticUnitId, value: string) {
+  onColorChange(id: AnalyticUnitId, deleted: boolean, value: string) {
     if(id === undefined) {
       throw new Error('id is undefined');
     }
-    this.analyticsController.onAnalyticUnitColorChange(id, value);
+    this.analyticsController.onAnalyticUnitColorChange(id, value, deleted);
     this.render();
   }
 

@@ -5,10 +5,13 @@ import { convertValuesToHistogram, getSeriesValues } from './histogram';
 import {
   AnalyticController,
   REGION_FILL_ALPHA,
-  REGION_STROKE_ALPHA,
+  REGION_STROKE_ALPHA
+} from './controllers/analytic_controller';
+
+import {
   REGION_DELETE_COLOR_LIGHT,
   REGION_DELETE_COLOR_DARK
-} from './controllers/analytic_controller';
+} from './colors';
 
 import { GraphCtrl } from './graph_ctrl';
 
@@ -345,7 +348,7 @@ export class GraphRenderer {
           REGION_DELETE_COLOR_LIGHT :
           REGION_DELETE_COLOR_DARK;
       } else {
-        color = this._analyticController.labelingUnit.color;
+        color = this._analyticController.labelingUnit.labeledColor;
       }
       fillAlpha = REGION_FILL_ALPHA;
       strokeAlpha = REGION_STROKE_ALPHA;

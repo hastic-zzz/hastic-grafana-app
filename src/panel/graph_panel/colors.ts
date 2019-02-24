@@ -76,6 +76,12 @@ export const ANALYTIC_UNIT_COLORS = [
   '#f8c171',
 ];
 
+export const REGION_DELETE_COLOR_LIGHT = '#d1d1d1';
+export const REGION_DELETE_COLOR_DARK = 'white';
+export const LABELED_SEGMENT_BORDER_COLOR = 'black';
+export const DELETED_SEGMENT_FILL_COLOR = '#00f0ff';
+export const DELETED_SEGMENT_BORDER_COLOR = 'black';
+
 export function hexToHsl(color) {
   return tinycolor(color).toHsl();
 }

@@ -14,7 +14,12 @@ import { SegmentArray } from '../models/segment_array';
 import { ServerInfo } from '../models/info';
 import { Threshold, Condition } from '../models/threshold';
 
-import { ANALYTIC_UNIT_COLORS } from '../colors';
+import { 
+  ANALYTIC_UNIT_COLORS,
+  LABELED_SEGMENT_BORDER_COLOR,
+  DELETED_SEGMENT_FILL_COLOR,
+  DELETED_SEGMENT_BORDER_COLOR
+} from '../colors';
 
 import { Emitter } from 'grafana/app/core/utils/emitter';
 
@@ -23,13 +28,7 @@ import * as tinycolor from 'tinycolor2';
 
 export const REGION_FILL_ALPHA = 0.5;
 export const REGION_STROKE_ALPHA = 0.8;
-const LABELING_MODE_ALPHA = 0.7;
-export const REGION_DELETE_COLOR_LIGHT = '#d1d1d1';
-export const REGION_DELETE_COLOR_DARK = 'white';
-const LABELED_SEGMENT_BORDER_COLOR = 'black';
-const DELETED_SEGMENT_FILL_COLOR = '#00f0ff';
-const DELETED_SEGMENT_BORDER_COLOR = 'black';
-
+export const LABELING_MODE_ALPHA = 0.7;
 
 export class AnalyticController {
 
@@ -87,11 +86,11 @@ export class AnalyticController {
     this._creatingNewAnalyticType = true;
     this._savingNewAnalyticUnit = false;
     if (this.analyticUnits.length === 0) {
-      this._newAnalyticUnit.color = ANALYTIC_UNIT_COLORS[0];
+      this._newAnalyticUnit.labeledColor = ANALYTIC_UNIT_COLORS[0];
     } else {
-      let colorIndex = ANALYTIC_UNIT_COLORS.indexOf(_.last(this.analyticUnits).color) + 1;
+      let colorIndex = ANALYTIC_UNIT_COLORS.indexOf(_.last(this.analyticUnits).labeledColor) + 1;
       colorIndex %= ANALYTIC_UNIT_COLORS.length;
-      this._newAnalyticUnit.color = ANALYTIC_UNIT_COLORS[colorIndex];
+      this._newAnalyticUnit.labeledColor = ANALYTIC_UNIT_COLORS[colorIndex];
     }
   }
 
@@ -195,11 +194,15 @@ export class AnalyticController {
     return this._analyticUnitsSet.items;
   }
 
-  onAnalyticUnitColorChange(id: AnalyticUnitId, value: string) {
+  onAnalyticUnitColorChange(id: AnalyticUnitId, value: string, deleted: boolean) {
     if(id === undefined) {
       throw new Error('id is undefined');
     }
-    this._analyticUnitsSet.byId(id).color = value;
+    if(deleted) {
+      this._analyticUnitsSet.byId(id).deletedColor = value;
+    } else {
+      this._analyticUnitsSet.byId(id).labeledColor = value;
+    }
   }
 
   fetchAnalyticUnitsStatuses() {
@@ -265,18 +268,18 @@ export class AnalyticController {
         continue;
       }
 
-      let borderColor = addAlphaToRGB(analyticUnit.color, REGION_STROKE_ALPHA);
-      let fillColor = addAlphaToRGB(analyticUnit.color, REGION_FILL_ALPHA);
+      let defaultBorderColor = addAlphaToRGB(analyticUnit.labeledColor, REGION_STROKE_ALPHA);
+      let defaultFillColor = addAlphaToRGB(analyticUnit.labeledColor, REGION_FILL_ALPHA);
       let labeledSegmentBorderColor = tinycolor(LABELED_SEGMENT_BORDER_COLOR).toRgbString();
       labeledSegmentBorderColor = addAlphaToRGB(labeledSegmentBorderColor, REGION_STROKE_ALPHA);
-      let deletedSegmentFillColor = tinycolor(DELETED_SEGMENT_FILL_COLOR).toRgbString();
+      let deletedSegmentFillColor = tinycolor(analyticUnit.deletedColor).toRgbString();
       deletedSegmentFillColor = addAlphaToRGB(deletedSegmentFillColor, REGION_FILL_ALPHA);
       let deletedSegmentBorderColor = tinycolor(DELETED_SEGMENT_BORDER_COLOR).toRgbString();
       deletedSegmentBorderColor = addAlphaToRGB(deletedSegmentBorderColor, REGION_STROKE_ALPHA);
 
       if(isEditMode && this.labelingMode && analyticUnit.selected) {
-        borderColor = addAlphaToRGB(borderColor, LABELING_MODE_ALPHA);
-        fillColor = addAlphaToRGB(fillColor, LABELING_MODE_ALPHA);
+        defaultBorderColor = addAlphaToRGB(defaultBorderColor, LABELING_MODE_ALPHA);
+        defaultFillColor = addAlphaToRGB(defaultFillColor, LABELING_MODE_ALPHA);
         labeledSegmentBorderColor = addAlphaToRGB(labeledSegmentBorderColor, LABELING_MODE_ALPHA);
         deletedSegmentFillColor = addAlphaToRGB(deletedSegmentFillColor, LABELING_MODE_ALPHA);
         deletedSegmentBorderColor = addAlphaToRGB(deletedSegmentBorderColor, LABELING_MODE_ALPHA);
@@ -286,8 +289,8 @@ export class AnalyticController {
       const rangeDist = +options.xaxis.max - +options.xaxis.min;
 
       segments.forEach(s => {
-        let segmentBorderColor = borderColor;
-        let segmentFillColor = fillColor;
+        let segmentBorderColor = defaultBorderColor;
+        let segmentFillColor = defaultFillColor;
 
         if(s.deleted) {
           segmentBorderColor = deletedSegmentBorderColor;
