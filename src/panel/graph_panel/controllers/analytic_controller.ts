@@ -162,7 +162,7 @@ export class AnalyticController {
       this.labelingUnit.segments.remove(s.id);
     });
     this._labelingDataDeletedSegments.getSegments().forEach(s => {
-      s.deleted = false;
+      this.labelingUnit.segments.addSegment(s);
     });
     this.dropLabeling();
   }
@@ -298,7 +298,7 @@ export class AnalyticController {
           }
         }
 
-        var expanded = s.expandDist(rangeDist, 0.01);
+        const expanded = s.expandDist(rangeDist, 0.01);
         options.grid.markings.push({
           xaxis: { from: expanded.from, to: expanded.to },
           color: segmentFillColor
@@ -317,11 +317,10 @@ export class AnalyticController {
   }
 
   deleteLabelingAnalyticUnitSegmentsInRange(from: number, to: number) {
-    let allRemovedSegs = this.labelingUnit.removeSegmentsInRange(from, to);
+    const allRemovedSegs = this.labelingUnit.removeSegmentsInRange(from, to);
     allRemovedSegs.forEach(s => {
       if(!this._labelingDataAddedSegments.has(s.id)) {
         this._labelingDataDeletedSegments.addSegment(s);
-        this.labelingUnit.addLabeledSegment(s, true);
       }
     });
     this._labelingDataAddedSegments.removeInRange(from, to);

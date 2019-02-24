@@ -88,9 +88,6 @@ export class AnalyticUnit {
 
   removeSegmentsInRange(from: number, to: number): AnalyticSegment[] {
     let deletedSegments = this._segmentSet.removeInRange(from, to);
-    deletedSegments.forEach(s => {
-      s.deleted = true;
-    });
     return deletedSegments;
   }
 
