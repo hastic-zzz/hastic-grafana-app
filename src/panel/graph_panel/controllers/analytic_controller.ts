@@ -37,7 +37,7 @@ export class AnalyticController {
   private _selectedAnalyticUnitId: AnalyticUnitId = null;
 
   private _labelingDataAddedSegments: SegmentsSet<AnalyticSegment>;
-  private _labelingDataDeletedSegments: SegmentsSet<AnalyticSegment>;
+  private _labelingDataRemovedSegments: SegmentsSet<AnalyticSegment>;
   private _newAnalyticUnit: AnalyticUnit = null;
   private _creatingNewAnalyticType: boolean = false;
   private _savingNewAnalyticUnit: boolean = false;
@@ -54,7 +54,7 @@ export class AnalyticController {
       _panelObject.analyticUnits = _panelObject.anomalyTypes || [];
     }
     this._labelingDataAddedSegments = new SegmentArray<AnalyticSegment>();
-    this._labelingDataDeletedSegments = new SegmentArray<AnalyticSegment>();
+    this._labelingDataRemovedSegments = new SegmentArray<AnalyticSegment>();
     this._analyticUnitsSet = new AnalyticUnitsSet(this._panelObject.analyticUnits);
     this._thresholds = [];
     this.updateThresholds();
@@ -161,7 +161,7 @@ export class AnalyticController {
     this._labelingDataAddedSegments.getSegments().forEach(s => {
       this.labelingUnit.segments.remove(s.id);
     });
-    this._labelingDataDeletedSegments.getSegments().forEach(s => {
+    this._labelingDataRemovedSegments.getSegments().forEach(s => {
       this.labelingUnit.segments.addSegment(s);
     });
     this.dropLabeling();
@@ -169,7 +169,7 @@ export class AnalyticController {
 
   dropLabeling() {
     this._labelingDataAddedSegments.clear();
-    this._labelingDataDeletedSegments.clear();
+    this._labelingDataRemovedSegments.clear();
     this.labelingUnit.selected = false;
     this._selectedAnalyticUnitId = null;
     this._tempIdCounted = -1;
@@ -228,7 +228,7 @@ export class AnalyticController {
     var allSegmentsSet = new SegmentArray(allSegmentsList);
     if(analyticUnit.selected) {
       this._labelingDataAddedSegments.getSegments().forEach(s => allSegmentsSet.addSegment(s));
-      this._labelingDataDeletedSegments.getSegments().forEach(s => allSegmentsSet.remove(s.id));
+      this._labelingDataRemovedSegments.getSegments().forEach(s => allSegmentsSet.remove(s.id));
     }
     analyticUnit.segments = allSegmentsSet;
   }
@@ -241,7 +241,7 @@ export class AnalyticController {
 
     if(
       this._labelingDataAddedSegments.length === 0 &&
-      this._labelingDataDeletedSegments.length === 0
+      this._labelingDataRemovedSegments.length === 0
     ) {
       return [];
     }
@@ -249,7 +249,7 @@ export class AnalyticController {
 
     await this._analyticService.updateMetric(unit.id, this._currentMetric, this._currentDatasource);
     return this._analyticService.updateSegments(
-      unit.id, this._labelingDataAddedSegments, this._labelingDataDeletedSegments
+      unit.id, this._labelingDataAddedSegments, this._labelingDataRemovedSegments
     );
   }
 
@@ -320,7 +320,7 @@ export class AnalyticController {
     const allRemovedSegs = this.labelingUnit.removeSegmentsInRange(from, to);
     allRemovedSegs.forEach(s => {
       if(!this._labelingDataAddedSegments.has(s.id)) {
-        this._labelingDataDeletedSegments.addSegment(s);
+        this._labelingDataRemovedSegments.addSegment(s);
       }
     });
     this._labelingDataAddedSegments.removeInRange(from, to);
