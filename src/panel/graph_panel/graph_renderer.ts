@@ -140,8 +140,8 @@ export class GraphRenderer {
 
     if(this._isHasticEvent(selectionEvent)) {
       this.plot.clearSelection();
-      var id = this._analyticController.getNewTempSegmentId();
-      var segment = new Segment(
+      const id = this._analyticController.getNewTempSegmentId();
+      const segment = new Segment(
         id,
         Math.round(selectionEvent.xaxis.from),
         Math.round(selectionEvent.xaxis.to)
@@ -150,8 +150,9 @@ export class GraphRenderer {
         this._analyticController.deleteLabelingAnalyticUnitSegmentsInRange(
           segment.from, segment.to
         );
+        this._analyticController.addLabelSegment(segment, true);
       } else {
-        this._analyticController.addLabelSegment(segment);
+        this._analyticController.addLabelSegment(segment, false);
       }
 
       this.renderPanel();

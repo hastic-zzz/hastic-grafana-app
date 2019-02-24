@@ -35,7 +35,6 @@ class GraphCtrl extends MetricsPanelCtrl {
   private _datasourceRequest: DatasourceRequest;
   private _datasources: any;
 
-  private _panelPath: any;
   private _renderError: boolean = false;
 
   // annotationsPromise: any;
