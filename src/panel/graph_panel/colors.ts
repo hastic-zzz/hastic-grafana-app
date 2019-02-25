@@ -76,6 +76,7 @@ export const ANALYTIC_UNIT_COLORS = [
   '#f8c171',
 ];
 
+export const DEFAULT_DELETED_SEGMENT_COLOR = '#00f0ff';
 export const REGION_UNLABEL_COLOR_LIGHT = '#d1d1d1';
 export const REGION_UNLABEL_COLOR_DARK = 'white';
 export const LABELED_SEGMENT_BORDER_COLOR = 'black';

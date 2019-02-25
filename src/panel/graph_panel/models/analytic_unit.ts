@@ -2,7 +2,7 @@ import { SegmentsSet } from './segment_set';
 import { SegmentArray } from './segment_array';
 import { Segment, SegmentId } from './segment';
 
-import { ANALYTIC_UNIT_COLORS } from '../colors';
+import { ANALYTIC_UNIT_COLORS, DEFAULT_DELETED_SEGMENT_COLOR } from '../colors';
 
 import _ from 'lodash';
 
@@ -44,7 +44,7 @@ export class AnalyticUnit {
     _.defaults(this._panelObject, {
       name: 'AnalyticUnitName',
       labeledColor: ANALYTIC_UNIT_COLORS[0],
-      deletedColor: '#00f0ff',
+      deletedColor: DEFAULT_DELETED_SEGMENT_COLOR,
       detectorType: 'pattern',
       type: 'GENERAL',
       alert: false
