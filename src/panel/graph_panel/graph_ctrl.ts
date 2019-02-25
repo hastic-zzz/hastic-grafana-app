@@ -272,6 +272,9 @@ class GraphCtrl extends MetricsPanelCtrl {
         await this.analyticsController.removeAnalyticUnit(analyticUnit.id, true);
       }
       if(analyticUnit.status === 'READY') {
+        if(this.range === undefined) {
+          this.updateTimeRange();
+        }
         await this.analyticsController.fetchSegments(analyticUnit, +this.range.from, +this.range.to);
       }
       this.render(this.seriesList);
