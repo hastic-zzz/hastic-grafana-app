@@ -2,6 +2,11 @@
 <div class="gf-form-group">
   <div class="gf-form">
     <label class="gf-form-label width-10">Hastic server url</label>
-    <input type="url" class="gf-form-input max-width-20" ng-model='ctrl.appModel.jsonData.hasticServerUrl'/>
+    <input 
+      type="text" 
+      class="gf-form-input max-width-20" 
+      ng-model="ctrl.appModel.jsonData.hasticServerUrl"
+      ng-blur="ctrl.normalizeUrl"
+    />
   </div>
 </div>
