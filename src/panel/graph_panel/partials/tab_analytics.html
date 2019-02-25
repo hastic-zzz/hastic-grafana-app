@@ -199,28 +199,13 @@
 
 <div class="gf-form" ng-show="ctrl.showHelp" >
   <pre class="gf-form-pre alert alert-info">
-    <b>Adding Analytic Units:</b>
-        1) Click on 'Add Analytic Unit' button to add an analytic unit.
-        2) Type in desired analytic unit name into provided 'Name' field.
-        3) Choose pattern type from the 'Type' dropdown menu. Pattern types explained below.
-        4) Click 'create' button.
+    <b>For usage instructions:</b>
+        Visit our <a href="https://github.com/hastic/hastic-grafana-app/wiki/Analytic-units"><b>Wiki</b></a> page.
 
-    <b>Labeling segments:</b>
-        1) Click on the chart symbol <img ng-src="{{ctrl.pluginPath}}/img/chartSymbol.png"> to enter labeling mode.
-        2) Hold down 'Ctrl' button on your keyboard and hold down left mouse button while dragging to label segments manually. Release LMB to finish labeling the segment.
-        3) After all of the needed segments are labeled click on the chart symbol again to exit labeling mode.
+    <b>If you encounter any problems:</b>
+        Look for solution or create a new Issue <a href="https://github.com/hastic/hastic-grafana-app/issues?q=is%3Aissue+is%3Aclosed"><b>here</b></a>.
 
-        <b>Hastic will now start learning, and after a short while you will see the results on your graph.</b>
-
-    <b>Deleting segments:</b>
-        1) Click on the chart symbol to enter labeling mode. (skip this step if you are already in labeling mode)
-        2) Press 'D' key twice to switch from <img ng-src="{{ctrl.pluginPath}}/img/labeling.jpg"> to <img ng-src="{{ctrl.pluginPath}}/img/deleting.jpg">.
-        3) Hold down 'Ctrl' button on your keyboard and hold down left mouse button while dragging to mark segments for deletion.
-        4) After all of the needed segments are deleted click on the chart symbol again to exit labeling mode.
-
-        <b>Hastic will now start learning again, based on updated segments list.</b>
-
-    <b>Available labeling patterns:</b>
+    <b>Available labeling patterns examples:</b>
       1) General: patterns in your data that don't fall under any of provided built-in patterns.
 
       2) Peaks: a sharp increase to a certain single value, followed by a return to the original value.
