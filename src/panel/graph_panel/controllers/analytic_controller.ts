@@ -105,8 +105,9 @@ export class AnalyticController {
     this._analyticUnitsSet.addItem(this._newAnalyticUnit);
     this._creatingNewAnalyticType = false;
     this._savingNewAnalyticUnit = false;
-    // this.runEnabledWaiter(this._newAnalyticUnit);
-    this._runStatusWaiter(this._newAnalyticUnit);
+    if(this._newAnalyticUnit.detectorType !== 'threshold') {
+      this._runStatusWaiter(this._newAnalyticUnit);
+    }
   }
 
   get creatingNew() { return this._creatingNewAnalyticType; }
