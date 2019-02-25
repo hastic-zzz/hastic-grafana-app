@@ -2,10 +2,17 @@ import { SegmentsSet } from './segment_set';
 import { SegmentArray } from './segment_array';
 import { Segment, SegmentId } from './segment';
 
-import { ANALYTIC_UNIT_COLORS } from '../colors';
+import { ANALYTIC_UNIT_COLORS, DEFAULT_DELETED_SEGMENT_COLOR } from '../colors';
 
 import _ from 'lodash';
 
+
+export enum LabelingMode {
+  LABELING = 'LABELING',
+  UNLABELING = 'UNLABELING',
+  DELETING = 'DELETING',
+  NOT_IN_LABELING_MODE = 'NOT_IN_LABELING_MODE'
+};
 
 export type AnalyticSegmentPair = { analyticUnit: AnalyticUnit, segment: AnalyticSegment };
 export type AnalyticSegmentsSearcher = (point: number, rangeDist: number) => AnalyticSegmentPair[];
@@ -23,8 +30,8 @@ export class AnalyticSegment extends Segment {
 
 export class AnalyticUnit {
 
+  private _labelingMode: LabelingMode = LabelingMode.LABELING;
   private _selected: boolean = false;
-  private _deleteMode: boolean = false;
   private _saving: boolean = false;
   private _segmentSet = new SegmentArray<AnalyticSegment>();
   private _status: string;
@@ -36,7 +43,8 @@ export class AnalyticUnit {
     }
     _.defaults(this._panelObject, {
       name: 'AnalyticUnitName',
-      color: ANALYTIC_UNIT_COLORS[0],
+      labeledColor: ANALYTIC_UNIT_COLORS[0],
+      deletedColor: DEFAULT_DELETED_SEGMENT_COLOR,
       detectorType: 'pattern',
       type: 'GENERAL',
       alert: false
@@ -58,8 +66,11 @@ export class AnalyticUnit {
   set confidence(value: number) { this._panelObject.confidence = value; }
   get confidence(): number { return this._panelObject.confidence; }
 
-  set color(value: string) { this._panelObject.color = value; }
-  get color(): string { return this._panelObject.color; }
+  set labeledColor(value: string) { this._panelObject.labeledColor = value; }
+  get labeledColor(): string { return this._panelObject.labeledColor; }
+
+  set deletedColor(value: string) { this._panelObject.deletedColor = value; }
+  get deletedColor(): string { return this._panelObject.deletedColor; }
 
   set alert(value: boolean) { this._panelObject.alert = value; }
   get alert(): boolean { return this._panelObject.alert; }
@@ -67,8 +78,8 @@ export class AnalyticUnit {
   get selected(): boolean { return this._selected; }
   set selected(value: boolean) { this._selected = value; }
 
-  get deleteMode(): boolean { return this._deleteMode; }
-  set deleteMode(value: boolean) { this._deleteMode = value; }
+  get labelingMode(): LabelingMode { return this._labelingMode; }
+  set labelingMode(value: LabelingMode) { this._labelingMode = value; }
 
   get saving(): boolean { return this._saving; }
   set saving(value: boolean) { this._saving = value; }
@@ -88,9 +99,6 @@ export class AnalyticUnit {
 
   removeSegmentsInRange(from: number, to: number): AnalyticSegment[] {
     let deletedSegments = this._segmentSet.removeInRange(from, to);
-    deletedSegments.forEach(s => {
-      s.deleted = true;
-    });
     return deletedSegments;
   }
 

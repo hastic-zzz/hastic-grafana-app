@@ -211,7 +211,7 @@ export class GraphTooltip {
       result += `
         <div class="graph-tooltip-list-item">
           <div class="graph-tooltip-series-name">
-            <i class="fa fa-exclamation" style="color:${s.analyticUnit.color}"></i>
+            <i class="fa fa-exclamation" style="color:${s.analyticUnit.labeledColor}"></i>
             ${s.analyticUnit.name}:
           </div>
           <div class="graph-tooltip-value">

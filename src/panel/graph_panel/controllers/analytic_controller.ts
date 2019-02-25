@@ -4,7 +4,8 @@ import { AnalyticService } from '../services/analytic_service'
 
 import {
   AnalyticUnitId, AnalyticUnit,
-  AnalyticUnitsSet, AnalyticSegment, AnalyticSegmentsSearcher, AnalyticSegmentPair
+  AnalyticUnitsSet, AnalyticSegment, AnalyticSegmentsSearcher, AnalyticSegmentPair,
+  LabelingMode
 } from '../models/analytic_unit';
 import { MetricExpanded } from '../models/metric';
 import { DatasourceRequest } from '../models/datasource';
@@ -14,22 +15,19 @@ import { SegmentArray } from '../models/segment_array';
 import { ServerInfo } from '../models/info';
 import { Threshold, Condition } from '../models/threshold';
 
-import { ANALYTIC_UNIT_COLORS } from '../colors';
+import {
+  ANALYTIC_UNIT_COLORS,
+  LABELED_SEGMENT_BORDER_COLOR,
+  DELETED_SEGMENT_BORDER_COLOR,
+  SEGMENT_FILL_ALPHA,
+  SEGMENT_STROKE_ALPHA,
+  LABELING_MODE_ALPHA
+} from '../colors';
 
 import { Emitter } from 'grafana/app/core/utils/emitter';
 
 import _ from 'lodash';
 import * as tinycolor from 'tinycolor2';
-
-export const REGION_FILL_ALPHA = 0.5;
-export const REGION_STROKE_ALPHA = 0.8;
-const LABELING_MODE_ALPHA = 0.7;
-export const REGION_DELETE_COLOR_LIGHT = '#d1d1d1';
-export const REGION_DELETE_COLOR_DARK = 'white';
-const LABELED_SEGMENT_BORDER_COLOR = 'black';
-const DELETED_SEGMENT_FILL_COLOR = '#00f0ff';
-const DELETED_SEGMENT_BORDER_COLOR = 'black';
-
 
 export class AnalyticController {
 
@@ -37,7 +35,7 @@ export class AnalyticController {
   private _selectedAnalyticUnitId: AnalyticUnitId = null;
 
   private _labelingDataAddedSegments: SegmentsSet<AnalyticSegment>;
-  private _labelingDataDeletedSegments: SegmentsSet<AnalyticSegment>;
+  private _labelingDataRemovedSegments: SegmentsSet<AnalyticSegment>;
   private _newAnalyticUnit: AnalyticUnit = null;
   private _creatingNewAnalyticType: boolean = false;
   private _savingNewAnalyticUnit: boolean = false;
@@ -54,7 +52,7 @@ export class AnalyticController {
       _panelObject.analyticUnits = _panelObject.anomalyTypes || [];
     }
     this._labelingDataAddedSegments = new SegmentArray<AnalyticSegment>();
-    this._labelingDataDeletedSegments = new SegmentArray<AnalyticSegment>();
+    this._labelingDataRemovedSegments = new SegmentArray<AnalyticSegment>();
     this._analyticUnitsSet = new AnalyticUnitsSet(this._panelObject.analyticUnits);
     this._thresholds = [];
     this.updateThresholds();
@@ -87,11 +85,11 @@ export class AnalyticController {
     this._creatingNewAnalyticType = true;
     this._savingNewAnalyticUnit = false;
     if (this.analyticUnits.length === 0) {
-      this._newAnalyticUnit.color = ANALYTIC_UNIT_COLORS[0];
+      this._newAnalyticUnit.labeledColor = ANALYTIC_UNIT_COLORS[0];
     } else {
-      let colorIndex = ANALYTIC_UNIT_COLORS.indexOf(_.last(this.analyticUnits).color) + 1;
+      let colorIndex = ANALYTIC_UNIT_COLORS.indexOf(_.last(this.analyticUnits).labeledColor) + 1;
       colorIndex %= ANALYTIC_UNIT_COLORS.length;
-      this._newAnalyticUnit.color = ANALYTIC_UNIT_COLORS[colorIndex];
+      this._newAnalyticUnit.labeledColor = ANALYTIC_UNIT_COLORS[colorIndex];
     }
   }
 
@@ -161,29 +159,29 @@ export class AnalyticController {
     this._labelingDataAddedSegments.getSegments().forEach(s => {
       this.labelingUnit.segments.remove(s.id);
     });
-    this._labelingDataDeletedSegments.getSegments().forEach(s => {
-      s.deleted = false;
+    this._labelingDataRemovedSegments.getSegments().forEach(s => {
+      this.labelingUnit.segments.addSegment(s);
     });
     this.dropLabeling();
   }
 
   dropLabeling() {
     this._labelingDataAddedSegments.clear();
-    this._labelingDataDeletedSegments.clear();
+    this._labelingDataRemovedSegments.clear();
     this.labelingUnit.selected = false;
     this._selectedAnalyticUnitId = null;
     this._tempIdCounted = -1;
   }
 
-  get labelingMode(): boolean {
+  get inLabelingMode(): boolean {
     return this._selectedAnalyticUnitId !== null;
   }
 
-  get labelingDeleteMode(): boolean {
-    if(!this.labelingMode) {
-      return false;
+  get labelingMode(): LabelingMode {
+    if(!this.inLabelingMode) {
+      return LabelingMode.NOT_IN_LABELING_MODE;
     }
-    return this.labelingUnit.deleteMode;
+    return this.labelingUnit.labelingMode;
   }
 
   addLabelSegment(segment: Segment, deleted = false) {
@@ -195,11 +193,15 @@ export class AnalyticController {
     return this._analyticUnitsSet.items;
   }
 
-  onAnalyticUnitColorChange(id: AnalyticUnitId, value: string) {
+  onAnalyticUnitColorChange(id: AnalyticUnitId, value: string, deleted: boolean) {
     if(id === undefined) {
       throw new Error('id is undefined');
     }
-    this._analyticUnitsSet.byId(id).color = value;
+    if(deleted) {
+      this._analyticUnitsSet.byId(id).deletedColor = value;
+    } else {
+      this._analyticUnitsSet.byId(id).labeledColor = value;
+    }
   }
 
   fetchAnalyticUnitsStatuses() {
@@ -228,7 +230,7 @@ export class AnalyticController {
     var allSegmentsSet = new SegmentArray(allSegmentsList);
     if(analyticUnit.selected) {
       this._labelingDataAddedSegments.getSegments().forEach(s => allSegmentsSet.addSegment(s));
-      this._labelingDataDeletedSegments.getSegments().forEach(s => allSegmentsSet.remove(s.id));
+      this._labelingDataRemovedSegments.getSegments().forEach(s => allSegmentsSet.remove(s.id));
     }
     analyticUnit.segments = allSegmentsSet;
   }
@@ -241,16 +243,20 @@ export class AnalyticController {
 
     if(
       this._labelingDataAddedSegments.length === 0 &&
-      this._labelingDataDeletedSegments.length === 0
+      this._labelingDataRemovedSegments.length === 0
     ) {
       return [];
     }
 
 
     await this._analyticService.updateMetric(unit.id, this._currentMetric, this._currentDatasource);
-    return this._analyticService.updateSegments(
-      unit.id, this._labelingDataAddedSegments, this._labelingDataDeletedSegments
+    const newIds = await this._analyticService.updateSegments(
+      unit.id, this._labelingDataAddedSegments, this._labelingDataRemovedSegments
     );
+    if(unit.labelingMode !== LabelingMode.UNLABELING) {
+      await this._analyticService.runDetect(unit.id);
+    }
+    return newIds;
   }
 
   // TODO: move to renderer
@@ -265,18 +271,18 @@ export class AnalyticController {
         continue;
       }
 
-      let borderColor = addAlphaToRGB(analyticUnit.color, REGION_STROKE_ALPHA);
-      let fillColor = addAlphaToRGB(analyticUnit.color, REGION_FILL_ALPHA);
+      let defaultBorderColor = addAlphaToRGB(analyticUnit.labeledColor, SEGMENT_STROKE_ALPHA);
+      let defaultFillColor = addAlphaToRGB(analyticUnit.labeledColor, SEGMENT_FILL_ALPHA);
       let labeledSegmentBorderColor = tinycolor(LABELED_SEGMENT_BORDER_COLOR).toRgbString();
-      labeledSegmentBorderColor = addAlphaToRGB(labeledSegmentBorderColor, REGION_STROKE_ALPHA);
-      let deletedSegmentFillColor = tinycolor(DELETED_SEGMENT_FILL_COLOR).toRgbString();
-      deletedSegmentFillColor = addAlphaToRGB(deletedSegmentFillColor, REGION_FILL_ALPHA);
+      labeledSegmentBorderColor = addAlphaToRGB(labeledSegmentBorderColor, SEGMENT_STROKE_ALPHA);
+      let deletedSegmentFillColor = tinycolor(analyticUnit.deletedColor).toRgbString();
+      deletedSegmentFillColor = addAlphaToRGB(deletedSegmentFillColor, SEGMENT_FILL_ALPHA);
       let deletedSegmentBorderColor = tinycolor(DELETED_SEGMENT_BORDER_COLOR).toRgbString();
-      deletedSegmentBorderColor = addAlphaToRGB(deletedSegmentBorderColor, REGION_STROKE_ALPHA);
+      deletedSegmentBorderColor = addAlphaToRGB(deletedSegmentBorderColor, SEGMENT_STROKE_ALPHA);
 
-      if(isEditMode && this.labelingMode && analyticUnit.selected) {
-        borderColor = addAlphaToRGB(borderColor, LABELING_MODE_ALPHA);
-        fillColor = addAlphaToRGB(fillColor, LABELING_MODE_ALPHA);
+      if(isEditMode && this.inLabelingMode && analyticUnit.selected) {
+        defaultBorderColor = addAlphaToRGB(defaultBorderColor, LABELING_MODE_ALPHA);
+        defaultFillColor = addAlphaToRGB(defaultFillColor, LABELING_MODE_ALPHA);
         labeledSegmentBorderColor = addAlphaToRGB(labeledSegmentBorderColor, LABELING_MODE_ALPHA);
         deletedSegmentFillColor = addAlphaToRGB(deletedSegmentFillColor, LABELING_MODE_ALPHA);
         deletedSegmentBorderColor = addAlphaToRGB(deletedSegmentBorderColor, LABELING_MODE_ALPHA);
@@ -286,8 +292,8 @@ export class AnalyticController {
       const rangeDist = +options.xaxis.max - +options.xaxis.min;
 
       segments.forEach(s => {
-        let segmentBorderColor = borderColor;
-        let segmentFillColor = fillColor;
+        let segmentBorderColor = defaultBorderColor;
+        let segmentFillColor = defaultFillColor;
 
         if(s.deleted) {
           segmentBorderColor = deletedSegmentBorderColor;
@@ -298,7 +304,7 @@ export class AnalyticController {
           }
         }
 
-        var expanded = s.expandDist(rangeDist, 0.01);
+        const expanded = s.expandDist(rangeDist, 0.01);
         options.grid.markings.push({
           xaxis: { from: expanded.from, to: expanded.to },
           color: segmentFillColor
@@ -317,21 +323,24 @@ export class AnalyticController {
   }
 
   deleteLabelingAnalyticUnitSegmentsInRange(from: number, to: number) {
-    let allRemovedSegs = this.labelingUnit.removeSegmentsInRange(from, to);
+    const allRemovedSegs = this.labelingUnit.removeSegmentsInRange(from, to);
     allRemovedSegs.forEach(s => {
       if(!this._labelingDataAddedSegments.has(s.id)) {
-        this._labelingDataDeletedSegments.addSegment(s);
-        this.labelingUnit.addLabeledSegment(s, true);
+        this._labelingDataRemovedSegments.addSegment(s);
       }
     });
     this._labelingDataAddedSegments.removeInRange(from, to);
   }
 
-  toggleDeleteMode() {
-    if(!this.labelingMode) {
-      throw new Error('Cant enter delete mode is labeling mode disabled');
+  toggleLabelingMode(mode: LabelingMode) {
+    if(!this.inLabelingMode) {
+      throw new Error(`Can't enter ${mode} mode when labeling mode is disabled`);
     }
-    this.labelingUnit.deleteMode = !this.labelingUnit.deleteMode;
+    if(this.labelingUnit.labelingMode === mode) {
+      this.labelingUnit.labelingMode = LabelingMode.LABELING;
+    } else {
+      this.labelingUnit.labelingMode = mode;
+    }
   }
 
   async removeAnalyticUnit(id: AnalyticUnitId, silent: boolean = false) {
