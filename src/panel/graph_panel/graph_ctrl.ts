@@ -7,7 +7,7 @@ import { GraphLegend } from './graph_legend';
 import { DataProcessor } from './data_processor';
 import { MetricExpanded } from './models/metric';
 import { DatasourceRequest } from './models/datasource';
-import { AnalyticUnitId, AnalyticUnit } from './models/analytic_unit';
+import { AnalyticUnitId, AnalyticUnit, LabelingMode } from './models/analytic_unit';
 import { AnalyticService } from './services/analytic_service';
 import { AnalyticController } from './controllers/analytic_controller';
 import { PanelInfo } from './models/info';
@@ -156,19 +156,28 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
   }
 
-  rebindDKey() {
+  rebindKeys() {
+    const dKeyCode = 68;
+    const uKeyCode = 85;
+
     $(document).off('keydown.hasticDKey');
     $(document).on('keydown.hasticDKey', (e) => {
-      // 68 is 'd' key kode
-      if(e.keyCode === 68) {
+      if(e.keyCode === dKeyCode) {
         this.onDKey();
+      }
+    });
+
+    $(document).off('keydown.hasticUKey');
+    $(document).on('keydown.hasticUKey', (e) => {
+      if(e.keyCode === uKeyCode) {
+        this.onUKey();
       }
     });
   }
 
   editPanel() {
     super.editPanel();
-    this.rebindDKey();
+    this.rebindKeys();
   }
 
   async getBackendURL(): Promise<string> {
@@ -299,7 +308,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   onInitEditMode() {
 
-    this.rebindDKey(); // a small hask: bind if we open page in edit mode
+    this.rebindKeys(); // a small hask: bind if we open page in edit mode
 
     const partialPath = this.panelPath + '/partials';
     this.addEditorTab('Analytics', `${partialPath}/tab_analytics.html`, 2);
@@ -623,10 +632,18 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   onDKey() {
-    if(!this.analyticsController.labelingMode) {
+    if(!this.analyticsController.inLabelingMode) {
       return;
     }
-    this.analyticsController.toggleDeleteMode();
+    this.analyticsController.toggleLabelingMode(LabelingMode.DELETING);
+    this.refresh();
+  }
+
+  onUKey() {
+    if(!this.analyticsController.inLabelingMode) {
+      return;
+    }
+    this.analyticsController.toggleLabelingMode(LabelingMode.UNLABELING);
     this.refresh();
   }
 

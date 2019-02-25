@@ -160,6 +160,10 @@ export class AnalyticService {
     return this.patch('/analyticUnits', updateObj);
   }
 
+  async runDetect(id: AnalyticUnitId) {
+    return this.post('/analyticUnits/detect', { id });
+  }
+
   private async _analyticRequest(method: string, url: string, data?: any) {
     try {
       method = method.toUpperCase();

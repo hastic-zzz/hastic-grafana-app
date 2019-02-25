@@ -4,7 +4,8 @@ import { AnalyticService } from '../services/analytic_service'
 
 import {
   AnalyticUnitId, AnalyticUnit,
-  AnalyticUnitsSet, AnalyticSegment, AnalyticSegmentsSearcher, AnalyticSegmentPair
+  AnalyticUnitsSet, AnalyticSegment, AnalyticSegmentsSearcher, AnalyticSegmentPair,
+  LabelingMode
 } from '../models/analytic_unit';
 import { MetricExpanded } from '../models/metric';
 import { DatasourceRequest } from '../models/datasource';
@@ -14,21 +15,19 @@ import { SegmentArray } from '../models/segment_array';
 import { ServerInfo } from '../models/info';
 import { Threshold, Condition } from '../models/threshold';
 
-import { 
+import {
   ANALYTIC_UNIT_COLORS,
   LABELED_SEGMENT_BORDER_COLOR,
-  DELETED_SEGMENT_FILL_COLOR,
-  DELETED_SEGMENT_BORDER_COLOR
+  DELETED_SEGMENT_BORDER_COLOR,
+  SEGMENT_FILL_ALPHA,
+  SEGMENT_STROKE_ALPHA,
+  LABELING_MODE_ALPHA
 } from '../colors';
 
 import { Emitter } from 'grafana/app/core/utils/emitter';
 
 import _ from 'lodash';
 import * as tinycolor from 'tinycolor2';
-
-export const REGION_FILL_ALPHA = 0.5;
-export const REGION_STROKE_ALPHA = 0.8;
-export const LABELING_MODE_ALPHA = 0.7;
 
 export class AnalyticController {
 
@@ -174,15 +173,15 @@ export class AnalyticController {
     this._tempIdCounted = -1;
   }
 
-  get labelingMode(): boolean {
+  get inLabelingMode(): boolean {
     return this._selectedAnalyticUnitId !== null;
   }
 
-  get labelingDeleteMode(): boolean {
-    if(!this.labelingMode) {
-      return false;
+  get labelingMode(): LabelingMode {
+    if(!this.inLabelingMode) {
+      return LabelingMode.NOT_IN_LABELING_MODE;
     }
-    return this.labelingUnit.deleteMode;
+    return this.labelingUnit.labelingMode;
   }
 
   addLabelSegment(segment: Segment, deleted = false) {
@@ -251,9 +250,13 @@ export class AnalyticController {
 
 
     await this._analyticService.updateMetric(unit.id, this._currentMetric, this._currentDatasource);
-    return this._analyticService.updateSegments(
+    const newIds = await this._analyticService.updateSegments(
       unit.id, this._labelingDataAddedSegments, this._labelingDataRemovedSegments
     );
+    if(unit.labelingMode !== LabelingMode.UNLABELING) {
+      await this._analyticService.runDetect(unit.id);
+    }
+    return newIds;
   }
 
   // TODO: move to renderer
@@ -268,16 +271,16 @@ export class AnalyticController {
         continue;
       }
 
-      let defaultBorderColor = addAlphaToRGB(analyticUnit.labeledColor, REGION_STROKE_ALPHA);
-      let defaultFillColor = addAlphaToRGB(analyticUnit.labeledColor, REGION_FILL_ALPHA);
+      let defaultBorderColor = addAlphaToRGB(analyticUnit.labeledColor, SEGMENT_STROKE_ALPHA);
+      let defaultFillColor = addAlphaToRGB(analyticUnit.labeledColor, SEGMENT_FILL_ALPHA);
       let labeledSegmentBorderColor = tinycolor(LABELED_SEGMENT_BORDER_COLOR).toRgbString();
-      labeledSegmentBorderColor = addAlphaToRGB(labeledSegmentBorderColor, REGION_STROKE_ALPHA);
+      labeledSegmentBorderColor = addAlphaToRGB(labeledSegmentBorderColor, SEGMENT_STROKE_ALPHA);
       let deletedSegmentFillColor = tinycolor(analyticUnit.deletedColor).toRgbString();
-      deletedSegmentFillColor = addAlphaToRGB(deletedSegmentFillColor, REGION_FILL_ALPHA);
+      deletedSegmentFillColor = addAlphaToRGB(deletedSegmentFillColor, SEGMENT_FILL_ALPHA);
       let deletedSegmentBorderColor = tinycolor(DELETED_SEGMENT_BORDER_COLOR).toRgbString();
-      deletedSegmentBorderColor = addAlphaToRGB(deletedSegmentBorderColor, REGION_STROKE_ALPHA);
+      deletedSegmentBorderColor = addAlphaToRGB(deletedSegmentBorderColor, SEGMENT_STROKE_ALPHA);
 
-      if(isEditMode && this.labelingMode && analyticUnit.selected) {
+      if(isEditMode && this.inLabelingMode && analyticUnit.selected) {
         defaultBorderColor = addAlphaToRGB(defaultBorderColor, LABELING_MODE_ALPHA);
         defaultFillColor = addAlphaToRGB(defaultFillColor, LABELING_MODE_ALPHA);
         labeledSegmentBorderColor = addAlphaToRGB(labeledSegmentBorderColor, LABELING_MODE_ALPHA);
@@ -329,11 +332,15 @@ export class AnalyticController {
     this._labelingDataAddedSegments.removeInRange(from, to);
   }
 
-  toggleDeleteMode() {
-    if(!this.labelingMode) {
-      throw new Error('Cant enter delete mode is labeling mode disabled');
+  toggleLabelingMode(mode: LabelingMode) {
+    if(!this.inLabelingMode) {
+      throw new Error(`Can't enter ${mode} mode when labeling mode is disabled`);
     }
-    this.labelingUnit.deleteMode = !this.labelingUnit.deleteMode;
+    if(this.labelingUnit.labelingMode === mode) {
+      this.labelingUnit.labelingMode = LabelingMode.LABELING;
+    } else {
+      this.labelingUnit.labelingMode = mode;
+    }
   }
 
   async removeAnalyticUnit(id: AnalyticUnitId, silent: boolean = false) {

@@ -7,6 +7,13 @@ import { ANALYTIC_UNIT_COLORS } from '../colors';
 import _ from 'lodash';
 
 
+export enum LabelingMode {
+  LABELING = 'LABELING',
+  UNLABELING = 'UNLABELING',
+  DELETING = 'DELETING',
+  NOT_IN_LABELING_MODE = 'NOT_IN_LABELING_MODE'
+};
+
 export type AnalyticSegmentPair = { analyticUnit: AnalyticUnit, segment: AnalyticSegment };
 export type AnalyticSegmentsSearcher = (point: number, rangeDist: number) => AnalyticSegmentPair[];
 
@@ -23,8 +30,8 @@ export class AnalyticSegment extends Segment {
 
 export class AnalyticUnit {
 
+  private _labelingMode: LabelingMode = LabelingMode.LABELING;
   private _selected: boolean = false;
-  private _deleteMode: boolean = false;
   private _saving: boolean = false;
   private _segmentSet = new SegmentArray<AnalyticSegment>();
   private _status: string;
@@ -71,8 +78,8 @@ export class AnalyticUnit {
   get selected(): boolean { return this._selected; }
   set selected(value: boolean) { this._selected = value; }
 
-  get deleteMode(): boolean { return this._deleteMode; }
-  set deleteMode(value: boolean) { this._deleteMode = value; }
+  get labelingMode(): LabelingMode { return this._labelingMode; }
+  set labelingMode(value: LabelingMode) { this._labelingMode = value; }
 
   get saving(): boolean { return this._saving; }
   set saving(value: boolean) { this._saving = value; }

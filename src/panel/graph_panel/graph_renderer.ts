@@ -1,16 +1,15 @@
 import { Segment } from './models/segment';
+import { LabelingMode } from './models/analytic_unit';
 import { GraphTooltip } from './graph_tooltip';
 
 import { convertValuesToHistogram, getSeriesValues } from './histogram';
 import {
-  AnalyticController,
-  REGION_FILL_ALPHA,
-  REGION_STROKE_ALPHA
+  AnalyticController
 } from './controllers/analytic_controller';
 
 import {
-  REGION_DELETE_COLOR_LIGHT,
-  REGION_DELETE_COLOR_DARK
+  REGION_UNLABEL_COLOR_LIGHT,
+  REGION_UNLABEL_COLOR_DARK
 } from './colors';
 
 import { GraphCtrl } from './graph_ctrl';
@@ -149,14 +148,20 @@ export class GraphRenderer {
         Math.round(selectionEvent.xaxis.from),
         Math.round(selectionEvent.xaxis.to)
       );
-      if(this._analyticController.labelingDeleteMode) {
+      if(this._analyticController.labelingMode === LabelingMode.DELETING) {
         this._analyticController.deleteLabelingAnalyticUnitSegmentsInRange(
           segment.from, segment.to
         );
         this._analyticController.addLabelSegment(segment, true);
-      } else {
+      } 
+      if(this._analyticController.labelingMode === LabelingMode.LABELING) {
         this._analyticController.addLabelSegment(segment, false);
       }
+      if(this._analyticController.labelingMode === LabelingMode.UNLABELING) {
+        this._analyticController.deleteLabelingAnalyticUnitSegmentsInRange(
+          segment.from, segment.to
+        );
+      } 
 
       this.renderPanel();
       return;
@@ -339,21 +344,22 @@ export class GraphRenderer {
   }
 
   private _chooseSelectionColor(e) {
-    var color = COLOR_SELECTION;
-    var fillAlpha = 0.4;
-    var strokeAlpha = 0.4;
+    let color = COLOR_SELECTION;
+
     if(this._isHasticEvent(e)) {
-      if(this._analyticController.labelingDeleteMode) {
-        color = this.contextSrv.user.lightTheme ?
-          REGION_DELETE_COLOR_LIGHT :
-          REGION_DELETE_COLOR_DARK;
-      } else {
+      if(this._analyticController.labelingMode === LabelingMode.DELETING) {
+        color = this._analyticController.labelingUnit.deletedColor;
+      }
+      if(this._analyticController.labelingMode === LabelingMode.LABELING) {
         color = this._analyticController.labelingUnit.labeledColor;
       }
-      fillAlpha = REGION_FILL_ALPHA;
-      strokeAlpha = REGION_STROKE_ALPHA;
+      if(this._analyticController.labelingMode === LabelingMode.UNLABELING) {
+        color = this.contextSrv.user.lightTheme ?
+          REGION_UNLABEL_COLOR_LIGHT :
+          REGION_UNLABEL_COLOR_DARK;
+      }
     }
-    this.plot.getOptions().selection.color = color
+    this.plot.getOptions().selection.color = color;
   }
 
   private _buildFlotPairs(data) {
@@ -810,7 +816,7 @@ export class GraphRenderer {
   private _isHasticEvent(obj: any) {
     return (obj.ctrlKey || obj.metaKey) &&
            this.contextSrv.isEditor &&
-           this._analyticController.labelingMode;
+           this._analyticController.inLabelingMode;
   }
 
 }
