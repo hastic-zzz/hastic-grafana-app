@@ -23,7 +23,7 @@
 
       <label class="gf-form-label width-4"> Type </label>
       <div class="gf-form-select-wrapper">
-        <select class="gf-form-input width-12"
+        <select class="gf-form-input width-10"
           ng-model="analyticUnit.type"
           ng-options="type.value as type.name for type in ctrl.analyticUnitTypes[analyticUnit.detectorType]"
           ng-disabled="true"
@@ -39,7 +39,7 @@
       />
       -->
 
-      <label class="gf-form-label width-8"> Labeled Color </label>
+      <label class="gf-form-label width-8"> Positive Color </label>
       <span class="gf-form-label">
         <color-picker
           color="analyticUnit.labeledColor"
@@ -50,7 +50,7 @@
       <!-- Hack to avoid Grafana's .gf-form-label + .gf-form-label css. Fix for https://github.com/hastic/hastic-grafana-app/issues/192 -->
       <div></div>
 
-      <label class="gf-form-label width-8"> Deleted Color </label>
+      <label class="gf-form-label width-8"> Negative Color </label>
       <span class="gf-form-label">
         <color-picker
           color="analyticUnit.deletedColor"
@@ -69,12 +69,20 @@
         >
           <i class="fa fa-bar-chart" ng-if="!analyticUnit.saving"></i>
           <i class="fa fa-spinner fa-spin" ng-if="analyticUnit.saving"></i>
-          <b ng-if="analyticUnit.selected && analyticUnit.labelingMode === 'LABELING' && !analyticUnit.saving"> labeling </b>
-          <b ng-if="analyticUnit.selected && analyticUnit.labelingMode === 'DELETING' && !analyticUnit.saving"> deleting </b>
-          <b ng-if="analyticUnit.selected && analyticUnit.labelingMode === 'UNLABELING' && !analyticUnit.saving"> unlabeling </b>
           <b ng-if="analyticUnit.saving" ng-disabled="true"> saving... </b>
         </a>
       </label>
+
+      <select class="gf-form-input width-10"
+        ng-model="ctrl.analyticsController.labelingMode"
+        ng-options="type.value as type.name for type in [
+          { name:'Label Positive', value: 'LABELING' }, 
+          { name:'Label Negative', value: 'DELETING' },
+          { name:'Unlabel', value: 'UNLABELING' }
+        ]"
+        ng-if="analyticUnit.selected && !analyticUnit.saving"
+        ng-disabled="analyticUnit.status === 'LEARNING'"
+      />
 
       <select class="gf-form-input width-7"
         ng-model="ctrl.analyticsController.getThreshold(analyticUnit.id).condition"
@@ -100,10 +108,9 @@
         Apply
       </button>
 
-      <label class="gf-form-label">
+      <label class="gf-form-label" ng-hide="analyticUnit.selected">
         <a
           ng-if="analyticUnit.visible"
-          ng-disabled="analyticUnit.selected"
           bs-tooltip="'Hide. It`s visible now.'"
           ng-click="ctrl.onToggleVisibility(analyticUnit.id)"
           class="pointer"
@@ -113,7 +120,6 @@
 
         <a
           ng-if="!analyticUnit.visible"
-          ng-disabled="analyticUnit.selected"
           bs-tooltip="'Show. It`s hidden now.'"
           ng-click="ctrl.onToggleVisibility(analyticUnit.id)"
           class="pointer"
@@ -159,7 +165,7 @@
 
       <label class="gf-form-label width-8"> Detector Type </label>
       <div class="gf-form-select-wrapper">
-        <select class="gf-form-input width-12"
+        <select class="gf-form-input width-10"
           ng-model="ctrl.analyticsController.newAnalyticUnit.detectorType"
           ng-options="analyticUnitDetectorType for analyticUnitDetectorType in ctrl.analyticUnitDetectorTypes"
           ng-change="ctrl.analyticsController.onAnalyticUnitDetectorChange(ctrl.analyticUnitTypes);"
@@ -168,7 +174,7 @@
 
       <label class="gf-form-label width-8"> Type </label>
       <div class="gf-form-select-wrapper">
-        <select class="gf-form-input width-12"
+        <select class="gf-form-input width-10"
           ng-model="ctrl.analyticsController.newAnalyticUnit.type"
           ng-options="
             type.value as type.name
