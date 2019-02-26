@@ -143,7 +143,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     private keybindingSrv,
     private backendSrv: BackendSrv,
     private popoverSrv,
-    private contextSrv,
+    private contextSrv
 ) {
     super($scope, $injector);
 
