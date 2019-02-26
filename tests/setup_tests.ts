@@ -25,5 +25,7 @@ analyticService.postNewItem = async function (newItem: AnalyticUnit, metric: Met
 
 export const analyticController = new AnalyticController({}, analyticService, new Emitter());
 
+jest.mock('../src/panel/graph_panel/partials/help_section.html', () => '');
+
 console.log = jest.fn();
 console.error = jest.fn();

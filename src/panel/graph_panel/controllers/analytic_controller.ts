@@ -14,6 +14,7 @@ import { SegmentsSet } from '../models/segment_set';
 import { SegmentArray } from '../models/segment_array';
 import { ServerInfo } from '../models/info';
 import { Threshold, Condition } from '../models/threshold';
+import text from '../partials/help_section.html';
 
 import {
   ANALYTIC_UNIT_COLORS,
@@ -59,6 +60,8 @@ export class AnalyticController {
 
     // this.analyticUnits.forEach(a => this.runEnabledWaiter(a));
   }
+
+  get helpSectionText() { return text; }
 
   getSegmentsSearcher(): AnalyticSegmentsSearcher {
     return this._segmentsSearcher.bind(this);
