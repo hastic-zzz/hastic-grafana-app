@@ -82,7 +82,7 @@ export function axesEditorComponent() {
   return {
     restrict: 'E',
     scope: true,
-    templateUrl: 'public/plugins/hastic-graph-panel/partials/axes_editor.html',
+    templateUrl: 'public/plugins/corpglory-hastic-app/panel/graph_panel/partials/axes_editor.html',
     controller: AxesEditorCtrl,
   };
 }
