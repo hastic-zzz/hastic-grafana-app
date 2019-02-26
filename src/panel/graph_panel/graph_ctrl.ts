@@ -659,8 +659,12 @@ class GraphCtrl extends MetricsPanelCtrl {
     const datasource = await this._getDatasourceByName(this.panel.datasource);
     const backendUrl = await this.getBackendURL();
 
+    let grafanaVersion = 'unknown';
+    if(_.has(window, 'grafanaBootData.settings.buildInfo.version')) {
+      grafanaVersion = window.grafanaBootData.settings.buildInfo.version;
+    }
     this._panelInfo = {
-      grafanaVersion: this.contextSrv.version,
+      grafanaVersion,
       grafanaUrl: window.location.host,
       datasourceType: datasource.type,
       hasticServerUrl: backendUrl

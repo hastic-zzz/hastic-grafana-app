@@ -140,6 +140,7 @@ export class AnalyticController {
     await this.disableLabeling();
     this._selectedAnalyticUnitId = id;
     this.labelingUnit.selected = true;
+    this.toggleLabelingMode(LabelingMode.LABELING);
     this.toggleVisibility(id, true);
   }
 
@@ -187,6 +188,10 @@ export class AnalyticController {
       return LabelingMode.NOT_IN_LABELING_MODE;
     }
     return this.labelingUnit.labelingMode;
+  }
+
+  set labelingMode(labelingMode: LabelingMode) {
+    this.labelingUnit.labelingMode = labelingMode;
   }
 
   addLabelSegment(segment: Segment, deleted = false) {
@@ -337,14 +342,14 @@ export class AnalyticController {
     this._labelingDataAddedSegments.removeInRange(from, to);
   }
 
-  toggleLabelingMode(mode: LabelingMode) {
+  toggleLabelingMode(labelingMode: LabelingMode) {
     if(!this.inLabelingMode) {
-      throw new Error(`Can't enter ${mode} mode when labeling mode is disabled`);
+      throw new Error(`Can't enter ${labelingMode} mode when labeling mode is disabled`);
     }
-    if(this.labelingUnit.labelingMode === mode) {
+    if(this.labelingUnit.labelingMode === labelingMode) {
       this.labelingUnit.labelingMode = LabelingMode.LABELING;
     } else {
-      this.labelingUnit.labelingMode = mode;
+      this.labelingUnit.labelingMode = labelingMode;
     }
   }
 
