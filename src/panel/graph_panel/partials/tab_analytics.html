@@ -197,30 +197,5 @@
     </button>
   </div>
 
-<div class="gf-form" ng-show="ctrl.showHelp" >
-  <pre class="gf-form-pre alert alert-info">
-    <b>For usage instructions:</b>
-        Visit our <a href="https://github.com/hastic/hastic-grafana-app/wiki/Analytic-units"><b>Wiki</b></a> page.
-
-    <b>If you encounter any problems:</b>
-        Look for solution or create a new Issue <a href="https://github.com/hastic/hastic-grafana-app/issues"><b>here</b></a>.
-
-    <b>Available labeling patterns examples:</b>
-      1) General: patterns in your data that don't fall under any of provided built-in patterns.
-
-      2) Peaks: a sharp increase to a certain single value, followed by a return to the original value.
-      <img ng-src="{{ctrl.pluginPath}}/img/peaks.jpg">
-
-      3) Troughs: a sharp decrease to a certain single value, followed by a return to the original value.
-      <img ng-src="{{ctrl.pluginPath}}/img/troughs.jpg">
-
-      4) Jumps: increase to a certain value without returning to the original state.
-      <img ng-src="{{ctrl.pluginPath}}/img/jumps.jpg">
-
-      5) Drops: decrease to a certain value without returning to the original state.
-      <img ng-src="{{ctrl.pluginPath}}/img/drops.jpg">
-
-      6) Custom: any custom model created and imported by you.
-      </pre>
-</div>
+<div class="gf-form" ng-show="ctrl.showHelp" ng-bind-html="ctrl.analyticsController.helpSectionText"></div>
 

@@ -14,6 +14,7 @@ import { SegmentsSet } from '../models/segment_set';
 import { SegmentArray } from '../models/segment_array';
 import { ServerInfo } from '../models/info';
 import { Threshold, Condition } from '../models/threshold';
+import text from '../partials/help_section.html';
 
 import {
   ANALYTIC_UNIT_COLORS,
@@ -46,8 +47,9 @@ export class AnalyticController {
   private _currentMetric: MetricExpanded;
   private _currentDatasource: DatasourceRequest;
   private _thresholds: Threshold[];
+  private $scope;
 
-  constructor(private _panelObject: any, private _analyticService: AnalyticService, private _emitter: Emitter) {
+  constructor(private _panelObject: any, private _analyticService: AnalyticService, private _emitter: Emitter, private $interpolate) {
     if(_panelObject.analyticUnits === undefined) {
       _panelObject.analyticUnits = _panelObject.anomalyTypes || [];
     }
@@ -59,6 +61,8 @@ export class AnalyticController {
 
     // this.analyticUnits.forEach(a => this.runEnabledWaiter(a));
   }
+
+  get helpSectionText() { return this.$interpolate(text)(this.$scope); }
 
   getSegmentsSearcher(): AnalyticSegmentsSearcher {
     return this._segmentsSearcher.bind(this);

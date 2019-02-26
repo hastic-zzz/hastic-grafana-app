@@ -143,9 +143,11 @@ class GraphCtrl extends MetricsPanelCtrl {
     private keybindingSrv,
     private backendSrv: BackendSrv,
     private popoverSrv,
-    private contextSrv
+    private contextSrv,
+    private $interpolate
 ) {
     super($scope, $injector);
+    this.$scope = $scope;
 
     _.defaults(this.panel, this.panelDefaults);
     _.defaults(this.panel.tooltip, this.panelDefaults.tooltip);
@@ -255,7 +257,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     this.runBackendConnectivityCheck();
 
-    this.analyticsController = new AnalyticController(this.panel, this.analyticService, this.events);
+    this.analyticsController = new AnalyticController(this.panel, this.analyticService, this.events, this.$interpolate);
 
 
     this.events.on('render', this.onRender.bind(this));
