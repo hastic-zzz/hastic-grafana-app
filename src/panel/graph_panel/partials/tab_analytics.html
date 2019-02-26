@@ -48,10 +48,10 @@
       </span>
 
       <!-- Hack to avoid Grafana's .gf-form-label + .gf-form-label css. Fix for https://github.com/hastic/hastic-grafana-app/issues/192 -->
-      <div></div>
+      <div ng-if="analyticUnit.detectorType === 'pattern'"></div>
 
-      <label class="gf-form-label width-8"> Negative Color </label>
-      <span class="gf-form-label">
+      <label ng-if="analyticUnit.detectorType === 'pattern'" class="gf-form-label width-8"> Negative Color </label>
+      <span ng-if="analyticUnit.detectorType === 'pattern'"  class="gf-form-label">
         <color-picker
           color="analyticUnit.deletedColor"
           onChange="ctrl.onColorChange.bind(ctrl, analyticUnit.id, true)"
