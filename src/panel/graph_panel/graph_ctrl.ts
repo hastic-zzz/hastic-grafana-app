@@ -144,7 +144,6 @@ class GraphCtrl extends MetricsPanelCtrl {
     private backendSrv: BackendSrv,
     private popoverSrv,
     private contextSrv,
-    private $interpolate
 ) {
     super($scope, $injector);
 
