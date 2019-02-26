@@ -47,9 +47,8 @@ export class AnalyticController {
   private _currentMetric: MetricExpanded;
   private _currentDatasource: DatasourceRequest;
   private _thresholds: Threshold[];
-  private $scope;
 
-  constructor(private _panelObject: any, private _analyticService: AnalyticService, private _emitter: Emitter, private $interpolate) {
+  constructor(private _panelObject: any, private _analyticService: AnalyticService, private _emitter: Emitter) {
     if(_panelObject.analyticUnits === undefined) {
       _panelObject.analyticUnits = _panelObject.anomalyTypes || [];
     }
@@ -62,7 +61,7 @@ export class AnalyticController {
     // this.analyticUnits.forEach(a => this.runEnabledWaiter(a));
   }
 
-  get helpSectionText() { return this.$interpolate(text)(this.$scope); }
+  get helpSectionText() { return text; }
 
   getSegmentsSearcher(): AnalyticSegmentsSearcher {
     return this._segmentsSearcher.bind(this);
