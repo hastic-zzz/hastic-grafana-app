@@ -7,7 +7,7 @@ import { GraphLegend } from './graph_legend';
 import { DataProcessor } from './data_processor';
 import { MetricExpanded } from './models/metric';
 import { DatasourceRequest } from './models/datasource';
-import { AnalyticUnitId, AnalyticUnit } from './models/analytic_unit';
+import { AnalyticUnitId, AnalyticUnit, LabelingMode } from './models/analytic_unit';
 import { AnalyticService } from './services/analytic_service';
 import { AnalyticController } from './controllers/analytic_controller';
 import { PanelInfo } from './models/info';
@@ -35,7 +35,6 @@ class GraphCtrl extends MetricsPanelCtrl {
   private _datasourceRequest: DatasourceRequest;
   private _datasources: any;
 
-  private _panelPath: any;
   private _renderError: boolean = false;
 
   // annotationsPromise: any;
@@ -157,19 +156,28 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
   }
 
-  rebindDKey() {
+  rebindKeys() {
+    const dKeyCode = 68;
+    const uKeyCode = 85;
+
     $(document).off('keydown.hasticDKey');
     $(document).on('keydown.hasticDKey', (e) => {
-      // 68 is 'd' key kode
-      if(e.keyCode === 68) {
+      if(e.keyCode === dKeyCode) {
         this.onDKey();
+      }
+    });
+
+    $(document).off('keydown.hasticUKey');
+    $(document).on('keydown.hasticUKey', (e) => {
+      if(e.keyCode === uKeyCode) {
+        this.onUKey();
       }
     });
   }
 
   editPanel() {
     super.editPanel();
-    this.rebindDKey();
+    this.rebindKeys();
   }
 
   async getBackendURL(): Promise<string> {
@@ -264,6 +272,9 @@ class GraphCtrl extends MetricsPanelCtrl {
         await this.analyticsController.removeAnalyticUnit(analyticUnit.id, true);
       }
       if(analyticUnit.status === 'READY') {
+        if(this.range === undefined) {
+          this.updateTimeRange();
+        }
         await this.analyticsController.fetchSegments(analyticUnit, +this.range.from, +this.range.to);
       }
       this.render(this.seriesList);
@@ -300,7 +311,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   onInitEditMode() {
 
-    this.rebindDKey(); // a small hask: bind if we open page in edit mode
+    this.rebindKeys(); // a small hask: bind if we open page in edit mode
 
     const partialPath = this.panelPath + '/partials';
     this.addEditorTab('Analytics', `${partialPath}/tab_analytics.html`, 2);
@@ -581,11 +592,11 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.analyticsController.fetchAnalyticUnitName(analyticUnit);
   }
 
-  onColorChange(id: AnalyticUnitId, value: string) {
+  onColorChange(id: AnalyticUnitId, deleted: boolean, value: string) {
     if(id === undefined) {
       throw new Error('id is undefined');
     }
-    this.analyticsController.onAnalyticUnitColorChange(id, value);
+    this.analyticsController.onAnalyticUnitColorChange(id, value, deleted);
     this.render();
   }
 
@@ -624,10 +635,18 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   onDKey() {
-    if(!this.analyticsController.labelingMode) {
+    if(!this.analyticsController.inLabelingMode) {
       return;
     }
-    this.analyticsController.toggleDeleteMode();
+    this.analyticsController.toggleLabelingMode(LabelingMode.DELETING);
+    this.refresh();
+  }
+
+  onUKey() {
+    if(!this.analyticsController.inLabelingMode) {
+      return;
+    }
+    this.analyticsController.toggleLabelingMode(LabelingMode.UNLABELING);
     this.refresh();
   }
 
@@ -640,8 +659,12 @@ class GraphCtrl extends MetricsPanelCtrl {
     const datasource = await this._getDatasourceByName(this.panel.datasource);
     const backendUrl = await this.getBackendURL();
 
+    let grafanaVersion = 'unknown';
+    if(_.has(window, 'grafanaBootData.settings.buildInfo.version')) {
+      grafanaVersion = window.grafanaBootData.settings.buildInfo.version;
+    }
     this._panelInfo = {
-      grafanaVersion: this.contextSrv.version,
+      grafanaVersion,
       grafanaUrl: window.location.host,
       datasourceType: datasource.type,
       hasticServerUrl: backendUrl

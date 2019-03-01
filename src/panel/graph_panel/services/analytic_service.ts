@@ -66,20 +66,22 @@ export class AnalyticService {
   }
 
   async updateSegments(
-    id: AnalyticUnitId, addedSegments: SegmentsSet<Segment>, removedSegments: SegmentsSet<Segment>
+    id: AnalyticUnitId, addedSegments: SegmentsSet<AnalyticSegment>, removedSegments: SegmentsSet<AnalyticSegment>
   ): Promise<SegmentId[]> {
-    const getJSONs = (segs: SegmentsSet<Segment>) => segs.getSegments().map(segment => ({
+    const getJSONs = (segs: SegmentsSet<AnalyticSegment>) => segs.getSegments().map(segment => ({
       from: segment.from,
-      to: segment.to
+      to: segment.to,
+      labeled: segment.labeled,
+      deleted: segment.deleted
     }));
 
-    var payload = {
+    const payload = {
       id,
       addedSegments: getJSONs(addedSegments),
       removedSegments: removedSegments.getSegments().map(s => s.id)
     };
 
-    var data = await this.patch('/segments', payload);
+    const data = await this.patch('/segments', payload);
     if(data.addedIds === undefined) {
       throw new Error('Server didn`t send addedIds');
     }
@@ -156,6 +158,10 @@ export class AnalyticService {
   async updateAnalyticUnit(id: AnalyticUnitId, updateObj: any) {
     updateObj.id = id;
     return this.patch('/analyticUnits', updateObj);
+  }
+
+  async runDetect(id: AnalyticUnitId) {
+    return this.post('/analyticUnits/detect', { id });
   }
 
   private async _analyticRequest(method: string, url: string, data?: any) {

@@ -47,7 +47,7 @@ export class SegmentArray<T extends Segment> implements SegmentsSet<T> {
 
   findSegments(point: number, rangeDist: number): T[] {
     return this._segments.filter(s => {
-      var expanded = s.expandDist(rangeDist, 0.01);
+      const expanded = s.expandDist(rangeDist, 0.01);
       return (expanded.from <= point) && (point <= expanded.to);
     });
   }

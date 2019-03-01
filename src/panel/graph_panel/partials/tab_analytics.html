@@ -11,7 +11,7 @@
   <div class="editor-row">
     <div class="gf-form" ng-repeat="analyticUnit in ctrl.analyticsController.analyticUnits">
 
-      <label class="gf-form-label width-6">
+      <label class="gf-form-label width-5">
         <i class="fa fa-info" bs-tooltip="'Analytic unit id: ' + analyticUnit.id"></i>
         &nbsp; Name
       </label>
@@ -21,9 +21,9 @@
         ng-change="ctrl.onAnalyticUnitNameChange(analyticUnit)"
       >
 
-      <label class="gf-form-label width-8"> Type </label>
+      <label class="gf-form-label width-4"> Type </label>
       <div class="gf-form-select-wrapper">
-        <select class="gf-form-input width-12"
+        <select class="gf-form-input width-10"
           ng-model="analyticUnit.type"
           ng-options="type.value as type.name for type in ctrl.analyticUnitTypes[analyticUnit.detectorType]"
           ng-disabled="true"
@@ -39,11 +39,22 @@
       />
       -->
 
-      <label class="gf-form-label width-6"> Color </label>
+      <label class="gf-form-label width-8"> Positive Color </label>
       <span class="gf-form-label">
         <color-picker
-          color="analyticUnit.color"
-          onChange="ctrl.onColorChange.bind(ctrl, analyticUnit.id)"
+          color="analyticUnit.labeledColor"
+          onChange="ctrl.onColorChange.bind(ctrl, analyticUnit.id, false)"
+        />
+      </span>
+
+      <!-- Hack to avoid Grafana's .gf-form-label + .gf-form-label css. Fix for https://github.com/hastic/hastic-grafana-app/issues/192 -->
+      <div ng-if="analyticUnit.detectorType === 'pattern'"></div>
+
+      <label ng-if="analyticUnit.detectorType === 'pattern'" class="gf-form-label width-8"> Negative Color </label>
+      <span ng-if="analyticUnit.detectorType === 'pattern'"  class="gf-form-label">
+        <color-picker
+          color="analyticUnit.deletedColor"
+          onChange="ctrl.onColorChange.bind(ctrl, analyticUnit.id, true)"
         />
       </span>
 
@@ -58,11 +69,20 @@
         >
           <i class="fa fa-bar-chart" ng-if="!analyticUnit.saving"></i>
           <i class="fa fa-spinner fa-spin" ng-if="analyticUnit.saving"></i>
-          <b ng-if="analyticUnit.selected && !analyticUnit.deleteMode && !analyticUnit.saving"> labeling </b>
-          <b ng-if="analyticUnit.selected && analyticUnit.deleteMode && !analyticUnit.saving"> deleting </b>
           <b ng-if="analyticUnit.saving" ng-disabled="true"> saving... </b>
         </a>
       </label>
+
+      <select class="gf-form-input width-10"
+        ng-model="ctrl.analyticsController.labelingMode"
+        ng-options="type.value as type.name for type in [
+          { name:'Label Positive', value: 'LABELING' }, 
+          { name:'Label Negative', value: 'DELETING' },
+          { name:'Unlabel', value: 'UNLABELING' }
+        ]"
+        ng-if="analyticUnit.selected && !analyticUnit.saving"
+        ng-disabled="analyticUnit.status === 'LEARNING'"
+      />
 
       <select class="gf-form-input width-7"
         ng-model="ctrl.analyticsController.getThreshold(analyticUnit.id).condition"
@@ -79,19 +99,18 @@
         "
       />
       <!-- TODO set .saving flag to thresholds, when learning is in progress -->
-      <button 
-        class="btn btn-inverse" 
-        ng-if="analyticUnit.detectorType === 'threshold'" 
+      <button
+        class="btn btn-inverse"
+        ng-if="analyticUnit.detectorType === 'threshold'"
         ng-click="ctrl.analyticsController.sendThresholdParamsToServer(analyticUnit.id)"
         ng-disabled="analyticUnit.status === 'PENDING' || analyticUnit.status === 'LEARNING'"
         >
         Apply
       </button>
 
-      <label class="gf-form-label">
+      <label class="gf-form-label" ng-hide="analyticUnit.selected">
         <a
           ng-if="analyticUnit.visible"
-          ng-disabled="analyticUnit.selected"
           bs-tooltip="'Hide. It`s visible now.'"
           ng-click="ctrl.onToggleVisibility(analyticUnit.id)"
           class="pointer"
@@ -101,7 +120,6 @@
 
         <a
           ng-if="!analyticUnit.visible"
-          ng-disabled="analyticUnit.selected"
           bs-tooltip="'Show. It`s hidden now.'"
           ng-click="ctrl.onToggleVisibility(analyticUnit.id)"
           class="pointer"
@@ -147,7 +165,7 @@
 
       <label class="gf-form-label width-8"> Detector Type </label>
       <div class="gf-form-select-wrapper">
-        <select class="gf-form-input width-12"
+        <select class="gf-form-input width-10"
           ng-model="ctrl.analyticsController.newAnalyticUnit.detectorType"
           ng-options="analyticUnitDetectorType for analyticUnitDetectorType in ctrl.analyticUnitDetectorTypes"
           ng-change="ctrl.analyticsController.onAnalyticUnitDetectorChange(ctrl.analyticUnitTypes);"
@@ -156,7 +174,7 @@
 
       <label class="gf-form-label width-8"> Type </label>
       <div class="gf-form-select-wrapper">
-        <select class="gf-form-input width-12"
+        <select class="gf-form-input width-10"
           ng-model="ctrl.analyticsController.newAnalyticUnit.type"
           ng-options="
             type.value as type.name
@@ -188,45 +206,5 @@
     </button>
   </div>
 
-<div class="gf-form" ng-show="ctrl.showHelp" >
-  <pre class="gf-form-pre alert alert-info">
-    <b>Adding Analytic Units:</b>
-        1) Click on 'Add Analytic Unit' button to add an analytic unit.
-        2) Type in desired analytic unit name into provided 'Name' field.
-        3) Choose pattern type from the 'Type' dropdown menu. Pattern types explained below.
-        4) Click 'create' button.
-
-    <b>Labeling segments:</b>
-        1) Click on the chart symbol <img ng-src="{{ctrl.pluginPath}}/img/chartSymbol.png"> to enter labeling mode.
-        2) Hold down 'Ctrl' button on your keyboard and hold down left mouse button while dragging to label segments manually. Release LMB to finish labeling the segment.
-        3) After all of the needed segments are labeled click on the chart symbol again to exit labeling mode.
-
-        <b>Hastic will now start learning, and after a short while you will see the results on your graph.</b>
-
-    <b>Deleting segments:</b>
-        1) Click on the chart symbol to enter labeling mode. (skip this step if you are already in labeling mode)
-        2) Press 'D' key twice to switch from <img ng-src="{{ctrl.pluginPath}}/img/labeling.jpg"> to <img ng-src="{{ctrl.pluginPath}}/img/deleting.jpg">.
-        3) Hold down 'Ctrl' button on your keyboard and hold down left mouse button while dragging to mark segments for deletion.
-        4) After all of the needed segments are deleted click on the chart symbol again to exit labeling mode.
-
-        <b>Hastic will now start learning again, based on updated segments list.</b>
-
-    <b>Available labeling patterns:</b>
-      1) General: patterns in your data that don't fall under any of provided built-in patterns.
-
-      2) Peaks: a sharp increase to a certain single value, followed by a return to the original value.
-      <img ng-src="{{ctrl.pluginPath}}/img/peaks.jpg">
-
-      3) Troughs: a sharp decrease to a certain single value, followed by a return to the original value.
-      <img ng-src="{{ctrl.pluginPath}}/img/troughs.jpg">
-
-      4) Jumps: increase to a certain value without returning to the original state.
-      <img ng-src="{{ctrl.pluginPath}}/img/jumps.jpg">
-
-      5) Drops: decrease to a certain value without returning to the original state.
-      <img ng-src="{{ctrl.pluginPath}}/img/drops.jpg">
-
-      6) Custom: any custom model created and imported by you.
-      </pre>
-</div>
+<div class="gf-form" ng-show="ctrl.showHelp" ng-bind-html="ctrl.analyticsController.helpSectionText"></div>
 
