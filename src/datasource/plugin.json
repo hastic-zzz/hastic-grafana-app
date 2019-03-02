@@ -2,5 +2,11 @@
   "type": "datasource",
   "name": "Hastic Datasource",
   "id": "corpglory-hastic-datasource",
-  "metrics": true
+  "metrics": true,
+  "info": {
+    "logos": {
+      "small": "../corpglory-hastic-app/img/icn-graph-panel.png",
+      "large": "../corpglory-hastic-app/img/icn-graph-panel.png"
+    }
+  }
 }
