@@ -14,7 +14,7 @@
           ng-blur="ctrl.normalizeUrl()"
         />
         <info-popover mode="right-absolute">
-          <p>Specify a complete Hastic Server HTTP URL (for example http://your_hastic_server:8080)</p>
+          <p>Specify a complete Hastic Server HTTP URL (for example http://your_hastic_server:8000)</p>
           <span ng-show="current.access === 'direct'">
             Your access method is <em>Browser</em>, this means the URL
             needs to be accessible from the browser.
@@ -34,7 +34,7 @@
           <select
             class="gf-form-input"
             ng-model="current.access"
-            ng-options="f.key as f.value for f in ctrl.accessOptions"
+            ng-options="f.key as f.value for f in ctrl.ACCESS_OPTIONS"
           />
 				</div>
 			</div>

@@ -8,7 +8,7 @@ import configTemplate from './partials/config.html';
 
 class HasticConfigCtrl {
   public static template = configTemplate;
-  public ACCESS_OPTIONS: any[] = [
+  public ACCESS_OPTIONS = [
     { key: 'proxy', value: 'Server (Default)' },
     { key: 'direct', value: 'Browser'}
   ];
@@ -16,13 +16,14 @@ class HasticConfigCtrl {
   public current: any;
   private showAccessHelp: boolean = false;
 
-  constructor($scope) {
-    this.current.access = 'proxy';
-    console.log($scope);
+  constructor(private $scope) {
   }
 
   normalizeUrl() {
-    this.current.url = normalizeUrl(this.current.url);
+    if(this.$scope.current.url === "") {
+      return;
+    }
+    this.$scope.current.url = normalizeUrl(this.$scope.current.url);
   }
 
   toggleAccessHelp() {
