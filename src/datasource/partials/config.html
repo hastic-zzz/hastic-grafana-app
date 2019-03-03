@@ -11,7 +11,7 @@
           min-length="0"
           ng-pattern="/^(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?$/"
           required
-          ng-blur="ctrl.normalizeUrl"
+          ng-blur="ctrl.normalizeUrl()"
         />
         <info-popover mode="right-absolute">
           <p>Specify a complete Hastic Server HTTP URL (for example http://your_hastic_server:8080)</p>
@@ -39,39 +39,45 @@
 				</div>
 			</div>
 			<div class="gf-form">
-				<label class="gf-form-label query-keyword pointer" ng-click="toggleAccessHelp()">
+				<label class="gf-form-label query-keyword pointer" ng-click="ctrl.toggleAccessHelp()">
 					Help&nbsp;
-					<i class="fa fa-caret-down" ng-show="showAccessHelp"></i>
-					<i class="fa fa-caret-right" ng-hide="showAccessHelp">&nbsp;</i>
+					<i class="fa fa-caret-down" ng-show="ctrl.showAccessHelp"></i>
+					<i class="fa fa-caret-right" ng-hide="ctrl.showAccessHelp">&nbsp;</i>
 				</label>
 			</div>
 		</div>
 
-		<div class="grafana-info-box m-t-2" ng-show="showAccessHelp">
+		<div class="grafana-info-box m-t-2" ng-show="ctrl.showAccessHelp">
 			<p>
-			Access mode controls how requests to the data source will be handled.
-			<strong><i>Server</i></strong> should be the preferred way if nothing else stated.
+        Access mode controls how requests to the data source will be handled.
+        <strong><i>Server</i></strong> access mode should be the preferred way if nothing else stated.
 			</p>
 			<div class="alert-title">Server access mode (Default):</div>
 			<p>
-			All requests will be made from the browser to Grafana backend/server which in turn will forward the requests to the data source
-			and by that circumvent possible Cross-Origin Resource Sharing (CORS) requirements.
-			The URL needs to be accessible from the grafana backend/server if you select this access mode.
+        All requests will be made from the browser to Grafana backend/server which in turn will
+        forward the requests to the data source and by that circumvent possible 
+        Cross-Origin Resource Sharing (CORS) requirements.
+        The URL needs to be accessible from the grafana backend/server if you select this access mode.
 			</p>
 			<div class="alert-title">Browser access mode:</div>
 			<p>
-			All requests will be made from the browser directly to the data source and may be subject to
-			Cross-Origin Resource Sharing (CORS) requirements. The URL needs to be accessible from the browser if you select this
-			access mode.
+        All requests will be made from the browser directly to the data source and may be subject to
+        Cross-Origin Resource Sharing (CORS) requirements. The URL needs to be accessible from the browser
+        if you select this access mode.
+      </p>
 		</div>
 
 		<div class="gf-form-inline" ng-if="current.access=='proxy'">
 			<div class="gf-form">
 				<span class="gf-form-label width-10">Whitelisted Cookies</span>
-				<bootstrap-tagsinput ng-model="current.jsonData.keepCookies" width-class="width-20" tagclass="label label-tag" placeholder="Add Name">
-				</bootstrap-tagsinput>
+        <bootstrap-tagsinput 
+          ng-model="current.jsonData.keepCookies"
+          width-class="width-20" tagclass="label label-tag"
+          placeholder="Add Name"
+        />
 				<info-popover mode="right-absolute">
-					Grafana Proxy deletes forwarded cookies by default. Specify cookies by name that should be forwarded to the data source.
+          Grafana Proxy deletes forwarded cookies by default. Specify cookies by name
+          that should be forwarded to the data source.
 				</info-popover>
 			</div>
 		</div>
