@@ -10,24 +10,24 @@ class HasticConfigCtrl {
   public static template = configTemplate;
   public accessOptions: any[];
   public current: any;
+  private showAccessHelp: boolean = false;
 
-  constructor() {
+  constructor($scope) {
     console.log(this);
     this.accessOptions = [
       { key: 'proxy', value: 'Server (Default)' },
       { key: 'direct', value: 'Browser'}
     ];
-    //this.current.access = 'proxy';
-    // if(this.appModel.jsonData === undefined) {
-    //   this.appModel.jsonData = {};
-    // }
-
-    // this.appEditCtrl.setPreUpdateHook(this.preUpdate.bind(this));
-    // this.appEditCtrl.setPostUpdateHook(this.postUpdate.bind(this));
+    this.current.access = 'proxy';
   }
 
   normalizeUrl() {
-    // this.appModel.jsonData.hasticServerUrl = normalizeUrl(this.appModel.jsonData.hasticServerUrl);
+    this.current.url = normalizeUrl(this.current.url);
+  }
+
+  toggleAccessHelp() {
+    console.log('hey');
+    this.showAccessHelp = !this.showAccessHelp;
   }
 
 }

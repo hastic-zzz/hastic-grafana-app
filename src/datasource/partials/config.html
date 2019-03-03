@@ -8,10 +8,10 @@
           class="gf-form-input" type="text"
           placeholder="http://localhost:8000"
           ng-model='current.url'
-          bs-typeahead="getSuggestUrls"
           min-length="0"
           ng-pattern="/^(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?$/"
           required
+          ng-blur="ctrl.normalizeUrl"
         />
         <info-popover mode="right-absolute">
           <p>Specify a complete Hastic Server HTTP URL (for example http://your_hastic_server:8080)</p>
