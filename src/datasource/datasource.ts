@@ -2,6 +2,7 @@ export class HasticDatasource {
 
   /** @ngInject */
   constructor(public instanceSettings: any) {
+
   }
 
   async query(options: any) {
