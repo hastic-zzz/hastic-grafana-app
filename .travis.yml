@@ -4,5 +4,22 @@ node_js:
 before_script:
   - npm install
 script: npm test
+
 notifications:
   email: false
+
+before_deploy:
+  -
+
+deploy:
+  provider: releases
+  api_key: "GITHUB OAUTH TOKEN"
+  file:
+    - "hastic-grafana-app.zip"
+    - "hastic-grafana-app.tar.gz"
+  email: ping@corpglory.com
+  api_key:
+    secure: ""
+  skip_cleanup: true
+  on:
+    tags: true
