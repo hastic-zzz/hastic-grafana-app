@@ -9,12 +9,12 @@ notifications:
   email: false
 
 before_deploy:
-  - tar -zxf dist hastic-grafana-app.tar.gz
-  - zip -r dist hastic-grafana-app.zip
+  - cp -r dist hastic-grafana-app
+  - tar -zxf hastic-grafana-app hastic-grafana-app.tar.gz
+  - zip -r hastic-grafana-app hastic-grafana-app.zip
 
 deploy:
   provider: releases
-  api_key: "GITHUB OAUTH TOKEN"
   file:
     - "hastic-grafana-app.zip"
     - "hastic-grafana-app.tar.gz"
