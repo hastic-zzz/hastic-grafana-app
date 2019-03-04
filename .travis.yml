@@ -10,6 +10,7 @@ notifications:
 
 before_deploy:
   - export RELEASE_TAG=$(git tag | tail -1)
+  - mkdir -p hastic-grafana-app-$RELEASE_TAG
   - cp -r dist hastic-grafana-app-$RELEASE_TAG
   - tar -zxf hastic-grafana-app-$RELEASE_TAG hastic-grafana-app-$RELEASE_TAG.tar.gz
   - zip -r hastic-grafana-app-$RELEASE_TAG hastic-grafana-app-$RELEASE_TAG.zip
