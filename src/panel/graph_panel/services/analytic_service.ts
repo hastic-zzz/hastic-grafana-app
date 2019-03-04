@@ -14,9 +14,7 @@ export class AnalyticService {
   constructor(
     private _backendURL: string,
     private $http
-  ) {
-    this.isBackendOk();
-  }
+  ) { }
 
   async getAnalyticUnitTypes() {
     return await this.get('/analyticUnits/types');
@@ -24,6 +22,9 @@ export class AnalyticService {
 
   async getThresholds(ids: AnalyticUnitId[]) {
     const resp = await this.get('/threshold', { ids: ids.join(',') });
+    if(resp === undefined) {
+      return [];
+    }
     return resp.thresholds.filter(t => t !== null);
   }
 
@@ -61,6 +62,10 @@ export class AnalyticService {
   }
 
   async isBackendOk(): Promise<boolean> {
+    if(!this._checkBackendUrl()) {
+      this._isUp = false;
+      return false;
+    }
     await this.get('/');
     return this._isUp;
   }
@@ -135,7 +140,19 @@ export class AnalyticService {
   }
 
   async getServerInfo(): Promise<ServerInfo> {
-    let data = await this.get('/');
+    const data = await this.get('/');
+    if(data === undefined) {
+      return {
+        nodeVersion: 'unknown',
+        packageVersion: 'unknown',
+        npmUserAgent: 'unknown',
+        docker: 'unknown',
+        zmqConectionString: 'unknown',
+        serverPort: 'unknown',
+        gitBranch: 'unknown',
+        gitCommitHash: 'unknown'
+      };
+    }
     return {
       nodeVersion: data.nodeVersion,
       packageVersion: data.packageVersion,
@@ -184,8 +201,23 @@ export class AnalyticService {
       } else {
         this._isUp = true;
       }
-      throw error;
+      // throw error;
     }
+  }
+
+  
+  private _checkBackendUrl(): boolean {
+    if(this._backendURL === null || this._backendURL === undefined || this._backendURL === '') {
+      appEvents.emit(
+        'alert-warning',
+        [
+          `Datasource (or URL in datasource) is missing`,
+          `Please set it in datasource config. More info: https://github.com/hastic/hastic-grafana-app/wiki/Getting-started`
+        ]
+      );
+      return false;
+    }
+    return true;
   }
 
   private async get(url, params?) {

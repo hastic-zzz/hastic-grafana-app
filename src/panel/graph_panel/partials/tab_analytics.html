@@ -1,3 +1,12 @@
+<div class="gf-form">
+  <label class="gf-form-label">Select Hastic datasource</label>
+  <select class="gf-form-input max-width-15"
+    ng-model="ctrl.panel.hasticDatasource"
+    ng-options="ds.id as ds.name for ds in ctrl.hasticDatasources"
+    ng-change="ctrl.onHasticDatasourceChange()"
+  />
+</div>
+
 <div class="gf-form-button-row" ng-if="ctrl.analyticsController.serverStatus === false">
   <h5>Hastic server at "{{ctrl.backendURL}}" is not available</h5>
   <button class="btn btn-inverse" ng-click="ctrl.runBackendConnectivityCheck()">

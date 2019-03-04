@@ -430,6 +430,9 @@ export class AnalyticController {
     );
 
     for await (const data of statusGenerator) {
+      if(data === undefined) {
+        break;
+      }
       let status = data.status;
       let error = data.errorMessage;
       if(analyticUnit.status !== status) {

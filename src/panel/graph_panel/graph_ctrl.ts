@@ -29,7 +29,6 @@ class GraphCtrl extends MetricsPanelCtrl {
   seriesList: any = [];
   dataList: any = [];
 
-  _backendUrl: string = undefined;
   // annotations: any = [];
 
   private _datasourceRequest: DatasourceRequest;
@@ -51,10 +50,15 @@ class GraphCtrl extends MetricsPanelCtrl {
   _panelInfo: PanelInfo;
 
   private _analyticUnitTypes: any;
+  private _hasticDatasources: any[];
+
+  private $graphElem: any;
+  private $legendElem: any;
 
   panelDefaults = {
     // datasource name, null = default datasource
     datasource: null,
+    hasticDatasource: null,
     // sets client side (flot) or native graphite png renderer (png)
     renderer: 'flot',
     yaxes: [
@@ -180,20 +184,16 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.rebindKeys();
   }
 
-  async getBackendURL(): Promise<string> {
-    if(this._backendUrl !== undefined) {
-      return this._backendUrl;
+  getBackendURL(): string {
+    const datasourceId = this.panel.hasticDatasource;
+    if(datasourceId !== undefined && datasourceId !== null) {
+      const datasource = _.find(this._hasticDatasources, { id: datasourceId });
+      if(datasource.access === 'proxy') {
+        return `/api/datasources/proxy/${datasource.id}`;
+      }
+      return datasource.url;
     }
-    var data = await this.backendSrv.get('api/plugins/corpglory-hastic-app/settings');
-    if(data.jsonData === undefined || data.jsonData === null) {
-      return undefined;
-    }
-    let val = data.jsonData.hasticServerUrl;
-    if(val === undefined || val === null) {
-      return undefined;
-    }
-    val = val.replace(/\/+$/, "");
-    return val;
+    return undefined;
   }
 
   async updateAnalyticUnitTypes() {
@@ -210,53 +210,34 @@ class GraphCtrl extends MetricsPanelCtrl {
     return _.keys(this._analyticUnitTypes);
   }
 
-  private _checkBackendUrlOk(backendURL: string): boolean {
-    if(backendURL === null || backendURL === undefined || backendURL === '') {
-      appEvents.emit(
-        'alert-warning',
-        [
-          `hasticServerUrl is missing`,
-          `Please set it in config. More info: https://github.com/hastic/hastic-grafana-app/wiki/Getting-started`
-        ]
-      );
-      return false;
-    }
-    return true;
-  }
-
   async runBackendConnectivityCheck() {
-    let backendURL = await this.getBackendURL();
-    if(!this._checkBackendUrlOk(backendURL)) {
-      return;
+    const backendURL = this.getBackendURL();
+
+    try {
+      const connected = await this.analyticService.isBackendOk();
+      if(connected) {
+        this.updateAnalyticUnitTypes();
+        appEvents.emit(
+          'alert-success',
+          [
+            'Connected to Hastic server',
+            `Hastic server: "${backendURL}"`
+          ]
+        );
+      }
     }
-    let connected = await this.analyticService.isBackendOk();
-    if(connected) {
-      this.updateAnalyticUnitTypes();
-      appEvents.emit(
-        'alert-success',
-        [
-          'Connected to Hastic server',
-          `Hastic server: "${backendURL}"`
-        ]
-      );
+    catch(err) {
+      console.error(err);
     }
   }
 
   async link(scope, elem, attrs, ctrl) {
+    this._datasources = {};
 
-    this.processor = new DataProcessor(this.panel);
+    this.$graphElem = $(elem[0]).find('#graphPanel');
+    this.$legendElem = $(elem[0]).find('#graphLegend');
 
-    let backendURL = await this.getBackendURL();
-    if(!this._checkBackendUrlOk(backendURL)) {
-      return;
-    }
-
-    this.analyticService = new AnalyticService(backendURL, this.$http);
-
-    this.runBackendConnectivityCheck();
-
-    this.analyticsController = new AnalyticController(this.panel, this.analyticService, this.events);
-
+    this.onHasticDatasourceChange();
 
     this.events.on('render', this.onRender.bind(this));
     this.events.on('data-received', this.onDataReceived.bind(this));
@@ -281,8 +262,6 @@ class GraphCtrl extends MetricsPanelCtrl {
       this.$scope.$digest();
     });
 
-    this._datasources = {};
-
     appEvents.on('ds-request-response', data => {
       let requestConfig = data.config;
 
@@ -294,19 +273,6 @@ class GraphCtrl extends MetricsPanelCtrl {
         type: undefined
       };
     });
-
-    this.analyticsController.fetchAnalyticUnitsStatuses();
-
-
-    var $graphElem = $(elem[0]).find('#graphPanel');
-    var $legendElem = $(elem[0]).find('#graphLegend');
-    this._graphRenderer = new GraphRenderer(
-      $graphElem, this.timeSrv, this.contextSrv, this.$scope
-    );
-    this._graphLegend = new GraphLegend($legendElem, this.popoverSrv, this.$scope);
-
-    this._updatePanelInfo();
-    this.analyticsController.updateServerInfo();
   }
 
   onInitEditMode() {
@@ -327,6 +293,27 @@ class GraphCtrl extends MetricsPanelCtrl {
   onInitPanelActions(actions) {
     actions.push({ text: 'Export CSV', click: 'ctrl.exportCsv()' });
     actions.push({ text: 'Toggle legend', click: 'ctrl.toggleLegend()' });
+  }
+
+  async onHasticDatasourceChange() {
+    this.processor = new DataProcessor(this.panel);
+
+    await this._fetchHasticDatasources();
+    const backendURL = this.getBackendURL();
+
+    this.analyticService = new AnalyticService(backendURL, this.$http);
+    this.runBackendConnectivityCheck();
+    this.analyticsController = new AnalyticController(this.panel, this.analyticService, this.events);
+
+    this.analyticsController.fetchAnalyticUnitsStatuses();
+
+    this._graphRenderer = new GraphRenderer(
+      this.$graphElem, this.timeSrv, this.contextSrv, this.$scope
+    );
+    this._graphLegend = new GraphLegend(this.$legendElem, this.popoverSrv, this.$scope);
+
+    this._updatePanelInfo();
+    this.analyticsController.updateServerInfo();
   }
 
   issueQueries(datasource) {
@@ -385,15 +372,17 @@ class GraphCtrl extends MetricsPanelCtrl {
       }
     }
 
-    var loadTasks = [
-      // this.annotationsPromise,
-      this.analyticsController.fetchAnalyticUnitsSegments(+this.range.from, +this.range.to)
-    ];
+    if(this.analyticsController !== undefined) {
+      var loadTasks = [
+        // this.annotationsPromise,
+        this.analyticsController.fetchAnalyticUnitsSegments(+this.range.from, +this.range.to)
+      ];
 
-    var results =  await Promise.all(loadTasks);
-    this.loading = false;
-    // this.annotations = results[0].annotations;
-    this.render(this.seriesList);
+      await Promise.all(loadTasks);
+      this.loading = false;
+      // this.annotations = results[0].annotations;
+      this.render(this.seriesList);
+    }
 
   }
 
@@ -657,7 +646,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   private async _updatePanelInfo() {
     const datasource = await this._getDatasourceByName(this.panel.datasource);
-    const backendUrl = await this.getBackendURL();
+    const backendUrl = this.getBackendURL();
 
     let grafanaVersion = 'unknown';
     if(_.has(window, 'grafanaBootData.settings.buildInfo.version')) {
@@ -689,6 +678,16 @@ class GraphCtrl extends MetricsPanelCtrl {
     } else {
       return this._datasources[name];
     }
+  }
+
+  private async _fetchHasticDatasources() {
+    this._hasticDatasources = await this.backendSrv.get('/api/datasources');
+    this._hasticDatasources = this._hasticDatasources.filter(ds => ds.type === 'corpglory-hastic-datasource');
+    this.$scope.$digest();
+  }
+
+  get hasticDatasources() {
+    return this._hasticDatasources;
   }
 
   get panelInfo() {
