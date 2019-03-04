@@ -24,4 +24,4 @@ deploy:
   github-token: $GITHUB_TOKEN
   skip_cleanup: true
   on:
-    tags: false
+    tags: true
