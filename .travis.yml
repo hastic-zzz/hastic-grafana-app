@@ -20,8 +20,7 @@ deploy:
     - "hastic-grafana-app-$RELEASE_TAG.zip"
     - "hastic-grafana-app-$RELEASE_TAG.tar.gz"
   email: ping@corpglory.com
-  api_key:
-    secure: ""
+  github-token: $GITHUB_TOKEN
   skip_cleanup: true
   on:
     tags: true
