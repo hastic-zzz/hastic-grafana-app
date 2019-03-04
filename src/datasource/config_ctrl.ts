@@ -9,11 +9,12 @@ export class HasticConfigCtrl {
     { key: 'direct', value: 'Browser' }
   ];
 
-  private showAccessHelp: boolean = false;
+  public showAccessHelp = false;
 
   constructor(private $scope: any) {
     if(this.$scope.current === undefined) {
       this.$scope.current = {
+        url: '',
         access: 'proxy'
       };
     }

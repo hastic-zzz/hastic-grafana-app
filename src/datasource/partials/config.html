@@ -7,7 +7,7 @@
         <input
           class="gf-form-input" type="text"
           placeholder="http://localhost:8000"
-          ng-model='current.url'
+          ng-model='ctrl.current.url'
           min-length="0"
           ng-pattern="/^(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?$/"
           required
@@ -15,11 +15,11 @@
         />
         <info-popover mode="right-absolute">
           <p>Specify a complete Hastic Server HTTP URL (for example http://your_hastic_server:8000)</p>
-          <span ng-show="current.access === 'direct'">
+          <span ng-show="ctrl.current.access === 'direct'">
             Your access method is <em>Browser</em>, this means the URL
             needs to be accessible from the browser.
           </span>
-          <span ng-show="current.access === 'proxy'">
+          <span ng-show="ctrl.current.access === 'proxy'">
             Your access method is <em>Server</em>, this means the URL
             needs to be accessible from the grafana backend/server.
           </span>
@@ -33,7 +33,7 @@
 				<div class="gf-form-select-wrapper max-width-24">
           <select
             class="gf-form-input"
-            ng-model="current.access"
+            ng-model="ctrl.current.access"
             ng-options="f.key as f.value for f in ctrl.ACCESS_OPTIONS"
           />
 				</div>
@@ -67,11 +67,11 @@
       </p>
 		</div>
 
-		<div class="gf-form-inline" ng-if="current.access=='proxy'">
+		<div class="gf-form-inline" ng-if="ctrl.current.access=='proxy'">
 			<div class="gf-form">
 				<span class="gf-form-label width-10">Whitelisted Cookies</span>
         <bootstrap-tagsinput 
-          ng-model="current.jsonData.keepCookies"
+          ng-model="ctrl.current.jsonData.keepCookies"
           width-class="width-20" tagclass="label label-tag"
           placeholder="Add Name"
         />
