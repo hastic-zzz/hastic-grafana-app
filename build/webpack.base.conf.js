@@ -11,7 +11,8 @@ module.exports = {
   context: resolve('src'),
   entry: {
     './module': './module.ts',
-    './panel/graph_panel/module': './panel/graph_panel/graph_ctrl.ts'
+    './panel/graph_panel/module': './panel/graph_panel/graph_ctrl.ts',
+    './datasource/module': './datasource/module.ts'
   },
   output: {
     filename: '[name].js',
@@ -35,7 +36,8 @@ module.exports = {
       { from: 'plugin.json' },
       { from: 'img/*' },
       { from: 'panel/graph_panel/plugin.json', to: 'panel/graph_panel/plugin.json' },
-      { from: 'panel/graph_panel/partials/*' }
+      { from: 'panel/graph_panel/partials/*' },
+      { from: 'datasource/plugin.json', to: 'datasource/plugin.json' },
     ])
   ],
   resolve: {

@@ -1,210 +1,224 @@
-<div class="gf-form-button-row" ng-if="ctrl.analyticsController.serverStatus === false">
-  <h5>Hastic server at "{{ctrl.backendURL}}" is not available</h5>
-  <button class="btn btn-inverse" ng-click="ctrl.runBackendConnectivityCheck()">
-    <i class="fa fa-plug"></i>
-    Reconnect to Hastic server
-  </button>
+<div class="gf-form-group">
+  <div class="gf-form">
+    <label class="gf-form-label">Select Hastic datasource</label>
+    <select class="gf-form-input max-width-15"
+      ng-model="ctrl.panel.hasticDatasource"
+      ng-options="ds.id as ds.name for ds in ctrl.hasticDatasources"
+      ng-change="ctrl.onHasticDatasourceChange()"
+    />
+  </div>
 </div>
 
-<div ng-if="ctrl.analyticsController.serverStatus === true">
-  <h5> Analytic Units </h5>
-  <div class="editor-row">
-    <div class="gf-form" ng-repeat="analyticUnit in ctrl.analyticsController.analyticUnits">
-
-      <label class="gf-form-label width-5">
-        <i class="fa fa-info" bs-tooltip="'Analytic unit id: ' + analyticUnit.id"></i>
-        &nbsp; Name
-      </label>
-      <input
-        type="text" class="gf-form-input max-width-15"
-        ng-model="analyticUnit.name"
-        ng-change="ctrl.onAnalyticUnitNameChange(analyticUnit)"
-      >
-
-      <label class="gf-form-label width-4"> Type </label>
-      <div class="gf-form-select-wrapper">
-        <select class="gf-form-input width-10"
-          ng-model="analyticUnit.type"
-          ng-options="type.value as type.name for type in ctrl.analyticUnitTypes[analyticUnit.detectorType]"
-          ng-disabled="true"
-        />
-      </div>
-
-      <!--
-      <label class="gf-form-label width-6"> Confidence </label>
-      <input
-        type="number" class="gf-form-input width-5 ng-valid ng-scope ng-empty ng-dirty ng-valid-number ng-touched"
-        placeholder="auto" bs-tooltip="'Override automatic decimal precision for legend and tooltips'"
-        data-placement="right" ng-model="ctrl.panel.decimals" ng-change="ctrl.render()" ng-model-onblur="" data-original-title="" title=""
-      />
-      -->
-
-      <label class="gf-form-label width-8"> Positive Color </label>
-      <span class="gf-form-label">
-        <color-picker
-          color="analyticUnit.labeledColor"
-          onChange="ctrl.onColorChange.bind(ctrl, analyticUnit.id, false)"
-        />
-      </span>
-
-      <!-- Hack to avoid Grafana's .gf-form-label + .gf-form-label css. Fix for https://github.com/hastic/hastic-grafana-app/issues/192 -->
-      <div ng-if="analyticUnit.detectorType === 'pattern'"></div>
-
-      <label ng-if="analyticUnit.detectorType === 'pattern'" class="gf-form-label width-8"> Negative Color </label>
-      <span ng-if="analyticUnit.detectorType === 'pattern'"  class="gf-form-label">
-        <color-picker
-          color="analyticUnit.deletedColor"
-          onChange="ctrl.onColorChange.bind(ctrl, analyticUnit.id, true)"
-        />
-      </span>
-
-      <label
-        class="gf-form-label"
-        ng-if="analyticUnit.detectorType === 'pattern'"
-        ng-style="analyticUnit.status === 'LEARNING' && { 'cursor': 'not-allowed' }"
-      >
-        <a class="pointer" tabindex="1"
-          ng-click="ctrl.onToggleLabelingMode(analyticUnit.id)"
-          ng-disabled="analyticUnit.status === 'LEARNING'"
-        >
-          <i class="fa fa-bar-chart" ng-if="!analyticUnit.saving"></i>
-          <i class="fa fa-spinner fa-spin" ng-if="analyticUnit.saving"></i>
-          <b ng-if="analyticUnit.saving" ng-disabled="true"> saving... </b>
-        </a>
-      </label>
-
-      <select class="gf-form-input width-10"
-        ng-model="ctrl.analyticsController.labelingMode"
-        ng-options="type.value as type.name for type in [
-          { name:'Label Positive', value: 'LABELING' }, 
-          { name:'Label Negative', value: 'DELETING' },
-          { name:'Unlabel', value: 'UNLABELING' }
-        ]"
-        ng-if="analyticUnit.selected && !analyticUnit.saving"
-        ng-disabled="analyticUnit.status === 'LEARNING'"
-      />
-
-      <select class="gf-form-input width-7"
-        ng-model="ctrl.analyticsController.getThreshold(analyticUnit.id).condition"
-        ng-options="type for type in ctrl.analyticsController.conditions"
-        ng-if="analyticUnit.detectorType === 'threshold'"
-      />
-      <input
-        class="gf-form-input width-5"
-        type="number"
-        ng-model="ctrl.analyticsController.getThreshold(analyticUnit.id).value"
-        ng-if="
-          analyticUnit.detectorType === 'threshold' &&
-          ctrl.analyticsController.getThreshold(analyticUnit.id).condition != 'NO_DATA'
-        "
-      />
-      <!-- TODO set .saving flag to thresholds, when learning is in progress -->
-      <button
-        class="btn btn-inverse"
-        ng-if="analyticUnit.detectorType === 'threshold'"
-        ng-click="ctrl.analyticsController.sendThresholdParamsToServer(analyticUnit.id)"
-        ng-disabled="analyticUnit.status === 'PENDING' || analyticUnit.status === 'LEARNING'"
-        >
-        Apply
-      </button>
-
-      <label class="gf-form-label" ng-hide="analyticUnit.selected">
-        <a
-          ng-if="analyticUnit.visible"
-          bs-tooltip="'Hide. It`s visible now.'"
-          ng-click="ctrl.onToggleVisibility(analyticUnit.id)"
-          class="pointer"
-        >
-          <i class="fa fa-eye"></i>
-        </a>
-
-        <a
-          ng-if="!analyticUnit.visible"
-          bs-tooltip="'Show. It`s hidden now.'"
-          ng-click="ctrl.onToggleVisibility(analyticUnit.id)"
-          class="pointer"
-        >
-          <i class="fa fa-eye-slash"></i>
-        </a>
-      </label>
-
-      <label class="gf-form-label">
-        <a
-          ng-if="!analyticUnit.selected"
-          ng-click="ctrl.onRemove(analyticUnit.id)"
-          class="pointer"
-        >
-          <i class="fa fa-trash"></i>
-        </a>
-
-        <a
-          ng-if="analyticUnit.selected"
-          ng-click="ctrl.onCancelLabeling(analyticUnit.id)"
-          class="pointer"
-        >
-          <i class="fa fa-ban"></i>
-        </a>
-      </label>
-
-      <label>
-        <i ng-if="analyticUnit.status === 'LEARNING'" class="grafana-tip fa fa-leanpub ng-scope" bs-tooltip="'Learning'"></i>
-        <i ng-if="analyticUnit.status === 'PENDING'" class="grafana-tip fa fa-list-ul ng-scope" bs-tooltip="'Pending'"></i>
-        <i ng-if="analyticUnit.status === 'FAILED'" class="grafana-tip fa fa-exclamation-circle ng-scope" bs-tooltip="'Error: ' + analyticUnit.error"></i>
-      </label>
-
-    </div>
+<div class="gf-form">
+  <div class="gf-form-button-row" ng-if="ctrl.analyticsController.serverStatus === false">
+    <h5>Hastic server at "{{ctrl.backendURL}}" is not available</h5>
+    <button class="btn btn-inverse" ng-click="ctrl.runBackendConnectivityCheck()">
+      <i class="fa fa-plug"></i>
+      Reconnect to Hastic server
+    </button>
   </div>
 
-  <div class="editor-row" ng-if="ctrl.analyticsController.creatingNew">
-    <div class="gf-form">
-      <label class="gf-form-label width-4"> Name </label>
-      <input
-        type="text" class="gf-form-input max-width-15"
-        ng-model="ctrl.analyticsController.newAnalyticUnit.name"
-      >
+  <div ng-if="ctrl.analyticsController.serverStatus === true">
+    <h5> Analytic Units </h5>
+    <div class="editor-row">
+      <div class="gf-form" ng-repeat="analyticUnit in ctrl.analyticsController.analyticUnits">
 
-      <label class="gf-form-label width-8"> Detector Type </label>
-      <div class="gf-form-select-wrapper">
-        <select class="gf-form-input width-10"
-          ng-model="ctrl.analyticsController.newAnalyticUnit.detectorType"
-          ng-options="analyticUnitDetectorType for analyticUnitDetectorType in ctrl.analyticUnitDetectorTypes"
-          ng-change="ctrl.analyticsController.onAnalyticUnitDetectorChange(ctrl.analyticUnitTypes);"
+        <label class="gf-form-label width-5">
+          <i class="fa fa-info" bs-tooltip="'Analytic unit id: ' + analyticUnit.id"></i>
+          &nbsp; Name
+        </label>
+        <input
+          type="text" class="gf-form-input max-width-15"
+          ng-model="analyticUnit.name"
+          ng-change="ctrl.onAnalyticUnitNameChange(analyticUnit)"
+        >
+
+        <label class="gf-form-label width-4"> Type </label>
+        <div class="gf-form-select-wrapper">
+          <select class="gf-form-input width-10"
+            ng-model="analyticUnit.type"
+            ng-options="type.value as type.name for type in ctrl.analyticUnitTypes[analyticUnit.detectorType]"
+            ng-disabled="true"
+          />
+        </div>
+
+        <!--
+        <label class="gf-form-label width-6"> Confidence </label>
+        <input
+          type="number" class="gf-form-input width-5 ng-valid ng-scope ng-empty ng-dirty ng-valid-number ng-touched"
+          placeholder="auto" bs-tooltip="'Override automatic decimal precision for legend and tooltips'"
+          data-placement="right" ng-model="ctrl.panel.decimals" ng-change="ctrl.render()" ng-model-onblur="" data-original-title="" title=""
         />
-      </div>
+        -->
 
-      <label class="gf-form-label width-8"> Type </label>
-      <div class="gf-form-select-wrapper">
+        <label class="gf-form-label width-8"> Positive Color </label>
+        <span class="gf-form-label">
+          <color-picker
+            color="analyticUnit.labeledColor"
+            onChange="ctrl.onColorChange.bind(ctrl, analyticUnit.id, false)"
+          />
+        </span>
+
+        <!-- Hack to avoid Grafana's .gf-form-label + .gf-form-label css. Fix for https://github.com/hastic/hastic-grafana-app/issues/192 -->
+        <div ng-if="analyticUnit.detectorType === 'pattern'"></div>
+
+        <label ng-if="analyticUnit.detectorType === 'pattern'" class="gf-form-label width-8"> Negative Color </label>
+        <span ng-if="analyticUnit.detectorType === 'pattern'"  class="gf-form-label">
+          <color-picker
+            color="analyticUnit.deletedColor"
+            onChange="ctrl.onColorChange.bind(ctrl, analyticUnit.id, true)"
+          />
+        </span>
+
+        <label
+          class="gf-form-label"
+          ng-if="analyticUnit.detectorType === 'pattern'"
+          ng-style="analyticUnit.status === 'LEARNING' && { 'cursor': 'not-allowed' }"
+        >
+          <a class="pointer" tabindex="1"
+            ng-click="ctrl.onToggleLabelingMode(analyticUnit.id)"
+            ng-disabled="analyticUnit.status === 'LEARNING'"
+          >
+            <i class="fa fa-bar-chart" ng-if="!analyticUnit.saving"></i>
+            <i class="fa fa-spinner fa-spin" ng-if="analyticUnit.saving"></i>
+            <b ng-if="analyticUnit.saving" ng-disabled="true"> saving... </b>
+          </a>
+        </label>
+
         <select class="gf-form-input width-10"
-          ng-model="ctrl.analyticsController.newAnalyticUnit.type"
-          ng-options="
-            type.value as type.name
-            for type in ctrl.analyticUnitTypes[ctrl.analyticsController.newAnalyticUnit.detectorType]
+          ng-model="ctrl.analyticsController.labelingMode"
+          ng-options="type.value as type.name for type in [
+            { name:'Label Positive', value: 'LABELING' }, 
+            { name:'Label Negative', value: 'DELETING' },
+            { name:'Unlabel', value: 'UNLABELING' }
+          ]"
+          ng-if="analyticUnit.selected && !analyticUnit.saving"
+          ng-disabled="analyticUnit.status === 'LEARNING'"
+        />
+
+        <select class="gf-form-input width-7"
+          ng-model="ctrl.analyticsController.getThreshold(analyticUnit.id).condition"
+          ng-options="type for type in ctrl.analyticsController.conditions"
+          ng-if="analyticUnit.detectorType === 'threshold'"
+        />
+        <input
+          class="gf-form-input width-5"
+          type="number"
+          ng-model="ctrl.analyticsController.getThreshold(analyticUnit.id).value"
+          ng-if="
+            analyticUnit.detectorType === 'threshold' &&
+            ctrl.analyticsController.getThreshold(analyticUnit.id).condition != 'NO_DATA'
           "
         />
-      </div>
+        <!-- TODO set .saving flag to thresholds, when learning is in progress -->
+        <button
+          class="btn btn-inverse"
+          ng-if="analyticUnit.detectorType === 'threshold'"
+          ng-click="ctrl.analyticsController.sendThresholdParamsToServer(analyticUnit.id)"
+          ng-disabled="analyticUnit.status === 'PENDING' || analyticUnit.status === 'LEARNING'"
+          >
+          Apply
+        </button>
 
-      <label class="gf-form-label">
-        <a class="pointer" tabindex="1" ng-click="ctrl.saveNew()">
-          <b ng-if="!ctrl.analyticsController.saving"> create </b>
-          <b ng-if="ctrl.analyticsController.saving" ng-disabled="true"> saving... </b>
-        </a>
-      </label>
+        <label class="gf-form-label" ng-hide="analyticUnit.selected">
+          <a
+            ng-if="analyticUnit.visible"
+            bs-tooltip="'Hide. It`s visible now.'"
+            ng-click="ctrl.onToggleVisibility(analyticUnit.id)"
+            class="pointer"
+          >
+            <i class="fa fa-eye"></i>
+          </a>
+
+          <a
+            ng-if="!analyticUnit.visible"
+            bs-tooltip="'Show. It`s hidden now.'"
+            ng-click="ctrl.onToggleVisibility(analyticUnit.id)"
+            class="pointer"
+          >
+            <i class="fa fa-eye-slash"></i>
+          </a>
+        </label>
+
+        <label class="gf-form-label">
+          <a
+            ng-if="!analyticUnit.selected"
+            ng-click="ctrl.onRemove(analyticUnit.id)"
+            class="pointer"
+          >
+            <i class="fa fa-trash"></i>
+          </a>
+
+          <a
+            ng-if="analyticUnit.selected"
+            ng-click="ctrl.onCancelLabeling(analyticUnit.id)"
+            class="pointer"
+          >
+            <i class="fa fa-ban"></i>
+          </a>
+        </label>
+
+        <label>
+          <i ng-if="analyticUnit.status === 'LEARNING'" class="grafana-tip fa fa-leanpub ng-scope" bs-tooltip="'Learning'"></i>
+          <i ng-if="analyticUnit.status === 'PENDING'" class="grafana-tip fa fa-list-ul ng-scope" bs-tooltip="'Pending'"></i>
+          <i ng-if="analyticUnit.status === 'FAILED'" class="grafana-tip fa fa-exclamation-circle ng-scope" bs-tooltip="'Error: ' + analyticUnit.error"></i>
+        </label>
+
+      </div>
+    </div>
+
+    <div class="editor-row" ng-if="ctrl.analyticsController.creatingNew">
+      <div class="gf-form">
+        <label class="gf-form-label width-4"> Name </label>
+        <input
+          type="text" class="gf-form-input max-width-15"
+          ng-model="ctrl.analyticsController.newAnalyticUnit.name"
+        >
+
+        <label class="gf-form-label width-8"> Detector Type </label>
+        <div class="gf-form-select-wrapper">
+          <select class="gf-form-input width-10"
+            ng-model="ctrl.analyticsController.newAnalyticUnit.detectorType"
+            ng-options="analyticUnitDetectorType for analyticUnitDetectorType in ctrl.analyticUnitDetectorTypes"
+            ng-change="ctrl.analyticsController.onAnalyticUnitDetectorChange(ctrl.analyticUnitTypes);"
+          />
+        </div>
+
+        <label class="gf-form-label width-8"> Type </label>
+        <div class="gf-form-select-wrapper">
+          <select class="gf-form-input width-10"
+            ng-model="ctrl.analyticsController.newAnalyticUnit.type"
+            ng-options="
+              type.value as type.name
+              for type in ctrl.analyticUnitTypes[ctrl.analyticsController.newAnalyticUnit.detectorType]
+            "
+          />
+        </div>
+
+        <label class="gf-form-label">
+          <a class="pointer" tabindex="1" ng-click="ctrl.saveNew()">
+            <b ng-if="!ctrl.analyticsController.saving"> create </b>
+            <b ng-if="ctrl.analyticsController.saving" ng-disabled="true"> saving... </b>
+          </a>
+        </label>
+      </div>
+    </div>
+
+    <div class="gf-form-button-row" ng-if="!ctrl.analyticsController.creatingAnalyticUnit">
+      <button class="btn btn-inverse" ng-click="ctrl.createNew()">
+        <i class="fa fa-plus"></i>
+        Add Analytic Unit
+      </button>
+    </div>
+    <div class="gf-form-button-row">
+      <button class="gf-form-label width-10 pointer" ng-click="ctrl.showHelp = !ctrl.showHelp">
+        Show Help
+        <i class="fa fa-caret-down" ng-show="ctrl.showHelp"></i>
+        <i class="fa fa-caret-right" ng-hide="ctrl.showHelp"></i>
+      </button>
     </div>
   </div>
-
-  <div class="gf-form-button-row" ng-if="!ctrl.analyticsController.creatingAnalyticUnit">
-    <button class="btn btn-inverse" ng-click="ctrl.createNew()">
-      <i class="fa fa-plus"></i>
-      Add Analytic Unit
-    </button>
-  </div>
-  <div class="gf-form-button-row">
-    <button class="gf-form-label width-10 pointer" ng-click="ctrl.showHelp = !ctrl.showHelp">
-      Show Help
-      <i class="fa fa-caret-down" ng-show="ctrl.showHelp"></i>
-      <i class="fa fa-caret-right" ng-hide="ctrl.showHelp"></i>
-    </button>
-  </div>
+</div>
 
 <div class="gf-form" ng-show="ctrl.showHelp" ng-bind-html="ctrl.analyticsController.helpSectionText"></div>
 

@@ -2,9 +2,9 @@ export type ServerInfo = {
   nodeVersion: string,
   packageVersion: string,
   npmUserAgent: string,
-  docker: boolean,
+  docker: string | boolean,
   zmqConectionString: string,
-  serverPort: number,
+  serverPort: string | number,
   gitBranch: string,
   gitCommitHash: string
 }

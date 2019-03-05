@@ -14,7 +14,8 @@
     "version": "0.3.0"
   },
   "includes": [
-    { "type": "panel", "name": "Hastic Graph Panel" }
+    { "type": "panel", "name": "Hastic Graph Panel" },
+    { "type": "datasource", "name": "Hastic Datasource" }
   ],
   "dependencies": {
     "grafanaVersion": "5.4.x"
