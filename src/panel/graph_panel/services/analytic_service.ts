@@ -12,7 +12,7 @@ export class AnalyticService {
   private _isUp = false;
 
   constructor(
-    private _backendURL: string,
+    private _hasticDatasourceURL: string,
     private $http
   ) { }
 
@@ -190,7 +190,7 @@ export class AnalyticService {
   private async _analyticRequest(method: string, url: string, data?: any) {
     try {
       method = method.toUpperCase();
-      url = this._backendURL + url;
+      url = this._hasticDatasourceURL + url;
       let requestObject: any = { method, url };
       if(method === 'GET' || method === 'DELETE') {
         requestObject.params = data;
@@ -211,9 +211,12 @@ export class AnalyticService {
     }
   }
 
+  get hasticDatasourceURL(): string {
+    return this._hasticDatasourceURL;
+  }
 
   private _checkBackendUrl(): boolean {
-    if(this._backendURL === null || this._backendURL === undefined || this._backendURL === '') {
+    if(this._hasticDatasourceURL === null || this._hasticDatasourceURL === undefined || this._hasticDatasourceURL === '') {
       appEvents.emit(
         'alert-warning',
         [
@@ -247,7 +250,7 @@ export class AnalyticService {
       'alert-error',
       [
         'No connection to Hastic server',
-        `Hastic server: "${this._backendURL}"`,
+        `Hastic server: "${this._hasticDatasourceURL}"`,
       ]
     );
   }

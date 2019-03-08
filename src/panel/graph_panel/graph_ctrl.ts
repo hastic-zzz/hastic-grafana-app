@@ -184,14 +184,14 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.rebindKeys();
   }
 
-  getBackendURL(): string {
-    const datasourceId = this.panel.hasticDatasource;
-    if(datasourceId !== undefined && datasourceId !== null) {
-      const datasource = _.find(this._hasticDatasources, { id: datasourceId });
-      if(datasource.access === 'proxy') {
-        return `/api/datasources/proxy/${datasource.id}`;
+  getHasticDatasourceURL(): string {
+    const hasticDatasourceId = this.panel.hasticDatasource;
+    if(hasticDatasourceId !== undefined && hasticDatasourceId !== null) {
+      const hasticDatasource = _.find(this._hasticDatasources, { id: hasticDatasourceId });
+      if(hasticDatasource.access === 'proxy') {
+        return `/api/datasources/proxy/${hasticDatasource.id}`;
       }
-      return datasource.url;
+      return hasticDatasource.url;
     }
     return undefined;
   }
@@ -211,8 +211,6 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   async runBackendConnectivityCheck() {
-    const backendURL = this.getBackendURL();
-
     try {
       const connected = await this.analyticService.isBackendOk();
       if(connected) {
@@ -220,8 +218,8 @@ class GraphCtrl extends MetricsPanelCtrl {
         appEvents.emit(
           'alert-success',
           [
-            'Connected to Hastic server',
-            `Hastic server: "${backendURL}"`
+            'Connected to Hastic Datasource',
+            `Hastic datasource URL: "${this.analyticService.hasticDatasourceURL}"`
           ]
         );
       }
@@ -299,12 +297,12 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.processor = new DataProcessor(this.panel);
 
     await this._fetchHasticDatasources();
-    const backendURL = this.getBackendURL();
+    const hasticDatasourceURL = this.getHasticDatasourceURL();
 
-    this.analyticService = new AnalyticService(backendURL, this.$http);
+    this.analyticService = new AnalyticService(hasticDatasourceURL, this.$http);
     this.runBackendConnectivityCheck();
-    this.analyticsController = new AnalyticController(this.panel, this.analyticService, this.events);
 
+    this.analyticsController = new AnalyticController(this.panel, this.analyticService, this.events);
     this.analyticsController.fetchAnalyticUnitsStatuses();
 
     this._graphRenderer = new GraphRenderer(
@@ -646,7 +644,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   private async _updatePanelInfo() {
     const datasource = await this._getDatasourceByName(this.panel.datasource);
-    const backendUrl = this.getBackendURL();
+    const backendUrl = this.getHasticDatasourceURL();
 
     let grafanaVersion = 'unknown';
     if(_.has(window, 'grafanaBootData.settings.buildInfo.version')) {
