@@ -218,7 +218,7 @@ export class AnalyticController {
     this.analyticUnits.forEach(a => this._runStatusWaiter(a));
   }
 
-  async fetchAnalyticUnitsSegments(from: number, to: number) {
+  async fetchAnalyticUnitsSegments(from: number, to: number): Promise<void[]> {
     if(!_.isNumber(+from)) {
       throw new Error('from isn`t number');
     }
@@ -258,7 +258,6 @@ export class AnalyticController {
       return [];
     }
 
-
     await this._analyticService.updateMetric(unit.id, this._currentMetric, this._currentDatasource);
     const newIds = await this._analyticService.updateSegments(
       unit.id, this._labelingDataAddedSegments, this._labelingDataRemovedSegments
@@ -270,7 +269,7 @@ export class AnalyticController {
   }
 
   // TODO: move to renderer
-  updateFlotEvents(isEditMode: boolean, options: any) {
+  updateFlotEvents(isEditMode: boolean, options: any): void {
     if(options.grid.markings === undefined) {
       options.markings = [];
     }
@@ -332,7 +331,7 @@ export class AnalyticController {
 
   }
 
-  deleteLabelingAnalyticUnitSegmentsInRange(from: number, to: number) {
+  deleteLabelingAnalyticUnitSegmentsInRange(from: number, to: number): void {
     const allRemovedSegs = this.labelingUnit.removeSegmentsInRange(from, to);
     allRemovedSegs.forEach(s => {
       if(!this._labelingDataAddedSegments.has(s.id)) {
@@ -342,7 +341,7 @@ export class AnalyticController {
     this._labelingDataAddedSegments.removeInRange(from, to);
   }
 
-  toggleLabelingMode(labelingMode: LabelingMode) {
+  toggleLabelingMode(labelingMode: LabelingMode): void {
     if(!this.inLabelingMode) {
       throw new Error(`Can't enter ${labelingMode} mode when labeling mode is disabled`);
     }
@@ -353,7 +352,7 @@ export class AnalyticController {
     }
   }
 
-  async removeAnalyticUnit(id: AnalyticUnitId, silent: boolean = false) {
+  async removeAnalyticUnit(id: AnalyticUnitId, silent: boolean = false): Promise<void> {
     if(id === this._selectedAnalyticUnitId) {
       this.dropLabeling();
     }
@@ -363,12 +362,12 @@ export class AnalyticController {
     }
   }
 
-  async toggleAnalyticUnitAlert(analyticUnit: AnalyticUnit) {
+  async toggleAnalyticUnitAlert(analyticUnit: AnalyticUnit): Promise<void> {
     analyticUnit.alert = analyticUnit.alert ? true : false;
     await this._analyticService.setAnalyticUnitAlert(analyticUnit);
   }
 
-  async fetchAnalyticUnitName(analyticUnit: AnalyticUnit) {
+  async fetchAnalyticUnitName(analyticUnit: AnalyticUnit): Promise<void> {
     let updateObj = {
       id: analyticUnit.id,
       name: analyticUnit.name
@@ -376,13 +375,13 @@ export class AnalyticController {
     await this._analyticService.updateAnalyticUnit(analyticUnit.id, updateObj);
   }
 
-  async updateThresholds() {
+  async updateThresholds(): Promise<void> {
     const ids = _.map(this._panelObject.analyticUnits, (analyticUnit: any) => analyticUnit.id);
     const thresholds = await this._analyticService.getThresholds(ids);
     this._thresholds = thresholds;
   }
 
-  getThreshold(id: AnalyticUnitId) {
+  getThreshold(id: AnalyticUnitId): Threshold {
     let threshold = _.find(this._thresholds, { id });
     if(threshold === undefined) {
       threshold = {

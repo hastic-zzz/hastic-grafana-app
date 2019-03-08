@@ -28,8 +28,8 @@ export class AnalyticService {
     return resp.thresholds.filter(t => t !== null);
   }
 
-  async updateThreshold(threshold: Threshold) {
-    return await this.patch('/threshold', threshold);
+  async updateThreshold(threshold: Threshold): Promise<void> {
+    return this.patch('/threshold', threshold);
   }
 
   async postNewItem(
@@ -49,7 +49,11 @@ export class AnalyticService {
     return response.id as AnalyticUnitId;
   }
 
-  async updateMetric(analyticUnitId: AnalyticUnitId, metric: MetricExpanded, datasource: DatasourceRequest) {
+  async updateMetric(
+    analyticUnitId: AnalyticUnitId,
+    metric: MetricExpanded,
+    datasource: DatasourceRequest
+  ) {
     await this.patch('/analyticUnits/metric', {
       analyticUnitId,
       metric: metric.toJSON(),
@@ -71,7 +75,9 @@ export class AnalyticService {
   }
 
   async updateSegments(
-    id: AnalyticUnitId, addedSegments: SegmentsSet<AnalyticSegment>, removedSegments: SegmentsSet<AnalyticSegment>
+    id: AnalyticUnitId,
+    addedSegments: SegmentsSet<AnalyticSegment>,
+    removedSegments: SegmentsSet<AnalyticSegment>
   ): Promise<SegmentId[]> {
     const getJSONs = (segs: SegmentsSet<AnalyticSegment>) => segs.getSegments().map(segment => ({
       from: segment.from,
@@ -205,7 +211,7 @@ export class AnalyticService {
     }
   }
 
-  
+
   private _checkBackendUrl(): boolean {
     if(this._backendURL === null || this._backendURL === undefined || this._backendURL === '') {
       appEvents.emit(
