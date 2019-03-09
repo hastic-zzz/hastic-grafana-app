@@ -49,9 +49,9 @@ export class AnalyticController {
   private _thresholds: Threshold[];
 
   constructor(
-    private _panelObject: any, 
-    private _emitter: Emitter, 
-    private _analyticService?: AnalyticService, 
+    private _panelObject: any,
+    private _emitter: Emitter,
+    private _analyticService?: AnalyticService,
   ) {
     if(_panelObject.analyticUnits === undefined) {
       _panelObject.analyticUnits = _panelObject.anomalyTypes || [];

@@ -16,7 +16,7 @@ export class AnalyticService {
     private _hasticDatasourceURL: string,
     private $http
   ) {
-    if(_hasticDatasourceURL === undefined) {
+    if(this._hasticDatasourceURL === undefined) {
       throw new TypeError('_hasticDatasourceURL is undefined');
     }
   }

@@ -59,7 +59,7 @@ export class GraphRenderer {
   private _graphMousePosition: any;
 
   constructor(
-    $elem: JQuery<HTMLElement>, timeSrv, contextSrv, scope, 
+    $elem: JQuery<HTMLElement>, timeSrv, contextSrv, scope,
     private _analyticController: AnalyticController
   ) {
     if(this._analyticController === undefined) {
@@ -154,7 +154,7 @@ export class GraphRenderer {
           segment.from, segment.to
         );
         this._analyticController.addLabelSegment(segment, true);
-      } 
+      }
       if(this._analyticController.labelingMode === LabelingMode.LABELING) {
         this._analyticController.addLabelSegment(segment, false);
       }
@@ -162,7 +162,7 @@ export class GraphRenderer {
         this._analyticController.deleteLabelingAnalyticUnitSegmentsInRange(
           segment.from, segment.to
         );
-      } 
+      }
 
       this.renderPanel();
       return;
