@@ -40,7 +40,7 @@ const COLOR_SELECTION = '#666';
 
 export class GraphRenderer {
 
-  private _analyticController: AnalyticController;
+  ;
   private data: any;
   private tooltip: GraphTooltip;
   private panelWidth: number;
@@ -58,7 +58,13 @@ export class GraphRenderer {
   private timeSrv: any;
   private _graphMousePosition: any;
 
-  constructor($elem: JQuery<HTMLElement>, timeSrv, contextSrv, scope) {
+  constructor(
+    $elem: JQuery<HTMLElement>, timeSrv, contextSrv, scope, 
+    private _analyticController: AnalyticController
+  ) {
+    if(this._analyticController === undefined) {
+      throw new TypeError('_analyticController is undefined');
+    }
     var self = this;
     this.$elem = $elem;
     this.ctrl = scope.ctrl;
@@ -68,11 +74,6 @@ export class GraphRenderer {
     this.timeSrv = timeSrv;
     this.contextSrv = contextSrv;
     this.scope = scope;
-
-    this._analyticController = this.ctrl.analyticsController;
-    if(this._analyticController === undefined) {
-      throw new Error('analyticController is undefined');
-    }
 
 
     // this.annotations = [];

@@ -3,19 +3,23 @@ import { MetricExpanded } from '../models/metric';
 import { DatasourceRequest } from '../models/datasource';
 import { SegmentsSet } from '../models/segment_set';
 import { AnalyticUnitId, AnalyticUnit, AnalyticSegment } from '../models/analytic_unit';
-import { ServerInfo } from '../models/info';
+import { ServerInfo, ServerInfoUnknown } from '../models/info';
 import { Threshold } from '../models/threshold';
 
 import { appEvents } from 'grafana/app/core/core';
 
 
 export class AnalyticService {
-  private _isUp = false;
+  private _isUp: boolean = false;
 
   constructor(
     private _hasticDatasourceURL: string,
     private $http
-  ) { }
+  ) {
+    if(_hasticDatasourceURL === undefined) {
+      throw new TypeError('_hasticDatasourceURL is undefined');
+    }
+  }
 
   async getAnalyticUnitTypes() {
     return this.get('/analyticUnits/types');
@@ -149,16 +153,7 @@ export class AnalyticService {
   async getServerInfo(): Promise<ServerInfo> {
     const data = await this.get('/');
     if(data === undefined) {
-      return {
-        nodeVersion: 'unknown',
-        packageVersion: 'unknown',
-        npmUserAgent: 'unknown',
-        docker: 'unknown',
-        zmqConectionString: 'unknown',
-        serverPort: 'unknown',
-        gitBranch: 'unknown',
-        gitCommitHash: 'unknown'
-      };
+      return ServerInfoUnknown;
     }
     return {
       nodeVersion: data.nodeVersion,
@@ -256,7 +251,7 @@ export class AnalyticService {
     );
   }
 
-  public get isUp() {
+  public get isUp(): boolean {
     return this._isUp;
   }
 }

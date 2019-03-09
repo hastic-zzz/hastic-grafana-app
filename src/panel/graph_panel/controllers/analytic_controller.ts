@@ -12,7 +12,7 @@ import { DatasourceRequest } from '../models/datasource';
 import { Segment, SegmentId } from '../models/segment';
 import { SegmentsSet } from '../models/segment_set';
 import { SegmentArray } from '../models/segment_array';
-import { ServerInfo } from '../models/info';
+import { ServerInfo, ServerInfoUnknown } from '../models/info';
 import { Threshold, Condition } from '../models/threshold';
 import text from '../partials/help_section.html';
 
@@ -48,7 +48,11 @@ export class AnalyticController {
   private _currentDatasource: DatasourceRequest;
   private _thresholds: Threshold[];
 
-  constructor(private _panelObject: any, private _analyticService: AnalyticService, private _emitter: Emitter) {
+  constructor(
+    private _panelObject: any, 
+    private _emitter: Emitter, 
+    private _analyticService?: AnalyticService, 
+  ) {
     if(_panelObject.analyticUnits === undefined) {
       _panelObject.analyticUnits = _panelObject.anomalyTypes || [];
     }
@@ -57,8 +61,6 @@ export class AnalyticController {
     this._analyticUnitsSet = new AnalyticUnitsSet(this._panelObject.analyticUnits);
     this._thresholds = [];
     this.updateThresholds();
-
-    // this.analyticUnits.forEach(a => this.runEnabledWaiter(a));
   }
 
   get helpSectionText() { return text; }
@@ -376,6 +378,9 @@ export class AnalyticController {
   }
 
   async updateThresholds(): Promise<void> {
+    if(this._analyticService === undefined) {
+      return;
+    }
     const ids = _.map(this._panelObject.analyticUnits, (analyticUnit: any) => analyticUnit.id);
     const thresholds = await this._analyticService.getThresholds(ids);
     this._thresholds = thresholds;
@@ -410,6 +415,9 @@ export class AnalyticController {
   }
 
   private async _runStatusWaiter(analyticUnit: AnalyticUnit) {
+    if(this._analyticService === undefined) {
+      return;
+    }
     if(analyticUnit === undefined || analyticUnit === null) {
       throw new Error('analyticUnit not defined');
     }
@@ -468,6 +476,10 @@ export class AnalyticController {
   }
 
   public async updateServerInfo() {
+    if(!this._analyticService) {
+      this._serverInfo = ServerInfoUnknown;
+      return;
+    }
     this._serverInfo = await this._analyticService.getServerInfo();
   }
 
@@ -475,7 +487,10 @@ export class AnalyticController {
     return this._serverInfo;
   }
 
-  public get serverStatus() {
+  public get serverStatus(): boolean {
+    if(this._analyticService === undefined) {
+      return false;
+    }
     return this._analyticService.isUp;
   }
 }
