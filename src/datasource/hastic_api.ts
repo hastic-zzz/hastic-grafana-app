@@ -1,5 +1,6 @@
 import { BackendSrv } from 'grafana/app/core/services/backend_srv';
 
+
 export default class HasticAPI {
   private url: string;
 

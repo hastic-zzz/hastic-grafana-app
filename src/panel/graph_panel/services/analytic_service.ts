@@ -3,7 +3,7 @@ import { MetricExpanded } from '../models/metric';
 import { DatasourceRequest } from '../models/datasource';
 import { SegmentsSet } from '../models/segment_set';
 import { AnalyticUnitId, AnalyticUnit, AnalyticSegment } from '../models/analytic_unit';
-import { ServerInfo, ServerInfoUnknown } from '../models/info';
+import { HasticServerInfo, HasticServerInfoUnknown } from '../models/hastic_server_info';
 import { Threshold } from '../models/threshold';
 
 import { appEvents } from 'grafana/app/core/core';
@@ -150,10 +150,10 @@ export class AnalyticService {
     }
   }
 
-  async getServerInfo(): Promise<ServerInfo> {
+  async getServerInfo(): Promise<HasticServerInfo> {
     const data = await this.get('/');
     if(data === undefined) {
-      return ServerInfoUnknown;
+      return HasticServerInfoUnknown;
     }
     return {
       nodeVersion: data.nodeVersion,
