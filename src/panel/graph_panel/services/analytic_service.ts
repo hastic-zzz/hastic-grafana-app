@@ -1,10 +1,11 @@
-import { Segment, SegmentId } from '../models/segment';
+import { SegmentId } from '../models/segment';
 import { MetricExpanded } from '../models/metric';
 import { DatasourceRequest } from '../models/datasource';
 import { SegmentsSet } from '../models/segment_set';
 import { AnalyticUnitId, AnalyticUnit, AnalyticSegment } from '../models/analytic_unit';
 import { ServerInfo } from '../models/info';
 import { Threshold } from '../models/threshold';
+
 import { appEvents } from 'grafana/app/core/core';
 
 
@@ -12,12 +13,12 @@ export class AnalyticService {
   private _isUp = false;
 
   constructor(
-    private _backendURL: string,
+    private _hasticDatasourceURL: string,
     private $http
   ) { }
 
   async getAnalyticUnitTypes() {
-    return await this.get('/analyticUnits/types');
+    return this.get('/analyticUnits/types');
   }
 
   async getThresholds(ids: AnalyticUnitId[]) {
@@ -28,8 +29,8 @@ export class AnalyticService {
     return resp.thresholds.filter(t => t !== null);
   }
 
-  async updateThreshold(threshold: Threshold) {
-    return await this.patch('/threshold', threshold);
+  async updateThreshold(threshold: Threshold): Promise<void> {
+    return this.patch('/threshold', threshold);
   }
 
   async postNewItem(
@@ -49,7 +50,11 @@ export class AnalyticService {
     return response.id as AnalyticUnitId;
   }
 
-  async updateMetric(analyticUnitId: AnalyticUnitId, metric: MetricExpanded, datasource: DatasourceRequest) {
+  async updateMetric(
+    analyticUnitId: AnalyticUnitId,
+    metric: MetricExpanded,
+    datasource: DatasourceRequest
+  ) {
     await this.patch('/analyticUnits/metric', {
       analyticUnitId,
       metric: metric.toJSON(),
@@ -61,8 +66,8 @@ export class AnalyticService {
     return this.delete('/analyticUnits', { id });
   }
 
-  async isBackendOk(): Promise<boolean> {
-    if(!this._checkBackendUrl()) {
+  async isDatasourceOk(): Promise<boolean> {
+    if(!this._checkDatasourceConfig()) {
       this._isUp = false;
       return false;
     }
@@ -71,7 +76,9 @@ export class AnalyticService {
   }
 
   async updateSegments(
-    id: AnalyticUnitId, addedSegments: SegmentsSet<AnalyticSegment>, removedSegments: SegmentsSet<AnalyticSegment>
+    id: AnalyticUnitId,
+    addedSegments: SegmentsSet<AnalyticSegment>,
+    removedSegments: SegmentsSet<AnalyticSegment>
   ): Promise<SegmentId[]> {
     const getJSONs = (segs: SegmentsSet<AnalyticSegment>) => segs.getSegments().map(segment => ({
       from: segment.from,
@@ -184,7 +191,7 @@ export class AnalyticService {
   private async _analyticRequest(method: string, url: string, data?: any) {
     try {
       method = method.toUpperCase();
-      url = this._backendURL + url;
+      url = this._hasticDatasourceURL + url;
       let requestObject: any = { method, url };
       if(method === 'GET' || method === 'DELETE') {
         requestObject.params = data;
@@ -196,7 +203,7 @@ export class AnalyticService {
       return response.data;
     } catch(error) {
       if(error.xhrStatus === 'error') {
-        this.displayConnectionAlert();
+        this.displayConnectionErrorAlert();
         this._isUp = false;
       } else {
         this._isUp = true;
@@ -205,14 +212,17 @@ export class AnalyticService {
     }
   }
 
-  
-  private _checkBackendUrl(): boolean {
-    if(this._backendURL === null || this._backendURL === undefined || this._backendURL === '') {
+  get hasticDatasourceURL(): string {
+    return this._hasticDatasourceURL;
+  }
+
+  private _checkDatasourceConfig(): boolean {
+    if(this._hasticDatasourceURL === null || this._hasticDatasourceURL === undefined || this._hasticDatasourceURL === '') {
       appEvents.emit(
         'alert-warning',
         [
-          `Datasource (or URL in datasource) is missing`,
-          `Please set it in datasource config. More info: https://github.com/hastic/hastic-grafana-app/wiki/Getting-started`
+          `Hastic Datasource is missing`,
+          `Please setup Hastic Datasource. More info: https://github.com/hastic/hastic-grafana-app/wiki/Getting-started`
         ]
       );
       return false;
@@ -236,12 +246,12 @@ export class AnalyticService {
     return this._analyticRequest('DELETE', url, data);
   }
 
-  private displayConnectionAlert() {
+  private displayConnectionErrorAlert() {
     appEvents.emit(
       'alert-error',
       [
-        'No connection to Hastic server',
-        `Hastic server: "${this._backendURL}"`,
+        'No connection to Hastic Datasource',
+        `Hastic Datasource URL: "${this._hasticDatasourceURL}"`,
       ]
     );
   }
