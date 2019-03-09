@@ -144,7 +144,6 @@ class GraphCtrl extends MetricsPanelCtrl {
   constructor(
     $scope, $injector, private $http,
     private annotationsSrv,
-    private keybindingSrv,
     private backendSrv: BackendSrv,
     private popoverSrv,
     private contextSrv
@@ -210,9 +209,9 @@ class GraphCtrl extends MetricsPanelCtrl {
     return _.keys(this._analyticUnitTypes);
   }
 
-  async runBackendConnectivityCheck() {
+  async runDatasourceConnectivityCheck() {
     try {
-      const connected = await this.analyticService.isBackendOk();
+      const connected = await this.analyticService.isDatasourceOk();
       if(connected) {
         this.updateAnalyticUnitTypes();
         appEvents.emit(
@@ -300,7 +299,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     const hasticDatasourceURL = this.getHasticDatasourceURL();
 
     this.analyticService = new AnalyticService(hasticDatasourceURL, this.$http);
-    this.runBackendConnectivityCheck();
+    this.runDatasourceConnectivityCheck();
 
     this.analyticsController = new AnalyticController(this.panel, this.analyticService, this.events);
     this.analyticsController.fetchAnalyticUnitsStatuses();
@@ -643,7 +642,11 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   private async _updatePanelInfo() {
-    const datasource = await this._getDatasourceByName(this.panel.datasource);
+    let datasource = undefined;
+    if(this.panel.datasource) {
+      datasource = await this._getDatasourceByName(this.panel.datasource);
+    }
+    
     const backendUrl = this.getHasticDatasourceURL();
 
     let grafanaVersion = 'unknown';
@@ -653,7 +656,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     this._panelInfo = {
       grafanaVersion,
       grafanaUrl: window.location.host,
-      datasourceType: datasource.type,
+      datasourceType: datasource === undefined ? 'unknown' : datasource.type,
       hasticServerUrl: backendUrl
     };
   }
