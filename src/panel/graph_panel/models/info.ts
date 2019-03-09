@@ -9,6 +9,17 @@ export type ServerInfo = {
   gitCommitHash: string
 }
 
+export const ServerInfoUnknown: ServerInfo = {
+  nodeVersion: 'unknown',
+  packageVersion: 'unknown',
+  npmUserAgent: 'unknown',
+  docker: 'unknown',
+  zmqConectionString: 'unknown',
+  serverPort: 'unknown',
+  gitBranch: 'unknown',
+  gitCommitHash: 'unknown'
+};
+
 export type PanelInfo = {
   grafanaVersion: string,
   grafanaUrl: string,

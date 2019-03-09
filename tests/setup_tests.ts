@@ -17,13 +17,15 @@ function $http() {
 } 
 
 const analyticService = new AnalyticService('', $http);
-analyticService.postNewItem = async function (newItem: AnalyticUnit, metric: MetricExpanded, datasource: DatasourceRequest, panelUrl: string
+analyticService.postNewItem = async function (
+  newItem: AnalyticUnit, metric: MetricExpanded, 
+  datasource: DatasourceRequest, panelUrl: string
 ): Promise<AnalyticUnitId> {
   id++;
   return Promise.resolve(id.toString());
 }
 
-export const analyticController = new AnalyticController({}, analyticService, new Emitter());
+export const analyticController = new AnalyticController({}, new Emitter(), analyticService);
 
 jest.mock('../src/panel/graph_panel/partials/help_section.html', () => '');
 

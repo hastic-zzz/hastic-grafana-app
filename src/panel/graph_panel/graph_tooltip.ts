@@ -12,7 +12,7 @@ export class GraphTooltip {
   constructor(
     private $elem: JQuery<HTMLElement>, private dashboard,
     private scope, private getSeriesFn,
-    private _analyticSegmentsSearcher: AnalyticSegmentsSearcher
+    private _analyticSegmentsSearcher?: AnalyticSegmentsSearcher
   ) {
     this.ctrl = scope.ctrl;
     this.panel = this.ctrl.panel;
@@ -115,7 +115,9 @@ export class GraphTooltip {
         plot.highlight(hoverInfo.index, hoverInfo.hoverIndex);
       }
 
+      
       seriesHtml += this._appendAnomaliesHTML(pos.x, rangeDist);
+      
 
       this._renderAndShow(absoluteTime, seriesHtml, pos, xMode);
     }
@@ -191,6 +193,9 @@ export class GraphTooltip {
   };
 
   private _appendAnomaliesHTML(pos: number, rangeDist: number): string {
+    if(this._analyticSegmentsSearcher === undefined) {
+      return '';
+    }
     var result = '';
     var segments = this._analyticSegmentsSearcher(pos, rangeDist);
     if(segments.length === 0) {

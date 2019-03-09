@@ -183,7 +183,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.rebindKeys();
   }
 
-  getHasticDatasourceURL(): string {
+  getHasticDatasourceURL(): string | undefined {
     const hasticDatasourceId = this.panel.hasticDatasource;
     if(hasticDatasourceId !== undefined && hasticDatasourceId !== null) {
       const hasticDatasource = _.find(this._hasticDatasources, { id: hasticDatasourceId });
@@ -297,20 +297,24 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     await this._fetchHasticDatasources();
     const hasticDatasourceURL = this.getHasticDatasourceURL();
+    if(hasticDatasourceURL === undefined) {
+      delete this.analyticService;
+    } else {
+      this.analyticService = new AnalyticService(hasticDatasourceURL, this.$http);
+      this.runDatasourceConnectivityCheck();  
+    }
 
-    this.analyticService = new AnalyticService(hasticDatasourceURL, this.$http);
-    this.runDatasourceConnectivityCheck();
-
-    this.analyticsController = new AnalyticController(this.panel, this.analyticService, this.events);
+    this.analyticsController = new AnalyticController(this.panel, this.events, this.analyticService);
     this.analyticsController.fetchAnalyticUnitsStatuses();
-
-    this._graphRenderer = new GraphRenderer(
-      this.$graphElem, this.timeSrv, this.contextSrv, this.$scope
-    );
-    this._graphLegend = new GraphLegend(this.$legendElem, this.popoverSrv, this.$scope);
 
     this._updatePanelInfo();
     this.analyticsController.updateServerInfo();
+
+    this._graphRenderer = new GraphRenderer(
+      this.$graphElem, this.timeSrv, this.contextSrv, this.$scope, this.analyticsController
+    );
+    this._graphLegend = new GraphLegend(this.$legendElem, this.popoverSrv, this.$scope);
+
   }
 
   issueQueries(datasource) {
