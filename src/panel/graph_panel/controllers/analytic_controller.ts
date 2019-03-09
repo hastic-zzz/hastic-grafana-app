@@ -12,7 +12,7 @@ import { DatasourceRequest } from '../models/datasource';
 import { Segment, SegmentId } from '../models/segment';
 import { SegmentsSet } from '../models/segment_set';
 import { SegmentArray } from '../models/segment_array';
-import { ServerInfo, ServerInfoUnknown } from '../models/info';
+import { HasticServerInfo, HasticServerInfoUnknown } from '../models/hastic_server_info';
 import { Threshold, Condition } from '../models/threshold';
 import text from '../partials/help_section.html';
 
@@ -43,7 +43,7 @@ export class AnalyticController {
   private _tempIdCounted: number = -1;
   private _graphLocked: boolean = false;
   private _statusRunners: Set<AnalyticUnitId> = new Set<AnalyticUnitId>();
-  private _serverInfo: ServerInfo;
+  private _serverInfo: HasticServerInfo;
   private _currentMetric: MetricExpanded;
   private _currentDatasource: DatasourceRequest;
   private _thresholds: Threshold[];
@@ -477,7 +477,7 @@ export class AnalyticController {
 
   public async updateServerInfo() {
     if(!this._analyticService) {
-      this._serverInfo = ServerInfoUnknown;
+      this._serverInfo = HasticServerInfoUnknown;
       return;
     }
     this._serverInfo = await this._analyticService.getServerInfo();

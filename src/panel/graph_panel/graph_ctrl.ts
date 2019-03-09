@@ -10,7 +10,7 @@ import { DatasourceRequest } from './models/datasource';
 import { AnalyticUnitId, AnalyticUnit, LabelingMode } from './models/analytic_unit';
 import { AnalyticService } from './services/analytic_service';
 import { AnalyticController } from './controllers/analytic_controller';
-import { PanelInfo } from './models/info';
+import { HasticPanelInfo } from './models/hastic_panel_info';
 
 import { axesEditorComponent } from './axes_editor';
 
@@ -47,7 +47,7 @@ class GraphCtrl extends MetricsPanelCtrl {
   _graphRenderer: GraphRenderer;
   _graphLegend: GraphLegend;
 
-  _panelInfo: PanelInfo;
+  _panelInfo: HasticPanelInfo;
 
   private _analyticUnitTypes: any;
   private _hasticDatasources: any[];
@@ -183,14 +183,18 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.rebindKeys();
   }
 
-  getHasticDatasourceURL(): string | undefined {
+  getHasticDatasource(): { url: string, name: string } | undefined {
     const hasticDatasourceId = this.panel.hasticDatasource;
     if(hasticDatasourceId !== undefined && hasticDatasourceId !== null) {
       const hasticDatasource = _.find(this._hasticDatasources, { id: hasticDatasourceId });
+      let url = hasticDatasource.url;
       if(hasticDatasource.access === 'proxy') {
-        return `/api/datasources/proxy/${hasticDatasource.id}`;
+        url = `/api/datasources/proxy/${hasticDatasource.id}`
       }
-      return hasticDatasource.url;
+      return {
+        url,
+        name: hasticDatasource.name
+      }
     }
     return undefined;
   }
@@ -296,11 +300,11 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.processor = new DataProcessor(this.panel);
 
     await this._fetchHasticDatasources();
-    const hasticDatasourceURL = this.getHasticDatasourceURL();
-    if(hasticDatasourceURL === undefined) {
+    let hasticDatasource = this.getHasticDatasource();
+    if(hasticDatasource === undefined) {
       delete this.analyticService;
     } else {
-      this.analyticService = new AnalyticService(hasticDatasourceURL, this.$http);
+      this.analyticService = new AnalyticService(hasticDatasource.url, this.$http);
       this.runDatasourceConnectivityCheck();  
     }
 
@@ -651,7 +655,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       datasource = await this._getDatasourceByName(this.panel.datasource);
     }
     
-    const backendUrl = this.getHasticDatasourceURL();
+    const hasticDatasource = this.getHasticDatasource();
 
     let grafanaVersion = 'unknown';
     if(_.has(window, 'grafanaBootData.settings.buildInfo.version')) {
@@ -660,8 +664,10 @@ class GraphCtrl extends MetricsPanelCtrl {
     this._panelInfo = {
       grafanaVersion,
       grafanaUrl: window.location.host,
+      datasourceName: datasource === undefined ? 'unknown' : datasource.name,
       datasourceType: datasource === undefined ? 'unknown' : datasource.type,
-      hasticServerUrl: backendUrl
+      hasticDatasourceName: datasource === undefined ? 'unknown' : hasticDatasource.name,
+      hasticDatasourceUrl: hasticDatasource === undefined ? 'unknown' : hasticDatasource.url
     };
   }
 
