@@ -19,6 +19,16 @@ export type AnalyticSegmentsSearcher = (point: number, rangeDist: number) => Ana
 
 export type AnalyticUnitId = string;
 
+export type AnalyticUnitView = {
+  name: string,
+  labeledColor: string,
+  deletedColor: string,
+  detectorType: string,
+  type: string,
+  alert: boolean,
+  id: AnalyticUnitId,
+  visible: boolean
+}
 export class AnalyticSegment extends Segment {
   constructor(public labeled: boolean, id: SegmentId, from: number, to: number, public deleted = false) {
     super(id, from, to);
@@ -37,18 +47,22 @@ export class AnalyticUnit {
   private _status: string;
   private _error: string;
 
-  constructor(private _panelObject?: any) {
-    if(_panelObject === undefined) {
-      this._panelObject = {};
-    }
-    _.defaults(this._panelObject, {
+  constructor(private _panelObject?: AnalyticUnitView) {
+    const defaults = {
       name: 'AnalyticUnitName',
       labeledColor: ANALYTIC_UNIT_COLORS[0],
       deletedColor: DEFAULT_DELETED_SEGMENT_COLOR,
       detectorType: 'pattern',
       type: 'GENERAL',
-      alert: false
-    });
+      alert: false,
+      id: null,
+      visible: true
+    }
+
+    if(_panelObject === undefined) {
+      this._panelObject = defaults;
+    }
+    _.defaults(this._panelObject, defaults);
   }
 
   get id(): AnalyticUnitId { return this._panelObject.id; }
@@ -62,9 +76,6 @@ export class AnalyticUnit {
 
   set type(value: string) { this._panelObject.type = value; }
   get type(): string { return this._panelObject.type; }
-
-  set confidence(value: number) { this._panelObject.confidence = value; }
-  get confidence(): number { return this._panelObject.confidence; }
 
   set labeledColor(value: string) { this._panelObject.labeledColor = value; }
   get labeledColor(): string { return this._panelObject.labeledColor; }
