@@ -553,6 +553,10 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.analyticsController.createNew();
   }
 
+  redetectAll() {
+    this.analyticsController.redetectAll();
+  }
+
   async saveNew() {
     try {
       const panelId = this.panel.id;

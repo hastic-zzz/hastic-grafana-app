@@ -270,6 +270,14 @@ export class AnalyticController {
     return newIds;
   }
 
+  redetectAll() {
+    this.analyticUnits.forEach(a => {
+      a.segments.clear();
+      this._runStatusWaiter(a);
+      this._analyticService.runDetect(a.id);
+    });
+  }
+
   // TODO: move to renderer
   updateFlotEvents(isEditMode: boolean, options: any): void {
     if(options.grid.markings === undefined) {

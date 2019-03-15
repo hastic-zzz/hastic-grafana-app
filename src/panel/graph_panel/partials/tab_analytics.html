@@ -85,7 +85,7 @@
           </a>
         </label>
 
-        <select class="gf-form-input width-10"
+        <select class="gf-form-input width-12"
           ng-model="ctrl.analyticsController.labelingMode"
           ng-options="type.value as type.name for type in [
             { name:'Label Positive', value: 'LABELING' }, 
@@ -205,13 +205,18 @@
     </div>
 
     <div class="gf-form-button-row" ng-if="!ctrl.analyticsController.creatingAnalyticUnit">
-      <button class="btn btn-inverse" ng-click="ctrl.createNew()">
+      <button class="btn btn-inverse width-12" ng-click="ctrl.createNew()">
         <i class="fa fa-plus"></i>
         Add Analytic Unit
       </button>
     </div>
     <div class="gf-form-button-row">
-      <button class="gf-form-label width-10 pointer" ng-click="ctrl.showHelp = !ctrl.showHelp">
+      <button class="gf-form-label width-12 pointer" ng-click="ctrl.redetectAll()">
+        Re-detect all analytic units
+      </button>
+    </div>
+    <div class="gf-form-button-row">
+      <button class="gf-form-label width-12 pointer" ng-click="ctrl.showHelp = !ctrl.showHelp">
         Show Help
         <i class="fa fa-caret-down" ng-show="ctrl.showHelp"></i>
         <i class="fa fa-caret-right" ng-hide="ctrl.showHelp"></i>
