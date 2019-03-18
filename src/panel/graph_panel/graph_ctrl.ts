@@ -55,6 +55,8 @@ class GraphCtrl extends MetricsPanelCtrl {
   private $graphElem: any;
   private $legendElem: any;
 
+  private panelUrl: string;
+
   panelDefaults = {
     // datasource name, null = default datasource
     datasource: null,
@@ -157,8 +159,9 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     // because of https://github.com/hastic/hastic-grafana-app/issues/162
     this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
-    this.panelId = this.panel.id;
-    this.panelUrl = window.location.origin + window.location.pathname + `?panelId=${this.panelId}`;
+
+    const panelId = this.panel.id;
+    this.panelUrl = window.location.origin + window.location.pathname + `?panelId=${panelId}`;
   }
 
   rebindKeys() {
@@ -307,7 +310,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       delete this.analyticService;
     } else {
       this.analyticService = new AnalyticService(hasticDatasource.url, this.$http);
-      this.runDatasourceConnectivityCheck();  
+      this.runDatasourceConnectivityCheck();
     }
 
     this.analyticsController = new AnalyticController(this.panel, this.events, this.analyticService);
@@ -557,15 +560,12 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   async saveNew() {
     try {
-      const panelId = this.panel.id;
-      const panelUrl = window.location.origin + window.location.pathname + `?panelId=${panelId}`;
-
       const datasource = await this._getDatasourceRequest();
 
       await this.analyticsController.saveNew(
         new MetricExpanded(this.panel.datasource, this.panel.targets),
         datasource,
-        panelUrl
+        this.panelUrl
       );
     } catch(e) {
       appEvents.emit(
@@ -656,7 +656,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     if(this.panel.datasource) {
       datasource = await this._getDatasourceByName(this.panel.datasource);
     }
-    
+
     const hasticDatasource = this.getHasticDatasource();
 
     let grafanaVersion = 'unknown';
