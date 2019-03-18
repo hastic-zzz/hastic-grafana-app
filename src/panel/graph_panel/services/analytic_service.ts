@@ -26,6 +26,15 @@ export class AnalyticService {
     return this.get('/analyticUnits/types');
   }
 
+  //TODO: change to panelId
+  async getAnalyticUnits(panelUrl: string) {
+    const resp = await this.get('/analyticUnits/units', { panelUrl });
+    if(resp === undefined) {
+      return [];
+    }
+    return resp.analyticUnits.filter(t => t !== null);
+  }
+
   async getThresholds(ids: AnalyticUnitId[]) {
     const resp = await this.get('/threshold', { ids: ids.join(',') });
     if(resp === undefined) {
@@ -46,6 +55,7 @@ export class AnalyticService {
   ): Promise<AnalyticUnitId> {
     const response = await this.post('/analyticUnits', {
       panelUrl,
+      view: newItem.view,
       type: newItem.type,
       name: newItem.name,
       metric: metric.toJSON(),

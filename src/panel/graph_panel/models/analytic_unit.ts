@@ -95,6 +95,8 @@ export class AnalyticUnit {
   get saving(): boolean { return this._saving; }
   set saving(value: boolean) { this._saving = value; }
 
+  get view(): AnalyticUnitView { return this._panelObject; }
+
   get visible(): boolean {
     return (this._panelObject.visible === undefined) ? true : this._panelObject.visible
   }
@@ -154,7 +156,7 @@ export class AnalyticUnitsSet {
   private _mapIdIndex: Map<AnalyticUnitId, number>;
   private _items: AnalyticUnit[];
 
-  constructor(private _panelObject: any[]) {
+  constructor(private _panelObject: AnalyticUnitView[]) {
     if(_panelObject === undefined) {
       throw new Error('panel object can`t be undefined');
     }

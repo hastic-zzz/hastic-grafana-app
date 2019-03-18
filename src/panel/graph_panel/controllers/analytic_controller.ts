@@ -5,7 +5,8 @@ import { AnalyticService } from '../services/analytic_service'
 import {
   AnalyticUnitId, AnalyticUnit,
   AnalyticUnitsSet, AnalyticSegment, AnalyticSegmentsSearcher, AnalyticSegmentPair,
-  LabelingMode
+  LabelingMode,
+  AnalyticUnitView
 } from '../models/analytic_unit';
 import { MetricExpanded } from '../models/metric';
 import { DatasourceRequest } from '../models/datasource';
@@ -58,7 +59,8 @@ export class AnalyticController {
     }
     this._labelingDataAddedSegments = new SegmentArray<AnalyticSegment>();
     this._labelingDataRemovedSegments = new SegmentArray<AnalyticSegment>();
-    this._analyticUnitsSet = new AnalyticUnitsSet(this._panelObject.analyticUnits);
+    this._analyticUnitsSet = void[];
+    this.fetchAnalyticUnits();
     this._thresholds = [];
     this.updateThresholds();
   }
@@ -375,6 +377,20 @@ export class AnalyticController {
       name: analyticUnit.name
     }
     await this._analyticService.updateAnalyticUnit(analyticUnit.id, updateObj);
+  }
+
+  async getAnalyticUnits(): Promise<AnalyticUnitView[]> {
+    if(this._analyticService === undefined) {
+      return [];
+    }
+
+    const panelUrls = this._panelObject
+    return await this._analyticService.getAnalyticUnits('panelUrl');
+  }
+
+  async fetchAnalyticUnits(): Promise<void> {
+    const units = await this.getAnalyticUnits()
+    this._analyticUnitsSet = new AnalyticUnitsSet(units);
   }
 
   async updateThresholds(): Promise<void> {
