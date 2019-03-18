@@ -5,8 +5,7 @@ import { AnalyticService } from '../services/analytic_service'
 import {
   AnalyticUnitId, AnalyticUnit,
   AnalyticUnitsSet, AnalyticSegment, AnalyticSegmentsSearcher, AnalyticSegmentPair,
-  LabelingMode,
-  AnalyticUnitView
+  LabelingMode
 } from '../models/analytic_unit';
 import { MetricExpanded } from '../models/metric';
 import { DatasourceRequest } from '../models/datasource';
@@ -377,13 +376,12 @@ export class AnalyticController {
     await this._analyticService.updateAnalyticUnit(analyticUnit.id, updateObj);
   }
 
-  async getAnalyticUnits(): Promise<AnalyticUnitView[]> {
+  async getAnalyticUnits(): Promise<any[]> {
     if(this._analyticService === undefined) {
       return [];
     }
 
-    const panelUrls = this._panelObject
-    return await this._analyticService.getAnalyticUnits(this._panelUrl);
+    return this._analyticService.getAnalyticUnits(this._panelUrl);
   }
 
   async fetchAnalyticUnits(): Promise<void> {

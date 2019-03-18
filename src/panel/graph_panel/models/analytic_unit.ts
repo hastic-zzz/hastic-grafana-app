@@ -7,6 +7,11 @@ import { ANALYTIC_UNIT_COLORS, DEFAULT_DELETED_SEGMENT_COLOR } from '../colors';
 import _ from 'lodash';
 
 
+export enum DetectorType {
+  PATTERN = 'pattern',
+  THRESHOLD = 'threshold'
+};
+
 export enum LabelingMode {
   LABELING = 'LABELING',
   UNLABELING = 'UNLABELING',
@@ -19,20 +24,10 @@ export type AnalyticSegmentsSearcher = (point: number, rangeDist: number) => Ana
 
 export type AnalyticUnitId = string;
 
-export type AnalyticUnitView = {
-  name: string,
-  labeledColor: string,
-  deletedColor: string,
-  detectorType: string,
-  type: string,
-  alert: boolean,
-  id: AnalyticUnitId,
-  visible: boolean
-}
 export class AnalyticSegment extends Segment {
   constructor(public labeled: boolean, id: SegmentId, from: number, to: number, public deleted = false) {
     super(id, from, to);
-    if(!_.isBoolean(labeled)) {
+    if(!_.isBoolean(this.labeled)) {
       throw new Error('labeled value is not boolean');
     }
   }
@@ -47,7 +42,7 @@ export class AnalyticUnit {
   private _status: string;
   private _error: string;
 
-  constructor(private _panelObject?: AnalyticUnitView) {
+  constructor(private _serverObject?: any) {
     const defaults = {
       name: 'AnalyticUnitName',
       labeledColor: ANALYTIC_UNIT_COLORS[0],
@@ -59,32 +54,32 @@ export class AnalyticUnit {
       visible: true
     }
 
-    if(_panelObject === undefined) {
-      this._panelObject = defaults;
+    if(_serverObject === undefined) {
+      this._serverObject = defaults;
     }
-    _.defaults(this._panelObject, defaults);
+    _.defaults(this._serverObject, defaults);
   }
 
-  get id(): AnalyticUnitId { return this._panelObject.id; }
-  set id(value: AnalyticUnitId) { this._panelObject.id = value; }
+  get id(): AnalyticUnitId { return this._serverObject.id; }
+  set id(value: AnalyticUnitId) { this._serverObject.id = value; }
 
-  set name(value: string) { this._panelObject.name = value; }
-  get name(): string { return this._panelObject.name; }
+  set name(value: string) { this._serverObject.name = value; }
+  get name(): string { return this._serverObject.name; }
 
-  set detectorType(value: string) { this._panelObject.detectorType = value; }
-  get detectorType(): string { return this._panelObject.detectorType; }
+  set detectorType(value: DetectorType) { this._serverObject.detectorType = value; }
+  get detectorType(): DetectorType { return this._serverObject.detectorType; }
 
-  set type(value: string) { this._panelObject.type = value; }
-  get type(): string { return this._panelObject.type; }
+  set type(value: string) { this._serverObject.type = value; }
+  get type(): string { return this._serverObject.type; }
 
-  set labeledColor(value: string) { this._panelObject.labeledColor = value; }
-  get labeledColor(): string { return this._panelObject.labeledColor; }
+  set labeledColor(value: string) { this._serverObject.labeledColor = value; }
+  get labeledColor(): string { return this._serverObject.labeledColor; }
 
-  set deletedColor(value: string) { this._panelObject.deletedColor = value; }
-  get deletedColor(): string { return this._panelObject.deletedColor; }
+  set deletedColor(value: string) { this._serverObject.deletedColor = value; }
+  get deletedColor(): string { return this._serverObject.deletedColor; }
 
-  set alert(value: boolean) { this._panelObject.alert = value; }
-  get alert(): boolean { return this._panelObject.alert; }
+  set alert(value: boolean) { this._serverObject.alert = value; }
+  get alert(): boolean { return this._serverObject.alert; }
 
   get selected(): boolean { return this._selected; }
   set selected(value: boolean) { this._selected = value; }
@@ -95,13 +90,11 @@ export class AnalyticUnit {
   get saving(): boolean { return this._saving; }
   set saving(value: boolean) { this._saving = value; }
 
-  get view(): AnalyticUnitView { return this._panelObject; }
-
   get visible(): boolean {
-    return (this._panelObject.visible === undefined) ? true : this._panelObject.visible
+    return (this._serverObject.visible === undefined) ? true : this._serverObject.visible
   }
   set visible(value: boolean) {
-    this._panelObject.visible = value;
+    this._serverObject.visible = value;
   }
 
   addLabeledSegment(segment: Segment, deleted: boolean): AnalyticSegment {
@@ -147,7 +140,7 @@ export class AnalyticUnit {
     return true;
   }
 
-  get panelObject() { return this._panelObject; }
+  get serverObject() { return this._serverObject; }
 
 }
 
@@ -156,26 +149,26 @@ export class AnalyticUnitsSet {
   private _mapIdIndex: Map<AnalyticUnitId, number>;
   private _items: AnalyticUnit[];
 
-  constructor(private _panelObject: AnalyticUnitView[]) {
-    if(_panelObject === undefined) {
-      throw new Error('panel object can`t be undefined');
+  constructor(private _serverObject: any[]) {
+    if(_serverObject === undefined) {
+      throw new Error('server object can`t be undefined');
     }
     this._mapIdIndex = new Map<AnalyticUnitId, number>();
-    this._items = _panelObject.map(p => new AnalyticUnit(p));
+    this._items = _serverObject.map(p => new AnalyticUnit(p));
     this._rebuildIndex();
   }
 
   get items() { return this._items; }
 
   addItem(item: AnalyticUnit) {
-    this._panelObject.push(item.panelObject);
+    this._serverObject.push(item.serverObject);
     this._mapIdIndex[item.id] = this._items.length;
     this._items.push(item);
   }
 
   removeItem(id: AnalyticUnitId) {
     var index = this._mapIdIndex[id];
-    this._panelObject.splice(index, 1);
+    this._serverObject.splice(index, 1);
     this._items.splice(index, 1);
     this._rebuildIndex();
   }

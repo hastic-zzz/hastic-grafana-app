@@ -2,7 +2,7 @@ import { SegmentId } from '../models/segment';
 import { MetricExpanded } from '../models/metric';
 import { DatasourceRequest } from '../models/datasource';
 import { SegmentsSet } from '../models/segment_set';
-import { AnalyticUnitId, AnalyticUnit, AnalyticSegment, AnalyticUnitView } from '../models/analytic_unit';
+import { AnalyticUnitId, AnalyticUnit, AnalyticSegment } from '../models/analytic_unit';
 import { HasticServerInfo, HasticServerInfoUnknown } from '../models/hastic_server_info';
 import { Threshold } from '../models/threshold';
 
@@ -55,7 +55,6 @@ export class AnalyticService {
   ): Promise<AnalyticUnitId> {
     const response = await this.post('/analyticUnits', {
       panelUrl,
-      view: newItem.view,
       type: newItem.type,
       name: newItem.name,
       metric: metric.toJSON(),
