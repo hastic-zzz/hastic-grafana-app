@@ -579,20 +579,22 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.render(this.seriesList);
   }
 
-  onAnalyticUnitAlertChange(analyticUnit: AnalyticUnit) {
-    this.analyticsController.toggleAnalyticUnitAlert(analyticUnit);
+  async onAnalyticUnitAlertChange(analyticUnit: AnalyticUnit) {
+    await this.analyticsController.toggleAnalyticUnitAlert(analyticUnit);
+    this.refresh();
   }
 
-  onAnalyticUnitNameChange(analyticUnit: AnalyticUnit) {
-    this.analyticsController.fetchAnalyticUnitName(analyticUnit);
+  async onAnalyticUnitNameChange(analyticUnit: AnalyticUnit) {
+    await this.analyticsController.saveAnalyticUnit(analyticUnit);
+    this.refresh();
   }
 
-  onColorChange(id: AnalyticUnitId, deleted: boolean, value: string) {
+  async onColorChange(id: AnalyticUnitId, deleted: boolean, value: string) {
     if(id === undefined) {
       throw new Error('id is undefined');
     }
-    this.analyticsController.onAnalyticUnitColorChange(id, value, deleted);
-    this.render();
+    await this.analyticsController.onAnalyticUnitColorChange(id, value, deleted);
+    this.refresh();
   }
 
   async onRemove(id: AnalyticUnitId) {
@@ -600,7 +602,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       throw new Error('id is undefined');
     }
     await this.analyticsController.removeAnalyticUnit(id);
-    this.render();
+    this.refresh();
   }
 
   onCancelLabeling(id: AnalyticUnitId) {
@@ -647,7 +649,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   onToggleVisibility(id: AnalyticUnitId) {
     this.analyticsController.toggleVisibility(id);
-    this.render();
+    this.refresh();
   }
 
   private async _updatePanelInfo() {

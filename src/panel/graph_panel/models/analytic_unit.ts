@@ -47,7 +47,7 @@ export class AnalyticUnit {
       name: 'AnalyticUnitName',
       labeledColor: ANALYTIC_UNIT_COLORS[0],
       deletedColor: DEFAULT_DELETED_SEGMENT_COLOR,
-      detectorType: 'pattern',
+      detectorType: DetectorType.PATTERN,
       type: 'GENERAL',
       alert: false,
       id: null,

@@ -184,8 +184,7 @@ export class AnalyticService {
     });
   }
 
-  async updateAnalyticUnit(id: AnalyticUnitId, updateObj: any) {
-    updateObj.id = id;
+  async updateAnalyticUnit(updateObj: any) {
     return this.patch('/analyticUnits', updateObj);
   }
 
