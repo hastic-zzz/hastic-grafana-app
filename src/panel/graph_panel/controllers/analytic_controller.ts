@@ -50,16 +50,14 @@ export class AnalyticController {
   private _thresholds: Threshold[];
 
   constructor(
+    private _panelUrl: string,
     private _panelObject: any,
     private _emitter: Emitter,
     private _analyticService?: AnalyticService,
   ) {
-    if(_panelObject.analyticUnits === undefined) {
-      _panelObject.analyticUnits = _panelObject.anomalyTypes || [];
-    }
     this._labelingDataAddedSegments = new SegmentArray<AnalyticSegment>();
     this._labelingDataRemovedSegments = new SegmentArray<AnalyticSegment>();
-    this._analyticUnitsSet = void[];
+    this._analyticUnitsSet = new AnalyticUnitsSet([]);
     this.fetchAnalyticUnits();
     this._thresholds = [];
     this.updateThresholds();
@@ -101,10 +99,10 @@ export class AnalyticController {
     }
   }
 
-  async saveNew(metric: MetricExpanded, datasource: DatasourceRequest, panelUrl: string) {
+  async saveNew(metric: MetricExpanded, datasource: DatasourceRequest) {
     this._savingNewAnalyticUnit = true;
     this._newAnalyticUnit.id = await this._analyticService.postNewItem(
-      this._newAnalyticUnit, metric, datasource, panelUrl
+      this._newAnalyticUnit, metric, datasource, this._panelUrl
     );
     if(this._newAnalyticUnit.detectorType === 'threshold') {
       await this.saveThreshold(this._newAnalyticUnit.id);
@@ -385,11 +383,11 @@ export class AnalyticController {
     }
 
     const panelUrls = this._panelObject
-    return await this._analyticService.getAnalyticUnits('panelUrl');
+    return await this._analyticService.getAnalyticUnits(this._panelUrl);
   }
 
   async fetchAnalyticUnits(): Promise<void> {
-    const units = await this.getAnalyticUnits()
+    const units = await this.getAnalyticUnits();
     this._analyticUnitsSet = new AnalyticUnitsSet(units);
   }
 

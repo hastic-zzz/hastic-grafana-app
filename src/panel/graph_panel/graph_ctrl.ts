@@ -313,7 +313,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       this.runDatasourceConnectivityCheck();
     }
 
-    this.analyticsController = new AnalyticController(this.panel, this.events, this.analyticService);
+    this.analyticsController = new AnalyticController(this.panelUrl, this.panel, this.events, this.analyticService);
     this.analyticsController.fetchAnalyticUnitsStatuses();
 
     this._updatePanelInfo();
@@ -564,8 +564,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
       await this.analyticsController.saveNew(
         new MetricExpanded(this.panel.datasource, this.panel.targets),
-        datasource,
-        this.panelUrl
+        datasource
       );
     } catch(e) {
       appEvents.emit(
