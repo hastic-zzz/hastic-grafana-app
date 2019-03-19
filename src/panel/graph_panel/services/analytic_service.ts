@@ -31,7 +31,7 @@ export class AnalyticService {
     if(resp === undefined) {
       return [];
     }
-    return resp.analyticUnits.filter(t => t !== null);
+    return resp.analyticUnits;
   }
 
   async getThresholds(ids: AnalyticUnitId[]) {
