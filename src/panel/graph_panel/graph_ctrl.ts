@@ -590,7 +590,6 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   async onAnalyticUnitAlertChange(analyticUnit: AnalyticUnit) {
     await this.analyticsController.toggleAnalyticUnitAlert(analyticUnit);
-    this.refresh();
   }
 
   async onAnalyticUnitNameChange(analyticUnit: AnalyticUnit) {
