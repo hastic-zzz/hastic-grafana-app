@@ -49,7 +49,8 @@ export class AnalyticController {
   private _thresholds: Threshold[];
 
   constructor(
-    private _panelUrl: string,
+    private _grafanaUrl: string,
+    private _panelId: string,
     private _panelObject: any,
     private _emitter: Emitter,
     private _analyticService?: AnalyticService,
@@ -101,7 +102,7 @@ export class AnalyticController {
   async saveNew(metric: MetricExpanded, datasource: DatasourceRequest) {
     this._savingNewAnalyticUnit = true;
     this._newAnalyticUnit.id = await this._analyticService.postNewItem(
-      this._newAnalyticUnit, metric, datasource, this._panelUrl
+      this._newAnalyticUnit, metric, datasource, this._grafanaUrl, this._panelId
     );
     if(this._newAnalyticUnit.detectorType === 'threshold') {
       await this.saveThreshold(this._newAnalyticUnit.id);
@@ -386,7 +387,7 @@ export class AnalyticController {
       return [];
     }
 
-    return this._analyticService.getAnalyticUnits(this._panelUrl);
+    return this._analyticService.getAnalyticUnits(this._panelId);
   }
 
   async fetchAnalyticUnits(): Promise<void> {

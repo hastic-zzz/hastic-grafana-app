@@ -26,9 +26,8 @@ export class AnalyticService {
     return this.get('/analyticUnits/types');
   }
 
-  //TODO: change to panelId
-  async getAnalyticUnits(panelUrl: string) {
-    const resp = await this.get('/analyticUnits/units', { panelUrl });
+  async getAnalyticUnits(panelId: string) {
+    const resp = await this.get('/analyticUnits/units', { panelId });
     if(resp === undefined) {
       return [];
     }
@@ -51,10 +50,12 @@ export class AnalyticService {
     newItem: AnalyticUnit,
     metric: MetricExpanded,
     datasource: DatasourceRequest,
-    panelUrl: string
+    grafanaUrl: string,
+    panelId: string
   ): Promise<AnalyticUnitId> {
     const response = await this.post('/analyticUnits', {
-      panelUrl,
+      grafanaUrl,
+      panelId,
       type: newItem.type,
       name: newItem.name,
       metric: metric.toJSON(),

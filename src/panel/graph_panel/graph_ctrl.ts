@@ -55,7 +55,8 @@ class GraphCtrl extends MetricsPanelCtrl {
   private $graphElem: any;
   private $legendElem: any;
 
-  private panelUrl: string;
+  private _grafanaUrl: string;
+  private _panelId: string;
 
   panelDefaults = {
     // datasource name, null = default datasource
@@ -160,8 +161,16 @@ class GraphCtrl extends MetricsPanelCtrl {
     // because of https://github.com/hastic/hastic-grafana-app/issues/162
     this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
 
-    const panelId = this.panel.id;
-    this.panelUrl = window.location.origin + window.location.pathname + `?panelId=${panelId}`;
+
+    const grafanaUrlRegex = /^(.+)\/d/;
+    const parsedUrl = window.location.href.match(grafanaUrlRegex);
+    if(parsedUrl !== null) {
+      this._grafanaUrl = parsedUrl[1];
+    } else {
+      throw new Error('Cannot parse grafana url');
+    }
+
+    this._panelId = `${this.dashboard.uid}/${this.panel.id}`;
   }
 
   rebindKeys() {
@@ -313,7 +322,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       this.runDatasourceConnectivityCheck();
     }
 
-    this.analyticsController = new AnalyticController(this.panelUrl, this.panel, this.events, this.analyticService);
+    this.analyticsController = new AnalyticController(this._grafanaUrl, this._panelId, this.panel, this.events, this.analyticService);
     this.analyticsController.fetchAnalyticUnitsStatuses();
 
     this._updatePanelInfo();
