@@ -55,6 +55,9 @@ class GraphCtrl extends MetricsPanelCtrl {
   private $graphElem: any;
   private $legendElem: any;
 
+  private _grafanaUrl: string;
+  private _panelId: string;
+
   panelDefaults = {
     // datasource name, null = default datasource
     datasource: null,
@@ -157,6 +160,17 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     // because of https://github.com/hastic/hastic-grafana-app/issues/162
     this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
+
+
+    const grafanaUrlRegex = /^(.+)\/d/;
+    const parsedUrl = window.location.href.match(grafanaUrlRegex);
+    if(parsedUrl !== null) {
+      this._grafanaUrl = parsedUrl[1];
+    } else {
+      throw new Error('Cannot parse grafana url');
+    }
+
+    this._panelId = `${this.dashboard.uid}/${this.panel.id}`;
   }
 
   rebindKeys() {
@@ -305,10 +319,10 @@ class GraphCtrl extends MetricsPanelCtrl {
       delete this.analyticService;
     } else {
       this.analyticService = new AnalyticService(hasticDatasource.url, this.$http);
-      this.runDatasourceConnectivityCheck();  
+      this.runDatasourceConnectivityCheck();
     }
 
-    this.analyticsController = new AnalyticController(this.panel, this.events, this.analyticService);
+    this.analyticsController = new AnalyticController(this._grafanaUrl, this._panelId, this.panel, this.events, this.analyticService);
     this.analyticsController.fetchAnalyticUnitsStatuses();
 
     this._updatePanelInfo();
@@ -559,15 +573,11 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   async saveNew() {
     try {
-      const panelId = this.panel.id;
-      const panelUrl = window.location.origin + window.location.pathname + `?panelId=${panelId}`;
-
       const datasource = await this._getDatasourceRequest();
 
       await this.analyticsController.saveNew(
         new MetricExpanded(this.panel.datasource, this.panel.targets),
-        datasource,
-        panelUrl
+        datasource
       );
     } catch(e) {
       appEvents.emit(
@@ -582,20 +592,21 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.render(this.seriesList);
   }
 
-  onAnalyticUnitAlertChange(analyticUnit: AnalyticUnit) {
-    this.analyticsController.toggleAnalyticUnitAlert(analyticUnit);
+  async onAnalyticUnitAlertChange(analyticUnit: AnalyticUnit) {
+    await this.analyticsController.toggleAnalyticUnitAlert(analyticUnit);
   }
 
-  onAnalyticUnitNameChange(analyticUnit: AnalyticUnit) {
-    this.analyticsController.fetchAnalyticUnitName(analyticUnit);
+  async onAnalyticUnitNameChange(analyticUnit: AnalyticUnit) {
+    await this.analyticsController.saveAnalyticUnit(analyticUnit);
+    this.refresh();
   }
 
-  onColorChange(id: AnalyticUnitId, deleted: boolean, value: string) {
+  async onColorChange(id: AnalyticUnitId, deleted: boolean, value: string) {
     if(id === undefined) {
       throw new Error('id is undefined');
     }
-    this.analyticsController.onAnalyticUnitColorChange(id, value, deleted);
-    this.render();
+    await this.analyticsController.onAnalyticUnitColorChange(id, value, deleted);
+    this.refresh();
   }
 
   async onRemove(id: AnalyticUnitId) {
@@ -603,7 +614,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       throw new Error('id is undefined');
     }
     await this.analyticsController.removeAnalyticUnit(id);
-    this.render();
+    this.refresh();
   }
 
   onCancelLabeling(id: AnalyticUnitId) {
@@ -650,7 +661,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   onToggleVisibility(id: AnalyticUnitId) {
     this.analyticsController.toggleVisibility(id);
-    this.render();
+    this.refresh();
   }
 
   private async _updatePanelInfo() {
@@ -658,7 +669,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     if(this.panel.datasource) {
       datasource = await this._getDatasourceByName(this.panel.datasource);
     }
-    
+
     const hasticDatasource = this.getHasticDatasource();
 
     let grafanaVersion = 'unknown';

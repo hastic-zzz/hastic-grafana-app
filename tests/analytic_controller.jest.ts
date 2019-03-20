@@ -10,7 +10,7 @@ describe('AnalyticController', function () {
     for (let color of ANALYTIC_UNIT_COLORS) {
       analyticController.createNew();
       expect(analyticController.newAnalyticUnit.labeledColor).toBe(color);
-      await analyticController.saveNew({} as MetricExpanded, {} as DatasourceRequest, '');
+      await analyticController.saveNew({} as MetricExpanded, {} as DatasourceRequest);
     }
   });
 
@@ -28,16 +28,16 @@ describe('AnalyticController', function () {
   it('should set different color to newly created Analytic Unit, afer NOT last AU was deleted', async function() {
     let auArray = analyticController.analyticUnits;
     analyticController.createNew();
-    await analyticController.saveNew({} as MetricExpanded, {} as DatasourceRequest, '');
-    expect(auArray[auArray.length - 2].panelObject.labeledColor).not.toBe(auArray[auArray.length - 1].panelObject.labeledColor);
+    await analyticController.saveNew({} as MetricExpanded, {} as DatasourceRequest);
+    expect(auArray[auArray.length - 2].serverObject.labeledColor).not.toBe(auArray[auArray.length - 1].serverObject.labeledColor);
   });
 
   it('should set different color to newly created Analytic Unit, after LAST AU was deleted', async function () {
     let auArray = analyticController.analyticUnits;
     auArray.splice(-1, 1);
     analyticController.createNew();
-    await analyticController.saveNew({} as MetricExpanded, {} as DatasourceRequest, '');
-    expect(auArray[auArray.length - 2].panelObject.labeledColor).not.toBe(auArray[auArray.length - 1].panelObject.labeledColor);
+    await analyticController.saveNew({} as MetricExpanded, {} as DatasourceRequest);
+    expect(auArray[auArray.length - 2].serverObject.labeledColor).not.toBe(auArray[auArray.length - 1].serverObject.labeledColor);
   });
 
   it('should change color on choosing from palette', function () {

@@ -25,7 +25,7 @@ analyticService.postNewItem = async function (
   return Promise.resolve(id.toString());
 }
 
-export const analyticController = new AnalyticController({}, new Emitter(), analyticService);
+export const analyticController = new AnalyticController('http://localhost:3000', '13Qdb1jmz', {}, new Emitter(), analyticService);
 
 jest.mock('../src/panel/graph_panel/partials/help_section.html', () => '');
 

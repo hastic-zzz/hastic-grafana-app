@@ -9,6 +9,7 @@ import { Threshold } from '../models/threshold';
 import { appEvents } from 'grafana/app/core/core';
 
 
+
 export class AnalyticService {
   private _isUp: boolean = false;
 
@@ -23,6 +24,14 @@ export class AnalyticService {
 
   async getAnalyticUnitTypes() {
     return this.get('/analyticUnits/types');
+  }
+
+  async getAnalyticUnits(panelId: string) {
+    const resp = await this.get('/analyticUnits/units', { panelId });
+    if(resp === undefined) {
+      return [];
+    }
+    return resp.analyticUnits;
   }
 
   async getThresholds(ids: AnalyticUnitId[]) {
@@ -41,10 +50,12 @@ export class AnalyticService {
     newItem: AnalyticUnit,
     metric: MetricExpanded,
     datasource: DatasourceRequest,
-    panelUrl: string
+    grafanaUrl: string,
+    panelId: string
   ): Promise<AnalyticUnitId> {
     const response = await this.post('/analyticUnits', {
-      panelUrl,
+      grafanaUrl,
+      panelId,
       type: newItem.type,
       name: newItem.name,
       metric: metric.toJSON(),
@@ -174,8 +185,7 @@ export class AnalyticService {
     });
   }
 
-  async updateAnalyticUnit(id: AnalyticUnitId, updateObj: any) {
-    updateObj.id = id;
+  async updateAnalyticUnit(updateObj: any) {
     return this.patch('/analyticUnits', updateObj);
   }
 

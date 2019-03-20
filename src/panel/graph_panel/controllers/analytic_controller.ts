@@ -49,16 +49,16 @@ export class AnalyticController {
   private _thresholds: Threshold[];
 
   constructor(
+    private _grafanaUrl: string,
+    private _panelId: string,
     private _panelObject: any,
     private _emitter: Emitter,
     private _analyticService?: AnalyticService,
   ) {
-    if(_panelObject.analyticUnits === undefined) {
-      _panelObject.analyticUnits = _panelObject.anomalyTypes || [];
-    }
     this._labelingDataAddedSegments = new SegmentArray<AnalyticSegment>();
     this._labelingDataRemovedSegments = new SegmentArray<AnalyticSegment>();
-    this._analyticUnitsSet = new AnalyticUnitsSet(this._panelObject.analyticUnits);
+    this._analyticUnitsSet = new AnalyticUnitsSet([]);
+    this.fetchAnalyticUnits();
     this._thresholds = [];
     this.updateThresholds();
   }
@@ -99,10 +99,10 @@ export class AnalyticController {
     }
   }
 
-  async saveNew(metric: MetricExpanded, datasource: DatasourceRequest, panelUrl: string) {
+  async saveNew(metric: MetricExpanded, datasource: DatasourceRequest) {
     this._savingNewAnalyticUnit = true;
     this._newAnalyticUnit.id = await this._analyticService.postNewItem(
-      this._newAnalyticUnit, metric, datasource, panelUrl
+      this._newAnalyticUnit, metric, datasource, this._grafanaUrl, this._panelId
     );
     if(this._newAnalyticUnit.detectorType === 'threshold') {
       await this.saveThreshold(this._newAnalyticUnit.id);
@@ -205,15 +205,17 @@ export class AnalyticController {
     return this._analyticUnitsSet.items;
   }
 
-  onAnalyticUnitColorChange(id: AnalyticUnitId, value: string, deleted: boolean) {
+  async onAnalyticUnitColorChange(id: AnalyticUnitId, value: string, deleted: boolean) {
     if(id === undefined) {
       throw new Error('id is undefined');
     }
+    const analyticUnit = this._analyticUnitsSet.byId(id);
     if(deleted) {
-      this._analyticUnitsSet.byId(id).deletedColor = value;
+      analyticUnit.deletedColor = value;
     } else {
-      this._analyticUnitsSet.byId(id).labeledColor = value;
+      analyticUnit.labeledColor = value;
     }
+    await this.saveAnalyticUnit(analyticUnit);
   }
 
   fetchAnalyticUnitsStatuses() {
@@ -366,23 +368,39 @@ export class AnalyticController {
     if(id === this._selectedAnalyticUnitId) {
       this.dropLabeling();
     }
-    this._analyticUnitsSet.removeItem(id);
     if(!silent) {
       await this._analyticService.removeAnalyticUnit(id);
     }
+    this._analyticUnitsSet.removeItem(id);
   }
 
   async toggleAnalyticUnitAlert(analyticUnit: AnalyticUnit): Promise<void> {
     analyticUnit.alert = analyticUnit.alert ? true : false;
+    // TODO: saveAnalyticUnit instead of specific method
     await this._analyticService.setAnalyticUnitAlert(analyticUnit);
   }
 
-  async fetchAnalyticUnitName(analyticUnit: AnalyticUnit): Promise<void> {
-    let updateObj = {
-      id: analyticUnit.id,
-      name: analyticUnit.name
+  async saveAnalyticUnit(analyticUnit: AnalyticUnit): Promise<void> {
+    if(analyticUnit.id === null || analyticUnit.id === undefined) {
+      throw new Error('Cannot save analytic unit without id');
     }
-    await this._analyticService.updateAnalyticUnit(analyticUnit.id, updateObj);
+
+    analyticUnit.saving = true;
+    await this._analyticService.updateAnalyticUnit(analyticUnit.serverObject);
+    analyticUnit.saving = false;
+  }
+
+  async getAnalyticUnits(): Promise<any[]> {
+    if(this._analyticService === undefined) {
+      return [];
+    }
+
+    return this._analyticService.getAnalyticUnits(this._panelId);
+  }
+
+  async fetchAnalyticUnits(): Promise<void> {
+    const units = await this.getAnalyticUnits();
+    this._analyticUnitsSet = new AnalyticUnitsSet(units);
   }
 
   async updateThresholds(): Promise<void> {
@@ -470,13 +488,14 @@ export class AnalyticController {
     return this._tempIdCounted.toString();
   }
 
-  public toggleVisibility(id: AnalyticUnitId, value?: boolean) {
-    var analyticUnit = this._analyticUnitsSet.byId(id);
+  public async toggleVisibility(id: AnalyticUnitId, value?: boolean) {
+    const analyticUnit = this._analyticUnitsSet.byId(id);
     if(value !== undefined) {
       analyticUnit.visible = value;
     } else {
       analyticUnit.visible = !analyticUnit.visible;
     }
+    await this.saveAnalyticUnit(analyticUnit);
   }
 
   public onAnalyticUnitDetectorChange(analyticUnitTypes: any) {
