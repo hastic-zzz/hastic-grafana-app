@@ -29,7 +29,7 @@ See also:
 * [hastic-server](https://github.com/hastic/hastic-server)
 * [Grafana >= 5.4.0](https://grafana.com/grafana/download)
 
-## Support and Consulting
+# Support and Consulting
 
 Commercial support, consulting, professional services — please send us your inquiry at ping@hastic.io
 
