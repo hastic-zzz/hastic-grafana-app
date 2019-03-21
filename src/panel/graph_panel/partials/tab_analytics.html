@@ -18,7 +18,7 @@
     </button>
   </div>
 
-  <div ng-if="ctrl.analyticsController.serverStatus === true && ctrl.analyticsController.analyticUnits !== undefined">
+  <div ng-if="ctrl.analyticsController.serverStatus === true && !ctrl.analyticsController.loading">
     <h5> Analytic Units </h5>
     <div class="editor-row">
       <div class="gf-form" ng-repeat="analyticUnit in ctrl.analyticsController.analyticUnits">
@@ -226,7 +226,7 @@
     <div class="gf-form" ng-show="ctrl.showHelp" ng-bind-html="ctrl.analyticsController.helpSectionText"></div>
   </div>
 
-  <div ng-if="ctrl.analyticsController.serverStatus === true && ctrl.analyticsController.analyticUnits === undefined">
+  <div ng-if="ctrl.analyticsController.serverStatus === true && ctrl.analyticsController.loading">
     <i class="fa fa-spinner fa-spin" /> Fetching analytic units...
   </div>
 </div>

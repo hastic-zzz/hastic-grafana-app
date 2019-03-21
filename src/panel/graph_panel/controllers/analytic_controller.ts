@@ -47,6 +47,7 @@ export class AnalyticController {
   private _currentMetric: MetricExpanded;
   private _currentDatasource: DatasourceRequest;
   private _thresholds: Threshold[];
+  private _loading = true;
 
   constructor(
     private _grafanaUrl: string,
@@ -57,12 +58,17 @@ export class AnalyticController {
   ) {
     this._labelingDataAddedSegments = new SegmentArray<AnalyticSegment>();
     this._labelingDataRemovedSegments = new SegmentArray<AnalyticSegment>();
+    this._analyticUnitsSet = new AnalyticUnitsSet([]);
     this.fetchAnalyticUnits();
     this._thresholds = [];
     this.updateThresholds();
   }
 
   get helpSectionText() { return text; }
+
+  get loading() {
+    return this._loading;
+  }
 
   getSegmentsSearcher(): AnalyticSegmentsSearcher {
     return this._segmentsSearcher.bind(this);
@@ -201,9 +207,6 @@ export class AnalyticController {
   }
 
   get analyticUnits(): AnalyticUnit[] {
-    if(this._analyticUnitsSet === undefined) {
-      return undefined;
-    }
     return this._analyticUnitsSet.items;
   }
 
@@ -221,16 +224,10 @@ export class AnalyticController {
   }
 
   fetchAnalyticUnitsStatuses() {
-    if(this.analyticUnits === undefined) {
-      return;
-    }
     this.analyticUnits.forEach(a => this._runStatusWaiter(a));
   }
 
   async fetchAnalyticUnitsSegments(from: number, to: number): Promise<void[]> {
-    if(this.analyticUnits === undefined) {
-      return [];
-    }
     if(!_.isNumber(+from)) {
       throw new Error('from isn`t number');
     }
@@ -294,9 +291,6 @@ export class AnalyticController {
       options.markings = [];
     }
 
-    if(this.analyticUnits === undefined) {
-      return;
-    }
     for(let i = 0; i < this.analyticUnits.length; i++) {
       const analyticUnit = this.analyticUnits[i];
       if(!analyticUnit.visible) {
@@ -412,6 +406,7 @@ export class AnalyticController {
   async fetchAnalyticUnits(): Promise<void> {
     const units = await this.getAnalyticUnits();
     this._analyticUnitsSet = new AnalyticUnitsSet(units);
+    this._loading = false;
     this.fetchAnalyticUnitsStatuses();
   }
 
