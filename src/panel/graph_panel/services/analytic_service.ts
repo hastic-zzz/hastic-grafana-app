@@ -6,6 +6,8 @@ import { AnalyticUnitId, AnalyticUnit, AnalyticSegment } from '../models/analyti
 import { HasticServerInfo, HasticServerInfoUnknown } from '../models/hastic_server_info';
 import { Threshold } from '../models/threshold';
 
+import { isHasticServerResponse, isSupportedServerVersion, SUPPORTED_SERVER_VERSION } from '../../../utlis';
+
 import { appEvents } from 'grafana/app/core/core';
 
 
@@ -23,7 +25,11 @@ export class AnalyticService {
   }
 
   async getAnalyticUnitTypes() {
-    return this.get('/analyticUnits/types');
+    const resp = await this.get('/analyticUnits/types');
+    if(resp === undefined) {
+      return {};
+    }
+    return resp;
   }
 
   async getAnalyticUnits(panelId: string) {
@@ -86,7 +92,15 @@ export class AnalyticService {
       this._isUp = false;
       return false;
     }
-    await this.get('/');
+    const response = await this.get('/');
+    if(!isHasticServerResponse(response)) {
+      this.displayWrongUrlAlert();
+      this._isUp = false;
+    }
+    if(!isSupportedServerVersion(response)) {
+      this.displayUnsupportedVersionAlert(response.packageVersion);
+      this._isUp = false;
+    }
     return this._isUp;
   }
 
@@ -203,17 +217,16 @@ export class AnalyticService {
       } else {
         requestObject.data = data;
       }
-      let response = await this.$http(requestObject);
+      const response = await this.$http(requestObject);
       this._isUp = true;
       return response.data;
     } catch(error) {
-      if(error.xhrStatus === 'error') {
+      if(error.xhrstatus === 'error' || error.status !== 200) {
         this.displayConnectionErrorAlert();
         this._isUp = false;
       } else {
         this._isUp = true;
       }
-      // throw error;
     }
   }
 
@@ -255,8 +268,28 @@ export class AnalyticService {
     appEvents.emit(
       'alert-error',
       [
-        'No connection to Hastic Datasource',
+        'No connection to Hastic Server',
         `Hastic Datasource URL: "${this._hasticDatasourceURL}"`,
+      ]
+    );
+  }
+
+  private displayWrongUrlAlert() {
+    appEvents.emit(
+      'alert-error',
+      [
+        'Please check Hastic Server URL',
+        `Something is working at "${this._hasticDatasourceURL}" but it's not Hastic Server`,
+      ]
+    );
+  }
+
+  private displayUnsupportedVersionAlert(actual: string) {
+    appEvents.emit(
+      'alert-error',
+      [
+        'Unsupported Hastic Server version',
+        `Hastic Server at "${this._hasticDatasourceURL}" has unsupported version (got ${actual}, should be ${SUPPORTED_SERVER_VERSION})`,
       ]
     );
   }

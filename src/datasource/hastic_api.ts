@@ -1,3 +1,5 @@
+import { isHasticServerResponse, isSupportedServerVersion, SUPPORTED_SERVER_VERSION } from '../utlis';
+
 import { BackendSrv } from 'grafana/app/core/services/backend_srv';
 
 
@@ -8,7 +10,7 @@ export default class HasticAPI {
     this.url = instanceSettings.url;
   }
 
-  get(url: string, params?: any) {
+  async get(url: string, params?: any) {
     return this._query('GET', url, params);
   }
 
@@ -25,6 +27,15 @@ export default class HasticAPI {
     }
 
     const response = await this.backendSrv.datasourceRequest(options);
-    return response.data;
+    const responseData = response.data;
+
+    if(!isHasticServerResponse(responseData)) {
+      throw new Error(`Something is working at "${url}" but it's not Hastic Server`);
+    }
+    if(!isSupportedServerVersion(responseData)) {
+      throw new Error(`Hastic Server at "${url}" has unsupported version (got ${responseData.packageVersion}, should be ${SUPPORTED_SERVER_VERSION})`);
+    }
+
+    return responseData;
   }
 }
