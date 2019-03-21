@@ -47,6 +47,7 @@ export class AnalyticController {
   private _currentMetric: MetricExpanded;
   private _currentDatasource: DatasourceRequest;
   private _thresholds: Threshold[];
+  private _loading = true;
 
   constructor(
     private _grafanaUrl: string,
@@ -64,6 +65,10 @@ export class AnalyticController {
   }
 
   get helpSectionText() { return text; }
+
+  get loading() {
+    return this._loading;
+  }
 
   getSegmentsSearcher(): AnalyticSegmentsSearcher {
     return this._segmentsSearcher.bind(this);
@@ -90,7 +95,7 @@ export class AnalyticController {
     this._newAnalyticUnit = new AnalyticUnit();
     this._creatingNewAnalyticType = true;
     this._savingNewAnalyticUnit = false;
-    if (this.analyticUnits.length === 0) {
+    if(this.analyticUnits.length === 0) {
       this._newAnalyticUnit.labeledColor = ANALYTIC_UNIT_COLORS[0];
     } else {
       let colorIndex = ANALYTIC_UNIT_COLORS.indexOf(_.last(this.analyticUnits).labeledColor) + 1;
@@ -229,7 +234,7 @@ export class AnalyticController {
     if(!_.isNumber(+to)) {
       throw new Error('to isn`t number');
     }
-    var tasks = this.analyticUnits.map(a => this.fetchSegments(a, from, to));
+    const tasks = this.analyticUnits.map(a => this.fetchSegments(a, from, to));
     return Promise.all(tasks);
   }
 
@@ -286,7 +291,7 @@ export class AnalyticController {
       options.markings = [];
     }
 
-    for(var i = 0; i < this.analyticUnits.length; i++) {
+    for(let i = 0; i < this.analyticUnits.length; i++) {
       const analyticUnit = this.analyticUnits[i];
       if(!analyticUnit.visible) {
         continue;
@@ -401,6 +406,8 @@ export class AnalyticController {
   async fetchAnalyticUnits(): Promise<void> {
     const units = await this.getAnalyticUnits();
     this._analyticUnitsSet = new AnalyticUnitsSet(units);
+    this._loading = false;
+    this.fetchAnalyticUnitsStatuses();
   }
 
   async updateThresholds(): Promise<void> {

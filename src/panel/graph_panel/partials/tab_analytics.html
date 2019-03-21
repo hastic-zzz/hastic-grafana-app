@@ -18,7 +18,7 @@
     </button>
   </div>
 
-  <div ng-if="ctrl.analyticsController.serverStatus === true">
+  <div ng-if="ctrl.analyticsController.serverStatus === true && !ctrl.analyticsController.loading">
     <h5> Analytic Units </h5>
     <div class="editor-row">
       <div class="gf-form" ng-repeat="analyticUnit in ctrl.analyticsController.analyticUnits">
@@ -88,7 +88,7 @@
         <select class="gf-form-input width-12"
           ng-model="ctrl.analyticsController.labelingMode"
           ng-options="type.value as type.name for type in [
-            { name:'Label Positive', value: 'LABELING' }, 
+            { name:'Label Positive', value: 'LABELING' },
             { name:'Label Negative', value: 'DELETING' },
             { name:'Unlabel', value: 'UNLABELING' }
           ]"
@@ -222,8 +222,12 @@
         <i class="fa fa-caret-right" ng-hide="ctrl.showHelp"></i>
       </button>
     </div>
+
+    <div class="gf-form" ng-show="ctrl.showHelp" ng-bind-html="ctrl.analyticsController.helpSectionText"></div>
+  </div>
+
+  <div ng-if="ctrl.analyticsController.serverStatus === true && ctrl.analyticsController.loading">
+    <i class="fa fa-spinner fa-spin" /> Fetching analytic units...
   </div>
 </div>
-
-<div class="gf-form" ng-show="ctrl.showHelp" ng-bind-html="ctrl.analyticsController.helpSectionText"></div>
 
