@@ -1,5 +1,7 @@
 import url from 'url-parse';
+import * as _ from 'lodash';
 
+export const SUPPORTED_SERVER_VERSION = '0.3.1-beta';
 
 export function normalizeUrl(inputUrl: string) {
   if(!inputUrl) {
@@ -27,4 +29,21 @@ export function normalizeUrl(inputUrl: string) {
     finalUrl = finalUrl + urlObj.pathname;
   }
   return finalUrl;
+}
+
+export function isHasticServerResponse(response: any) {
+  if(response === undefined) {
+    return false;
+  }
+  if(!_.has(response, 'server')) {
+    return false;
+  }
+  return true;
+}
+
+export function isSupportedServerVersion(response: any) {
+  if(response.packageVersion !== SUPPORTED_SERVER_VERSION) {
+    return false;
+  }
+  return true;
 }

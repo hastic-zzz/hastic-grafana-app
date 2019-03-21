@@ -17,7 +17,6 @@ export class HasticDatasource {
   async testDatasource() {
     try {
       await this.hastic.get('/');
-      // TODO: check if it is hastic
       return {
         status: 'success', title: 'Success',
         message: 'Datasource is working'
@@ -26,7 +25,7 @@ export class HasticDatasource {
       console.error(err);
       return {
         status: 'error', title: 'Error',
-        message: 'Hastic connection error'
+        message: err.message
       };
     }
   }
