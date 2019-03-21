@@ -57,7 +57,6 @@ export class AnalyticController {
   ) {
     this._labelingDataAddedSegments = new SegmentArray<AnalyticSegment>();
     this._labelingDataRemovedSegments = new SegmentArray<AnalyticSegment>();
-    this._analyticUnitsSet = new AnalyticUnitsSet([]);
     this.fetchAnalyticUnits();
     this._thresholds = [];
     this.updateThresholds();
@@ -90,7 +89,7 @@ export class AnalyticController {
     this._newAnalyticUnit = new AnalyticUnit();
     this._creatingNewAnalyticType = true;
     this._savingNewAnalyticUnit = false;
-    if (this.analyticUnits.length === 0) {
+    if(this.analyticUnits.length === 0) {
       this._newAnalyticUnit.labeledColor = ANALYTIC_UNIT_COLORS[0];
     } else {
       let colorIndex = ANALYTIC_UNIT_COLORS.indexOf(_.last(this.analyticUnits).labeledColor) + 1;
@@ -202,6 +201,9 @@ export class AnalyticController {
   }
 
   get analyticUnits(): AnalyticUnit[] {
+    if(this._analyticUnitsSet === undefined) {
+      return undefined;
+    }
     return this._analyticUnitsSet.items;
   }
 
@@ -219,17 +221,23 @@ export class AnalyticController {
   }
 
   fetchAnalyticUnitsStatuses() {
+    if(this.analyticUnits === undefined) {
+      return;
+    }
     this.analyticUnits.forEach(a => this._runStatusWaiter(a));
   }
 
   async fetchAnalyticUnitsSegments(from: number, to: number): Promise<void[]> {
+    if(this.analyticUnits === undefined) {
+      return [];
+    }
     if(!_.isNumber(+from)) {
       throw new Error('from isn`t number');
     }
     if(!_.isNumber(+to)) {
       throw new Error('to isn`t number');
     }
-    var tasks = this.analyticUnits.map(a => this.fetchSegments(a, from, to));
+    const tasks = this.analyticUnits.map(a => this.fetchSegments(a, from, to));
     return Promise.all(tasks);
   }
 
@@ -286,7 +294,10 @@ export class AnalyticController {
       options.markings = [];
     }
 
-    for(var i = 0; i < this.analyticUnits.length; i++) {
+    if(this.analyticUnits === undefined) {
+      return;
+    }
+    for(let i = 0; i < this.analyticUnits.length; i++) {
       const analyticUnit = this.analyticUnits[i];
       if(!analyticUnit.visible) {
         continue;
@@ -401,6 +412,7 @@ export class AnalyticController {
   async fetchAnalyticUnits(): Promise<void> {
     const units = await this.getAnalyticUnits();
     this._analyticUnitsSet = new AnalyticUnitsSet(units);
+    this.fetchAnalyticUnitsStatuses();
   }
 
   async updateThresholds(): Promise<void> {
