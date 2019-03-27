@@ -203,12 +203,12 @@ class GraphCtrl extends MetricsPanelCtrl {
       const hasticDatasource = _.find(this._hasticDatasources, { id: hasticDatasourceId });
       let url = hasticDatasource.url;
       if(hasticDatasource.access === 'proxy') {
-        url = `/api/datasources/proxy/${hasticDatasource.id}`
+        url = `api/datasources/proxy/${hasticDatasource.id}`;
       }
       return {
         url,
         name: hasticDatasource.name
-      }
+      };
     }
     return undefined;
   }
@@ -699,7 +699,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       throw new Error('Trying to get datasource with NULL name');
     }
     if(this._datasources[name] === undefined) {
-      const datasource = await this.backendSrv.get(`/api/datasources/name/${name}`);
+      const datasource = await this.backendSrv.get(`api/datasources/name/${name}`);
       return datasource;
     } else {
       return this._datasources[name];
@@ -707,7 +707,7 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   private async _fetchHasticDatasources() {
-    this._hasticDatasources = await this.backendSrv.get('/api/datasources');
+    this._hasticDatasources = await this.backendSrv.get('api/datasources');
     this._hasticDatasources = this._hasticDatasources.filter(ds => ds.type === 'corpglory-hastic-datasource');
     this.$scope.$digest();
   }
