@@ -203,12 +203,12 @@ class GraphCtrl extends MetricsPanelCtrl {
       const hasticDatasource = _.find(this._hasticDatasources, { id: hasticDatasourceId });
       let url = hasticDatasource.url;
       if(hasticDatasource.access === 'proxy') {
-        url = `api/datasources/proxy/${hasticDatasource.id}`
+        url = `api/datasources/proxy/${hasticDatasource.id}`;
       }
       return {
         url,
         name: hasticDatasource.name
-      }
+      };
     }
     return undefined;
   }
