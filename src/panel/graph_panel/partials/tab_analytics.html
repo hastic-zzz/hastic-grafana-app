@@ -12,7 +12,7 @@
 <div class="gf-form">
   <div class="gf-form-button-row" ng-if="ctrl.analyticsController.serverStatus === false">
     <h5>Hastic server at "{{ctrl.backendURL}}" is not available</h5>
-    <button class="btn btn-inverse" ng-click="ctrl.runBackendConnectivityCheck()">
+    <button class="btn btn-inverse" ng-click="ctrl.runDatasourceConnectivityCheck()">
       <i class="fa fa-plug"></i>
       Reconnect to Hastic server
     </button>
