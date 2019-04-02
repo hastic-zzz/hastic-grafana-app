@@ -158,6 +158,9 @@ class GraphCtrl extends MetricsPanelCtrl {
     _.defaults(this.panel.legend, this.panelDefaults.legend);
     _.defaults(this.panel.xaxis, this.panelDefaults.xaxis);
 
+    // because of https://github.com/hastic/hastic-grafana-app/issues/162
+    this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
+
     const grafanaUrlRegex = /^(.+)\/d/;
     const parsedUrl = window.location.href.match(grafanaUrlRegex);
     if(parsedUrl !== null) {
@@ -255,7 +258,6 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.events.on('data-error', this.onDataError.bind(this));
     this.events.on('data-snapshot-load', this.onDataSnapshotLoad.bind(this));
     this.events.on('init-panel-actions', this.onInitPanelActions.bind(this));
-    this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
 
     this.events.on('analytic-unit-status-change', async (analyticUnit: AnalyticUnit) => {
       if(analyticUnit === undefined) {
