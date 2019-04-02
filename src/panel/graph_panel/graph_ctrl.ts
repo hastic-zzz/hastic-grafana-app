@@ -315,7 +315,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.processor = new DataProcessor(this.panel);
 
     await this._fetchHasticDatasources();
-    let hasticDatasource = this.getHasticDatasource();
+    const hasticDatasource = this.getHasticDatasource();
     if(hasticDatasource === undefined) {
       delete this.analyticService;
     } else {
@@ -682,7 +682,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       grafanaUrl: window.location.host,
       datasourceName: datasource === undefined ? 'unknown' : datasource.name,
       datasourceType: datasource === undefined ? 'unknown' : datasource.type,
-      hasticDatasourceName: datasource === undefined ? 'unknown' : hasticDatasource.name,
+      hasticDatasourceName: hasticDatasource === undefined || datasource === undefined ? 'unknown' : hasticDatasource.name,
       hasticDatasourceUrl: hasticDatasource === undefined ? 'unknown' : hasticDatasource.url
     };
   }

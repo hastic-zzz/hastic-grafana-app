@@ -96,8 +96,7 @@ export class AnalyticService {
     if(!isHasticServerResponse(response)) {
       this.displayWrongUrlAlert();
       this._isUp = false;
-    }
-    if(!isSupportedServerVersion(response)) {
+    } else if(!isSupportedServerVersion(response)) {
       this.displayUnsupportedVersionAlert(response.packageVersion);
       this._isUp = false;
     }
