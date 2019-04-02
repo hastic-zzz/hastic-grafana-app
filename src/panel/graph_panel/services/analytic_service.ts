@@ -10,6 +10,7 @@ import { isHasticServerResponse, isSupportedServerVersion, SUPPORTED_SERVER_VERS
 
 import { appEvents } from 'grafana/app/core/core';
 
+import * as _ from 'lodash';
 
 
 export class AnalyticService {
@@ -202,8 +203,11 @@ export class AnalyticService {
     return this.patch('/analyticUnits', updateObj);
   }
 
-  async runDetect(id: AnalyticUnitId) {
-    return this.post('/analyticUnits/detect', { id });
+  async runDetect(ids: AnalyticUnitId | AnalyticUnitId[]) {
+    if(!_.isArray(ids)) {
+      ids = [ids];
+    }
+    return this.post('/analyticUnits/detect', { ids });
   }
 
   private async _analyticRequest(method: string, url: string, data?: any) {

@@ -273,12 +273,15 @@ export class AnalyticController {
     return newIds;
   }
 
-  redetectAll() {
-    this.analyticUnits.forEach(a => {
-      a.segments.clear();
-      this._runStatusWaiter(a);
-      this._analyticService.runDetect(a.id);
+  async redetectAll() {
+    this.analyticUnits.forEach(unit => {
+      unit.segments.clear();
+      unit.status = undefined;
     });
+    const ids = this.analyticUnits.map(analyticUnit => analyticUnit.id);
+    await this._analyticService.runDetect(ids);
+
+    _.each(this.analyticUnits, analyticUnit => this._runStatusWaiter(analyticUnit));
   }
 
   // TODO: move to renderer
