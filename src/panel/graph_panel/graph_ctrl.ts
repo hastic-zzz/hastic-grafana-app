@@ -638,7 +638,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.refresh();
     const datasource = await this._getDatasourceRequest();
     const metric = new MetricExpanded(this.panel.datasource, this.panel.targets);
-    await this.analyticsController.toggleUnitTypeLabelingMode(id, metric, datasource);
+    await this.analyticsController.toggleAnalyticUnitLabelingMode(id, metric, datasource);
     this.$scope.$digest();
     this.render();
   }

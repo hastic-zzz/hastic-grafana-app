@@ -115,9 +115,6 @@ export class AnalyticController {
     this._analyticUnitsSet.addItem(this._newAnalyticUnit);
     this._creatingNewAnalyticType = false;
     this._savingNewAnalyticUnit = false;
-    if(this._newAnalyticUnit.detectorType !== 'threshold') {
-      this._runStatusWaiter(this._newAnalyticUnit);
-    }
   }
 
   get creatingNew() { return this._creatingNewAnalyticType; }
@@ -134,7 +131,7 @@ export class AnalyticController {
     return this._analyticUnitsSet.byId(this._selectedAnalyticUnitId);
   }
 
-  async toggleUnitTypeLabelingMode(id: AnalyticUnitId, metric: MetricExpanded, datasource: DatasourceRequest) {
+  async toggleAnalyticUnitLabelingMode(id: AnalyticUnitId, metric: MetricExpanded, datasource: DatasourceRequest) {
     this._currentMetric = metric;
     this._currentDatasource = datasource;
 
@@ -148,7 +145,6 @@ export class AnalyticController {
     this._selectedAnalyticUnitId = id;
     this.labelingUnit.selected = true;
     this.toggleLabelingMode(LabelingMode.LABELING);
-    this.toggleVisibility(id, true);
   }
 
   async disableLabeling() {
