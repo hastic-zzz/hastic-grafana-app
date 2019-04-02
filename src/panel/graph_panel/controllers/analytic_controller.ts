@@ -276,7 +276,7 @@ export class AnalyticController {
   async redetectAll() {
     this.analyticUnits.forEach(unit => {
       unit.segments.clear();
-      unit.status = undefined;
+      unit.status = null;
     });
     const ids = this.analyticUnits.map(analyticUnit => analyticUnit.id);
     await this._analyticService.runDetect(ids);
