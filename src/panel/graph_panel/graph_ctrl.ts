@@ -253,6 +253,8 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.$graphElem = $(elem[0]).find('#graphPanel');
     this.$legendElem = $(elem[0]).find('#graphLegend');
 
+    this.onHasticDatasourceChange();
+
     this.events.on('render', this.onRender.bind(this));
     this.events.on('data-received', this.onDataReceived.bind(this));
     this.events.on('data-error', this.onDataError.bind(this));
@@ -287,8 +289,6 @@ class GraphCtrl extends MetricsPanelCtrl {
         type: undefined
       };
     });
-
-    await this.onHasticDatasourceChange();
   }
 
   onInitEditMode() {
