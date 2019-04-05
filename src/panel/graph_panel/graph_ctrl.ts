@@ -161,7 +161,6 @@ class GraphCtrl extends MetricsPanelCtrl {
     // because of https://github.com/hastic/hastic-grafana-app/issues/162
     this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
 
-
     const grafanaUrlRegex = /^(.+)\/d/;
     const parsedUrl = window.location.href.match(grafanaUrlRegex);
     if(parsedUrl !== null) {
@@ -171,6 +170,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
 
     this._panelId = `${this.dashboard.uid}/${this.panel.id}`;
+    this._datasources = {};
   }
 
   rebindKeys() {
@@ -201,6 +201,9 @@ class GraphCtrl extends MetricsPanelCtrl {
     const hasticDatasourceId = this.panel.hasticDatasource;
     if(hasticDatasourceId !== undefined && hasticDatasourceId !== null) {
       const hasticDatasource = _.find(this._hasticDatasources, { id: hasticDatasourceId });
+      if(hasticDatasource === undefined) {
+        return undefined;
+      }
       let url = hasticDatasource.url;
       if(hasticDatasource.access === 'proxy') {
         url = `api/datasources/proxy/${hasticDatasource.id}`;
@@ -247,8 +250,6 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   async link(scope, elem, attrs, ctrl) {
-    this._datasources = {};
-
     this.$graphElem = $(elem[0]).find('#graphPanel');
     this.$legendElem = $(elem[0]).find('#graphLegend');
 
@@ -314,7 +315,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.processor = new DataProcessor(this.panel);
 
     await this._fetchHasticDatasources();
-    let hasticDatasource = this.hasticDatasource;
+    const hasticDatasource = this.getHasticDatasource();
     if(hasticDatasource === undefined) {
       delete this.analyticService;
     } else {
@@ -638,7 +639,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.refresh();
     const datasource = await this._getDatasourceRequest();
     const metric = new MetricExpanded(this.panel.datasource, this.panel.targets);
-    await this.analyticsController.toggleUnitTypeLabelingMode(id, metric, datasource);
+    await this.analyticsController.toggleAnalyticUnitLabelingMode(id, metric, datasource);
     this.$scope.$digest();
     this.render();
   }
@@ -681,7 +682,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       grafanaUrl: window.location.host,
       datasourceName: datasource === undefined ? 'unknown' : datasource.name,
       datasourceType: datasource === undefined ? 'unknown' : datasource.type,
-      hasticDatasourceName: datasource === undefined ? 'unknown' : hasticDatasource.name,
+      hasticDatasourceName: hasticDatasource === undefined || datasource === undefined ? 'unknown' : hasticDatasource.name,
       hasticDatasourceUrl: hasticDatasource === undefined ? 'unknown' : hasticDatasource.url
     };
   }

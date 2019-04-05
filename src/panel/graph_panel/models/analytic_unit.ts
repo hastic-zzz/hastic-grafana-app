@@ -120,7 +120,8 @@ export class AnalyticUnit {
       value !== 'READY' &&
       value !== 'LEARNING' &&
       value !== 'PENDING' &&
-      value !== 'FAILED'
+      value !== 'FAILED' &&
+      value !== null
     ) {
       throw new Error('Unsupported status value: ' + value);
     }

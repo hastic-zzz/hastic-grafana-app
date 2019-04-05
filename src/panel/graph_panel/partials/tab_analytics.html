@@ -159,6 +159,7 @@
         </label>
 
         <label>
+          <i ng-if="analyticUnit.status === 'READY'" class="grafana-tip fa fa-check-circle ng-scope" bs-tooltip="'Ready'"></i>
           <i ng-if="analyticUnit.status === 'LEARNING'" class="grafana-tip fa fa-leanpub ng-scope" bs-tooltip="'Learning'"></i>
           <i ng-if="analyticUnit.status === 'PENDING'" class="grafana-tip fa fa-list-ul ng-scope" bs-tooltip="'Pending'"></i>
           <i ng-if="analyticUnit.status === 'FAILED'" class="grafana-tip fa fa-exclamation-circle ng-scope" bs-tooltip="'Error: ' + analyticUnit.error"></i>
