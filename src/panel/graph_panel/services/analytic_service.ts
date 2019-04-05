@@ -221,7 +221,7 @@ export class AnalyticService {
       this._isUp = true;
       return response.data;
     } catch(error) {
-      if(error.xhrstatus === 'error') {
+      if(error.xhrstatus !== 'complete') {
         this.displayConnectionErrorAlert();
         this._isUp = false;
       } else {
