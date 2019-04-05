@@ -224,9 +224,9 @@ export class AnalyticService {
       this._isUp = true;
       return response.data;
     } catch(error) {
-      // xhrstatus may be one of: ('complete', 'error', 'timeout' or 'abort')
+      // xhrStatus may be one of: ('complete', 'error', 'timeout' or 'abort')
       // See: https://github.com/angular/angular.js/blob/55075b840c9194b8524627a293d6166528b9a1c2/src/ng/http.js#L919-L920
-      if(error.xhrstatus !== 'complete') {
+      if(error.xhrStatus !== 'complete') {
         this.displayConnectionErrorAlert();
         this._isUp = false;
       } else {
