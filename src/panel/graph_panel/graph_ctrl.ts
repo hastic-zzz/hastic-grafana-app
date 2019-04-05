@@ -197,7 +197,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.rebindKeys();
   }
 
-  getHasticDatasource(): { url: string, name: string } | undefined {
+  get hasticDatasource(): { url: string, name: string } | undefined {
     const hasticDatasourceId = this.panel.hasticDatasource;
     if(hasticDatasourceId !== undefined && hasticDatasourceId !== null) {
       const hasticDatasource = _.find(this._hasticDatasources, { id: hasticDatasourceId });
@@ -671,7 +671,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       datasource = await this._getDatasourceByName(this.panel.datasource);
     }
 
-    const hasticDatasource = this.getHasticDatasource();
+    const hasticDatasource = this.hasticDatasource;
 
     let grafanaVersion = 'unknown';
     if(_.has(window, 'grafanaBootData.settings.buildInfo.version')) {
