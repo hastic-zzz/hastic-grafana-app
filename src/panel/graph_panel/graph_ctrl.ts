@@ -315,7 +315,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.processor = new DataProcessor(this.panel);
 
     await this._fetchHasticDatasources();
-    const hasticDatasource = this.getHasticDatasource();
+    const hasticDatasource = this.hasticDatasource;
     if(hasticDatasource === undefined) {
       delete this.analyticService;
     } else {
