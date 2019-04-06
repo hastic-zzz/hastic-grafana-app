@@ -17,7 +17,7 @@ function $http() {
 } 
 
 const analyticService = new AnalyticService('', $http);
-analyticService.postNewItem = async function (
+analyticService.postNewAnalyticUnit = async function (
   newItem: AnalyticUnit, metric: MetricExpanded, 
   datasource: DatasourceRequest, panelUrl: string
 ): Promise<AnalyticUnitId> {
