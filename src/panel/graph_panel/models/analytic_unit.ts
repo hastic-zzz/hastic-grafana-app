@@ -52,7 +52,7 @@ export class AnalyticUnit {
       alert: false,
       id: null,
       visible: true
-    }
+    };
 
     if(_serverObject === undefined) {
       this._serverObject = defaults;

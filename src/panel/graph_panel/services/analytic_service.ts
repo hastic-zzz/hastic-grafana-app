@@ -53,8 +53,8 @@ export class AnalyticService {
     return this.patch('/threshold', threshold);
   }
 
-  async postNewItem(
-    newItem: AnalyticUnit,
+  async postNewAnalyticUnit(
+    analyticUnit: AnalyticUnit,
     metric: MetricExpanded,
     datasource: DatasourceRequest,
     grafanaUrl: string,
@@ -63,8 +63,14 @@ export class AnalyticService {
     const response = await this.post('/analyticUnits', {
       grafanaUrl,
       panelId,
-      type: newItem.type,
-      name: newItem.name,
+      // TODO: serialize analytic unit
+      name: analyticUnit.name,
+      type: analyticUnit.type,
+      alert: analyticUnit.alert,
+      labeledColor: analyticUnit.labeledColor,
+      deletedColor: analyticUnit.deletedColor,
+      detectorType: analyticUnit.detectorType,
+      visible: analyticUnit.visible,
       metric: metric.toJSON(),
       datasource
     });
