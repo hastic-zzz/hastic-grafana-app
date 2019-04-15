@@ -696,15 +696,19 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   private async _getDatasourceByName(name: string) {
-    if(name === null) {
-      throw new Error('Trying to get datasource with NULL name');
-    }
     if(this._datasources[name] === undefined) {
-      const datasource = await this.backendSrv.get(`api/datasources/name/${name}`);
-      return datasource;
-    } else {
-      return this._datasources[name];
+      if(name === null) {
+        // Default datasource has null name
+        const datasources = await this.backendSrv.get(`api/datasources`);
+        this._datasources[name] = _.find(datasources, datasource => datasource.isDefault);
+        if(this._datasources[name] === undefined) {
+          throw new Error('No default datasource found');
+        }
+      } else {
+        this._datasources[name] = await this.backendSrv.get(`api/datasources/name/${name}`);
+      }
     }
+    return this._datasources[name];
   }
 
   private async _fetchHasticDatasources() {
