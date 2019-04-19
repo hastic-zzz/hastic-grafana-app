@@ -5,6 +5,7 @@ import { SegmentsSet } from '../models/segment_set';
 import { AnalyticUnitId, AnalyticUnit, AnalyticSegment } from '../models/analytic_unit';
 import { HasticServerInfo, HasticServerInfoUnknown } from '../models/hastic_server_info';
 import { Threshold } from '../models/threshold';
+import { DetectionStatus } from '../models/detection_status';
 
 import { isHasticServerResponse, isSupportedServerVersion, SUPPORTED_SERVER_VERSION } from '../../../utlis';
 
@@ -133,6 +134,18 @@ export class AnalyticService {
       throw new Error('Server didn`t send addedIds');
     }
     return data.addedIds as SegmentId[];
+  }
+
+  async getDetectionStatus(id: AnalyticUnitId, from: number, to: number): Promise<DetectionStatus[]> {
+    if(id === undefined) {
+      throw new Error('id is undefined');
+    }
+    let payload: any = { id, from, to };
+    const data = await this.get('/detectionStatus', payload);
+    if(data.timeranges === undefined) {
+      throw new Error('Server didn`t return timeranges array');
+    }
+    return data.timeranges;
   }
 
   async getSegments(id: AnalyticUnitId, from?: number, to?: number): Promise<AnalyticSegment[]> {

@@ -223,6 +223,28 @@ export class AnalyticController {
     this.analyticUnits.forEach(a => this._runStatusWaiter(a));
   }
 
+  async fetchAnalyticUnitsDetectionStatuses(from: number, to: number): Promise<void[]> {
+    if(!_.isNumber(+from)) {
+      throw new Error('from isn`t number');
+    }
+    if(!_.isNumber(+to)) {
+      throw new Error('to isn`t number');
+    }
+    const tasks = this.analyticUnits
+      .map(analyticUnit => this.fetchDetectionStatus(analyticUnit, from, to));
+    return Promise.all(tasks);
+  }
+
+  async fetchDetectionStatus(analyticUnit: AnalyticUnit, from: number, to: number): Promise<void> {
+    if(!_.isNumber(+from)) {
+      throw new Error('from isn`t number');
+    }
+    if(!_.isNumber(+to)) {
+      throw new Error('to isn`t number');
+    }
+    analyticUnit.detectionStatuses = await this._analyticService.getDetectionStatus(analyticUnit.id, from, to);
+  }
+
   async fetchAnalyticUnitsSegments(from: number, to: number): Promise<void[]> {
     if(!_.isNumber(+from)) {
       throw new Error('from isn`t number');
