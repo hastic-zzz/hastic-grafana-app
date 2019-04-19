@@ -139,6 +139,23 @@
             <i class="fa fa-eye-slash"></i>
           </a>
         </label>
+        
+        <label class="gf-form-label" ng-if="analyticUnit.status === 'READY' && analyticUnit.visible">
+          <a
+            class="pointer"
+            ng-click="ctrl.onToggleInspect(analyticUnit.id)"
+            ng-if="!analyticUnit.inspect"
+          >
+            Inspect
+          </a>
+          <a
+            class="pointer"
+            ng-click="ctrl.onToggleInspect(analyticUnit.id)"
+            ng-if="analyticUnit.inspect"
+          >
+            Disable Inspect
+          </a>
+        </label>
 
         <label class="gf-form-label">
           <a
@@ -164,7 +181,6 @@
           <i ng-if="analyticUnit.status === 'PENDING'" class="grafana-tip fa fa-list-ul ng-scope" bs-tooltip="'Pending'"></i>
           <i ng-if="analyticUnit.status === 'FAILED'" class="grafana-tip fa fa-exclamation-circle ng-scope" bs-tooltip="'Error: ' + analyticUnit.error"></i>
         </label>
-
       </div>
     </div>
 

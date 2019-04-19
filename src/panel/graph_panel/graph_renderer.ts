@@ -338,7 +338,6 @@ export class GraphRenderer {
     this._prepareXAxis(this.panel);
     this._configureYAxisOptions(this.data);
     // this.eventManager.addFlotEvents(this.annotations, this.flotOptions);
-    this._analyticController.updateFlotEvents(this.contextSrv.isEditor, this.flotOptions);
 
     this.sortedSeries = this._sortSeries(this.data, this.panel);
     this._callPlot(true);
@@ -441,12 +440,18 @@ export class GraphRenderer {
       this.ctrl.renderingCompleted();
     }
   }
+  
+  private _drawAnalyticHook(plot: any) {
+    // We call updateFlotEvents from hook cause we need access to min Y axis value
+    this._analyticController.updateFlotEvents(this.contextSrv.isEditor, plot)
+  }
 
   private _buildFlotOptions(panel) {
     const stack = panel.stack ? true : null;
     this.flotOptions = {
       hooks: {
         draw: [this._drawHook.bind(this)],
+        drawBackground: [this._drawAnalyticHook.bind(this)],
         processOffset: [this._processOffsetHook.bind(this)],
       },
       legend: { show: false },

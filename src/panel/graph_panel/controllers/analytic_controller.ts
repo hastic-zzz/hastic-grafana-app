@@ -14,6 +14,7 @@ import { SegmentsSet } from '../models/segment_set';
 import { SegmentArray } from '../models/segment_array';
 import { HasticServerInfo, HasticServerInfoUnknown } from '../models/hastic_server_info';
 import { Threshold, Condition } from '../models/threshold';
+import { DetectionState } from '../models/detection_status';
 import text from '../partials/help_section.html';
 
 import {
@@ -223,6 +224,28 @@ export class AnalyticController {
     this.analyticUnits.forEach(a => this._runStatusWaiter(a));
   }
 
+  async fetchAnalyticUnitsDetectionStatuses(from: number, to: number): Promise<void[]> {
+    if(!_.isNumber(+from)) {
+      throw new Error('from isn`t number');
+    }
+    if(!_.isNumber(+to)) {
+      throw new Error('to isn`t number');
+    }
+    const tasks = this.analyticUnits
+      .map(analyticUnit => this.fetchDetectionStatus(analyticUnit, from, to));
+    return Promise.all(tasks);
+  }
+
+  async fetchDetectionStatus(analyticUnit: AnalyticUnit, from: number, to: number): Promise<void> {
+    if(!_.isNumber(+from)) {
+      throw new Error('from isn`t number');
+    }
+    if(!_.isNumber(+to)) {
+      throw new Error('to isn`t number');
+    }
+    analyticUnit.detectionStatuses = await this._analyticService.getDetectionStatus(analyticUnit.id, from, to);
+  }
+
   async fetchAnalyticUnitsSegments(from: number, to: number): Promise<void[]> {
     if(!_.isNumber(+from)) {
       throw new Error('from isn`t number');
@@ -285,7 +308,9 @@ export class AnalyticController {
   }
 
   // TODO: move to renderer
-  updateFlotEvents(isEditMode: boolean, options: any): void {
+  updateFlotEvents(isEditMode: boolean, plot: any): void {
+    // We get a reference to flot options so we can change it and it'll be rendered
+    let options = plot.getOptions();
     if(options.grid.markings === undefined) {
       options.markings = [];
     }
@@ -341,6 +366,36 @@ export class AnalyticController {
         options.grid.markings.push({
           xaxis: { from: expanded.to, to: expanded.to },
           color: segmentBorderColor
+        });
+      });
+
+      if(!analyticUnit.inspect) {
+        return;
+      }
+      const detectionStatuses = analyticUnit.detectionStatuses;
+      if(detectionStatuses === undefined) {
+        return;
+      }
+      const minValue = _.min(_.map(plot.getYAxes(), axis => axis.min));
+      detectionStatuses.forEach(detectionStatus => {
+        let underlineColor;
+        switch(detectionStatus.state) {
+          case DetectionState.READY:
+            underlineColor = 'green'
+            break;
+          case DetectionState.RUNNING:
+            underlineColor = 'yellow'
+            break;
+          case DetectionState.FAILED:
+            underlineColor = 'red'
+            break;
+          default:
+            break;
+        }
+        options.grid.markings.push({
+          xaxis: { from: detectionStatus.from, to: detectionStatus.to },
+          color: underlineColor,
+          yaxis: { from: minValue, to: minValue }
         });
       });
     }
@@ -502,6 +557,14 @@ export class AnalyticController {
       analyticUnit.visible = !analyticUnit.visible;
     }
     await this.saveAnalyticUnit(analyticUnit);
+  }
+
+  public async toggleInspect(id: AnalyticUnitId) {
+    const analyticUnit = this._analyticUnitsSet.byId(id);
+    if(!analyticUnit.inspect) {
+      this.analyticUnits.forEach(analyticUnit => analyticUnit.inspect = false);
+    }
+    analyticUnit.inspect = !analyticUnit.inspect;
   }
 
   public onAnalyticUnitDetectorChange(analyticUnitTypes: any) {

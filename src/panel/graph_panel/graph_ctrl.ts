@@ -393,9 +393,13 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
 
     if(this.analyticsController !== undefined) {
-      var loadTasks = [
+      const from = +this.range.from;
+      const to = +this.range.to;
+      const loadTasks = [
         // this.annotationsPromise,
-        this.analyticsController.fetchAnalyticUnitsSegments(+this.range.from, +this.range.to)
+        this.analyticsController.fetchAnalyticUnitsSegments(from, to),
+        // TODO: run detection status waiter if detection state !== 'READY'
+        this.analyticsController.fetchAnalyticUnitsDetectionStatuses(from, to)
       ];
 
       await Promise.all(loadTasks);
@@ -662,6 +666,11 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   onToggleVisibility(id: AnalyticUnitId) {
     this.analyticsController.toggleVisibility(id);
+    this.refresh();
+  }
+
+  onToggleInspect(id: AnalyticUnitId) {
+    this.analyticsController.toggleInspect(id);
     this.refresh();
   }
 
