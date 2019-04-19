@@ -308,7 +308,9 @@ export class AnalyticController {
   }
 
   // TODO: move to renderer
-  updateFlotEvents(isEditMode: boolean, options: any): void {
+  updateFlotEvents(isEditMode: boolean, plot: any): void {
+    // We get a reference to flot options so we can change it and it'll be rendered
+    let options = plot.getOptions();
     if(options.grid.markings === undefined) {
       options.markings = [];
     }
@@ -368,7 +370,10 @@ export class AnalyticController {
       });
 
       const detectionStatuses = analyticUnit.detectionStatuses;
-
+      if(detectionStatuses === undefined) {
+        return;
+      }
+      const minValue = _.min(_.map(plot.getYAxes(), axis => axis.min));
       detectionStatuses.forEach(detectionStatus => {
         let underlineColor;
         switch(detectionStatus.state) {
@@ -387,7 +392,7 @@ export class AnalyticController {
         options.grid.markings.push({
           xaxis: { from: detectionStatus.from, to: detectionStatus.to },
           color: underlineColor,
-          yaxis: { from: 5, to: 5 }
+          yaxis: { from: minValue, to: minValue }
         });
       });
     }
