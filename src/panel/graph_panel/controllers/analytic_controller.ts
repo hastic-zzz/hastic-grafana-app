@@ -14,6 +14,7 @@ import { SegmentsSet } from '../models/segment_set';
 import { SegmentArray } from '../models/segment_array';
 import { HasticServerInfo, HasticServerInfoUnknown } from '../models/hastic_server_info';
 import { Threshold, Condition } from '../models/threshold';
+import { DetectionState } from '../models/detection_status';
 import text from '../partials/help_section.html';
 
 import {
@@ -363,6 +364,30 @@ export class AnalyticController {
         options.grid.markings.push({
           xaxis: { from: expanded.to, to: expanded.to },
           color: segmentBorderColor
+        });
+      });
+
+      const detectionStatuses = analyticUnit.detectionStatuses;
+
+      detectionStatuses.forEach(detectionStatus => {
+        let underlineColor;
+        switch(detectionStatus.state) {
+          case DetectionState.READY:
+            underlineColor = 'green'
+            break;
+          case DetectionState.RUNNING:
+            underlineColor = 'yellow'
+            break;
+          case DetectionState.FAILED:
+            underlineColor = 'red'
+            break;
+          default:
+            break;
+        }
+        options.grid.markings.push({
+          xaxis: { from: detectionStatus.from, to: detectionStatus.to },
+          color: underlineColor,
+          yaxis: { from: 5, to: 5 }
         });
       });
     }
