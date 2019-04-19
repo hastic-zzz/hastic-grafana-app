@@ -669,6 +669,11 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.refresh();
   }
 
+  onToggleInspect(id: AnalyticUnitId) {
+    this.analyticsController.toggleInspect(id);
+    this.refresh();
+  }
+
   private async _updatePanelInfo() {
     let datasource = undefined;
     if(this.panel.datasource) {

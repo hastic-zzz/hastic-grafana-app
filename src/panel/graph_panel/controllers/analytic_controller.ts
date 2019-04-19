@@ -369,6 +369,9 @@ export class AnalyticController {
         });
       });
 
+      if(!analyticUnit.inspect) {
+        return;
+      }
       const detectionStatuses = analyticUnit.detectionStatuses;
       if(detectionStatuses === undefined) {
         return;
@@ -554,6 +557,14 @@ export class AnalyticController {
       analyticUnit.visible = !analyticUnit.visible;
     }
     await this.saveAnalyticUnit(analyticUnit);
+  }
+
+  public async toggleInspect(id: AnalyticUnitId) {
+    const analyticUnit = this._analyticUnitsSet.byId(id);
+    if(!analyticUnit.inspect) {
+      this.analyticUnits.forEach(analyticUnit => analyticUnit.inspect = false);
+    }
+    analyticUnit.inspect = !analyticUnit.inspect;
   }
 
   public onAnalyticUnitDetectorChange(analyticUnitTypes: any) {
