@@ -526,63 +526,49 @@ export class AnalyticController {
       analyticUnit.id, 1000
     );
 
-    const loop = async () => {
-      for await (const data of statusGenerator) {
-        if(data === undefined) {
-          return;
+    return this._runWaiter(analyticUnit, this._statusRunners, statusGenerator, (data) => {
+      const status = data.status;
+      const error = data.errorMessage;
+      if(analyticUnit.status !== status) {
+        analyticUnit.status = status;
+        if(error !== undefined) {
+          analyticUnit.error = error;
         }
-        const status = data.status;
-        const error = data.errorMessage;
-        if(analyticUnit.status !== status) {
-          analyticUnit.status = status;
-          if(error !== undefined) {
-            analyticUnit.error = error;
-          }
-          this._emitter.emit('analytic-unit-status-change', analyticUnit);
-        }
-        if(!analyticUnit.isActiveStatus) {
-          return;
-        }
+        this._emitter.emit('analytic-unit-status-change', analyticUnit);
       }
-    };
-
-    return this._runWaiter(analyticUnit, this._statusRunners, loop);
+      if(!analyticUnit.isActiveStatus) {
+        return;
+      }
+    });
   }
 
   // TODO: range type with "from" and "to" fields
   private async _runDetectionsWaiter(analyticUnit: AnalyticUnit, from: number, to: number) {
     const detectionsGenerator = this._analyticService.getDetectionsGenerator(analyticUnit.id, from, to, 1000);
 
-    const loop = async () => {
-      for await (const data of detectionsGenerator) {
-        if(data === undefined) {
-          return;
-        }
-        // for stopping
-        if(!this._detectionRunners.has(analyticUnit.id)) {
-          return;
-        }
-
-        if(!_.isEqual(data, analyticUnit.detectionSpans) && analyticUnit.inspect) {
-          this._emitter.emit('render');
-        }
-        analyticUnit.detectionSpans = data;
-        let isFinished = true;
-        for (let detection of data) {
-          if(detection.status === DetectionStatus.RUNNING) {
-            isFinished = false;
-          }
-        }
-        if(isFinished) {
-          return;
+    return this._runWaiter(analyticUnit, this._detectionRunners, detectionsGenerator, (data) => {
+      if(!_.isEqual(data, analyticUnit.detectionSpans) && analyticUnit.inspect) {
+        this._emitter.emit('render');
+      }
+      analyticUnit.detectionSpans = data;
+      let isFinished = true;
+      for (let detection of data) {
+        if(detection.status === DetectionStatus.RUNNING) {
+          isFinished = false;
         }
       }
-    };
-
-    return this._runWaiter(analyticUnit, this._detectionRunners, loop);
+      if(isFinished) {
+        return;
+      }
+    });
   }
 
-  private async _runWaiter(analyticUnit: AnalyticUnit, runners: Set<AnalyticUnitId>, loop: any) {
+  private async _runWaiter(
+    analyticUnit: AnalyticUnit,
+    runners: Set<AnalyticUnitId>,
+    generator: AsyncIterableIterator<any>,
+    iteration: (data: any) => void
+  ) {
     if(this._analyticService === undefined) {
       return;
     }
@@ -600,7 +586,15 @@ export class AnalyticController {
 
     runners.add(analyticUnit.id);
 
-    await loop();
+    for await (const data of generator) {
+      if(data === undefined) {
+        return;
+      }
+      if(!runners.has(analyticUnit.id)) {
+        return;
+      }
+      iteration(data);
+    }
 
     runners.delete(analyticUnit.id);
   }
