@@ -87,10 +87,11 @@ export const SEGMENT_FILL_ALPHA = 0.5;
 export const SEGMENT_STROKE_ALPHA = 0.8;
 export const LABELING_MODE_ALPHA = 0.7;
 
-export const DETECTION_STATUS_COLORS = new Map<DetectionStatus, string>();
-DETECTION_STATUS_COLORS.set(DetectionStatus.READY, 'green');
-DETECTION_STATUS_COLORS.set(DetectionStatus.RUNNING, 'yellow');
-DETECTION_STATUS_COLORS.set(DetectionStatus.FAILED, 'red');
+export const DETECTION_STATUS_COLORS = new Map<DetectionStatus, string>([
+  [DetectionStatus.READY, 'green'],
+  [DetectionStatus.RUNNING, 'yellow'],
+  [DetectionStatus.FAILED, 'red']
+]);
 
 export function hexToHsl(color) {
   return tinycolor(color).toHsl();

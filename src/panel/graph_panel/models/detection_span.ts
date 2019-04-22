@@ -13,7 +13,8 @@ export type DetectionSpan = {
   to: number
 };
 
-export const DETECTION_STATUS_TEXT = new Map<DetectionStatus, string>();
-DETECTION_STATUS_TEXT.set(DetectionStatus.READY, 'Detection is done');
-DETECTION_STATUS_TEXT.set(DetectionStatus.RUNNING, 'Detection is running...');
-DETECTION_STATUS_TEXT.set(DetectionStatus.FAILED, 'Detection failed');
+export const DETECTION_STATUS_TEXT = new Map<DetectionStatus, string>([
+  [DetectionStatus.READY, 'Detection is done'],
+  [DetectionStatus.RUNNING, 'Detection is running...'],
+  [DetectionStatus.FAILED, 'Detection failed']
+]);
