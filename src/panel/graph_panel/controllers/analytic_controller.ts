@@ -541,8 +541,9 @@ export class AnalyticController {
           this._emitter.emit('analytic-unit-status-change', analyticUnit);
         }
         if(!analyticUnit.isActiveStatus) {
-          return;
+          return true;
         }
+        return false;
       }
     );
   }
@@ -567,8 +568,9 @@ export class AnalyticController {
           }
         }
         if(isFinished) {
-          return;
+          return true;
         }
+        return false;
       }
     );
   }
@@ -577,7 +579,7 @@ export class AnalyticController {
     analyticUnit: AnalyticUnit,
     runners: Set<AnalyticUnitId>,
     generator: AsyncIterableIterator<T>,
-    iteration: (data: T) => void
+    iteration: (data: T) => boolean
   ) {
     if(this._analyticService === undefined) {
       return;
@@ -598,12 +600,15 @@ export class AnalyticController {
 
     for await (const data of generator) {
       if(data === undefined) {
-        return;
+        break;
       }
       if(!runners.has(analyticUnit.id)) {
-        return;
+        break;
       }
-      iteration(data);
+      const shouldBreak = iteration(data);
+      if(shouldBreak) {
+        break;
+      }
     }
 
     runners.delete(analyticUnit.id);
