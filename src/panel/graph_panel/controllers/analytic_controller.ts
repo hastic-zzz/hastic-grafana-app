@@ -567,10 +567,7 @@ export class AnalyticController {
             isFinished = false;
           }
         }
-        if(isFinished) {
-          return true;
-        }
-        return false;
+        return isFinished;
       }
     );
   }
