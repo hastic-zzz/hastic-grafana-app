@@ -89,7 +89,7 @@ export const LABELING_MODE_ALPHA = 0.7;
 
 export const DETECTION_STATUS_COLORS = new Map<DetectionStatus, string>([
   [DetectionStatus.READY, 'green'],
-  [DetectionStatus.RUNNING, 'yellow'],
+  [DetectionStatus.RUNNING, 'gold'],
   [DetectionStatus.FAILED, 'red']
 ]);
 
