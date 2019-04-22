@@ -12,7 +12,12 @@ export class GraphLegend {
   seriesList;
   legendScrollbar;
 
-  constructor(private $elem: JQuery<HTMLElement>, private popoverSrv, private scope, private _analyticsController: AnalyticController) {
+  constructor(
+    private $elem: JQuery<HTMLElement>,
+    private popoverSrv,
+    private scope,
+    private _analyticsController: AnalyticController
+  ) {
     this.ctrl = this.scope.ctrl;
     this.panel = this.ctrl.panel;
     this.scope.$on('$destroy', () => {
