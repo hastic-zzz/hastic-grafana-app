@@ -167,48 +167,39 @@ export class AnalyticService {
     return segments.map(s => new AnalyticSegment(s.labeled, s.id, s.from, s.to, s.deleted));
   }
 
-  async * getStatusGenerator(id: AnalyticUnitId, duration: number):
-    AsyncIterableIterator<{ status: string, errorMessage?: string }> {
-
-    if(id === undefined) {
-      throw new Error('id is undefined');
-    }
-    let statusCheck = async () => {
-      try {
-        return await this.get('/analyticUnits/status', { id });
-      } catch(error) {
-        if(error.status === 404) {
-          return { status: '404' };
+  getStatusGenerator(
+    id: AnalyticUnitId,
+    duration: number
+  ): AsyncIterableIterator<{ status: string, errorMessage?: string }> {
+    return getGenerator<{ status: string, errorMessage?: string }>(
+      id,
+      duration,
+      async (id) => {
+        try {
+          return this.get('/analyticUnits/status', { id });
+        } catch(error) {
+          if(error.status === 404) {
+            return { status: '404' };
+          }
+          throw error;
         }
-        throw error;
       }
-    }
-
-    let timeout = async () => new Promise(
-      resolve => setTimeout(resolve, duration)
     );
-
-    while(true) {
-      yield await statusCheck();
-      await timeout();
-    }
   }
 
-  async * getDetectionsGenerator(id: AnalyticUnitId, from: number, to: number, duration: number):
-    AsyncIterableIterator<DetectionSpan[]> {
-
-    if(id === undefined) {
-      throw new Error('id is undefined');
-    }
-
-    let timeout = async () => new Promise(
-      resolve => setTimeout(resolve, duration)
+  getDetectionsGenerator(
+    id: AnalyticUnitId,
+    from: number,
+    to: number,
+    duration: number
+  ): AsyncIterableIterator<DetectionSpan[]> {
+    return getGenerator<DetectionSpan[]>(
+      id,
+      duration,
+      this.getDetectionSpans.bind(this),
+      from,
+      to
     );
-
-    while(true) {
-      yield await this.getDetectionSpans(id, from, to);
-      await timeout();
-    }
   }
 
   async getServerInfo(): Promise<HasticServerInfo> {
@@ -337,5 +328,25 @@ export class AnalyticService {
 
   public get isUp(): boolean {
     return this._isUp;
+  }
+}
+
+async function *getGenerator<T>(
+  id: AnalyticUnitId,
+  duration: number,
+  func: (...args: any[]) => Promise<T>,
+  ...args
+): AsyncIterableIterator<T> {
+  if(id === undefined) {
+    throw new Error('id is undefined');
+  }
+
+  let timeout = async () => new Promise(
+    resolve => setTimeout(resolve, duration)
+  );
+
+  while(true) {
+    yield await func(id, ...args);
+    await timeout();
   }
 }
