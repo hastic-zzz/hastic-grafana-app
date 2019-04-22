@@ -14,7 +14,7 @@ import { SegmentsSet } from '../models/segment_set';
 import { SegmentArray } from '../models/segment_array';
 import { HasticServerInfo, HasticServerInfoUnknown } from '../models/hastic_server_info';
 import { Threshold, Condition } from '../models/threshold';
-import { DetectionStatus, DETECTION_STATUS_TEXT } from '../models/detection';
+import { DetectionStatus, DETECTION_STATUS_TEXT, DetectionSpan } from '../models/detection';
 import text from '../partials/help_section.html';
 
 import {
@@ -526,48 +526,58 @@ export class AnalyticController {
       analyticUnit.id, 1000
     );
 
-    return this._runWaiter(analyticUnit, this._statusRunners, statusGenerator, (data) => {
-      const status = data.status;
-      const error = data.errorMessage;
-      if(analyticUnit.status !== status) {
-        analyticUnit.status = status;
-        if(error !== undefined) {
-          analyticUnit.error = error;
+    return this._runWaiter<{ status: string, errorMessage?: string }>(
+      analyticUnit,
+      this._statusRunners,
+      statusGenerator,
+      (data) => {
+        const status = data.status;
+        const error = data.errorMessage;
+        if(analyticUnit.status !== status) {
+          analyticUnit.status = status;
+          if(error !== undefined) {
+            analyticUnit.error = error;
+          }
+          this._emitter.emit('analytic-unit-status-change', analyticUnit);
         }
-        this._emitter.emit('analytic-unit-status-change', analyticUnit);
+        if(!analyticUnit.isActiveStatus) {
+          return;
+        }
       }
-      if(!analyticUnit.isActiveStatus) {
-        return;
-      }
-    });
+    );
   }
 
   // TODO: range type with "from" and "to" fields
   private async _runDetectionsWaiter(analyticUnit: AnalyticUnit, from: number, to: number) {
     const detectionsGenerator = this._analyticService.getDetectionsGenerator(analyticUnit.id, from, to, 1000);
 
-    return this._runWaiter(analyticUnit, this._detectionRunners, detectionsGenerator, (data) => {
-      if(!_.isEqual(data, analyticUnit.detectionSpans) && analyticUnit.inspect) {
-        this._emitter.emit('render');
-      }
-      analyticUnit.detectionSpans = data;
-      let isFinished = true;
-      for (let detection of data) {
-        if(detection.status === DetectionStatus.RUNNING) {
-          isFinished = false;
+    return this._runWaiter<DetectionSpan[]>(
+      analyticUnit,
+      this._detectionRunners,
+      detectionsGenerator,
+      (data) => {
+        if(!_.isEqual(data, analyticUnit.detectionSpans) && analyticUnit.inspect) {
+          this._emitter.emit('render');
+        }
+        analyticUnit.detectionSpans = data;
+        let isFinished = true;
+        for (let detection of data) {
+          if(detection.status === DetectionStatus.RUNNING) {
+            isFinished = false;
+          }
+        }
+        if(isFinished) {
+          return;
         }
       }
-      if(isFinished) {
-        return;
-      }
-    });
+    );
   }
 
-  private async _runWaiter(
+  private async _runWaiter<T>(
     analyticUnit: AnalyticUnit,
     runners: Set<AnalyticUnitId>,
-    generator: AsyncIterableIterator<any>,
-    iteration: (data: any) => void
+    generator: AsyncIterableIterator<T>,
+    iteration: (data: T) => void
   ) {
     if(this._analyticService === undefined) {
       return;
