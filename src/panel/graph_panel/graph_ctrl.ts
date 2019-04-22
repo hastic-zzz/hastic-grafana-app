@@ -399,7 +399,7 @@ class GraphCtrl extends MetricsPanelCtrl {
         // this.annotationsPromise,
         this.analyticsController.fetchAnalyticUnitsSegments(from, to),
         // TODO: run detection status waiter if detection state !== 'READY'
-        this.analyticsController.fetchAnalyticUnitsDetectionStatuses(from, to)
+        this.analyticsController.fetchAnalyticUnitsDetectionSpans(from, to)
       ];
 
       await Promise.all(loadTasks);
