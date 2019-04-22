@@ -1,14 +1,14 @@
 import { AnalyticUnitId } from './analytic_unit';
 
-export enum DetectionState {
+export enum DetectionStatus {
   READY = 'READY',
   RUNNING = 'RUNNING',
   FAILED = 'FAILED'
 };
 
-export type DetectionStatus = {
+export type DetectionSpan = {
   id: AnalyticUnitId,
-  state: DetectionState,
+  status: DetectionStatus,
   from: number,
   to: number
 };

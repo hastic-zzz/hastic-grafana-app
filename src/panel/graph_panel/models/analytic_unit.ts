@@ -1,7 +1,7 @@
 import { SegmentsSet } from './segment_set';
 import { SegmentArray } from './segment_array';
 import { Segment, SegmentId } from './segment';
-import { DetectionStatus } from './detection_status';
+import { DetectionSpan } from './detection_span';
 
 import { ANALYTIC_UNIT_COLORS, DEFAULT_DELETED_SEGMENT_COLOR } from '../colors';
 
@@ -40,7 +40,7 @@ export class AnalyticUnit {
   private _selected: boolean = false;
   private _saving: boolean = false;
   private _segmentSet = new SegmentArray<AnalyticSegment>();
-  private _detectionStatuses: DetectionStatus[];
+  private _detectionSpans: DetectionSpan[];
   private _inspect = false;
   private _status: string;
   private _error: string;
@@ -119,8 +119,8 @@ export class AnalyticUnit {
     this._segmentSet.setSegments(value.getSegments());
   }
 
-  get detectionStatuses(): DetectionStatus[] { return this._detectionStatuses; }
-  set detectionStatuses(value: DetectionStatus[]) { this._detectionStatuses = value; }
+  get detectionSpans(): DetectionSpan[] { return this._detectionSpans; }
+  set detectionSpans(value: DetectionSpan[]) { this._detectionSpans = value; }
 
   get status() { return this._status; }
   set status(value) {

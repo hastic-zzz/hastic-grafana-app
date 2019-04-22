@@ -14,7 +14,7 @@ import { SegmentsSet } from '../models/segment_set';
 import { SegmentArray } from '../models/segment_array';
 import { HasticServerInfo, HasticServerInfoUnknown } from '../models/hastic_server_info';
 import { Threshold, Condition } from '../models/threshold';
-import { DetectionState } from '../models/detection_status';
+import { DetectionStatus } from '../models/detection_span';
 import text from '../partials/help_section.html';
 
 import {
@@ -224,7 +224,7 @@ export class AnalyticController {
     this.analyticUnits.forEach(a => this._runStatusWaiter(a));
   }
 
-  async fetchAnalyticUnitsDetectionStatuses(from: number, to: number): Promise<void[]> {
+  async fetchAnalyticUnitsDetectionSpans(from: number, to: number): Promise<void[]> {
     if(!_.isNumber(+from)) {
       throw new Error('from isn`t number');
     }
@@ -232,18 +232,18 @@ export class AnalyticController {
       throw new Error('to isn`t number');
     }
     const tasks = this.analyticUnits
-      .map(analyticUnit => this.fetchDetectionStatus(analyticUnit, from, to));
+      .map(analyticUnit => this.fetchDetectionSpans(analyticUnit, from, to));
     return Promise.all(tasks);
   }
 
-  async fetchDetectionStatus(analyticUnit: AnalyticUnit, from: number, to: number): Promise<void> {
+  async fetchDetectionSpans(analyticUnit: AnalyticUnit, from: number, to: number): Promise<void> {
     if(!_.isNumber(+from)) {
       throw new Error('from isn`t number');
     }
     if(!_.isNumber(+to)) {
       throw new Error('to isn`t number');
     }
-    analyticUnit.detectionStatuses = await this._analyticService.getDetectionStatus(analyticUnit.id, from, to);
+    analyticUnit.detectionSpans = await this._analyticService.getDetectionSpans(analyticUnit.id, from, to);
   }
 
   async fetchAnalyticUnitsSegments(from: number, to: number): Promise<void[]> {
@@ -372,28 +372,28 @@ export class AnalyticController {
       if(!analyticUnit.inspect) {
         return;
       }
-      const detectionStatuses = analyticUnit.detectionStatuses;
-      if(detectionStatuses === undefined) {
+      const detectionSpans = analyticUnit.detectionSpans;
+      if(detectionSpans === undefined) {
         return;
       }
       const minValue = _.min(_.map(plot.getYAxes(), axis => axis.min));
-      detectionStatuses.forEach(detectionStatus => {
+      detectionSpans.forEach(detectionSpan => {
         let underlineColor;
-        switch(detectionStatus.state) {
-          case DetectionState.READY:
+        switch(detectionSpan.status) {
+          case DetectionStatus.READY:
             underlineColor = 'green'
             break;
-          case DetectionState.RUNNING:
+          case DetectionStatus.RUNNING:
             underlineColor = 'yellow'
             break;
-          case DetectionState.FAILED:
+          case DetectionStatus.FAILED:
             underlineColor = 'red'
             break;
           default:
             break;
         }
         options.grid.markings.push({
-          xaxis: { from: detectionStatus.from, to: detectionStatus.to },
+          xaxis: { from: detectionSpan.from, to: detectionSpan.to },
           color: underlineColor,
           yaxis: { from: minValue, to: minValue }
         });
