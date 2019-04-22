@@ -194,6 +194,23 @@ export class AnalyticService {
     }
   }
 
+  async * getDetectionsGenerator(id: AnalyticUnitId, from: number, to: number, duration: number):
+    AsyncIterableIterator<DetectionSpan[]> {
+
+    if(id === undefined) {
+      throw new Error('id is undefined');
+    }
+
+    let timeout = async () => new Promise(
+      resolve => setTimeout(resolve, duration)
+    );
+
+    while(true) {
+      yield await this.getDetectionSpans(id, from, to);
+      await timeout();
+    }
+  }
+
   async getServerInfo(): Promise<HasticServerInfo> {
     const data = await this.get('/');
     if(data === undefined) {

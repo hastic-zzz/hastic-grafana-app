@@ -45,6 +45,7 @@ export class AnalyticController {
   private _tempIdCounted: number = -1;
   private _graphLocked: boolean = false;
   private _statusRunners: Set<AnalyticUnitId> = new Set<AnalyticUnitId>();
+  private _detectionRunners: Set<AnalyticUnitId> = new Set<AnalyticUnitId>();
   private _serverInfo: HasticServerInfo;
   private _currentMetric: MetricExpanded;
   private _currentDatasource: DatasourceRequest;
@@ -223,6 +224,14 @@ export class AnalyticController {
 
   fetchAnalyticUnitsStatuses() {
     this.analyticUnits.forEach(a => this._runStatusWaiter(a));
+  }
+
+  fetchAnalyticUnitsDetections(from: number, to: number) {
+    this.analyticUnits.forEach(analyticUnit => this._runDetectionsWaiter(analyticUnit, from, to));
+  }
+
+  stopAnalyticUnitsDetectionsFetching() {
+    this.analyticUnits.forEach(analyticUnit => this._detectionRunners.delete(analyticUnit.id))
   }
 
   async fetchAnalyticUnitsDetectionSpans(from: number, to: number): Promise<void[]> {
@@ -513,6 +522,67 @@ export class AnalyticController {
   }
 
   private async _runStatusWaiter(analyticUnit: AnalyticUnit) {
+    const statusGenerator = this._analyticService.getStatusGenerator(
+      analyticUnit.id, 1000
+    );
+
+    const loop = async () => {
+      for await (const data of statusGenerator) {
+        if(data === undefined) {
+          return;
+        }
+        const status = data.status;
+        const error = data.errorMessage;
+        if(analyticUnit.status !== status) {
+          analyticUnit.status = status;
+          if(error !== undefined) {
+            analyticUnit.error = error;
+          }
+          this._emitter.emit('analytic-unit-status-change', analyticUnit);
+        }
+        if(!analyticUnit.isActiveStatus) {
+          return;
+        }
+      }
+    };
+
+    return this._runWaiter(analyticUnit, this._statusRunners, loop);
+  }
+
+  // TODO: range type with "from" and "to" fields
+  private async _runDetectionsWaiter(analyticUnit: AnalyticUnit, from: number, to: number) {
+    const detectionsGenerator = this._analyticService.getDetectionsGenerator(analyticUnit.id, from, to, 1000);
+
+    const loop = async () => {
+      for await (const data of detectionsGenerator) {
+        if(data === undefined) {
+          return;
+        }
+        // for stopping
+        if(!this._detectionRunners.has(analyticUnit.id)) {
+          return;
+        }
+
+        if(!_.isEqual(data, analyticUnit.detectionSpans) && analyticUnit.inspect) {
+          this._emitter.emit('render');
+        }
+        analyticUnit.detectionSpans = data;
+        let isFinished = true;
+        for (let detection of data) {
+          if(detection.status !== DetectionStatus.READY) {
+            isFinished = false;
+          }
+        }
+        if(isFinished) {
+          return;
+        }
+      }
+    };
+
+    return this._runWaiter(analyticUnit, this._detectionRunners, loop);
+  }
+
+  private async _runWaiter(analyticUnit: AnalyticUnit, runners: any, loop: any) {
     if(this._analyticService === undefined) {
       return;
     }
@@ -524,35 +594,15 @@ export class AnalyticController {
       throw new Error('analyticUnit.id is undefined');
     }
 
-    if(this._statusRunners.has(analyticUnit.id)) {
+    if(runners.has(analyticUnit.id)) {
       return;
     }
 
-    this._statusRunners.add(analyticUnit.id);
+    runners.add(analyticUnit.id);
 
-    var statusGenerator = this._analyticService.getStatusGenerator(
-      analyticUnit.id, 1000
-    );
+    await loop();
 
-    for await (const data of statusGenerator) {
-      if(data === undefined) {
-        break;
-      }
-      let status = data.status;
-      let error = data.errorMessage;
-      if(analyticUnit.status !== status) {
-        analyticUnit.status = status;
-        if(error !== undefined) {
-          analyticUnit.error = error;
-        }
-        this._emitter.emit('analytic-unit-status-change', analyticUnit);
-      }
-      if(!analyticUnit.isActiveStatus) {
-        break;
-      }
-    }
-
-    this._statusRunners.delete(analyticUnit.id);
+    runners.delete(analyticUnit.id);
   }
 
   public getNewTempSegmentId(): SegmentId {
