@@ -313,7 +313,7 @@ export class AnalyticController {
     // We get a reference to flot options so we can change it and it'll be rendered
     let options = plot.getOptions();
     if(options.grid.markings === undefined) {
-      options.markings = [];
+      options.grid.markings = [];
     }
 
     for(let i = 0; i < this.analyticUnits.length; i++) {
@@ -371,11 +371,11 @@ export class AnalyticController {
       });
 
       if(!analyticUnit.inspect) {
-        return;
+        continue;
       }
       const detectionSpans = analyticUnit.detectionSpans;
       if(detectionSpans === undefined) {
-        return;
+        continue;
       }
       const minValue = _.min(_.map(plot.getYAxes(), axis => axis.min));
       detectionSpans.forEach(detectionSpan => {
