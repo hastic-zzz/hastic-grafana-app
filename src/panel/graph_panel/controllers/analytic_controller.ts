@@ -582,7 +582,7 @@ export class AnalyticController {
     return this._runWaiter(analyticUnit, this._detectionRunners, loop);
   }
 
-  private async _runWaiter(analyticUnit: AnalyticUnit, runners: any, loop: any) {
+  private async _runWaiter(analyticUnit: AnalyticUnit, runners: Set<AnalyticUnitId>, loop: any) {
     if(this._analyticService === undefined) {
       return;
     }
