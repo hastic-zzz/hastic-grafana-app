@@ -1,5 +1,5 @@
 import tinycolor from 'tinycolor2';
-import { DetectionStatus } from './models/detection_span';
+import { DetectionStatus } from './models/detection';
 
 export const PALETTE_ROWS = 4;
 export const PALETTE_COLUMNS = 14;

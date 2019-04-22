@@ -14,7 +14,7 @@ import { SegmentsSet } from '../models/segment_set';
 import { SegmentArray } from '../models/segment_array';
 import { HasticServerInfo, HasticServerInfoUnknown } from '../models/hastic_server_info';
 import { Threshold, Condition } from '../models/threshold';
-import { DetectionStatus, DETECTION_STATUS_TEXT } from '../models/detection_span';
+import { DetectionStatus, DETECTION_STATUS_TEXT } from '../models/detection';
 import text from '../partials/help_section.html';
 
 import {

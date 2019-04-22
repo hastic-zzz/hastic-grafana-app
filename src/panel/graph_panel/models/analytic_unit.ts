@@ -1,7 +1,7 @@
 import { SegmentsSet } from './segment_set';
 import { SegmentArray } from './segment_array';
 import { Segment, SegmentId } from './segment';
-import { DetectionSpan } from './detection_span';
+import { DetectionSpan } from './detection';
 
 import { ANALYTIC_UNIT_COLORS, DEFAULT_DELETED_SEGMENT_COLOR } from '../colors';
 

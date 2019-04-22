@@ -5,7 +5,7 @@ import { SegmentsSet } from '../models/segment_set';
 import { AnalyticUnitId, AnalyticUnit, AnalyticSegment } from '../models/analytic_unit';
 import { HasticServerInfo, HasticServerInfoUnknown } from '../models/hastic_server_info';
 import { Threshold } from '../models/threshold';
-import { DetectionSpan } from '../models/detection_span';
+import { DetectionSpan } from '../models/detection';
 
 import { isHasticServerResponse, isSupportedServerVersion, SUPPORTED_SERVER_VERSION } from '../../../utlis';
 
