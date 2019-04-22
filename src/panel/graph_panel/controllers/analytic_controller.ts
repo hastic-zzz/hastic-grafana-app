@@ -14,7 +14,7 @@ import { SegmentsSet } from '../models/segment_set';
 import { SegmentArray } from '../models/segment_array';
 import { HasticServerInfo, HasticServerInfoUnknown } from '../models/hastic_server_info';
 import { Threshold, Condition } from '../models/threshold';
-import { DetectionStatus } from '../models/detection_span';
+import { DetectionStatus, DETECTION_STATUS_TEXT } from '../models/detection_span';
 import text from '../partials/help_section.html';
 
 import {
@@ -23,7 +23,8 @@ import {
   DELETED_SEGMENT_BORDER_COLOR,
   SEGMENT_FILL_ALPHA,
   SEGMENT_STROKE_ALPHA,
-  LABELING_MODE_ALPHA
+  LABELING_MODE_ALPHA,
+  DETECTION_STATUS_COLORS
 } from '../colors';
 
 import { Emitter } from 'grafana/app/core/utils/emitter';
@@ -378,20 +379,8 @@ export class AnalyticController {
       }
       const minValue = _.min(_.map(plot.getYAxes(), axis => axis.min));
       detectionSpans.forEach(detectionSpan => {
-        let underlineColor;
-        switch(detectionSpan.status) {
-          case DetectionStatus.READY:
-            underlineColor = 'green'
-            break;
-          case DetectionStatus.RUNNING:
-            underlineColor = 'yellow'
-            break;
-          case DetectionStatus.FAILED:
-            underlineColor = 'red'
-            break;
-          default:
-            break;
-        }
+        const underlineColor = DETECTION_STATUS_COLORS.get(detectionSpan.status);;
+
         options.grid.markings.push({
           xaxis: { from: detectionSpan.from, to: detectionSpan.to },
           color: underlineColor,
@@ -399,7 +388,29 @@ export class AnalyticController {
         });
       });
     }
+  }
 
+  updateLegend($elem: any) {
+    let detectionStatuses: DetectionStatus[] = [];
+    this.analyticUnits
+      .filter(analyticUnit => analyticUnit.inspect)
+      .forEach(analyticUnit => {
+        const statuses = analyticUnit.detectionSpans.map(span => span.status);
+        detectionStatuses = _.concat(detectionStatuses, statuses);
+      });
+    detectionStatuses = _.uniq(detectionStatuses);
+
+    detectionStatuses.forEach(status => {
+      const html = `
+        <div class="graph-legend-series">
+          <div class="graph-legend-icon">
+            <i class="fa fa-minus" style="color:${DETECTION_STATUS_COLORS.get(status)}"></i>
+          </div>
+          <a class="graph-legend-alias">${DETECTION_STATUS_TEXT.get(status)}</a>
+        </div>
+      `;
+      $elem.append(html);
+    });
   }
 
   deleteLabelingAnalyticUnitSegmentsInRange(from: number, to: number): void {

@@ -1,4 +1,5 @@
 import tinycolor from 'tinycolor2';
+import { DetectionStatus } from './models/detection_span';
 
 export const PALETTE_ROWS = 4;
 export const PALETTE_COLUMNS = 14;
@@ -85,6 +86,11 @@ export const DELETED_SEGMENT_BORDER_COLOR = 'black';
 export const SEGMENT_FILL_ALPHA = 0.5;
 export const SEGMENT_STROKE_ALPHA = 0.8;
 export const LABELING_MODE_ALPHA = 0.7;
+
+export const DETECTION_STATUS_COLORS = new Map<DetectionStatus, string>();
+DETECTION_STATUS_COLORS.set(DetectionStatus.READY, 'green');
+DETECTION_STATUS_COLORS.set(DetectionStatus.RUNNING, 'yellow');
+DETECTION_STATUS_COLORS.set(DetectionStatus.FAILED, 'red');
 
 export function hexToHsl(color) {
   return tinycolor(color).toHsl();

@@ -1,3 +1,5 @@
+import { AnalyticController } from './controllers/analytic_controller';
+
 import PerfectScrollbar from 'perfect-scrollbar';
 import _ from 'lodash';
 
@@ -10,11 +12,11 @@ export class GraphLegend {
   seriesList;
   legendScrollbar;
 
-  constructor(private $elem: JQuery<HTMLElement>, private popoverSrv, private scope) {
-    this.ctrl = scope.ctrl;
+  constructor(private $elem: JQuery<HTMLElement>, private popoverSrv, private scope, private _analyticsController: AnalyticController) {
+    this.ctrl = this.scope.ctrl;
     this.panel = this.ctrl.panel;
-    scope.$on('$destroy', () => {
-      if (this.legendScrollbar) {
+    this.scope.$on('$destroy', () => {
+      if(this.legendScrollbar) {
         this.legendScrollbar.destroy();
       }
     });
@@ -142,8 +144,8 @@ export class GraphLegend {
       this.seriesList = _.sortBy(this.seriesList, series => series.stats[this.panel.legend.sort]);
       if (this.panel.legend.sortDesc) {
         this.seriesList = this.seriesList.reverse();
+      }
     }
-  }
 
     // render first time for getting proper legend height
     if (!this.panel.legend.rightSide) {
@@ -152,6 +154,8 @@ export class GraphLegend {
     }
 
     this.renderLegendElement(tableHeaderElem);
+
+    this._analyticsController.updateLegend(this.$elem);
   }
 
   renderSeriesLegendElements() {
