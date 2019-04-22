@@ -392,19 +392,19 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
 
     if(this.analyticsController !== undefined) {
+      this.analyticsController.stopAnalyticUnitsDetectionsFetching();
       const from = +this.range.from;
       const to = +this.range.to;
       const loadTasks = [
         // this.annotationsPromise,
-        this.analyticsController.fetchAnalyticUnitsSegments(from, to),
-        // TODO: run detection status waiter if detection state !== 'READY'
-        this.analyticsController.fetchAnalyticUnitsDetectionSpans(from, to)
+        this.analyticsController.fetchAnalyticUnitsSegments(from, to)
       ];
 
       await Promise.all(loadTasks);
       this.loading = false;
       // this.annotations = results[0].annotations;
       this.render(this.seriesList);
+      this.analyticsController.fetchAnalyticUnitsDetections(from, to);
     }
 
   }
