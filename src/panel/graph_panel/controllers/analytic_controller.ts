@@ -226,7 +226,10 @@ export class AnalyticController {
     this.analyticUnits.forEach(a => this._runStatusWaiter(a));
   }
 
-  fetchAnalyticUnitsDetections(from: number, to: number) {
+  fetchAnalyticUnitsDetections(from: number | null, to: number | null) {
+    if(from === null || to === null) {
+      return;
+    }
     this.analyticUnits.forEach(analyticUnit => {
       if(analyticUnit.status === 'READY') {
         this._runDetectionsWaiter(analyticUnit, from, to);
@@ -408,8 +411,10 @@ export class AnalyticController {
     this.analyticUnits
       .filter(analyticUnit => analyticUnit.inspect)
       .forEach(analyticUnit => {
-        const statuses = analyticUnit.detectionSpans.map(span => span.status);
-        detectionStatuses = _.concat(detectionStatuses, statuses);
+        if(analyticUnit.detectionSpans !== undefined) {
+          const statuses = analyticUnit.detectionSpans.map(span => span.status);
+          detectionStatuses = _.concat(detectionStatuses, statuses);
+        }
       });
     detectionStatuses = _.uniq(detectionStatuses);
 

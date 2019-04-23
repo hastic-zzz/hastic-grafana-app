@@ -58,6 +58,11 @@ class GraphCtrl extends MetricsPanelCtrl {
   private _grafanaUrl: string;
   private _panelId: string;
 
+  private _dataTimerange: {
+    from: number,
+    to: number
+  };
+
   panelDefaults = {
     // datasource name, null = default datasource
     datasource: null,
@@ -404,34 +409,28 @@ class GraphCtrl extends MetricsPanelCtrl {
       this.loading = false;
       // this.annotations = results[0].annotations;
       this.render(this.seriesList);
-      this.analyticsController.fetchAnalyticUnitsDetections(from, to);
+      this.analyticsController.fetchAnalyticUnitsDetections(
+        this._dataTimerange.from,
+        this._dataTimerange.to
+      );
     }
 
   }
 
   onRender(data) {
-    if (!this.seriesList) {
+    if(!this.seriesList) {
       return;
     }
 
-    for (let series of this.seriesList) {
-      if (series.prediction) {
-        var overrideItem = _.find(
-          this.panel.seriesOverrides,
-          el => el.alias === series.alias
-        )
-        if (overrideItem !== undefined) {
-          this.addSeriesOverride({
-            alias: series.alias,
-            linewidth: 0,
-            legend: false,
-            // if pointradius === 0 -> point still shows, that's why pointradius === -1
-            pointradius: -1,
-            fill: 3
-          });
-        }
+    for(let series of this.seriesList) {
+      const from = _.find(series.datapoints, datapoint => datapoint[0] !== null);
+      const to = _.findLast(series.datapoints, datapoint => datapoint[0] !== null);
+
+      if(from !== undefined && to !== undefined) {
+        this._dataTimerange = { from: from[1], to: to[1] };
+      } else {
+        this._dataTimerange = { from: null, to: null }
       }
-      series.applySeriesOverrides(this.panel.seriesOverrides);
 
       if (series.unit) {
         this.panel.yaxes[series.yaxis - 1].format = series.unit;
