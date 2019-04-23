@@ -231,7 +231,7 @@ export class AnalyticController {
   }
 
   stopAnalyticUnitsDetectionsFetching() {
-    this.analyticUnits.forEach(analyticUnit => this._detectionRunners.delete(analyticUnit.id))
+    this.analyticUnits.forEach(analyticUnit => this._detectionRunners.delete(analyticUnit.id));
   }
 
   async fetchAnalyticUnitsDetectionSpans(from: number, to: number): Promise<void[]> {
@@ -450,6 +450,8 @@ export class AnalyticController {
     if(!silent) {
       await this._analyticService.removeAnalyticUnit(id);
     }
+    this._statusRunners.delete(id);
+    this._detectionRunners.delete(id);
     this._analyticUnitsSet.removeItem(id);
   }
 
