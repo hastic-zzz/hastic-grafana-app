@@ -227,7 +227,11 @@ export class AnalyticController {
   }
 
   fetchAnalyticUnitsDetections(from: number, to: number) {
-    this.analyticUnits.forEach(analyticUnit => this._runDetectionsWaiter(analyticUnit, from, to));
+    this.analyticUnits.forEach(analyticUnit => {
+      if(analyticUnit.status === 'READY') {
+        this._runDetectionsWaiter(analyticUnit, from, to);
+      }
+    });
   }
 
   stopAnalyticUnitsDetectionsFetching() {
@@ -559,8 +563,8 @@ export class AnalyticController {
       this._detectionRunners,
       detectionsGenerator,
       (data) => {
-        if(!_.isEqual(data, analyticUnit.detectionSpans) && analyticUnit.inspect) {
-          this._emitter.emit('render');
+        if(!_.isEqual(data, analyticUnit.detectionSpans)) {
+          this._emitter.emit('analytic-unit-status-change', analyticUnit);
         }
         analyticUnit.detectionSpans = data;
         let isFinished = true;
