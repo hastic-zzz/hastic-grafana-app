@@ -14,7 +14,7 @@ import { SegmentsSet } from '../models/segment_set';
 import { SegmentArray } from '../models/segment_array';
 import { HasticServerInfo, HasticServerInfoUnknown } from '../models/hastic_server_info';
 import { Threshold, Condition } from '../models/threshold';
-import { DetectionStatus, DETECTION_STATUS_TEXT } from '../models/detection';
+import { DetectionStatus, DETECTION_STATUS_TEXT, DetectionSpan } from '../models/detection';
 import text from '../partials/help_section.html';
 
 import {
@@ -45,6 +45,7 @@ export class AnalyticController {
   private _tempIdCounted: number = -1;
   private _graphLocked: boolean = false;
   private _statusRunners: Set<AnalyticUnitId> = new Set<AnalyticUnitId>();
+  private _detectionRunners: Set<AnalyticUnitId> = new Set<AnalyticUnitId>();
   private _serverInfo: HasticServerInfo;
   private _currentMetric: MetricExpanded;
   private _currentDatasource: DatasourceRequest;
@@ -225,6 +226,21 @@ export class AnalyticController {
     this.analyticUnits.forEach(a => this._runStatusWaiter(a));
   }
 
+  fetchAnalyticUnitsDetections(from: number | null, to: number | null) {
+    if(from === null || to === null) {
+      return;
+    }
+    this.analyticUnits.forEach(analyticUnit => {
+      if(analyticUnit.status === 'READY') {
+        this._runDetectionsWaiter(analyticUnit, from, to);
+      }
+    });
+  }
+
+  stopAnalyticUnitsDetectionsFetching() {
+    this.analyticUnits.forEach(analyticUnit => this._detectionRunners.delete(analyticUnit.id));
+  }
+
   async fetchAnalyticUnitsDetectionSpans(from: number, to: number): Promise<void[]> {
     if(!_.isNumber(+from)) {
       throw new Error('from isn`t number');
@@ -395,8 +411,10 @@ export class AnalyticController {
     this.analyticUnits
       .filter(analyticUnit => analyticUnit.inspect)
       .forEach(analyticUnit => {
-        const statuses = analyticUnit.detectionSpans.map(span => span.status);
-        detectionStatuses = _.concat(detectionStatuses, statuses);
+        if(analyticUnit.detectionSpans !== undefined) {
+          const statuses = analyticUnit.detectionSpans.map(span => span.status);
+          detectionStatuses = _.concat(detectionStatuses, statuses);
+        }
       });
     detectionStatuses = _.uniq(detectionStatuses);
 
@@ -441,6 +459,8 @@ export class AnalyticController {
     if(!silent) {
       await this._analyticService.removeAnalyticUnit(id);
     }
+    this._statusRunners.delete(id);
+    this._detectionRunners.delete(id);
     this._analyticUnitsSet.removeItem(id);
   }
 
@@ -513,6 +533,62 @@ export class AnalyticController {
   }
 
   private async _runStatusWaiter(analyticUnit: AnalyticUnit) {
+    const statusGenerator = this._analyticService.getStatusGenerator(
+      analyticUnit.id, 1000
+    );
+
+    return this._runWaiter<{ status: string, errorMessage?: string }>(
+      analyticUnit,
+      this._statusRunners,
+      statusGenerator,
+      (data) => {
+        const status = data.status;
+        const error = data.errorMessage;
+        if(analyticUnit.status !== status) {
+          analyticUnit.status = status;
+          if(error !== undefined) {
+            analyticUnit.error = error;
+          }
+          this._emitter.emit('analytic-unit-status-change', analyticUnit);
+        }
+        if(!analyticUnit.isActiveStatus) {
+          return true;
+        }
+        return false;
+      }
+    );
+  }
+
+  // TODO: range type with "from" and "to" fields
+  private async _runDetectionsWaiter(analyticUnit: AnalyticUnit, from: number, to: number) {
+    const detectionsGenerator = this._analyticService.getDetectionsGenerator(analyticUnit.id, from, to, 1000);
+
+    return this._runWaiter<DetectionSpan[]>(
+      analyticUnit,
+      this._detectionRunners,
+      detectionsGenerator,
+      (data) => {
+        if(!_.isEqual(data, analyticUnit.detectionSpans)) {
+          this._emitter.emit('analytic-unit-status-change', analyticUnit);
+        }
+        analyticUnit.detectionSpans = data;
+        let isFinished = true;
+        for (let detection of data) {
+          if(detection.status === DetectionStatus.RUNNING) {
+            isFinished = false;
+          }
+        }
+        return isFinished;
+      }
+    );
+  }
+
+  private async _runWaiter<T>(
+    analyticUnit: AnalyticUnit,
+    runners: Set<AnalyticUnitId>,
+    generator: AsyncIterableIterator<T>,
+    iteration: (data: T) => boolean
+  ) {
     if(this._analyticService === undefined) {
       return;
     }
@@ -524,35 +600,26 @@ export class AnalyticController {
       throw new Error('analyticUnit.id is undefined');
     }
 
-    if(this._statusRunners.has(analyticUnit.id)) {
+    if(runners.has(analyticUnit.id)) {
       return;
     }
 
-    this._statusRunners.add(analyticUnit.id);
+    runners.add(analyticUnit.id);
 
-    var statusGenerator = this._analyticService.getStatusGenerator(
-      analyticUnit.id, 1000
-    );
-
-    for await (const data of statusGenerator) {
+    for await (const data of generator) {
       if(data === undefined) {
         break;
       }
-      let status = data.status;
-      let error = data.errorMessage;
-      if(analyticUnit.status !== status) {
-        analyticUnit.status = status;
-        if(error !== undefined) {
-          analyticUnit.error = error;
-        }
-        this._emitter.emit('analytic-unit-status-change', analyticUnit);
+      if(!runners.has(analyticUnit.id)) {
+        break;
       }
-      if(!analyticUnit.isActiveStatus) {
+      const shouldBreak = iteration(data);
+      if(shouldBreak) {
         break;
       }
     }
 
-    this._statusRunners.delete(analyticUnit.id);
+    runners.delete(analyticUnit.id);
   }
 
   public getNewTempSegmentId(): SegmentId {
