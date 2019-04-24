@@ -11,7 +11,7 @@
       "small": "img/icn-graph-panel.png",
       "large": "img/icn-graph-panel.png"
     },
-    "version": "0.3.2"
+    "version": "0.3.3"
   },
   "includes": [
     { "type": "panel", "name": "Hastic Graph Panel" },
