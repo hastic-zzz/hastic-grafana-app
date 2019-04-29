@@ -373,16 +373,12 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.dataList = dataList;
     this.loading = true;
 
+    const from = +this.range.from;
+    const to = +this.range.to;
+
     if(this.analyticsController !== undefined) {
-      const from = +this.range.from;
-      const to = +this.range.to;
-      const smoothedData: any = await this.analyticsController.getHSRData(from, to);
-      smoothedData.color = '#FF99FF';
-      smoothedData.overrides = [{
-        alias: 'HSR',
-        linewidth: 3
-      }]
-      this.dataList = _.concat(this.dataList, smoothedData);
+      const hsrDataSeries = await this.analyticsController.getHSRDataSeries(from, to);
+      this.dataList = _.concat(this.dataList, hsrDataSeries);
     }
     this.seriesList = this.processor.getSeriesList({
       dataList: this.dataList,
@@ -411,8 +407,6 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     if(this.analyticsController !== undefined) {
       this.analyticsController.stopAnalyticUnitsDetectionsFetching();
-      const from = +this.range.from;
-      const to = +this.range.to;
       const loadTasks = [
         // this.annotationsPromise,
         this.analyticsController.fetchAnalyticUnitsSegments(from, to)

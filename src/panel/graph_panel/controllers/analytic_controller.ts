@@ -514,6 +514,23 @@ export class AnalyticController {
     }
   }
 
+  async getHSRDataSeries(from: number, to: number) {
+    const hsrData: any = await this.getHSRData(from, to);
+
+    if(_.isEmpty(hsrData)) {
+      return [];
+    }
+    return {
+      ...hsrData,
+      color: ANALYTIC_UNIT_COLORS[0],
+      // TODO: render it separately from series
+      overrides: [{
+        alias: 'HSR',
+        linewidth: 3
+      }]
+    };
+  }
+
   async updateThresholds(): Promise<void> {
     if(this._analyticService === undefined) {
       return;
