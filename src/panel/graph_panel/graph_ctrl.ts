@@ -371,8 +371,21 @@ class GraphCtrl extends MetricsPanelCtrl {
   async onDataReceived(dataList) {
 
     this.dataList = dataList;
+    this.loading = true;
+
+    if(this.analyticsController !== undefined) {
+      const from = +this.range.from;
+      const to = +this.range.to;
+      const smoothedData: any = await this.analyticsController.getHSRData(from, to);
+      smoothedData.color = '#FF99FF';
+      smoothedData.overrides = [{
+        alias: 'HSR',
+        linewidth: 3
+      }]
+      this.dataList = _.concat(this.dataList, smoothedData);
+    }
     this.seriesList = this.processor.getSeriesList({
-      dataList: dataList,
+      dataList: this.dataList,
       range: this.range,
     });
 
@@ -417,7 +430,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   }
 
-  onRender(data) {
+  onRender() {
     if(!this.seriesList) {
       return;
     }
@@ -438,7 +451,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
 
     if(!this.analyticsController.graphLocked) {
-      this._graphRenderer.render(data);
+      this._graphRenderer.render(this.seriesList);
       this._graphLegend.render();
       this._graphRenderer.renderPanel();
     }

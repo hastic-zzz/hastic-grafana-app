@@ -495,6 +495,25 @@ export class AnalyticController {
     this.fetchAnalyticUnitsStatuses();
   }
 
+  async getHSRData(from: number, to: number): Promise<{
+    datapoints: [number, number][];
+    target: string;
+  } | any[]> {
+    let analyticUnitId;
+    this.analyticUnits.forEach(analyticUnit => {
+      if(analyticUnit.inspect) {
+        analyticUnitId = analyticUnit.id;
+      }
+    });
+    if(analyticUnitId !== undefined) {
+      const data = await this._analyticService.getHSRData(analyticUnitId, from, to);
+      const datapoints = data.values.map(value => value.reverse() as [number, number]);
+      return { target: 'HSR', datapoints };
+    } else {
+      return [];
+    }
+  }
+
   async updateThresholds(): Promise<void> {
     if(this._analyticService === undefined) {
       return;
