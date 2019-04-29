@@ -112,7 +112,7 @@ export class DataProcessor {
     });
 
     if(seriesData.overrides !== undefined) {
-      series.applySeriesOverrides(seriesData.overrides)
+      series.applySeriesOverrides(seriesData.overrides);
     }
 
     if (datapoints && datapoints.length > 0) {
