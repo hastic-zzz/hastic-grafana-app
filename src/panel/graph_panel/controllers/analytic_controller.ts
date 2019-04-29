@@ -513,7 +513,7 @@ export class AnalyticController {
   }
 
   async getHSRDataSeries(from: number, to: number) {
-    const hsrData: any = await this.getHSRData(from, to);
+    const hsrData = await this.getHSRData(from, to);
 
     if(hsrData === null) {
       return [];
