@@ -219,7 +219,7 @@ export class AnalyticService {
     };
   }
 
-  async getHSRData(analyticUnitId: AnalyticUnitId, from: number, to: number): Promise<{
+  async getHSR(analyticUnitId: AnalyticUnitId, from: number, to: number): Promise<{
     values: [number, number][];
     columns: string[];
   }> {

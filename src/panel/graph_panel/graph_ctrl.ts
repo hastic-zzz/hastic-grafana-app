@@ -377,8 +377,8 @@ class GraphCtrl extends MetricsPanelCtrl {
     const to = +this.range.to;
 
     if(this.analyticsController !== undefined) {
-      const hsrDataSeries = await this.analyticsController.getHSRDataSeries(from, to);
-      this.dataList = _.concat(this.dataList, hsrDataSeries);
+      const hsrSeries = await this.analyticsController.getHSRSeries(from, to);
+      this.dataList = _.concat(this.dataList, hsrSeries);
     }
     this.seriesList = this.processor.getSeriesList({
       dataList: this.dataList,
@@ -413,7 +413,6 @@ class GraphCtrl extends MetricsPanelCtrl {
       ];
 
       await Promise.all(loadTasks);
-      this.loading = false;
       // this.annotations = results[0].annotations;
       this.render(this.seriesList);
       this.analyticsController.fetchAnalyticUnitsDetections(
@@ -422,6 +421,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       );
     }
 
+    this.loading = false;
   }
 
   onRender() {
