@@ -111,6 +111,10 @@ export class DataProcessor {
       unit: seriesData.unit,
     });
 
+    if(seriesData.overrides !== undefined) {
+      series.applySeriesOverrides(seriesData.overrides);
+    }
+
     if (datapoints && datapoints.length > 0) {
       var last = datapoints[datapoints.length - 1][1];
       var from = options.range.from;

@@ -371,8 +371,17 @@ class GraphCtrl extends MetricsPanelCtrl {
   async onDataReceived(dataList) {
 
     this.dataList = dataList;
+    this.loading = true;
+
+    const from = +this.range.from;
+    const to = +this.range.to;
+
+    if(this.analyticsController !== undefined) {
+      const hsrSeries = await this.analyticsController.getHSRSeries(from, to);
+      this.dataList = _.concat(this.dataList, hsrSeries);
+    }
     this.seriesList = this.processor.getSeriesList({
-      dataList: dataList,
+      dataList: this.dataList,
       range: this.range,
     });
 
@@ -398,15 +407,12 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     if(this.analyticsController !== undefined) {
       this.analyticsController.stopAnalyticUnitsDetectionsFetching();
-      const from = +this.range.from;
-      const to = +this.range.to;
       const loadTasks = [
         // this.annotationsPromise,
         this.analyticsController.fetchAnalyticUnitsSegments(from, to)
       ];
 
       await Promise.all(loadTasks);
-      this.loading = false;
       // this.annotations = results[0].annotations;
       this.render(this.seriesList);
       this.analyticsController.fetchAnalyticUnitsDetections(
@@ -415,9 +421,10 @@ class GraphCtrl extends MetricsPanelCtrl {
       );
     }
 
+    this.loading = false;
   }
 
-  onRender(data) {
+  onRender() {
     if(!this.seriesList) {
       return;
     }
@@ -438,7 +445,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
 
     if(!this.analyticsController.graphLocked) {
-      this._graphRenderer.render(data);
+      this._graphRenderer.render(this.seriesList);
       this._graphLegend.render();
       this._graphRenderer.renderPanel();
     }

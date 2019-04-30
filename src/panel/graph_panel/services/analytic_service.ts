@@ -219,6 +219,14 @@ export class AnalyticService {
     };
   }
 
+  async getHSR(analyticUnitId: AnalyticUnitId, from: number, to: number): Promise<{
+    values: [number, number][];
+    columns: string[];
+  }> {
+    const data = await this.get('/query', { analyticUnitId, from, to });
+    return data.results;
+  }
+
   async setAnalyticUnitAlert(analyticUnit: AnalyticUnit) {
     return this.patch('/analyticUnits/alert', {
       analyticUnitId: analyticUnit.id,

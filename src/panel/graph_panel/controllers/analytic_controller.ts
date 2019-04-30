@@ -32,6 +32,8 @@ import { Emitter } from 'grafana/app/core/utils/emitter';
 import _ from 'lodash';
 import * as tinycolor from 'tinycolor2';
 
+export type HSRTimeSeries = { datapoints: [number, number][]; target: string; };
+
 export class AnalyticController {
 
   private _analyticUnitsSet: AnalyticUnitsSet;
@@ -407,15 +409,16 @@ export class AnalyticController {
   }
 
   updateLegend($elem: any) {
+    const analyticUnit = this.inspectedAnalyticUnit;
+    if(analyticUnit === null) {
+      return;
+    }
+
     let detectionStatuses: DetectionStatus[] = [];
-    this.analyticUnits
-      .filter(analyticUnit => analyticUnit.inspect)
-      .forEach(analyticUnit => {
-        if(analyticUnit.detectionSpans !== undefined) {
-          const statuses = analyticUnit.detectionSpans.map(span => span.status);
-          detectionStatuses = _.concat(detectionStatuses, statuses);
-        }
-      });
+    if(analyticUnit.detectionSpans !== undefined) {
+      const statuses = analyticUnit.detectionSpans.map(span => span.status);
+      detectionStatuses = _.concat(detectionStatuses, statuses);
+    }
     detectionStatuses = _.uniq(detectionStatuses);
 
     detectionStatuses.forEach(status => {
@@ -493,6 +496,44 @@ export class AnalyticController {
     this._analyticUnitsSet = new AnalyticUnitsSet(units);
     this._loading = false;
     this.fetchAnalyticUnitsStatuses();
+  }
+
+  async getHSR(from: number, to: number): Promise<HSRTimeSeries | null> {
+    // Returns HSR (Hastic Signal Representation) for inspected analytic unit
+    // Returns null when there is no analytic units in Inspect mode
+    if(this.inspectedAnalyticUnit === null) {
+      return null;
+    }
+
+    const hsr = await this._analyticService.getHSR(this.inspectedAnalyticUnit.id, from, to);
+    const datapoints = hsr.values.map(value => value.reverse() as [number, number]);
+    return { target: 'HSR', datapoints };
+  }
+
+  async getHSRSeries(from: number, to: number) {
+    const hsr = await this.getHSR(from, to);
+
+    if(hsr === null) {
+      return [];
+    }
+    return {
+      ...hsr,
+      color: ANALYTIC_UNIT_COLORS[0],
+      // TODO: render it separately from series
+      overrides: [{
+        alias: 'HSR',
+        linewidth: 3
+      }]
+    };
+  }
+
+  get inspectedAnalyticUnit(): AnalyticUnit | null {
+    for(let analyticUnit of this.analyticUnits) {
+      if(analyticUnit.inspect) {
+        return analyticUnit;
+      }
+    };
+    return null;
   }
 
   async updateThresholds(): Promise<void> {
