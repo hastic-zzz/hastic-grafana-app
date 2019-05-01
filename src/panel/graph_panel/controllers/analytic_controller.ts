@@ -319,6 +319,14 @@ export class AnalyticController {
     _.each(this.analyticUnits, analyticUnit => this._runStatusWaiter(analyticUnit));
   }
 
+  async runDetect(analyticUnitId: AnalyticUnitId) {
+    const analyticUnit = this._analyticUnitsSet.byId(analyticUnitId);
+    analyticUnit.segments.clear();
+    analyticUnit.status = null;
+    await this._analyticService.runDetect(analyticUnitId);
+    this._runStatusWaiter(analyticUnit);
+  }
+
   // TODO: move to renderer
   updateFlotEvents(isEditMode: boolean, plot: any): void {
     // We get a reference to flot options so we can change it and it'll be rendered

@@ -580,6 +580,10 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.analyticsController.redetectAll();
   }
 
+  async runDetect(analyticUnitId: AnalyticUnitId) {
+    this.analyticsController.runDetect(analyticUnitId);
+  }
+
   async saveNew() {
     try {
       const datasource = await this._getDatasourceRequest();

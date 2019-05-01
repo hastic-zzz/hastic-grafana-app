@@ -109,11 +109,11 @@
           type="number"
           ng-model="analyticUnit.value"
         />
-        <!-- TODO: apply -->
+
         <button
           class="btn btn-inverse"
           ng-if="analyticUnit.detectorType === 'threshold'"
-          ng-click="ctrl.analyticsController.sendThresholdParamsToServer(analyticUnit.id)"
+          ng-click="ctrl.runDetect(analyticUnit.id)"
           ng-disabled="analyticUnit.status === 'PENDING' || analyticUnit.status === 'LEARNING'"
           >
           Apply
