@@ -59,7 +59,7 @@ export class AnalyticUnit {
 
   constructor(protected _serverObject?: any) {
     if(_serverObject === undefined) {
-      this._serverObject = DEFAULTS;
+      this._serverObject = _.clone(DEFAULTS);
     }
     _.defaults(this._serverObject, DEFAULTS);
   }
