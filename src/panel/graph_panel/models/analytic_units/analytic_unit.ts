@@ -68,7 +68,10 @@ export class AnalyticUnit {
     return {
       id: this.id,
       name: this.name,
+      // TODO: enum type
+      // TODO: type -> modelType
       type: this.type,
+      // TODO: detectorType -> type
       detectorType: this.detectorType,
       labeledColor: this.labeledColor,
       deletedColor: this.deletedColor,
