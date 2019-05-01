@@ -144,8 +144,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     // series color overrides
     aliasColors: {},
     // other style overrides
-    seriesOverrides: [],
-    thresholds: []
+    seriesOverrides: []
   };
 
   /** @ngInject */

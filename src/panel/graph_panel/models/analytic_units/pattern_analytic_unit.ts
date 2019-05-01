@@ -13,4 +13,11 @@ export class PatternAnalyticUnit extends AnalyticUnit {
     super(_serverObject);
     _.defaults(this._serverObject, DEFAULTS);
   }
+
+  toJSON() {
+    const baseJSON = super.toJSON();
+    return {
+      ...baseJSON
+    };
+  }
 }

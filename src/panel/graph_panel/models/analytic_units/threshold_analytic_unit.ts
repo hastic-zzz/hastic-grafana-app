@@ -26,6 +26,15 @@ export class ThresholdAnalyticUnit extends AnalyticUnit {
     _.defaults(this._serverObject, DEFAULTS);
   }
 
+  toJSON() {
+    const baseJSON = super.toJSON();
+    return {
+      ...baseJSON,
+      value: this.value,
+      condition: this.condition
+    };
+  }
+
   set value(val: number) { this._serverObject.value = val; }
   get value(): number { return this._serverObject.value; }
 

@@ -4,7 +4,6 @@ import { DatasourceRequest } from '../models/datasource';
 import { SegmentsSet } from '../models/segment_set';
 import { AnalyticUnitId, AnalyticUnit, AnalyticSegment } from '../models/analytic_units/analytic_unit';
 import { HasticServerInfo, HasticServerInfoUnknown } from '../models/hastic_server_info';
-import { Threshold } from '../models/threshold';
 import { DetectionSpan } from '../models/detection';
 
 import { isHasticServerResponse, isSupportedServerVersion, SUPPORTED_SERVER_VERSION } from '../../../utlis';
@@ -42,18 +41,6 @@ export class AnalyticService {
     return resp.analyticUnits;
   }
 
-  async getThresholds(ids: AnalyticUnitId[]) {
-    const resp = await this.get('/threshold', { ids: ids.join(',') });
-    if(resp === undefined) {
-      return [];
-    }
-    return resp.thresholds.filter(t => t !== null);
-  }
-
-  async updateThreshold(threshold: Threshold): Promise<void> {
-    return this.patch('/threshold', threshold);
-  }
-
   async postNewAnalyticUnit(
     analyticUnit: AnalyticUnit,
     metric: MetricExpanded,
@@ -61,19 +48,13 @@ export class AnalyticService {
     grafanaUrl: string,
     panelId: string
   ): Promise<AnalyticUnitId> {
+    const analyticUnitJson = analyticUnit.toJSON();
     const response = await this.post('/analyticUnits', {
       grafanaUrl,
       panelId,
-      // TODO: serialize analytic unit
-      name: analyticUnit.name,
-      type: analyticUnit.type,
-      alert: analyticUnit.alert,
-      labeledColor: analyticUnit.labeledColor,
-      deletedColor: analyticUnit.deletedColor,
-      detectorType: analyticUnit.detectorType,
-      visible: analyticUnit.visible,
       metric: metric.toJSON(),
-      datasource
+      datasource,
+      ...analyticUnitJson
     });
 
     return response.id as AnalyticUnitId;

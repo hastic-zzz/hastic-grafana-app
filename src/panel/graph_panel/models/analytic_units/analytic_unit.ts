@@ -36,13 +36,13 @@ export class AnalyticSegment extends Segment {
 
 // TODO: make it class field
 const DEFAULTS = {
-  detectorType: DetectorType.PATTERN,
-  type: 'GENERAL',
+  id: null,
   name: 'AnalyticUnitName',
+  type: 'GENERAL',
+  detectorType: DetectorType.PATTERN,
   labeledColor: ANALYTIC_UNIT_COLORS[0],
   deletedColor: DEFAULT_DELETED_SEGMENT_COLOR,
   alert: false,
-  id: null,
   visible: true
 };
 
@@ -62,6 +62,19 @@ export class AnalyticUnit {
       this._serverObject = DEFAULTS;
     }
     _.defaults(this._serverObject, DEFAULTS);
+  }
+
+  toJSON() {
+    return {
+      id: this.id,
+      name: this.name,
+      type: this.type,
+      detectorType: this.detectorType,
+      labeledColor: this.labeledColor,
+      deletedColor: this.deletedColor,
+      alert: this.alert,
+      visible: this.visible,
+    };
   }
 
   get id(): AnalyticUnitId { return this._serverObject.id; }

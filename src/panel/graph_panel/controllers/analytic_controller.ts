@@ -8,14 +8,13 @@ import {
   LabelingMode
 } from '../models/analytic_units/analytic_unit';
 import { AnalyticUnitsSet } from '../models/analytic_units/analytic_units_set';
-import { PatternAnalyticUnit } from '../models/analytic_units/pattern_analytic_unit';
 import { MetricExpanded } from '../models/metric';
 import { DatasourceRequest } from '../models/datasource';
 import { Segment, SegmentId } from '../models/segment';
 import { SegmentsSet } from '../models/segment_set';
 import { SegmentArray } from '../models/segment_array';
 import { HasticServerInfo, HasticServerInfoUnknown } from '../models/hastic_server_info';
-import { Threshold, Condition } from '../models/threshold';
+import { Condition } from '../models/analytic_units/threshold_analytic_unit';
 import { DetectionStatus, DETECTION_STATUS_TEXT, DetectionSpan } from '../models/detection';
 import helpSectionText from '../partials/help_section.html';
 
@@ -55,7 +54,6 @@ export class AnalyticController {
   private _serverInfo: HasticServerInfo;
   private _currentMetric: MetricExpanded;
   private _currentDatasource: DatasourceRequest;
-  private _thresholds: Threshold[];
   private _loading = true;
 
   constructor(
@@ -69,8 +67,6 @@ export class AnalyticController {
     this._labelingDataRemovedSegments = new SegmentArray<AnalyticSegment>();
     this._analyticUnitsSet = new AnalyticUnitsSet([]);
     this.fetchAnalyticUnits();
-    this._thresholds = [];
-    this.updateThresholds();
   }
 
   get helpSectionText() { return helpSectionText; }
@@ -94,12 +90,6 @@ export class AnalyticController {
     return result;
   }
 
-  async sendThresholdParamsToServer(id: AnalyticUnitId) {
-    await this.saveThreshold(id);
-    await this._analyticService.runDetect(id);
-    await this._runStatusWaiter(this._analyticUnitsSet.byId(id));
-  }
-
   createNew() {
     this._basicAnalyticUnit = new AnalyticUnit();
     this._creatingNewAnalyticUnit = true;
@@ -119,9 +109,6 @@ export class AnalyticController {
     this._newAnalyticUnit.id = await this._analyticService.postNewAnalyticUnit(
       this._newAnalyticUnit, metric, datasource, this._grafanaUrl, this._panelId
     );
-    if(this._newAnalyticUnit.detectorType === 'threshold') {
-      await this.saveThreshold(this._newAnalyticUnit.id);
-    }
     this._analyticUnitsSet.addItem(this._newAnalyticUnit);
     this._creatingNewAnalyticUnit = false;
     this._savingNewAnalyticUnit = false;
@@ -540,39 +527,6 @@ export class AnalyticController {
       }
     };
     return null;
-  }
-
-  async updateThresholds(): Promise<void> {
-    if(this._analyticService === undefined) {
-      return;
-    }
-    const ids = _.map(this._panelObject.analyticUnits, (analyticUnit: any) => analyticUnit.id);
-    const thresholds = await this._analyticService.getThresholds(ids);
-    this._thresholds = thresholds;
-  }
-
-  getThreshold(id: AnalyticUnitId): Threshold {
-    let threshold = _.find(this._thresholds, { id });
-    if(threshold === undefined) {
-      threshold = {
-        id,
-        value: 0,
-        condition: Condition.ABOVE
-      };
-      this._thresholds.push(threshold);
-    }
-    return threshold;
-  }
-
-  async saveThreshold(id: AnalyticUnitId) {
-    const threshold = this.getThreshold(id);
-    if(threshold.value === undefined) {
-      throw new Error('Cannot save threshold with undefined value');
-    }
-    if(threshold.condition === undefined) {
-      throw new Error('Cannot save threshold with undefined condition');
-    }
-    return this._analyticService.updateThreshold(threshold);
   }
 
   public get conditions() {
