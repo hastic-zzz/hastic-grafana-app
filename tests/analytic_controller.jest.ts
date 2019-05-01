@@ -9,7 +9,7 @@ describe('AnalyticController', function () {
   it('should create analytic units with colors from palette', async function () {
     for (let color of ANALYTIC_UNIT_COLORS) {
       analyticController.createNew();
-      expect(analyticController.newAnalyticUnit.labeledColor).toBe(color);
+      expect(analyticController.basicAnalyticUnit.labeledColor).toBe(color);
       await analyticController.saveNew({} as MetricExpanded, {} as DatasourceRequest);
     }
   });
