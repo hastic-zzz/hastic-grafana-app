@@ -1,12 +1,14 @@
 // Corresponds to https://github.com/hastic/hastic-server/blob/master/server/src/models/analytic_units/analytic_unit.ts
 
-import { AnalyticService } from '../services/analytic_service'
+import { AnalyticService } from '../services/analytic_service';
 
 import {
   AnalyticUnitId, AnalyticUnit,
-  AnalyticUnitsSet, AnalyticSegment, AnalyticSegmentsSearcher, AnalyticSegmentPair,
+  AnalyticSegment, AnalyticSegmentsSearcher, AnalyticSegmentPair,
   LabelingMode
 } from '../models/analytic_units/analytic_unit';
+import { AnalyticUnitsSet } from '../models/analytic_units/analytic_units_set';
+import { PatternAnalyticUnit } from '../models/analytic_units/pattern_analytic_unit';
 import { MetricExpanded } from '../models/metric';
 import { DatasourceRequest } from '../models/datasource';
 import { Segment, SegmentId } from '../models/segment';
@@ -15,7 +17,7 @@ import { SegmentArray } from '../models/segment_array';
 import { HasticServerInfo, HasticServerInfoUnknown } from '../models/hastic_server_info';
 import { Threshold, Condition } from '../models/threshold';
 import { DetectionStatus, DETECTION_STATUS_TEXT, DetectionSpan } from '../models/detection';
-import text from '../partials/help_section.html';
+import helpSectionText from '../partials/help_section.html';
 
 import {
   ANALYTIC_UNIT_COLORS,
@@ -69,7 +71,7 @@ export class AnalyticController {
     this.updateThresholds();
   }
 
-  get helpSectionText() { return text; }
+  get helpSectionText() { return helpSectionText; }
 
   get loading() {
     return this._loading;
@@ -97,7 +99,7 @@ export class AnalyticController {
   }
 
   createNew() {
-    this._newAnalyticUnit = new AnalyticUnit();
+    this._newAnalyticUnit = new PatternAnalyticUnit();
     this._creatingNewAnalyticType = true;
     this._savingNewAnalyticUnit = false;
     if(this.analyticUnits.length === 0) {
