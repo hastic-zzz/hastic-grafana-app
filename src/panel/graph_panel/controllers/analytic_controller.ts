@@ -33,6 +33,7 @@ import { Emitter } from 'grafana/app/core/utils/emitter';
 
 import _ from 'lodash';
 import * as tinycolor from 'tinycolor2';
+import { createAnalyticUnit } from '../models/analytic_units/analytic_unit_creator';
 
 export type HSRTimeSeries = { datapoints: [number, number][]; target: string; };
 
@@ -43,8 +44,9 @@ export class AnalyticController {
 
   private _labelingDataAddedSegments: SegmentsSet<AnalyticSegment>;
   private _labelingDataRemovedSegments: SegmentsSet<AnalyticSegment>;
+  private _basicAnalyticUnit: AnalyticUnit = null;
   private _newAnalyticUnit: AnalyticUnit = null;
-  private _creatingNewAnalyticType: boolean = false;
+  private _creatingNewAnalyticUnit: boolean = false;
   private _savingNewAnalyticUnit: boolean = false;
   private _tempIdCounted: number = -1;
   private _graphLocked: boolean = false;
@@ -99,20 +101,21 @@ export class AnalyticController {
   }
 
   createNew() {
-    this._newAnalyticUnit = new PatternAnalyticUnit();
-    this._creatingNewAnalyticType = true;
+    this._basicAnalyticUnit = new AnalyticUnit();
+    this._creatingNewAnalyticUnit = true;
     this._savingNewAnalyticUnit = false;
     if(this.analyticUnits.length === 0) {
-      this._newAnalyticUnit.labeledColor = ANALYTIC_UNIT_COLORS[0];
+      this._basicAnalyticUnit.labeledColor = ANALYTIC_UNIT_COLORS[0];
     } else {
       let colorIndex = ANALYTIC_UNIT_COLORS.indexOf(_.last(this.analyticUnits).labeledColor) + 1;
       colorIndex %= ANALYTIC_UNIT_COLORS.length;
-      this._newAnalyticUnit.labeledColor = ANALYTIC_UNIT_COLORS[colorIndex];
+      this._basicAnalyticUnit.labeledColor = ANALYTIC_UNIT_COLORS[colorIndex];
     }
   }
 
   async saveNew(metric: MetricExpanded, datasource: DatasourceRequest) {
     this._savingNewAnalyticUnit = true;
+    this._newAnalyticUnit = createAnalyticUnit(this._basicAnalyticUnit.serverObject);
     this._newAnalyticUnit.id = await this._analyticService.postNewAnalyticUnit(
       this._newAnalyticUnit, metric, datasource, this._grafanaUrl, this._panelId
     );
@@ -120,12 +123,13 @@ export class AnalyticController {
       await this.saveThreshold(this._newAnalyticUnit.id);
     }
     this._analyticUnitsSet.addItem(this._newAnalyticUnit);
-    this._creatingNewAnalyticType = false;
+    this._creatingNewAnalyticUnit = false;
     this._savingNewAnalyticUnit = false;
   }
 
-  get creatingNew() { return this._creatingNewAnalyticType; }
+  get creatingNew() { return this._creatingNewAnalyticUnit; }
   get saving() { return this._savingNewAnalyticUnit; }
+  get basicAnalyticUnit(): AnalyticUnit { return this._basicAnalyticUnit; }
   get newAnalyticUnit(): AnalyticUnit { return this._newAnalyticUnit; }
 
   get graphLocked() { return this._graphLocked; }

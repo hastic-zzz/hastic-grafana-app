@@ -36,6 +36,8 @@ export class AnalyticSegment extends Segment {
 
 // TODO: make it class field
 const DEFAULTS = {
+  detectorType: DetectorType.PATTERN,
+  type: 'GENERAL',
   name: 'AnalyticUnitName',
   labeledColor: ANALYTIC_UNIT_COLORS[0],
   deletedColor: DEFAULT_DELETED_SEGMENT_COLOR,
@@ -44,7 +46,7 @@ const DEFAULTS = {
   visible: true
 };
 
-export abstract class AnalyticUnit {
+export class AnalyticUnit {
 
   private _labelingMode: LabelingMode = LabelingMode.LABELING;
   private _selected: boolean = false;

@@ -1,5 +1,5 @@
 import { AnalyticUnit, AnalyticUnitId } from './analytic_unit';
-import { PatternAnalyticUnit } from './pattern_analytic_unit';
+import { createAnalyticUnit } from './analytic_unit_creator';
 
 export class AnalyticUnitsSet {
 
@@ -11,7 +11,7 @@ export class AnalyticUnitsSet {
       throw new Error('server object can`t be undefined');
     }
     this._mapIdIndex = new Map<AnalyticUnitId, number>();
-    this._items = _serverObject.map(p => new PatternAnalyticUnit(p));
+    this._items = _serverObject.map(p => createAnalyticUnit(p));
     this._rebuildIndex();
   }
 

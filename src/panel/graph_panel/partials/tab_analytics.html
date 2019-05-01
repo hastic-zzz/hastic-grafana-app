@@ -189,13 +189,13 @@
         <label class="gf-form-label width-4"> Name </label>
         <input
           type="text" class="gf-form-input max-width-15"
-          ng-model="ctrl.analyticsController.newAnalyticUnit.name"
+          ng-model="ctrl.analyticsController.basicAnalyticUnit.name"
         >
 
         <label class="gf-form-label width-8"> Detector Type </label>
         <div class="gf-form-select-wrapper">
           <select class="gf-form-input width-10"
-            ng-model="ctrl.analyticsController.newAnalyticUnit.detectorType"
+            ng-model="ctrl.analyticsController.basicAnalyticUnit.detectorType"
             ng-options="analyticUnitDetectorType for analyticUnitDetectorType in ctrl.analyticUnitDetectorTypes"
             ng-change="ctrl.analyticsController.onAnalyticUnitDetectorChange(ctrl.analyticUnitTypes);"
           />
@@ -204,10 +204,10 @@
         <label class="gf-form-label width-8"> Type </label>
         <div class="gf-form-select-wrapper">
           <select class="gf-form-input width-10"
-            ng-model="ctrl.analyticsController.newAnalyticUnit.type"
+            ng-model="ctrl.analyticsController.basicAnalyticUnit.type"
             ng-options="
               type.value as type.name
-              for type in ctrl.analyticUnitTypes[ctrl.analyticsController.newAnalyticUnit.detectorType]
+              for type in ctrl.analyticUnitTypes[ctrl.analyticsController.basicAnalyticUnit.detectorType]
             "
           />
         </div>
