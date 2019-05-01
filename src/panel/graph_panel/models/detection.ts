@@ -1,4 +1,4 @@
-import { AnalyticUnitId } from './analytic_unit';
+import { AnalyticUnitId } from './analytic_units/analytic_unit';
 
 export enum DetectionStatus {
   READY = 'READY',

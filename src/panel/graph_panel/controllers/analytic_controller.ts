@@ -1,4 +1,4 @@
-// Corresponds to https://github.com/hastic/hastic-server/blob/master/server/src/models/analytic_unit.ts
+// Corresponds to https://github.com/hastic/hastic-server/blob/master/server/src/models/analytic_units/analytic_unit.ts
 
 import { AnalyticService } from '../services/analytic_service'
 
@@ -6,7 +6,7 @@ import {
   AnalyticUnitId, AnalyticUnit,
   AnalyticUnitsSet, AnalyticSegment, AnalyticSegmentsSearcher, AnalyticSegmentPair,
   LabelingMode
-} from '../models/analytic_unit';
+} from '../models/analytic_units/analytic_unit';
 import { MetricExpanded } from '../models/metric';
 import { DatasourceRequest } from '../models/datasource';
 import { Segment, SegmentId } from '../models/segment';
