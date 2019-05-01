@@ -323,6 +323,7 @@ export class AnalyticController {
     const analyticUnit = this._analyticUnitsSet.byId(analyticUnitId);
     analyticUnit.segments.clear();
     analyticUnit.status = null;
+    await this.saveAnalyticUnit(analyticUnit);
     await this._analyticService.runDetect(analyticUnitId);
     this._runStatusWaiter(analyticUnit);
   }
