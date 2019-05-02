@@ -34,7 +34,6 @@ export class AnalyticSegment extends Segment {
   }
 }
 
-// TODO: make it class field
 const DEFAULTS = {
   id: null,
   name: 'AnalyticUnitName',
