@@ -576,7 +576,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.analyticsController.redetectAll();
   }
 
-  async runDetectOnCurrentRange(analyticUnitId: AnalyticUnitId) {
+  async runDetectInCurrentRange(analyticUnitId: AnalyticUnitId) {
     const { from, to } = this.rangeTimestamp;
 
     this.analyticsController.runDetect(

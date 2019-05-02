@@ -113,7 +113,7 @@
         <button
           class="btn btn-inverse"
           ng-if="analyticUnit.detectorType === 'threshold'"
-          ng-click="ctrl.runDetectOnCurrentRange(analyticUnit.id)"
+          ng-click="ctrl.runDetectInCurrentRange(analyticUnit.id)"
           ng-disabled="analyticUnit.status === 'PENDING' || analyticUnit.status === 'LEARNING'"
           >
           Apply
