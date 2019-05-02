@@ -56,6 +56,7 @@ export class AnalyticUnit {
   private _status: string;
   private _error: string;
 
+  // TODO: serverObject -> fields
   constructor(protected _serverObject?: any) {
     if(_serverObject === undefined) {
       this._serverObject = _.clone(DEFAULTS);
