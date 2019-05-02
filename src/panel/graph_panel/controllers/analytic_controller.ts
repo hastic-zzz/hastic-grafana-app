@@ -309,7 +309,9 @@ export class AnalyticController {
 
   async redetectAll() {
     this.analyticUnits.forEach(unit => {
+      // TODO: remove duplication with runDetect
       unit.segments.clear();
+      unit.detectionSpans = [];
       unit.status = null;
     });
     const ids = this.analyticUnits.map(analyticUnit => analyticUnit.id);
@@ -321,6 +323,7 @@ export class AnalyticController {
   async runDetect(analyticUnitId: AnalyticUnitId, from?: number, to?: number) {
     const analyticUnit = this._analyticUnitsSet.byId(analyticUnitId);
     analyticUnit.segments.clear();
+    analyticUnit.detectionSpans = [];
     analyticUnit.status = null;
     await this.saveAnalyticUnit(analyticUnit);
     await this._analyticService.runDetect(analyticUnitId, from, to);
