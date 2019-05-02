@@ -11,7 +11,8 @@ import _ from 'lodash';
 // TODO: move types to ./types
 export enum DetectorType {
   PATTERN = 'pattern',
-  THRESHOLD = 'threshold'
+  THRESHOLD = 'threshold',
+  ANOMALY = 'anomaly'
 };
 
 export enum LabelingMode {
