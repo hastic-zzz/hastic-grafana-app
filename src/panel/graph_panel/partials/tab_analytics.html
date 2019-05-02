@@ -118,6 +118,7 @@
           max="1"
           type="number"
           ng-model="analyticUnit.alpha"
+          ng-blur="ctrl.onAnalyticUnitChange(analyticUnit)"
         />
 
         <label class="gf-form-label width-6" ng-if="analyticUnit.detectorType === 'anomaly'"> Confidence </label>
@@ -126,6 +127,7 @@
           min="0"
           type="number"
           ng-model="analyticUnit.confidence"
+          ng-blur="ctrl.onAnalyticUnitChange(analyticUnit)"
         />
 
         <button
@@ -158,21 +160,22 @@
         </label>
 
         <label class="gf-form-label" ng-if="analyticUnit.status === 'READY' && analyticUnit.visible">
-          <a
-            class="pointer"
-            ng-click="ctrl.onToggleInspect(analyticUnit.id)"
-            ng-if="!analyticUnit.inspect"
-          >
-            Inspect
-          </a>
-          <a
-            class="pointer"
-            ng-click="ctrl.onToggleInspect(analyticUnit.id)"
-            ng-if="analyticUnit.inspect"
-          >
-            Disable Inspect
-          </a>
+          Inspect
         </label>
+
+        <gf-form-switch ng-if="analyticUnit.status === 'READY' && analyticUnit.visible"
+          on-change="ctrl.onToggleInspect(analyticUnit.id)"
+          checked="analyticUnit.inspect"
+        />
+
+        <label class="gf-form-label" ng-if="analyticUnit.status === 'READY' && analyticUnit.visible">
+          HSR
+        </label>
+
+        <gf-form-switch ng-if="analyticUnit.status === 'READY' && analyticUnit.visible"
+          on-change="ctrl.onToggleHSR(analyticUnit.id)"
+          checked="analyticUnit.showHSR"
+        />
 
         <label class="gf-form-label">
           <a

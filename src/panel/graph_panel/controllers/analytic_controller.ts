@@ -500,13 +500,13 @@ export class AnalyticController {
   }
 
   async getHSR(from: number, to: number): Promise<HSRTimeSeries | null> {
-    // Returns HSR (Hastic Signal Representation) for inspected analytic unit
-    // Returns null when there is no analytic units in Inspect mode
-    if(this.inspectedAnalyticUnit === null) {
+    // Returns HSR (Hastic Signal Representation) for analytic unit with enabled "Show HSR"
+    // Returns null when there is no analytic units have "Show HSR" enabled
+    if(this.hsrAnalyticUnit === null) {
       return null;
     }
 
-    const hsr = await this._analyticService.getHSR(this.inspectedAnalyticUnit.id, from, to);
+    const hsr = await this._analyticService.getHSR(this.hsrAnalyticUnit.id, from, to);
     const datapoints = hsr.values.map(value => value.reverse() as [number, number]);
     return { target: 'HSR', datapoints };
   }
@@ -531,6 +531,16 @@ export class AnalyticController {
   get inspectedAnalyticUnit(): AnalyticUnit | null {
     for(let analyticUnit of this.analyticUnits) {
       if(analyticUnit.inspect) {
+        return analyticUnit;
+      }
+    };
+    return null;
+  }
+
+  get hsrAnalyticUnit(): AnalyticUnit | null {
+    // TODO: remove inspectedAnalyticUnit duplication
+    for(let analyticUnit of this.analyticUnits) {
+      if(analyticUnit.showHSR) {
         return analyticUnit;
       }
     };
@@ -646,12 +656,19 @@ export class AnalyticController {
     await this.saveAnalyticUnit(analyticUnit);
   }
 
-  public async toggleInspect(id: AnalyticUnitId) {
+  public toggleInspect(id: AnalyticUnitId) {
     const analyticUnit = this._analyticUnitsSet.byId(id);
     if(!analyticUnit.inspect) {
-      this.analyticUnits.forEach(analyticUnit => analyticUnit.inspect = false);
+      this.analyticUnits.forEach(unit => unit.inspect = false);
     }
-    analyticUnit.inspect = !analyticUnit.inspect;
+  }
+
+  public toggleHSR(id: AnalyticUnitId) {
+    // TODO: remove toggleInspect duplication
+    const analyticUnit = this._analyticUnitsSet.byId(id);
+    if(!analyticUnit.showHSR) {
+      this.analyticUnits.forEach(unit => unit.showHSR = false);
+    }
   }
 
   public onAnalyticUnitDetectorChange(analyticUnitTypes: any) {
