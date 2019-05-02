@@ -219,11 +219,11 @@ export class AnalyticService {
     return this.patch('/analyticUnits', updateObj);
   }
 
-  async runDetect(ids: AnalyticUnitId | AnalyticUnitId[]) {
+  async runDetect(ids: AnalyticUnitId | AnalyticUnitId[], from?: number, to?: number) {
     if(!_.isArray(ids)) {
       ids = [ids];
     }
-    return this.post('/analyticUnits/detect', { ids });
+    return this.post('/analyticUnits/detect', { ids, from, to });
   }
 
   private async _analyticRequest(method: string, url: string, data?: any) {

@@ -222,8 +222,8 @@ export class AnalyticController {
     this.analyticUnits.forEach(a => this._runStatusWaiter(a));
   }
 
-  fetchAnalyticUnitsDetections(from: number | null, to: number | null) {
-    if(from === null || to === null) {
+  fetchAnalyticUnitsDetections(from?: number, to?: number) {
+    if(from === undefined || to === undefined) {
       return;
     }
     this.analyticUnits.forEach(analyticUnit => {
@@ -311,7 +311,9 @@ export class AnalyticController {
 
   async redetectAll() {
     this.analyticUnits.forEach(unit => {
+      // TODO: remove duplication with runDetect
       unit.segments.clear();
+      unit.detectionSpans = [];
       unit.status = null;
     });
     const ids = this.analyticUnits.map(analyticUnit => analyticUnit.id);
@@ -320,9 +322,10 @@ export class AnalyticController {
     _.each(this.analyticUnits, analyticUnit => this._runStatusWaiter(analyticUnit));
   }
 
-  async runDetect(analyticUnitId: AnalyticUnitId) {
+  async runDetect(analyticUnitId: AnalyticUnitId, from?: number, to?: number) {
     const analyticUnit = this._analyticUnitsSet.byId(analyticUnitId);
     analyticUnit.segments.clear();
+    analyticUnit.detectionSpans = [];
     analyticUnit.status = null;
     await this._analyticService.runDetect(analyticUnitId);
     this._runStatusWaiter(analyticUnit);

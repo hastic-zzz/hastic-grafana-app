@@ -59,8 +59,8 @@ class GraphCtrl extends MetricsPanelCtrl {
   private _panelId: string;
 
   private _dataTimerange: {
-    from: number,
-    to: number
+    from?: number,
+    to?: number
   };
 
   panelDefaults = {
@@ -273,10 +273,8 @@ class GraphCtrl extends MetricsPanelCtrl {
         await this.analyticsController.removeAnalyticUnit(analyticUnit.id, true);
       }
       if(analyticUnit.status === 'READY') {
-        if(this.range === undefined) {
-          this.updateTimeRange();
-        }
-        await this.analyticsController.fetchSegments(analyticUnit, +this.range.from, +this.range.to);
+        const { from, to } = this.rangeTimestamp;
+        await this.analyticsController.fetchSegments(analyticUnit, from, to);
       }
       this.render(this.seriesList);
       this.$scope.$digest();
@@ -372,8 +370,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.dataList = dataList;
     this.loading = true;
 
-    const from = +this.range.from;
-    const to = +this.range.to;
+    const { from, to } = this.rangeTimestamp;
 
     if(this.analyticsController !== undefined) {
       const hsrSeries = await this.analyticsController.getHSRSeries(from, to);
@@ -432,10 +429,9 @@ class GraphCtrl extends MetricsPanelCtrl {
       const from = _.find(series.datapoints, datapoint => datapoint[0] !== null);
       const to = _.findLast(series.datapoints, datapoint => datapoint[0] !== null);
 
+      this._dataTimerange = {};
       if(from !== undefined && to !== undefined) {
         this._dataTimerange = { from: from[1], to: to[1] };
-      } else {
-        this._dataTimerange = { from: null, to: null }
       }
 
       if (series.unit) {
@@ -580,8 +576,13 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.analyticsController.redetectAll();
   }
 
-  async runDetect(analyticUnitId: AnalyticUnitId) {
-    this.analyticsController.runDetect(analyticUnitId);
+  async runDetectInCurrentRange(analyticUnitId: AnalyticUnitId) {
+    const { from, to } = this.rangeTimestamp;
+
+    this.analyticsController.runDetect(
+      analyticUnitId,
+      from, to
+    );
   }
 
   async saveNew() {
@@ -737,6 +738,17 @@ class GraphCtrl extends MetricsPanelCtrl {
     this._hasticDatasources = await this.backendSrv.get('api/datasources');
     this._hasticDatasources = this._hasticDatasources.filter(ds => ds.type === 'corpglory-hastic-datasource');
     this.$scope.$digest();
+  }
+
+  get rangeTimestamp(): { from: number, to: number } {
+    if(this.range === undefined) {
+      this.updateTimeRange();
+    }
+
+    return {
+      from: +this.range.from,
+      to: +this.range.to
+    };
   }
 
   get hasticDatasources() {
