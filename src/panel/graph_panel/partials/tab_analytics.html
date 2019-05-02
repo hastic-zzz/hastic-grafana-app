@@ -96,6 +96,7 @@
           ng-disabled="analyticUnit.status === 'LEARNING'"
         />
 
+        <!-- TODO: move analytic-unit-specific fields rendering to class -->
         <select class="gf-form-input width-7"
           ng-if="analyticUnit.detectorType === 'threshold'"
           ng-model="analyticUnit.condition"
