@@ -68,7 +68,7 @@ export class AnalyticUnit {
       id: this.id,
       name: this.name,
       // TODO: enum type
-      // TODO: type -> modelType
+      // TODO: type -> subType
       type: this.type,
       // TODO: detectorType -> type
       detectorType: this.detectorType,
