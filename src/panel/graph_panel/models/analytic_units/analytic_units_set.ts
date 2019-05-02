@@ -1,6 +1,7 @@
 import { AnalyticUnit, AnalyticUnitId } from './analytic_unit';
 import { createAnalyticUnit } from './analytic_unit_creator';
 
+
 export class AnalyticUnitsSet {
 
   private _mapIdIndex: Map<AnalyticUnitId, number>;
