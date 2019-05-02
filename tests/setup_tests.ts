@@ -1,5 +1,5 @@
 import { AnalyticController } from '../src/panel/graph_panel/controllers/analytic_controller';
-import { AnalyticUnit, AnalyticUnitId } from '../src/panel/graph_panel/models/analytic_unit';
+import { AnalyticUnit, AnalyticUnitId } from '../src/panel/graph_panel/models/analytic_units/analytic_unit';
 import { AnalyticService } from '../src/panel/graph_panel/services/analytic_service';
 import { MetricExpanded } from '../src/panel/graph_panel/models/metric';
 import { DatasourceRequest } from '../src/panel/graph_panel/models/datasource';

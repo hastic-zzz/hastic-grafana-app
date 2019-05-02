@@ -1,13 +1,14 @@
-import { SegmentsSet } from './segment_set';
-import { SegmentArray } from './segment_array';
-import { Segment, SegmentId } from './segment';
-import { DetectionSpan } from './detection';
+import { SegmentsSet } from '../segment_set';
+import { SegmentArray } from '../segment_array';
+import { Segment, SegmentId } from '../segment';
+import { DetectionSpan } from '../detection';
 
-import { ANALYTIC_UNIT_COLORS, DEFAULT_DELETED_SEGMENT_COLOR } from '../colors';
+import { ANALYTIC_UNIT_COLORS, DEFAULT_DELETED_SEGMENT_COLOR } from '../../colors';
 
 import _ from 'lodash';
 
 
+// TODO: move types to ./types
 export enum DetectorType {
   PATTERN = 'pattern',
   THRESHOLD = 'threshold'
@@ -34,6 +35,17 @@ export class AnalyticSegment extends Segment {
   }
 }
 
+const DEFAULTS = {
+  id: null,
+  name: 'AnalyticUnitName',
+  type: 'GENERAL',
+  detectorType: DetectorType.PATTERN,
+  labeledColor: ANALYTIC_UNIT_COLORS[0],
+  deletedColor: DEFAULT_DELETED_SEGMENT_COLOR,
+  alert: false,
+  visible: true
+};
+
 export class AnalyticUnit {
 
   private _labelingMode: LabelingMode = LabelingMode.LABELING;
@@ -45,22 +57,28 @@ export class AnalyticUnit {
   private _status: string;
   private _error: string;
 
-  constructor(private _serverObject?: any) {
-    const defaults = {
-      name: 'AnalyticUnitName',
-      labeledColor: ANALYTIC_UNIT_COLORS[0],
-      deletedColor: DEFAULT_DELETED_SEGMENT_COLOR,
-      detectorType: DetectorType.PATTERN,
-      type: 'GENERAL',
-      alert: false,
-      id: null,
-      visible: true
-    };
-
+  // TODO: serverObject -> fields
+  constructor(protected _serverObject?: any) {
     if(_serverObject === undefined) {
-      this._serverObject = defaults;
+      this._serverObject = _.clone(DEFAULTS);
     }
-    _.defaults(this._serverObject, defaults);
+    _.defaults(this._serverObject, DEFAULTS);
+  }
+
+  toJSON() {
+    return {
+      id: this.id,
+      name: this.name,
+      // TODO: enum type
+      // TODO: type -> subType
+      type: this.type,
+      // TODO: detectorType -> type
+      detectorType: this.detectorType,
+      labeledColor: this.labeledColor,
+      deletedColor: this.deletedColor,
+      alert: this.alert,
+      visible: this.visible,
+    };
   }
 
   get id(): AnalyticUnitId { return this._serverObject.id; }
@@ -153,48 +171,4 @@ export class AnalyticUnit {
 
   get serverObject() { return this._serverObject; }
 
-}
-
-export class AnalyticUnitsSet {
-
-  private _mapIdIndex: Map<AnalyticUnitId, number>;
-  private _items: AnalyticUnit[];
-
-  constructor(private _serverObject: any[]) {
-    if(_serverObject === undefined) {
-      throw new Error('server object can`t be undefined');
-    }
-    this._mapIdIndex = new Map<AnalyticUnitId, number>();
-    this._items = _serverObject.map(p => new AnalyticUnit(p));
-    this._rebuildIndex();
-  }
-
-  get items() { return this._items; }
-
-  addItem(item: AnalyticUnit) {
-    this._serverObject.push(item.serverObject);
-    this._mapIdIndex[item.id] = this._items.length;
-    this._items.push(item);
-  }
-
-  removeItem(id: AnalyticUnitId) {
-    var index = this._mapIdIndex[id];
-    this._serverObject.splice(index, 1);
-    this._items.splice(index, 1);
-    this._rebuildIndex();
-  }
-
-  _rebuildIndex() {
-    this._items.forEach((a, i) => {
-      this._mapIdIndex[a.id] = i;
-    });
-  }
-
-  byId(id: AnalyticUnitId): AnalyticUnit {
-    return this._items[this._mapIdIndex[id]];
-  }
-
-  byIndex(index: number): AnalyticUnit {
-    return this._items[index];
-  }
 }

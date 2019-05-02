@@ -7,7 +7,7 @@ import { GraphLegend } from './graph_legend';
 import { DataProcessor } from './data_processor';
 import { MetricExpanded } from './models/metric';
 import { DatasourceRequest } from './models/datasource';
-import { AnalyticUnitId, AnalyticUnit, LabelingMode } from './models/analytic_unit';
+import { AnalyticUnitId, AnalyticUnit, LabelingMode } from './models/analytic_units/analytic_unit';
 import { AnalyticService } from './services/analytic_service';
 import { AnalyticController } from './controllers/analytic_controller';
 import { HasticPanelInfo } from './models/hastic_panel_info';
@@ -144,8 +144,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     // series color overrides
     aliasColors: {},
     // other style overrides
-    seriesOverrides: [],
-    thresholds: []
+    seriesOverrides: []
   };
 
   /** @ngInject */
@@ -581,6 +580,10 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.analyticsController.redetectAll();
   }
 
+  async runDetect(analyticUnitId: AnalyticUnitId) {
+    this.analyticsController.runDetect(analyticUnitId);
+  }
+
   async saveNew() {
     try {
       const datasource = await this._getDatasourceRequest();
@@ -606,7 +609,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     await this.analyticsController.toggleAnalyticUnitAlert(analyticUnit);
   }
 
-  async onAnalyticUnitNameChange(analyticUnit: AnalyticUnit) {
+  async onAnalyticUnitChange(analyticUnit: AnalyticUnit) {
     await this.analyticsController.saveAnalyticUnit(analyticUnit);
     this.refresh();
   }

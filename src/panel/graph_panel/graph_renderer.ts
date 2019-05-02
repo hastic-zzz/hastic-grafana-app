@@ -1,5 +1,5 @@
 import { Segment } from './models/segment';
-import { LabelingMode } from './models/analytic_unit';
+import { LabelingMode } from './models/analytic_units/analytic_unit';
 import { GraphTooltip } from './graph_tooltip';
 
 import { convertValuesToHistogram, getSeriesValues } from './histogram';
