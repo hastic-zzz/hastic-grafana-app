@@ -111,9 +111,26 @@
           ng-model="analyticUnit.value"
         />
 
+        <label class="gf-form-label width-6" ng-if="analyticUnit.detectorType === 'anomaly'"> Alpha </label>
+        <input class="gf-form-input width-5"
+          ng-if="analyticUnit.detectorType === 'anomaly'"
+          min="0"
+          max="1"
+          type="number"
+          ng-model="analyticUnit.alpha"
+        />
+
+        <label class="gf-form-label width-6" ng-if="analyticUnit.detectorType === 'anomaly'"> Confidence </label>
+        <input class="gf-form-input width-5"
+          ng-if="analyticUnit.detectorType === 'anomaly'"
+          min="0"
+          type="number"
+          ng-model="analyticUnit.confidence"
+        />
+
         <button
           class="btn btn-inverse"
-          ng-if="analyticUnit.detectorType === 'threshold'"
+          ng-if="analyticUnit.detectorType === 'threshold' || analyticUnit.detectorType === 'anomaly'"
           ng-click="ctrl.runDetect(analyticUnit.id)"
           ng-disabled="analyticUnit.status === 'PENDING' || analyticUnit.status === 'LEARNING'"
           >
