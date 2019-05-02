@@ -1,5 +1,5 @@
 import { AnalyticUnit, AnalyticUnitId } from './analytic_unit';
-import { createAnalyticUnit } from './analytic_unit_creator';
+import { createAnalyticUnit } from './utils';
 
 
 export class AnalyticUnitsSet {

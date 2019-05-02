@@ -16,6 +16,7 @@ import { SegmentArray } from '../models/segment_array';
 import { HasticServerInfo, HasticServerInfoUnknown } from '../models/hastic_server_info';
 import { Condition } from '../models/analytic_units/threshold_analytic_unit';
 import { DetectionStatus, DETECTION_STATUS_TEXT, DetectionSpan } from '../models/detection';
+import { createAnalyticUnit } from '../models/analytic_units/utils';
 import helpSectionText from '../partials/help_section.html';
 
 import {
@@ -32,7 +33,6 @@ import { Emitter } from 'grafana/app/core/utils/emitter';
 
 import _ from 'lodash';
 import * as tinycolor from 'tinycolor2';
-import { createAnalyticUnit } from '../models/analytic_units/analytic_unit_creator';
 
 export type HSRTimeSeries = { datapoints: [number, number][]; target: string; };
 
