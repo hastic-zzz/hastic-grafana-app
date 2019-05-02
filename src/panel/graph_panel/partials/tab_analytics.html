@@ -97,7 +97,7 @@
         />
 
         <!-- TODO: move analytic-unit-specific fields rendering to class -->
-        <select class="gf-form-input width-7"
+        <select class="gf-form-input width-9"
           ng-if="analyticUnit.detectorType === 'threshold'"
           ng-model="analyticUnit.condition"
           ng-options="type for type in ctrl.analyticsController.conditions"
