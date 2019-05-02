@@ -8,6 +8,7 @@ import { ANALYTIC_UNIT_COLORS, DEFAULT_DELETED_SEGMENT_COLOR } from '../../color
 import _ from 'lodash';
 
 
+// TODO: move types to ./types
 export enum DetectorType {
   PATTERN = 'pattern',
   THRESHOLD = 'threshold'
