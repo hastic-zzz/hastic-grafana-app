@@ -70,6 +70,90 @@
           />
         </span>
 
+        <!-- TODO: move analytic-unit-specific fields rendering to class -->
+        <select class="gf-form-input width-9"
+          ng-if="analyticUnit.detectorType === 'threshold'"
+          ng-model="analyticUnit.condition"
+          ng-options="type for type in ctrl.analyticsController.conditions"
+          ng-change="ctrl.onAnalyticUnitChange(analyticUnit)"
+        />
+        <input class="gf-form-input width-5"
+          ng-if="
+            analyticUnit.detectorType === 'threshold' &&
+            analyticUnit.condition !== 'NO_DATA'
+          "
+          type="number"
+          ng-model="analyticUnit.value"
+          ng-blur="ctrl.onAnalyticUnitChange(analyticUnit)"
+        />
+
+        <label class="gf-form-label width-6" ng-if="analyticUnit.detectorType === 'anomaly'"> Alpha </label>
+        <input class="gf-form-input width-5"
+          ng-if="analyticUnit.detectorType === 'anomaly'"
+          min="0"
+          max="1"
+          type="number"
+          ng-model="analyticUnit.alpha"
+          ng-blur="ctrl.onAnalyticUnitChange(analyticUnit)"
+        />
+
+        <label class="gf-form-label width-6" ng-if="analyticUnit.detectorType === 'anomaly'"> Confidence </label>
+        <input class="gf-form-input width-5"
+          ng-if="analyticUnit.detectorType === 'anomaly'"
+          min="0"
+          type="number"
+          ng-model="analyticUnit.confidence"
+          ng-blur="ctrl.onAnalyticUnitChange(analyticUnit)"
+        />
+
+        <label class="gf-form-label" ng-if="analyticUnit.status === 'READY' && analyticUnit.visible">
+          Inspect
+        </label>
+
+        <gf-form-switch ng-if="analyticUnit.status === 'READY' && analyticUnit.visible"
+          on-change="ctrl.onToggleInspect(analyticUnit.id)"
+          checked="analyticUnit.inspect"
+        />
+
+        <label class="gf-form-label" ng-if="analyticUnit.visible">
+          HSR
+        </label>
+
+        <gf-form-switch ng-if="analyticUnit.visible"
+          on-change="ctrl.onToggleHSR(analyticUnit.id)"
+          checked="analyticUnit.showHSR"
+        />
+
+        <label class="gf-form-label" ng-hide="analyticUnit.selected">
+          <a
+            ng-if="analyticUnit.visible"
+            bs-tooltip="'Hide. It`s visible now.'"
+            ng-click="ctrl.onToggleVisibility(analyticUnit.id)"
+            class="pointer"
+          >
+            <i class="fa fa-eye"></i>
+          </a>
+
+          <a
+            ng-if="!analyticUnit.visible"
+            bs-tooltip="'Show. It`s hidden now.'"
+            ng-click="ctrl.onToggleVisibility(analyticUnit.id)"
+            class="pointer"
+          >
+            <i class="fa fa-eye-slash"></i>
+          </a>
+        </label>
+
+        <label class="gf-form-label"
+          ng-if="analyticUnit.detectorType === 'threshold' || analyticUnit.detectorType === 'anomaly'"
+        >
+          <a class="pointer" ng-click="ctrl.runDetect(analyticUnit.id)">
+            <i class="fa fa-spinner fa-spin" ng-if="analyticUnit.saving"></i>
+            <b ng-if="!analyticUnit.saving"> Detect </b>
+            <b ng-if="analyticUnit.saving" ng-disabled="true"> saving... </b>
+          </a>
+        </label>
+
         <label
           class="gf-form-label"
           ng-if="analyticUnit.detectorType === 'pattern'"
@@ -94,87 +178,6 @@
           ]"
           ng-if="analyticUnit.selected && !analyticUnit.saving"
           ng-disabled="analyticUnit.status === 'LEARNING'"
-        />
-
-        <!-- TODO: move analytic-unit-specific fields rendering to class -->
-        <select class="gf-form-input width-9"
-          ng-if="analyticUnit.detectorType === 'threshold'"
-          ng-model="analyticUnit.condition"
-          ng-options="type for type in ctrl.analyticsController.conditions"
-        />
-        <input class="gf-form-input width-5"
-          ng-if="
-            analyticUnit.detectorType === 'threshold' &&
-            analyticUnit.condition !== 'NO_DATA'
-          "
-          type="number"
-          ng-model="analyticUnit.value"
-        />
-
-        <label class="gf-form-label width-6" ng-if="analyticUnit.detectorType === 'anomaly'"> Alpha </label>
-        <input class="gf-form-input width-5"
-          ng-if="analyticUnit.detectorType === 'anomaly'"
-          min="0"
-          max="1"
-          type="number"
-          ng-model="analyticUnit.alpha"
-          ng-blur="ctrl.onAnalyticUnitChange(analyticUnit)"
-        />
-
-        <label class="gf-form-label width-6" ng-if="analyticUnit.detectorType === 'anomaly'"> Confidence </label>
-        <input class="gf-form-input width-5"
-          ng-if="analyticUnit.detectorType === 'anomaly'"
-          min="0"
-          type="number"
-          ng-model="analyticUnit.confidence"
-          ng-blur="ctrl.onAnalyticUnitChange(analyticUnit)"
-        />
-
-        <button
-          class="btn btn-inverse"
-          ng-if="analyticUnit.detectorType === 'threshold' || analyticUnit.detectorType === 'anomaly'"
-          ng-click="ctrl.runDetect(analyticUnit.id)"
-          ng-disabled="analyticUnit.status === 'PENDING' || analyticUnit.status === 'LEARNING'"
-          >
-          Apply
-        </button>
-
-        <label class="gf-form-label" ng-hide="analyticUnit.selected">
-          <a
-            ng-if="analyticUnit.visible"
-            bs-tooltip="'Hide. It`s visible now.'"
-            ng-click="ctrl.onToggleVisibility(analyticUnit.id)"
-            class="pointer"
-          >
-            <i class="fa fa-eye"></i>
-          </a>
-
-          <a
-            ng-if="!analyticUnit.visible"
-            bs-tooltip="'Show. It`s hidden now.'"
-            ng-click="ctrl.onToggleVisibility(analyticUnit.id)"
-            class="pointer"
-          >
-            <i class="fa fa-eye-slash"></i>
-          </a>
-        </label>
-
-        <label class="gf-form-label" ng-if="analyticUnit.status === 'READY' && analyticUnit.visible">
-          Inspect
-        </label>
-
-        <gf-form-switch ng-if="analyticUnit.status === 'READY' && analyticUnit.visible"
-          on-change="ctrl.onToggleInspect(analyticUnit.id)"
-          checked="analyticUnit.inspect"
-        />
-
-        <label class="gf-form-label" ng-if="analyticUnit.visible">
-          HSR
-        </label>
-
-        <gf-form-switch ng-if="analyticUnit.visible"
-          on-change="ctrl.onToggleHSR(analyticUnit.id)"
-          checked="analyticUnit.showHSR"
         />
 
         <label class="gf-form-label">
