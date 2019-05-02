@@ -220,8 +220,8 @@ export class AnalyticController {
     this.analyticUnits.forEach(a => this._runStatusWaiter(a));
   }
 
-  fetchAnalyticUnitsDetections(from: number | null, to: number | null) {
-    if(from === null || to === null) {
+  fetchAnalyticUnitsDetections(from?: number, to?: number) {
+    if(from === undefined || to === undefined) {
       return;
     }
     this.analyticUnits.forEach(analyticUnit => {
@@ -318,12 +318,12 @@ export class AnalyticController {
     _.each(this.analyticUnits, analyticUnit => this._runStatusWaiter(analyticUnit));
   }
 
-  async runDetect(analyticUnitId: AnalyticUnitId) {
+  async runDetect(analyticUnitId: AnalyticUnitId, from?: number, to?: number) {
     const analyticUnit = this._analyticUnitsSet.byId(analyticUnitId);
     analyticUnit.segments.clear();
     analyticUnit.status = null;
     await this.saveAnalyticUnit(analyticUnit);
-    await this._analyticService.runDetect(analyticUnitId);
+    await this._analyticService.runDetect(analyticUnitId, from, to);
     this._runStatusWaiter(analyticUnit);
   }
 
