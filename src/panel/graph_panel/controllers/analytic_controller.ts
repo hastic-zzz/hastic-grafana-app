@@ -5,8 +5,10 @@ import { AnalyticService } from '../services/analytic_service';
 import {
   AnalyticUnitId, AnalyticUnit,
   AnalyticSegment, AnalyticSegmentsSearcher, AnalyticSegmentPair,
-  LabelingMode
+  LabelingMode,
+  DetectorType
 } from '../models/analytic_units/analytic_unit';
+import { AnomalyAnalyticUnit } from '../models/analytic_units/anomaly_analytic_unit';
 import { AnalyticUnitsSet } from '../models/analytic_units/analytic_units_set';
 import { MetricExpanded } from '../models/metric';
 import { DatasourceRequest } from '../models/datasource';
@@ -322,7 +324,6 @@ export class AnalyticController {
     const analyticUnit = this._analyticUnitsSet.byId(analyticUnitId);
     analyticUnit.segments.clear();
     analyticUnit.status = null;
-    await this.saveAnalyticUnit(analyticUnit);
     await this._analyticService.runDetect(analyticUnitId);
     this._runStatusWaiter(analyticUnit);
   }
@@ -517,14 +518,35 @@ export class AnalyticController {
     if(hsr === null) {
       return [];
     }
+    if(this.hsrAnalyticUnit.detectorType === DetectorType.ANOMALY) {
+      const confidence = (this.hsrAnalyticUnit as AnomalyAnalyticUnit).confidence;
+      // TODO: looks bad
+      return [
+        {
+          target: 'Confidence interval lower',
+          datapoints: hsr.datapoints.map(datapoint =>
+            [datapoint[0] - confidence, datapoint[1]]
+          ),
+          color: ANALYTIC_UNIT_COLORS[0],
+          overrides: [{ alias: 'Confidence interval lower', linewidth: 1, fill: 0 }]
+        },
+        {
+          target: 'Confidence interval upper',
+          datapoints: hsr.datapoints.map(datapoint =>
+            [datapoint[0] + confidence, datapoint[1]]
+          ),
+          color: ANALYTIC_UNIT_COLORS[0],
+          overrides: [{ alias: 'Confidence interval upper', linewidth: 1, fill: 0 }]
+        },
+      ];
+    }
     return {
       ...hsr,
       color: ANALYTIC_UNIT_COLORS[0],
-      // TODO: render it separately from series
-      overrides: [{
-        alias: 'HSR',
-        linewidth: 3
-      }]
+      // TODO: render it separately from Metric series
+      overrides: [
+        { alias: 'HSR', linewidth: 3, fill: 0 }
+      ]
     };
   }
 
