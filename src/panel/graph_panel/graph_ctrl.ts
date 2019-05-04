@@ -384,14 +384,14 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.dataWarning = null;
     const hasSomePoint = this.seriesList.some(s => s.datapoints.length > 0);
 
-    if (!hasSomePoint) {
+    if(!hasSomePoint) {
       this.dataWarning = {
         title: 'No data points',
         tip: 'No datapoints returned from data query',
       };
     } else {
-      for (let series of this.seriesList) {
-        if (series.isOutsideRange) {
+      for(let series of this.seriesList) {
+        if(series.isOutsideRange) {
           this.dataWarning = {
             title: 'Data points outside time range',
             tip: 'Can be caused by timezone mismatch or missing time filter in query',
@@ -680,6 +680,11 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   onToggleInspect(id: AnalyticUnitId) {
     this.analyticsController.toggleInspect(id);
+    this.refresh();
+  }
+
+  onToggleHSR(id: AnalyticUnitId) {
+    this.analyticsController.toggleHSR(id);
     this.refresh();
   }
 

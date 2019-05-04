@@ -11,7 +11,8 @@ import _ from 'lodash';
 // TODO: move types to ./types
 export enum DetectorType {
   PATTERN = 'pattern',
-  THRESHOLD = 'threshold'
+  THRESHOLD = 'threshold',
+  ANOMALY = 'anomaly'
 };
 
 export enum LabelingMode {
@@ -54,6 +55,7 @@ export class AnalyticUnit {
   private _segmentSet = new SegmentArray<AnalyticSegment>();
   private _detectionSpans: DetectionSpan[];
   private _inspect = false;
+  private _showHSR = false;
   private _status: string;
   private _error: string;
 
@@ -113,6 +115,9 @@ export class AnalyticUnit {
 
   get inspect(): boolean { return this._inspect; }
   set inspect(value: boolean) { this._inspect = value; }
+
+  get showHSR(): boolean { return this._showHSR; }
+  set showHSR(value: boolean) { this._showHSR = value; }
 
   get visible(): boolean {
     return (this._serverObject.visible === undefined) ? true : this._serverObject.visible

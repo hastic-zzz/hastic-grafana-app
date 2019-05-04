@@ -5,8 +5,10 @@ import { AnalyticService } from '../services/analytic_service';
 import {
   AnalyticUnitId, AnalyticUnit,
   AnalyticSegment, AnalyticSegmentsSearcher, AnalyticSegmentPair,
-  LabelingMode
+  LabelingMode,
+  DetectorType
 } from '../models/analytic_units/analytic_unit';
+import { AnomalyAnalyticUnit } from '../models/analytic_units/anomaly_analytic_unit';
 import { AnalyticUnitsSet } from '../models/analytic_units/analytic_units_set';
 import { MetricExpanded } from '../models/metric';
 import { DatasourceRequest } from '../models/datasource';
@@ -325,7 +327,6 @@ export class AnalyticController {
     analyticUnit.segments.clear();
     analyticUnit.detectionSpans = [];
     analyticUnit.status = null;
-    await this.saveAnalyticUnit(analyticUnit);
     await this._analyticService.runDetect(analyticUnitId, from, to);
     this._runStatusWaiter(analyticUnit);
   }
@@ -503,13 +504,13 @@ export class AnalyticController {
   }
 
   async getHSR(from: number, to: number): Promise<HSRTimeSeries | null> {
-    // Returns HSR (Hastic Signal Representation) for inspected analytic unit
-    // Returns null when there is no analytic units in Inspect mode
-    if(this.inspectedAnalyticUnit === null) {
+    // Returns HSR (Hastic Signal Representation) for analytic unit with enabled "Show HSR"
+    // Returns null when there is no analytic units which have "Show HSR" enabled
+    if(this.hsrAnalyticUnit === null) {
       return null;
     }
 
-    const hsr = await this._analyticService.getHSR(this.inspectedAnalyticUnit.id, from, to);
+    const hsr = await this._analyticService.getHSR(this.hsrAnalyticUnit.id, from, to);
     const datapoints = hsr.values.map(value => value.reverse() as [number, number]);
     return { target: 'HSR', datapoints };
   }
@@ -520,20 +521,51 @@ export class AnalyticController {
     if(hsr === null) {
       return [];
     }
+    if(this.hsrAnalyticUnit.detectorType === DetectorType.ANOMALY) {
+      const confidence = (this.hsrAnalyticUnit as AnomalyAnalyticUnit).confidence;
+      // TODO: looks bad
+      return [
+        {
+          target: 'Confidence interval lower',
+          datapoints: hsr.datapoints.map(datapoint =>
+            [datapoint[0] - confidence, datapoint[1]]
+          ),
+          color: ANALYTIC_UNIT_COLORS[0],
+          overrides: [{ alias: 'Confidence interval lower', linewidth: 1, fill: 0 }]
+        },
+        {
+          target: 'Confidence interval upper',
+          datapoints: hsr.datapoints.map(datapoint =>
+            [datapoint[0] + confidence, datapoint[1]]
+          ),
+          color: ANALYTIC_UNIT_COLORS[0],
+          overrides: [{ alias: 'Confidence interval upper', linewidth: 1, fill: 0 }]
+        },
+      ];
+    }
     return {
       ...hsr,
       color: ANALYTIC_UNIT_COLORS[0],
-      // TODO: render it separately from series
-      overrides: [{
-        alias: 'HSR',
-        linewidth: 3
-      }]
+      // TODO: render it separately from Metric series
+      overrides: [
+        { alias: 'HSR', linewidth: 3, fill: 0 }
+      ]
     };
   }
 
   get inspectedAnalyticUnit(): AnalyticUnit | null {
     for(let analyticUnit of this.analyticUnits) {
       if(analyticUnit.inspect) {
+        return analyticUnit;
+      }
+    };
+    return null;
+  }
+
+  get hsrAnalyticUnit(): AnalyticUnit | null {
+    // TODO: remove inspectedAnalyticUnit duplication
+    for(let analyticUnit of this.analyticUnits) {
+      if(analyticUnit.showHSR) {
         return analyticUnit;
       }
     };
@@ -649,12 +681,19 @@ export class AnalyticController {
     await this.saveAnalyticUnit(analyticUnit);
   }
 
-  public async toggleInspect(id: AnalyticUnitId) {
+  public toggleInspect(id: AnalyticUnitId) {
     const analyticUnit = this._analyticUnitsSet.byId(id);
     if(!analyticUnit.inspect) {
-      this.analyticUnits.forEach(analyticUnit => analyticUnit.inspect = false);
+      this.analyticUnits.forEach(unit => unit.inspect = false);
     }
-    analyticUnit.inspect = !analyticUnit.inspect;
+  }
+
+  public toggleHSR(id: AnalyticUnitId) {
+    // TODO: remove toggleInspect duplication
+    const analyticUnit = this._analyticUnitsSet.byId(id);
+    if(!analyticUnit.showHSR) {
+      this.analyticUnits.forEach(unit => unit.showHSR = false);
+    }
   }
 
   public onAnalyticUnitDetectorChange(analyticUnitTypes: any) {
