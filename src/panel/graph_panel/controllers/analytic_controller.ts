@@ -327,7 +327,7 @@ export class AnalyticController {
     analyticUnit.segments.clear();
     analyticUnit.detectionSpans = [];
     analyticUnit.status = null;
-    await this._analyticService.runDetect(analyticUnitId);
+    await this._analyticService.runDetect(analyticUnitId, from, to);
     this._runStatusWaiter(analyticUnit);
   }
 
