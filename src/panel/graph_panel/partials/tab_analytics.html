@@ -147,7 +147,7 @@
         <label class="gf-form-label"
           ng-if="analyticUnit.detectorType === 'threshold' || analyticUnit.detectorType === 'anomaly'"
         >
-          <a class="pointer" ng-click="ctrl.runDetect(analyticUnit.id)">
+          <a class="pointer" ng-click="ctrl.runDetectInCurrentRange(analyticUnit.id)">
             <i class="fa fa-spinner fa-spin" ng-if="analyticUnit.saving"></i>
             <b ng-if="!analyticUnit.saving"> Detect </b>
             <b ng-if="analyticUnit.saving" ng-disabled="true"> saving... </b>
