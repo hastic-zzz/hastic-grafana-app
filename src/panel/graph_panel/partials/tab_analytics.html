@@ -156,7 +156,7 @@
 
         <label
           class="gf-form-label"
-          ng-if="analyticUnit.detectorType === 'pattern'"
+          ng-if="analyticUnit.detectorType === 'pattern' && analyticUnit.selected"
           ng-style="analyticUnit.status === 'LEARNING' && { 'cursor': 'not-allowed' }"
         >
           <a class="pointer" tabindex="1"
@@ -165,7 +165,6 @@
           >
             <i class="fa fa-bar-chart" ng-if="!analyticUnit.saving"></i>
             <i class="fa fa-spinner fa-spin" ng-if="analyticUnit.saving"></i>
-            <b ng-if="analyticUnit.saving" ng-disabled="true"> saving... </b>
           </a>
         </label>
 
@@ -179,6 +178,22 @@
           ng-if="analyticUnit.selected && !analyticUnit.saving"
           ng-disabled="analyticUnit.status === 'LEARNING'"
         />
+
+        <label
+          class="gf-form-label"
+          ng-style="analyticUnit.status === 'LEARNING' && { 'cursor': 'not-allowed' }"
+          ng-if="analyticUnit.selected && !analyticUnit.saving"
+          ng-disabled="analyticUnit.status === 'LEARNING'"
+        >
+          <a class="pointer"
+            ng-click="ctrl.onToggleLabelingMode(analyticUnit.id)"
+            ng-disabled="analyticUnit.status === 'LEARNING'"
+          >
+            <i class="fa fa-spinner fa-spin" ng-if="analyticUnit.saving"></i>
+            <b ng-if="!analyticUnit.saving"> Detect </b>
+            <b ng-if="analyticUnit.saving" ng-disabled="true"> saving... </b>
+            </a>
+        </label>
 
         <label class="gf-form-label">
           <a
