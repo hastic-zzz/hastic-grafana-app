@@ -156,7 +156,7 @@
 
         <label
           class="gf-form-label"
-          ng-if="analyticUnit.detectorType === 'pattern' && analyticUnit.selected"
+          ng-if="analyticUnit.detectorType === 'pattern' && !analyticUnit.selected"
           ng-style="analyticUnit.status === 'LEARNING' && { 'cursor': 'not-allowed' }"
         >
           <a class="pointer" tabindex="1"
@@ -166,6 +166,7 @@
             <i class="fa fa-bar-chart" ng-if="!analyticUnit.saving"></i>
             <i class="fa fa-spinner fa-spin" ng-if="analyticUnit.saving"></i>
           </a>
+          Label
         </label>
 
         <select class="gf-form-input width-12"
