@@ -180,6 +180,7 @@
           ng-disabled="analyticUnit.status === 'LEARNING'"
         />
 
+        <!-- Standard way to add conditions to ng-style: https://stackoverflow.com/a/29470439 -->
         <label
           class="gf-form-label"
           ng-style="analyticUnit.status === 'LEARNING' && { 'cursor': 'not-allowed' }"
