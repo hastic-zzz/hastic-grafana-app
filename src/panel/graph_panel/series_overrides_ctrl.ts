@@ -54,7 +54,7 @@ export class SeriesOverridesCtrl {
         element: $element.find('.dropdown')[0],
         position: 'top center',
         openOn: 'click',
-        template: '<series-color-picker series="series" onColorChange="colorSelected" />',
+        template: '<series-color-picker-popover series="series" onColorChange="colorSelected" />',
         model: {
           autoClose: true,
           colorSelected: $scope.colorSelected,
