@@ -672,10 +672,9 @@ export class AnalyticController {
   }
 
   public toggleInspect(id: AnalyticUnitId) {
-    const analyticUnit = this._analyticUnitsSet.byId(id);
-    if(!analyticUnit.inspect) {
-      this.analyticUnits.forEach(unit => unit.inspect = false);
-    }
+    this.analyticUnits
+      .filter(analyticUnit => analyticUnit.id !== id)
+      .forEach(unit => unit.inspect = false);
   }
 
   public onAnalyticUnitDetectorChange(analyticUnitTypes: any) {
