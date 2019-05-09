@@ -688,14 +688,6 @@ export class AnalyticController {
     }
   }
 
-  public toggleHSR(id: AnalyticUnitId) {
-    // TODO: remove toggleInspect duplication
-    const analyticUnit = this._analyticUnitsSet.byId(id);
-    if(!analyticUnit.showHSR) {
-      this.analyticUnits.forEach(unit => unit.showHSR = false);
-    }
-  }
-
   public onAnalyticUnitDetectorChange(analyticUnitTypes: any) {
     // TODO: looks bad
     this._newAnalyticUnit.type = analyticUnitTypes[this._newAnalyticUnit.detectorType][0].value;
