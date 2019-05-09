@@ -504,13 +504,13 @@ export class AnalyticController {
   }
 
   async getHSR(from: number, to: number): Promise<HSRTimeSeries | null> {
-    // Returns HSR (Hastic Signal Representation) for analytic unit with enabled "Show HSR"
-    // Returns null when there is no analytic units which have "Show HSR" enabled
-    if(this.hsrAnalyticUnit === null) {
+    // Returns HSR (Hastic Signal Representation) for analytic unit in "Inspect" mode
+    // Returns null when there is no analytic units in "Inspect" mode
+    if(this.inspectedAnalyticUnit === null) {
       return null;
     }
 
-    const hsr = await this._analyticService.getHSR(this.hsrAnalyticUnit.id, from, to);
+    const hsr = await this._analyticService.getHSR(this.inspectedAnalyticUnit.id, from, to);
     const datapoints = hsr.values.map(value => value.reverse() as [number, number]);
     return { target: 'HSR', datapoints };
   }
@@ -521,8 +521,8 @@ export class AnalyticController {
     if(hsr === null) {
       return [];
     }
-    if(this.hsrAnalyticUnit.detectorType === DetectorType.ANOMALY) {
-      const confidence = (this.hsrAnalyticUnit as AnomalyAnalyticUnit).confidence;
+    if(this.inspectedAnalyticUnit.detectorType === DetectorType.ANOMALY) {
+      const confidence = (this.inspectedAnalyticUnit as AnomalyAnalyticUnit).confidence;
       // TODO: looks bad
       return [
         {
@@ -556,16 +556,6 @@ export class AnalyticController {
   get inspectedAnalyticUnit(): AnalyticUnit | null {
     for(let analyticUnit of this.analyticUnits) {
       if(analyticUnit.inspect) {
-        return analyticUnit;
-      }
-    };
-    return null;
-  }
-
-  get hsrAnalyticUnit(): AnalyticUnit | null {
-    // TODO: remove inspectedAnalyticUnit duplication
-    for(let analyticUnit of this.analyticUnits) {
-      if(analyticUnit.showHSR) {
         return analyticUnit;
       }
     };
