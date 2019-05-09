@@ -106,22 +106,14 @@
           ng-blur="ctrl.onAnalyticUnitChange(analyticUnit)"
         />
 
-        <label class="gf-form-label" ng-if="analyticUnit.status === 'READY' && analyticUnit.visible">
-          Inspect
-        </label>
-
-        <gf-form-switch ng-if="analyticUnit.status === 'READY' && analyticUnit.visible"
+        <!-- TODO: Remove hack with "margin-bottom: 0" -->
+        <gf-form-switch ng-if="analyticUnit.visible"
+          class="gf-form"
+          style="margin-bottom: 0"
+          label="Inspect"
+          label-class="width-5"
           on-change="ctrl.onToggleInspect(analyticUnit.id)"
           checked="analyticUnit.inspect"
-        />
-
-        <label class="gf-form-label" ng-if="analyticUnit.visible">
-          HSR
-        </label>
-
-        <gf-form-switch ng-if="analyticUnit.visible"
-          on-change="ctrl.onToggleHSR(analyticUnit.id)"
-          checked="analyticUnit.showHSR"
         />
 
         <label class="gf-form-label" ng-hide="analyticUnit.selected">
