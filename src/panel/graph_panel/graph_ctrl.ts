@@ -398,10 +398,17 @@ class GraphCtrl extends MetricsPanelCtrl {
           };
           break;
         }
+        const from = _.find(series.datapoints, datapoint => datapoint[0] !== null);
+        const to = _.findLast(series.datapoints, datapoint => datapoint[0] !== null);
+
+        this._dataTimerange = {};
+        if(from !== undefined && to !== undefined) {
+          this._dataTimerange = { from: from[1], to: to[1] };
+        }
       }
     }
 
-    if(this.analyticsController !== undefined) {
+    if(this.analyticsController !== undefined) {      
       this.analyticsController.stopAnalyticUnitsDetectionsFetching();
       const loadTasks = [
         // this.annotationsPromise,
@@ -410,11 +417,11 @@ class GraphCtrl extends MetricsPanelCtrl {
 
       await Promise.all(loadTasks);
       // this.annotations = results[0].annotations;
-      this.render(this.seriesList);
-      this.analyticsController.fetchAnalyticUnitsDetections(
+      await this.analyticsController.fetchAnalyticUnitsDetections(
         this._dataTimerange.from,
         this._dataTimerange.to
       );
+      this.render(this.seriesList);
     }
 
     this.loading = false;
@@ -426,14 +433,6 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
 
     for(let series of this.seriesList) {
-      const from = _.find(series.datapoints, datapoint => datapoint[0] !== null);
-      const to = _.findLast(series.datapoints, datapoint => datapoint[0] !== null);
-
-      this._dataTimerange = {};
-      if(from !== undefined && to !== undefined) {
-        this._dataTimerange = { from: from[1], to: to[1] };
-      }
-
       if (series.unit) {
         this.panel.yaxes[series.yaxis - 1].format = series.unit;
       }

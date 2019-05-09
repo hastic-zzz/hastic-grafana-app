@@ -203,8 +203,11 @@ export class AnalyticService {
   async getHSR(analyticUnitId: AnalyticUnitId, from: number, to: number): Promise<{
     values: [number, number][];
     columns: string[];
-  }> {
+  } | null> {
     const data = await this.get('/query', { analyticUnitId, from, to });
+    if(data === undefined) {
+      return null;
+    }
     return data.results;
   }
 
