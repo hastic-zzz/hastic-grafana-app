@@ -408,7 +408,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       }
     }
 
-    if(this.analyticsController !== undefined) {      
+    if(this.analyticsController !== undefined) {
       this.analyticsController.stopAnalyticUnitsDetectionsFetching();
       const loadTasks = [
         // this.annotationsPromise,
