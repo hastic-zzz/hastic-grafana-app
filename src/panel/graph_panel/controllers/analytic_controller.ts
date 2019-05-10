@@ -505,7 +505,7 @@ export class AnalyticController {
 
   async getHSR(from: number, to: number): Promise<HSRTimeSeries | null> {
     // Returns HSR (Hastic Signal Representation) for analytic unit in "Inspect" mode
-    // Returns null when there is no analytic units in "Inspect" mode
+    // Returns null when there are no analytic units in "Inspect" mode
     // or if there is no response from server
     if(this.inspectedAnalyticUnit === null) {
       return null;
