@@ -8,7 +8,7 @@ const DEFAULTS = {
   detectorType: DetectorType.ANOMALY,
   type: 'ANOMALY',
   alpha: 0.5,
-  confidence: 0,
+  confidence: 1,
   seasonality: 0
 };
 
