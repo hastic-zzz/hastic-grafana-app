@@ -196,8 +196,8 @@ export class AnalyticController {
     this.labelingUnit.labelingMode = labelingMode;
   }
 
-  addLabelSegment(segment: Segment, deleted = false) {
-    const asegment = this.labelingUnit.addLabeledSegment(segment, deleted);
+  addSegment(segment: Segment, deleted = false) {
+    const asegment = this.labelingUnit.addSegment(segment, deleted);
     this._labelingDataAddedSegments.addSegment(asegment);
   }
 

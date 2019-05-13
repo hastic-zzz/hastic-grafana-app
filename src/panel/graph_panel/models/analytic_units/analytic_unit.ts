@@ -122,7 +122,7 @@ export class AnalyticUnit {
     this._serverObject.visible = value;
   }
 
-  addLabeledSegment(segment: Segment, deleted: boolean): AnalyticSegment {
+  addSegment(segment: Segment, deleted: boolean): AnalyticSegment {
     const asegment = new AnalyticSegment(!deleted, segment.id, segment.from, segment.to, deleted);
     this._segmentSet.addSegment(asegment);
     return asegment;
