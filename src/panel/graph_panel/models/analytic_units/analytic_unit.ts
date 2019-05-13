@@ -33,6 +33,9 @@ export class AnalyticSegment extends Segment {
     if(!_.isBoolean(this.labeled)) {
       throw new Error('labeled value is not boolean');
     }
+    if(labeled && deleted) {
+      throw new Error('Segment can`t be both labeled and deleted');
+    }
   }
 }
 
