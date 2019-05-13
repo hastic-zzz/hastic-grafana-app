@@ -681,6 +681,17 @@ export class AnalyticController {
       .forEach(unit => unit.inspect = false);
   }
 
+  public toggleSeasonality(id: AnalyticUnitId) {
+    const analyticUnit = this._analyticUnitsSet.byId(id) as AnomalyAnalyticUnit;
+    analyticUnit.seasonality = 1;
+  }
+
+  public async updateSeasonality(id: AnalyticUnitId) {
+    const analyticUnit = this._analyticUnitsSet.byId(id) as AnomalyAnalyticUnit;
+    analyticUnit.updateSeasonality();
+    await this.saveAnalyticUnit(analyticUnit);
+  }
+
   public onAnalyticUnitDetectorChange(analyticUnitTypes: any) {
     // TODO: looks bad
     this._newAnalyticUnit.type = analyticUnitTypes[this._newAnalyticUnit.detectorType][0].value;
