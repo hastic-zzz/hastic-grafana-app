@@ -13,8 +13,8 @@ const DEFAULTS = {
 };
 
 export class AnomalyAnalyticUnit extends AnalyticUnit {
-
-  private _seasonalityPeriod = { value: 1, unit: 'seconds' };
+  // TODO: timespan type
+  private _seasonalityPeriod: any = {};
 
   constructor(_serverObject?: any) {
     super(_serverObject);
