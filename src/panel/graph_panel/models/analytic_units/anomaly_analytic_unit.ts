@@ -1,4 +1,4 @@
-import { AnalyticUnit, DetectorType } from './analytic_unit';
+import { AnalyticUnit, DetectorType, LabelingMode } from './analytic_unit';
 import { msToPeriod } from './utils';
 
 import _ from 'lodash';
@@ -19,6 +19,11 @@ export class AnomalyAnalyticUnit extends AnalyticUnit {
   constructor(_serverObject?: any) {
     super(_serverObject);
     _.defaults(this._serverObject, DEFAULTS);
+
+    this.LABELING_MODES = [
+      { name: 'Label Negative', value: LabelingMode.DELETING },
+      { name: 'Unlabel', value: LabelingMode.UNLABELING }
+    ];
     this.updateSeasonality();
   }
 

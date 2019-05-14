@@ -60,6 +60,7 @@ export class AnalyticUnit {
   private _inspect = false;
   private _status: string;
   private _error: string;
+  protected LABELING_MODES = [];
 
   // TODO: serverObject -> fields
   constructor(protected _serverObject?: any) {
@@ -175,4 +176,7 @@ export class AnalyticUnit {
 
   get serverObject() { return this._serverObject; }
 
+  get labelingModes() {
+    return this.LABELING_MODES;
+  }
 }

@@ -153,8 +153,11 @@
         >
 
         <div class="gf-form-select-wrapper"
-          ng-hide="analyticUnit.selected"
-          ng-if="analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality"
+          ng-if="
+            analyticUnit.detectorType === 'anomaly' && 
+            analyticUnit.hasSeasonality &&
+            !analyticUnit.selected
+          "
         >
           <!-- TODO: move periods from ng-options -->
           <select class="gf-form-input width-8"
@@ -164,7 +167,7 @@
           />
         </div>
 
-        <label class="gf-form-label" ng-hide="analyticUnit.selected">
+        <label class="gf-form-label" ng-if="!analyticUnit.selected">
           <a
             ng-if="analyticUnit.visible"
             bs-tooltip="'Hide. It`s visible now.'"
@@ -202,11 +205,7 @@
 
         <select class="gf-form-input width-12"
           ng-model="ctrl.analyticsController.labelingMode"
-          ng-options="type.value as type.name for type in [
-            { name:'Label Positive', value: 'LABELING' },
-            { name:'Label Negative', value: 'DELETING' },
-            { name:'Unlabel', value: 'UNLABELING' }
-          ]"
+          ng-options="type.value as type.name for type in analyticUnit.labelingModes"
           ng-if="
             (analyticUnit.detectorType === 'pattern' ||
             (analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality)) &&

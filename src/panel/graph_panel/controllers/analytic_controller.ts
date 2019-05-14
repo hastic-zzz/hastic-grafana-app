@@ -143,7 +143,8 @@ export class AnalyticController {
     await this.disableLabeling();
     this._selectedAnalyticUnitId = id;
     this.labelingUnit.selected = true;
-    this.toggleLabelingMode(LabelingMode.LABELING);
+    const modes = this.labelingUnit.labelingModes;
+    this.toggleLabelingMode(modes[0].value);
   }
 
   async disableLabeling() {
