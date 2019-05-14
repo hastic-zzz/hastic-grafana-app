@@ -681,11 +681,6 @@ export class AnalyticController {
       .forEach(unit => unit.inspect = false);
   }
 
-  public toggleSeasonality(id: AnalyticUnitId) {
-    const analyticUnit = this._analyticUnitsSet.byId(id) as AnomalyAnalyticUnit;
-    analyticUnit.seasonality = 1000;
-  }
-
   public async updateSeasonality(id: AnalyticUnitId) {
     const analyticUnit = this._analyticUnitsSet.byId(id) as AnomalyAnalyticUnit;
     analyticUnit.updateSeasonality();
