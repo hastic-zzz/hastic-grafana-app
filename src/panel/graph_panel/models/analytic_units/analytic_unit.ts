@@ -127,9 +127,9 @@ export class AnalyticUnit {
   }
 
   addSegment(segment: Segment, deleted: boolean): AnalyticSegment {
-    const asegment = new AnalyticSegment(!deleted, segment.id, segment.from, segment.to, deleted);
-    this._segmentSet.addSegment(asegment);
-    return asegment;
+    const addedSegment = new AnalyticSegment(!deleted, segment.id, segment.from, segment.to, deleted);
+    this._segmentSet.addSegment(addedSegment);
+    return addedSegment;
   }
 
   removeSegmentsInRange(from: number, to: number): AnalyticSegment[] {

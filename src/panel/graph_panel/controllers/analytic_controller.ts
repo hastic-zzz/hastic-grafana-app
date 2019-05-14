@@ -198,8 +198,8 @@ export class AnalyticController {
   }
 
   addSegment(segment: Segment, deleted = false) {
-    const asegment = this.labelingUnit.addSegment(segment, deleted);
-    this._labelingDataAddedSegments.addSegment(asegment);
+    const addedSegment = this.labelingUnit.addSegment(segment, deleted);
+    this._labelingDataAddedSegments.addSegment(addedSegment);
   }
 
   get analyticUnits(): AnalyticUnit[] {
