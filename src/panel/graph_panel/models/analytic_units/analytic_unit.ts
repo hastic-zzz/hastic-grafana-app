@@ -33,6 +33,9 @@ export class AnalyticSegment extends Segment {
     if(!_.isBoolean(this.labeled)) {
       throw new Error('labeled value is not boolean');
     }
+    if(labeled && deleted) {
+      throw new Error('Segment can`t be both labeled and deleted');
+    }
   }
 }
 
@@ -46,6 +49,8 @@ const DEFAULTS = {
   alert: false,
   visible: true
 };
+
+const LABELING_MODES = [];
 
 export class AnalyticUnit {
 
@@ -122,10 +127,10 @@ export class AnalyticUnit {
     this._serverObject.visible = value;
   }
 
-  addLabeledSegment(segment: Segment, deleted: boolean): AnalyticSegment {
-    const asegment = new AnalyticSegment(!deleted, segment.id, segment.from, segment.to, deleted);
-    this._segmentSet.addSegment(asegment);
-    return asegment;
+  addSegment(segment: Segment, deleted: boolean): AnalyticSegment {
+    const addedSegment = new AnalyticSegment(!deleted, segment.id, segment.from, segment.to, deleted);
+    this._segmentSet.addSegment(addedSegment);
+    return addedSegment;
   }
 
   removeSegmentsInRange(from: number, to: number): AnalyticSegment[] {
@@ -172,4 +177,8 @@ export class AnalyticUnit {
 
   get serverObject() { return this._serverObject; }
 
+  // TODO: make it abstract
+  get labelingModes() {
+    return LABELING_MODES;
+  }
 }

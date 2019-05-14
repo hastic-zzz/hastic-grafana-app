@@ -153,10 +153,10 @@ export class GraphRenderer {
         this._analyticController.deleteLabelingAnalyticUnitSegmentsInRange(
           segment.from, segment.to
         );
-        this._analyticController.addLabelSegment(segment, true);
+        this._analyticController.addSegment(segment, true);
       }
       if(this._analyticController.labelingMode === LabelingMode.LABELING) {
-        this._analyticController.addLabelSegment(segment, false);
+        this._analyticController.addSegment(segment, false);
       }
       if(this._analyticController.labelingMode === LabelingMode.UNLABELING) {
         this._analyticController.deleteLabelingAnalyticUnitSegmentsInRange(

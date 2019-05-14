@@ -682,6 +682,11 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.refresh();
   }
 
+  onSeasonalityChange(id: AnalyticUnitId) {
+    this.analyticsController.updateSeasonality(id);
+    this.refresh();
+  }
+
   private async _updatePanelInfo() {
     let datasource = undefined;
     if(this.panel.datasource) {

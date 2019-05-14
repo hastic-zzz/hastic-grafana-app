@@ -106,7 +106,7 @@ export class AnalyticController {
 
   async saveNew(metric: MetricExpanded, datasource: DatasourceRequest) {
     this._savingNewAnalyticUnit = true;
-    const newAnalyticUnit = createAnalyticUnit(this._newAnalyticUnit.serverObject);
+    const newAnalyticUnit = createAnalyticUnit(this._newAnalyticUnit.toJSON());
     newAnalyticUnit.id = await this._analyticService.postNewAnalyticUnit(
       newAnalyticUnit, metric, datasource, this._grafanaUrl, this._panelId
     );
@@ -143,7 +143,8 @@ export class AnalyticController {
     await this.disableLabeling();
     this._selectedAnalyticUnitId = id;
     this.labelingUnit.selected = true;
-    this.toggleLabelingMode(LabelingMode.LABELING);
+    const labelingModes = this.labelingUnit.labelingModes;
+    this.toggleLabelingMode(labelingModes[0].value);
   }
 
   async disableLabeling() {
@@ -196,9 +197,9 @@ export class AnalyticController {
     this.labelingUnit.labelingMode = labelingMode;
   }
 
-  addLabelSegment(segment: Segment, deleted = false) {
-    const asegment = this.labelingUnit.addLabeledSegment(segment, deleted);
-    this._labelingDataAddedSegments.addSegment(asegment);
+  addSegment(segment: Segment, deleted = false) {
+    const addedSegment = this.labelingUnit.addSegment(segment, deleted);
+    this._labelingDataAddedSegments.addSegment(addedSegment);
   }
 
   get analyticUnits(): AnalyticUnit[] {
@@ -453,11 +454,7 @@ export class AnalyticController {
     if(!this.inLabelingMode) {
       throw new Error(`Can't enter ${labelingMode} mode when labeling mode is disabled`);
     }
-    if(this.labelingUnit.labelingMode === labelingMode) {
-      this.labelingUnit.labelingMode = LabelingMode.LABELING;
-    } else {
-      this.labelingUnit.labelingMode = labelingMode;
-    }
+    this.labelingUnit.labelingMode = labelingMode;
   }
 
   async removeAnalyticUnit(id: AnalyticUnitId, silent: boolean = false): Promise<void> {
@@ -484,7 +481,7 @@ export class AnalyticController {
     }
 
     analyticUnit.saving = true;
-    await this._analyticService.updateAnalyticUnit(analyticUnit.serverObject);
+    await this._analyticService.updateAnalyticUnit(analyticUnit.toJSON());
     analyticUnit.saving = false;
   }
 
@@ -679,6 +676,11 @@ export class AnalyticController {
     this.analyticUnits
       .filter(analyticUnit => analyticUnit.id !== id)
       .forEach(unit => unit.inspect = false);
+  }
+
+  public async updateSeasonality(id: AnalyticUnitId) {
+    const analyticUnit = this._analyticUnitsSet.byId(id) as AnomalyAnalyticUnit;
+    await this.saveAnalyticUnit(analyticUnit);
   }
 
   public onAnalyticUnitDetectorChange(analyticUnitTypes: any) {

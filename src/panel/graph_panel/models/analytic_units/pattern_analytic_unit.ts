@@ -1,4 +1,4 @@
-import { AnalyticUnit, DetectorType } from './analytic_unit';
+import { AnalyticUnit, DetectorType, LabelingMode } from './analytic_unit';
 
 import _ from 'lodash';
 
@@ -6,6 +6,12 @@ const DEFAULTS = {
   detectorType: DetectorType.PATTERN,
   type: 'GENERAL'
 };
+
+const LABELING_MODES = [
+  { name: 'Label Positive', value: LabelingMode.LABELING },
+  { name: 'Label Negative', value: LabelingMode.DELETING },
+  { name: 'Unlabel', value: LabelingMode.UNLABELING }
+];
 
 export class PatternAnalyticUnit extends AnalyticUnit {
 
@@ -19,5 +25,9 @@ export class PatternAnalyticUnit extends AnalyticUnit {
     return {
       ...baseJSON
     };
+  }
+
+  get labelingModes() {
+    return LABELING_MODES;
   }
 }
