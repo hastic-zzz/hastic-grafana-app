@@ -1,21 +1,26 @@
 import { AnalyticUnit, DetectorType, LabelingMode } from './analytic_unit';
-import { msToPeriod } from './utils';
 
 import _ from 'lodash';
 import moment from 'moment';
+
+type TimePeriod = {
+  value: number,
+  unit: string
+};
 
 const DEFAULTS = {
   detectorType: DetectorType.ANOMALY,
   type: 'ANOMALY',
   alpha: 0.5,
   confidence: 1,
-  seasonality: 0
+  seasonality: 0,
+  seasonalityPeriod: {
+    value: 0,
+    unit: 'seconds'
+  }
 };
 
 export class AnomalyAnalyticUnit extends AnalyticUnit {
-  // TODO: timespan type
-  public seasonalityPeriod: any = {};
-
   constructor(_serverObject?: any) {
     super(_serverObject);
     _.defaults(this._serverObject, DEFAULTS);
@@ -24,7 +29,6 @@ export class AnomalyAnalyticUnit extends AnalyticUnit {
       { name: 'Label Negative', value: LabelingMode.DELETING },
       { name: 'Unlabel', value: LabelingMode.UNLABELING }
     ];
-    this.updateSeasonality();
   }
 
   toJSON() {
@@ -33,14 +37,9 @@ export class AnomalyAnalyticUnit extends AnalyticUnit {
       ...baseJSON,
       alpha: this.alpha,
       confidence: this.confidence,
-      seasonality: this.seasonality
+      seasonality: this.seasonality,
+      seasonalityPeriod: this.seasonalityPeriod
     };
-  }
-
-  public updateSeasonality() {
-    let seasonalityObj = {};
-    seasonalityObj[this.seasonalityPeriod.unit] = this.seasonalityPeriod.value;
-    this.seasonality = moment.duration(seasonalityObj).asMilliseconds();
   }
 
   set alpha(val: number) { this._serverObject.alpha = val; }
@@ -49,18 +48,21 @@ export class AnomalyAnalyticUnit extends AnalyticUnit {
   set confidence(val: number) { this._serverObject.confidence = val; }
   get confidence(): number { return this._serverObject.confidence; }
 
-  set seasonality(val: number) { 
-    this._serverObject.seasonality = val;
-    this.seasonalityPeriod = msToPeriod(this.seasonality);
+  get seasonality(): number {
+    let seasonalityObj = {};
+    seasonalityObj[this.seasonalityPeriod.unit] = this.seasonalityPeriod.value;
+    return moment.duration(seasonalityObj).asMilliseconds();
   }
-  get seasonality(): number { return this._serverObject.seasonality; }
+
+  set seasonalityPeriod(val: TimePeriod) { this._serverObject.seasonalityPeriod = val; }
+  get seasonalityPeriod(): TimePeriod { return this._serverObject.seasonalityPeriod; }
 
   // TODO: merge seasonality and hasSeasonality
   set hasSeasonality(val: boolean) {
     if(val) {
-      this.seasonality = 1000;
+      this.seasonalityPeriod = { value: 1, unit: 'seconds' };
     } else {
-      this.seasonality = 0;
+      this.seasonalityPeriod = { value: 0, unit: 'seconds' };
     }
   }
   get hasSeasonality(): boolean {

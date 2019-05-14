@@ -106,7 +106,7 @@ export class AnalyticController {
 
   async saveNew(metric: MetricExpanded, datasource: DatasourceRequest) {
     this._savingNewAnalyticUnit = true;
-    const newAnalyticUnit = createAnalyticUnit(this._newAnalyticUnit.serverObject);
+    const newAnalyticUnit = createAnalyticUnit(this._newAnalyticUnit.toJSON());
     newAnalyticUnit.id = await this._analyticService.postNewAnalyticUnit(
       newAnalyticUnit, metric, datasource, this._grafanaUrl, this._panelId
     );
@@ -485,7 +485,7 @@ export class AnalyticController {
     }
 
     analyticUnit.saving = true;
-    await this._analyticService.updateAnalyticUnit(analyticUnit.serverObject);
+    await this._analyticService.updateAnalyticUnit(analyticUnit.toJSON());
     analyticUnit.saving = false;
   }
 
@@ -684,7 +684,6 @@ export class AnalyticController {
 
   public async updateSeasonality(id: AnalyticUnitId) {
     const analyticUnit = this._analyticUnitsSet.byId(id) as AnomalyAnalyticUnit;
-    analyticUnit.updateSeasonality();
     await this.saveAnalyticUnit(analyticUnit);
   }
 
