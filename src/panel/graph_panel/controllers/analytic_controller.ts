@@ -454,11 +454,7 @@ export class AnalyticController {
     if(!this.inLabelingMode) {
       throw new Error(`Can't enter ${labelingMode} mode when labeling mode is disabled`);
     }
-    if(this.labelingUnit.labelingMode === labelingMode) {
-      this.labelingUnit.labelingMode = LabelingMode.LABELING;
-    } else {
-      this.labelingUnit.labelingMode = labelingMode;
-    }
+    this.labelingUnit.labelingMode = labelingMode;
   }
 
   async removeAnalyticUnit(id: AnalyticUnitId, silent: boolean = false): Promise<void> {
