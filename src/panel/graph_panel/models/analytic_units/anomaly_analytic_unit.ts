@@ -55,6 +55,7 @@ export class AnomalyAnalyticUnit extends AnalyticUnit {
   }
   get seasonality(): number { return this._serverObject.seasonality; }
 
+  // TODO: merge seasonality and hasSeasonality
   set hasSeasonality(val: boolean) {
     if(val) {
       this.seasonality = 1000;
