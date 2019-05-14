@@ -87,9 +87,15 @@
           ng-blur="ctrl.onAnalyticUnitChange(analyticUnit)"
         />
 
-        <label class="gf-form-label width-4" ng-if="analyticUnit.detectorType === 'anomaly'"> Alpha </label>
+        <label
+          class="gf-form-label width-4"
+          ng-if="analyticUnit.detectorType === 'anomaly' && !analyticUnit.selected"
+        >
+          Alpha
+        </label>
         <input class="gf-form-input max-width-4"
-          ng-if="analyticUnit.detectorType === 'anomaly'"
+          ng-hide="analyticUnit.selected"
+          ng-if="analyticUnit.detectorType === 'anomaly' && !analyticUnit.selected"
           min="0"
           max="1"
           type="number"
@@ -97,9 +103,14 @@
           ng-blur="ctrl.onAnalyticUnitChange(analyticUnit)"
         />
 
-        <label class="gf-form-label width-6" ng-if="analyticUnit.detectorType === 'anomaly'"> Confidence </label>
+        <label
+          class="gf-form-label width-6"
+          ng-if="analyticUnit.detectorType === 'anomaly' && !analyticUnit.selected"
+        >
+          Confidence
+        </label>
         <input class="gf-form-input max-width-4"
-          ng-if="analyticUnit.detectorType === 'anomaly'"
+          ng-if="analyticUnit.detectorType === 'anomaly' && !analyticUnit.selected"
           min="0"
           type="number"
           ng-model="analyticUnit.confidence"
@@ -117,7 +128,8 @@
         />
 
         <!-- TODO: Remove hack with "margin-bottom: 0" -->
-        <gf-form-switch ng-if="analyticUnit.detectorType === 'anomaly'"
+        <gf-form-switch 
+          ng-if="analyticUnit.detectorType === 'anomaly' && !analyticUnit.selected"
           class="gf-form"
           style="margin-bottom: 0"
           label="Seasonality"
@@ -127,19 +139,21 @@
         />
 
         <label
-          ng-if="analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality"
+          ng-hide="analyticUnit.selected"
+          ng-if="analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality && !analyticUnit.selected"
           class="gf-form-label width-9"
         >
           Seasonality Period
         </label>
         <input
-          ng-if="analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality"
+          ng-if="analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality && !analyticUnit.selected"
           type="text" class="gf-form-input max-width-5"
           ng-model="analyticUnit.seasonalityPeriod.value"
           ng-blur="ctrl.onSeasonalityChange(analyticUnit.id)"
         >
 
         <div class="gf-form-select-wrapper"
+          ng-hide="analyticUnit.selected"
           ng-if="analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality"
         >
           <!-- TODO: move periods from ng-options -->
@@ -193,7 +207,12 @@
             { name:'Label Negative', value: 'DELETING' },
             { name:'Unlabel', value: 'UNLABELING' }
           ]"
-          ng-if="analyticUnit.selected && !analyticUnit.saving"
+          ng-if="
+            (analyticUnit.detectorType === 'pattern' ||
+            (analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality)) &&
+            analyticUnit.selected &&
+            !analyticUnit.saving
+          "
           ng-disabled="analyticUnit.status === 'LEARNING'"
         />
 
