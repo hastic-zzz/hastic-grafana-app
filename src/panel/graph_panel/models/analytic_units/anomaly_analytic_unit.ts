@@ -20,15 +20,16 @@ const DEFAULTS = {
   }
 };
 
+const LABELING_MODES = [
+  { name: 'Label Negative', value: LabelingMode.DELETING },
+  { name: 'Unlabel', value: LabelingMode.UNLABELING }
+];
+
 export class AnomalyAnalyticUnit extends AnalyticUnit {
+
   constructor(_serverObject?: any) {
     super(_serverObject);
     _.defaults(this._serverObject, DEFAULTS);
-
-    this.LABELING_MODES = [
-      { name: 'Label Negative', value: LabelingMode.DELETING },
-      { name: 'Unlabel', value: LabelingMode.UNLABELING }
-    ];
   }
 
   toJSON() {
@@ -67,5 +68,9 @@ export class AnomalyAnalyticUnit extends AnalyticUnit {
   }
   get hasSeasonality(): boolean {
     return this.seasonality > 0;
+  }
+
+  get labelingModes() {
+    return LABELING_MODES;
   }
 }

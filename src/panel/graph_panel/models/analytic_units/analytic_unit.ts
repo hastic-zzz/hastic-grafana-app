@@ -50,6 +50,8 @@ const DEFAULTS = {
   visible: true
 };
 
+const LABELING_MODES = [];
+
 export class AnalyticUnit {
 
   private _labelingMode: LabelingMode = LabelingMode.LABELING;
@@ -60,7 +62,6 @@ export class AnalyticUnit {
   private _inspect = false;
   private _status: string;
   private _error: string;
-  protected LABELING_MODES = [];
 
   // TODO: serverObject -> fields
   constructor(protected _serverObject?: any) {
@@ -176,7 +177,8 @@ export class AnalyticUnit {
 
   get serverObject() { return this._serverObject; }
 
+  // TODO: make it abstract
   get labelingModes() {
-    return this.LABELING_MODES;
+    return LABELING_MODES;
   }
 }

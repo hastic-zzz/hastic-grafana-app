@@ -7,17 +7,17 @@ const DEFAULTS = {
   type: 'GENERAL'
 };
 
+const LABELING_MODES = [
+  { name: 'Label Positive', value: LabelingMode.LABELING },
+  { name: 'Label Negative', value: LabelingMode.DELETING },
+  { name: 'Unlabel', value: LabelingMode.UNLABELING }
+];
+
 export class PatternAnalyticUnit extends AnalyticUnit {
 
   constructor(_serverObject?: any) {
     super(_serverObject);
     _.defaults(this._serverObject, DEFAULTS);
-
-    this.LABELING_MODES = [
-      { name: 'Label Positive', value: LabelingMode.LABELING },
-      { name: 'Label Negative', value: LabelingMode.DELETING },
-      { name: 'Unlabel', value: LabelingMode.UNLABELING }
-    ];
   }
 
   toJSON() {
@@ -25,5 +25,9 @@ export class PatternAnalyticUnit extends AnalyticUnit {
     return {
       ...baseJSON
     };
+  }
+
+  get labelingModes() {
+    return LABELING_MODES;
   }
 }
