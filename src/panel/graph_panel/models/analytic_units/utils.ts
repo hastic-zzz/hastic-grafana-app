@@ -18,6 +18,7 @@ export function createAnalyticUnit(serverObject: any): AnalyticUnit {
 }
 
 export function msToPeriod(ms: number) {
+  console.log(ms)
   if(ms < 60000) {
     // Less than 1 min
     return {

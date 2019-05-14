@@ -14,7 +14,7 @@ const DEFAULTS = {
 
 export class AnomalyAnalyticUnit extends AnalyticUnit {
   // TODO: timespan type
-  private _seasonalityPeriod: any = {};
+  public seasonalityPeriod: any = {};
 
   constructor(_serverObject?: any) {
     super(_serverObject);
@@ -34,9 +34,8 @@ export class AnomalyAnalyticUnit extends AnalyticUnit {
 
   public updateSeasonality() {
     let seasonalityObj = {};
-    seasonalityObj[this._seasonalityPeriod.unit] = this._seasonalityPeriod.value;
+    seasonalityObj[this.seasonalityPeriod.unit] = this.seasonalityPeriod.value;
     this.seasonality = moment.duration(seasonalityObj).asMilliseconds();
-    this._seasonalityPeriod = msToPeriod(this.seasonality);
   }
 
   set alpha(val: number) { this._serverObject.alpha = val; }
@@ -45,7 +44,10 @@ export class AnomalyAnalyticUnit extends AnalyticUnit {
   set confidence(val: number) { this._serverObject.confidence = val; }
   get confidence(): number { return this._serverObject.confidence; }
 
-  set seasonality(val: number) { this._serverObject.seasonality = val; }
+  set seasonality(val: number) { 
+    this._serverObject.seasonality = val;
+    this.seasonalityPeriod = msToPeriod(this.seasonality);
+  }
   get seasonality(): number { return this._serverObject.seasonality; }
 
   set hasSeasonality(val: boolean) {
@@ -57,18 +59,5 @@ export class AnomalyAnalyticUnit extends AnalyticUnit {
   }
   get hasSeasonality(): boolean {
     return this.seasonality > 0;
-  }
-
-  get seasonalitySpanValue() {
-    return this._seasonalityPeriod.value;
-  }
-  set seasonalitySpanValue(val: number) {
-    this._seasonalityPeriod.value = val;
-  }
-  get seasonalitySpanUnit() {
-    return this._seasonalityPeriod.unit;
-  }
-  set seasonalitySpanUnit(val: string) {
-    this._seasonalityPeriod.unit = val;
   }
 }

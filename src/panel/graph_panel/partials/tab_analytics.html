@@ -135,16 +135,16 @@
         <input
           ng-if="analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality"
           type="text" class="gf-form-input max-width-5"
-          ng-model="analyticUnit.seasonalitySpanValue"
+          ng-model="analyticUnit.seasonalityPeriod.value"
           ng-blur="ctrl.onSeasonalityChange(analyticUnit.id)"
         >
 
         <div class="gf-form-select-wrapper"
           ng-if="analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality"
         >
-          <!-- TODO: move timespans from ng-options -->
+          <!-- TODO: move periods from ng-options -->
           <select class="gf-form-input width-8"
-            ng-model="analyticUnit.seasonalitySpanUnit"
+            ng-model="analyticUnit.seasonalityPeriod.unit"
             ng-change="ctrl.onSeasonalityChange(analyticUnit.id)"
             ng-options="type for type in ['seconds', 'minutes', 'days', 'hours', 'days', 'years']"
           />
