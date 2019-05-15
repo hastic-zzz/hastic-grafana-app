@@ -253,8 +253,9 @@
           <label class="gf-form-label width-9"> Seasonality Period </label>
           <input
             type="number" class="gf-form-input width-5"
-            ng-model="analyticUnit.seasonalityPeriod.value"
-            ng-blur="ctrl.onSeasonalityChange(analyticUnit.id)"
+            ng-init="seasonalityValue = analyticUnit.seasonalityPeriod.value"
+            ng-model="seasonalityValue"
+            ng-blur="ctrl.onSeasonalityChange(analyticUnit.id, seasonalityValue)"
             min="0"
           >
         </div>
