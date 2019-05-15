@@ -12,6 +12,10 @@ import { appEvents } from 'grafana/app/core/core';
 
 import * as _ from 'lodash';
 
+type TableTimeSeries = {
+  values: [number, number][];
+  columns: string[];
+};
 
 export class AnalyticService {
   private _isUp: boolean = false;
@@ -201,8 +205,8 @@ export class AnalyticService {
   }
 
   async getHSR(analyticUnitId: AnalyticUnitId, from: number, to: number): Promise<{
-    values: [number, number][];
-    columns: string[];
+    hsr: TableTimeSeries,
+    smoothed?: TableTimeSeries
   } | null> {
     const data = await this.get('/query', { analyticUnitId, from, to });
     if(data === undefined) {

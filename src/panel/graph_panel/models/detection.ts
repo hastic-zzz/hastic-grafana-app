@@ -14,7 +14,7 @@ export type DetectionSpan = {
 };
 
 export const DETECTION_STATUS_TEXT = new Map<DetectionStatus, string>([
-  [DetectionStatus.READY, 'Detection is done'],
-  [DetectionStatus.RUNNING, 'Detection is running...'],
-  [DetectionStatus.FAILED, 'Detection failed']
+  [DetectionStatus.READY, '[DetectionStatus]: done'],
+  [DetectionStatus.RUNNING, '[DetectionStatus]: running...'],
+  [DetectionStatus.FAILED, '[DetectionStatus]: failed']
 ]);
