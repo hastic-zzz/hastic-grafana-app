@@ -1,12 +1,11 @@
 // Corresponds to https://github.com/hastic/hastic-server/blob/master/server/src/models/analytic_units/analytic_unit.ts
 
-import { AnalyticService } from '../services/analytic_service';
+import { AnalyticService, TableTimeSeries } from '../services/analytic_service';
 
 import {
   AnalyticUnitId, AnalyticUnit,
   AnalyticSegment, AnalyticSegmentsSearcher, AnalyticSegmentPair,
-  LabelingMode,
-  DetectorType
+  LabelingMode
 } from '../models/analytic_units/analytic_unit';
 import { AnomalyAnalyticUnit } from '../models/analytic_units/anomaly_analytic_unit';
 import { AnalyticUnitsSet } from '../models/analytic_units/analytic_units_set';
@@ -502,7 +501,8 @@ export class AnalyticController {
 
   async getHSR(from: number, to: number): Promise<{
     hsr: HSRTimeSeries,
-    smoothed?: HSRTimeSeries
+    lowerBound?: HSRTimeSeries,
+    upperBound?: HSRTimeSeries
   } | null> {
     // Returns HSR (Hastic Signal Representation) for analytic unit in "Inspect" mode
     // Returns null when there are no analytic units in "Inspect" mode
@@ -516,19 +516,14 @@ export class AnalyticController {
       return null;
     }
 
-    const hsrDatapoints = response.hsr.values.map(value => value.reverse() as [number, number]);
-    const hsrTimeSeries = { target: 'HSR', datapoints: hsrDatapoints };
-
-    let smoothed: HSRTimeSeries;
-    if(response.smoothed !== undefined) {
-      // TODO: remove duplication with hsrDatapoints
-      const smoothedDatapoints = response.smoothed.values.map(value => value.reverse() as [number, number]);
-      smoothed = { target: 'Smoothed data', datapoints: smoothedDatapoints };
-    }
+    const hsr = convertTableToTimeSeries('HSR', response.hsr);
+    const lowerBound = convertTableToTimeSeries('Lower bound', response.lowerBound);
+    const upperBound = convertTableToTimeSeries('Upper bound', response.upperBound);
 
     return {
-      hsr: hsrTimeSeries,
-      smoothed
+      hsr,
+      lowerBound,
+      upperBound
     };
   }
 
@@ -546,23 +541,19 @@ export class AnalyticController {
         { alias: 'HSR', linewidth: 3, fill: 0 }
       ]
     };
-    if(response.smoothed !== undefined) {
-      const confidence = (this.inspectedAnalyticUnit as AnomalyAnalyticUnit).confidence;
+
+    if(response.lowerBound !== undefined && response.upperBound !== undefined) {
       // TODO: looks bad
       return [
         {
           target: '[AnomalyDetector]: lower bound',
-          datapoints: response.smoothed.datapoints.map(datapoint =>
-            [datapoint[0] - confidence, datapoint[1]]
-          ),
+          datapoints: response.lowerBound.datapoints,
           color: ANALYTIC_UNIT_COLORS[0],
           overrides: [{ alias: '[AnomalyDetector]: lower bound', linewidth: 1, fill: 0 }]
         },
         {
           target: '[AnomalyDetector]: upper bound',
-          datapoints: response.smoothed.datapoints.map(datapoint =>
-            [datapoint[0] + confidence, datapoint[1]]
-          ),
+          datapoints: response.upperBound.datapoints,
           color: ANALYTIC_UNIT_COLORS[0],
           overrides: [{ alias: '[AnomalyDetector]: upper bound', linewidth: 1, fill: 0 }]
         },
@@ -737,4 +728,13 @@ function addAlphaToRGB(colorString: string, alpha: number): string {
   } else {
     return colorString;
   }
+}
+
+function convertTableToTimeSeries(target: string, tableData?: TableTimeSeries): HSRTimeSeries {
+  if(tableData === undefined) {
+    return undefined;
+  }
+  const datapoints = tableData.values.map(value => value.reverse() as [number, number]);
+
+  return { target, datapoints };
 }
