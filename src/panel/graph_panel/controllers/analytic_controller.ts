@@ -500,7 +500,10 @@ export class AnalyticController {
     this.fetchAnalyticUnitsStatuses();
   }
 
-  async getHSR(from: number, to: number): Promise<HSRTimeSeries | null> {
+  async getHSR(from: number, to: number): Promise<{
+    hsr: HSRTimeSeries,
+    smoothed?: HSRTimeSeries
+  } | null> {
     // Returns HSR (Hastic Signal Representation) for analytic unit in "Inspect" mode
     // Returns null when there are no analytic units in "Inspect" mode
     // or if there is no response from server
@@ -508,50 +511,65 @@ export class AnalyticController {
       return null;
     }
 
-    const hsr = await this._analyticService.getHSR(this.inspectedAnalyticUnit.id, from, to);
-    if(hsr === null) {
+    const response = await this._analyticService.getHSR(this.inspectedAnalyticUnit.id, from, to);
+    if(response === null) {
       return null;
     }
-    const datapoints = hsr.values.map(value => value.reverse() as [number, number]);
-    return { target: 'HSR', datapoints };
+
+    const hsrDatapoints = response.hsr.values.map(value => value.reverse() as [number, number]);
+    const hsrTimeSeries = { target: 'HSR', datapoints: hsrDatapoints };
+
+    let smoothed: HSRTimeSeries;
+    if(response.smoothed !== undefined) {
+      // TODO: remove duplication with hsrDatapoints
+      const smoothedDatapoints = response.smoothed.values.map(value => value.reverse() as [number, number]);
+      smoothed = { target: 'Smoothed data', datapoints: smoothedDatapoints };
+    }
+
+    return {
+      hsr: hsrTimeSeries,
+      smoothed
+    };
   }
 
   async getHSRSeries(from: number, to: number) {
-    const hsr = await this.getHSR(from, to);
+    const response = await this.getHSR(from, to);
 
-    if(hsr === null) {
+    if(response === null) {
       return [];
     }
-    if(this.inspectedAnalyticUnit.detectorType === DetectorType.ANOMALY) {
-      const confidence = (this.inspectedAnalyticUnit as AnomalyAnalyticUnit).confidence;
-      // TODO: looks bad
-      return [
-        {
-          target: 'Confidence interval lower',
-          datapoints: hsr.datapoints.map(datapoint =>
-            [datapoint[0] - confidence, datapoint[1]]
-          ),
-          color: ANALYTIC_UNIT_COLORS[0],
-          overrides: [{ alias: 'Confidence interval lower', linewidth: 1, fill: 0 }]
-        },
-        {
-          target: 'Confidence interval upper',
-          datapoints: hsr.datapoints.map(datapoint =>
-            [datapoint[0] + confidence, datapoint[1]]
-          ),
-          color: ANALYTIC_UNIT_COLORS[0],
-          overrides: [{ alias: 'Confidence interval upper', linewidth: 1, fill: 0 }]
-        },
-      ];
-    }
-    return {
-      ...hsr,
+    const hsrSerie = {
+      ...response.hsr,
       color: ANALYTIC_UNIT_COLORS[0],
       // TODO: render it separately from Metric series
       overrides: [
         { alias: 'HSR', linewidth: 3, fill: 0 }
       ]
     };
+    if(response.smoothed !== undefined) {
+      const confidence = (this.inspectedAnalyticUnit as AnomalyAnalyticUnit).confidence;
+      // TODO: looks bad
+      return [
+        {
+          target: '[AnomalyDetector]: lower bound',
+          datapoints: response.smoothed.datapoints.map(datapoint =>
+            [datapoint[0] - confidence, datapoint[1]]
+          ),
+          color: ANALYTIC_UNIT_COLORS[0],
+          overrides: [{ alias: '[AnomalyDetector]: lower bound', linewidth: 1, fill: 0 }]
+        },
+        {
+          target: '[AnomalyDetector]: upper bound',
+          datapoints: response.smoothed.datapoints.map(datapoint =>
+            [datapoint[0] + confidence, datapoint[1]]
+          ),
+          color: ANALYTIC_UNIT_COLORS[0],
+          overrides: [{ alias: '[AnomalyDetector]: upper bound', linewidth: 1, fill: 0 }]
+        },
+        hsrSerie
+      ];
+    }
+    return hsrSerie;
   }
 
   get inspectedAnalyticUnit(): AnalyticUnit | null {
