@@ -319,7 +319,7 @@ export class AnalyticController {
     const ids = this.analyticUnits.map(analyticUnit => analyticUnit.id);
     await this._analyticService.runDetect(ids);
 
-    _.each(this.analyticUnits, analyticUnit => this._runStatusWaiter(analyticUnit));
+    this.fetchAnalyticUnitsStatuses();
   }
 
   async runDetect(analyticUnitId: AnalyticUnitId, from?: number, to?: number) {
@@ -617,7 +617,7 @@ export class AnalyticController {
         }
         analyticUnit.detectionSpans = data;
         let isFinished = true;
-        for (let detection of data) {
+        for(let detection of data) {
           if(detection.status === DetectionStatus.RUNNING) {
             isFinished = false;
           }
