@@ -226,10 +226,9 @@ export class AnalyticController {
     if(from === undefined || to === undefined) {
       return;
     }
+    this.stopAnalyticUnitsDetectionsFetching();
     this.analyticUnits.forEach(analyticUnit => {
-      if(analyticUnit.status === 'READY') {
-        this._runDetectionsWaiter(analyticUnit, from, to);
-      }
+      this._runDetectionsWaiter(analyticUnit, from, to);
     });
   }
 
@@ -319,7 +318,7 @@ export class AnalyticController {
     const ids = this.analyticUnits.map(analyticUnit => analyticUnit.id);
     await this._analyticService.runDetect(ids);
 
-    _.each(this.analyticUnits, analyticUnit => this._runStatusWaiter(analyticUnit));
+    this.fetchAnalyticUnitsStatuses();
   }
 
   async runDetect(analyticUnitId: AnalyticUnitId, from?: number, to?: number) {

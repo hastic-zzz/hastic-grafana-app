@@ -272,12 +272,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       if(analyticUnit.status === '404') {
         await this.analyticsController.removeAnalyticUnit(analyticUnit.id, true);
       }
-      if(analyticUnit.status === 'READY') {
-        const { from, to } = this.rangeTimestamp;
-        await this.analyticsController.fetchSegments(analyticUnit, from, to);
-      }
-      this.render(this.seriesList);
-      this.$scope.$digest();
+      this.refresh();
     });
 
     appEvents.on('ds-request-response', data => {
@@ -326,7 +321,6 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
 
     this.analyticsController = new AnalyticController(this._grafanaUrl, this._panelId, this.panel, this.events, this.analyticService);
-    this.analyticsController.fetchAnalyticUnitsStatuses();
 
     this._updatePanelInfo();
     this.analyticsController.updateServerInfo();
@@ -409,18 +403,16 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
 
     if(this.analyticsController !== undefined) {
-      this.analyticsController.stopAnalyticUnitsDetectionsFetching();
+      this.analyticsController.fetchAnalyticUnitsStatuses();
+      this.analyticsController.fetchAnalyticUnitsDetections(
+        this._dataTimerange.from,
+        this._dataTimerange.to
+      );
       const loadTasks = [
-        // this.annotationsPromise,
         this.analyticsController.fetchAnalyticUnitsSegments(from, to)
       ];
 
       await Promise.all(loadTasks);
-      // this.annotations = results[0].annotations;
-      await this.analyticsController.fetchAnalyticUnitsDetections(
-        this._dataTimerange.from,
-        this._dataTimerange.to
-      );
       this.render(this.seriesList);
     }
 
