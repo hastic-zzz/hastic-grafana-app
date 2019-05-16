@@ -228,7 +228,9 @@ export class AnalyticController {
     }
     this.stopAnalyticUnitsDetectionsFetching();
     this.analyticUnits.forEach(analyticUnit => {
-      this._runDetectionsWaiter(analyticUnit, from, to);
+      if(analyticUnit.status === 'READY') {
+        this._runDetectionsWaiter(analyticUnit, from, to);
+      }
     });
   }
 
