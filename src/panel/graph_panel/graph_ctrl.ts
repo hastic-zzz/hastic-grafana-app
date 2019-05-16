@@ -404,6 +404,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     if(this.analyticsController !== undefined) {
       await this.analyticsController.fetchAnalyticUnitsSegments(from, to);
+      // TODO: make statuses and detection spans connected
       this.analyticsController.fetchAnalyticUnitsStatuses();
       this.analyticsController.fetchAnalyticUnitsDetections(
         this._dataTimerange.from,
