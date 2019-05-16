@@ -12,6 +12,7 @@ import { appEvents } from 'grafana/app/core/core';
 
 import * as _ from 'lodash';
 
+// TODO: TableTimeSeries is bad name
 export type TableTimeSeries = {
   values: [number, number][];
   columns: string[];
