@@ -403,16 +403,12 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
 
     if(this.analyticsController !== undefined) {
+      await this.analyticsController.fetchAnalyticUnitsSegments(from, to);
       this.analyticsController.fetchAnalyticUnitsStatuses();
       this.analyticsController.fetchAnalyticUnitsDetections(
         this._dataTimerange.from,
         this._dataTimerange.to
       );
-      const loadTasks = [
-        this.analyticsController.fetchAnalyticUnitsSegments(from, to)
-      ];
-
-      await Promise.all(loadTasks);
       this.render(this.seriesList);
     }
 
