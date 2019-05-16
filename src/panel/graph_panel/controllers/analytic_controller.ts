@@ -616,7 +616,7 @@ export class AnalyticController {
         }
         analyticUnit.detectionSpans = data;
         let isFinished = true;
-        for (let detection of data) {
+        for(let detection of data) {
           if(detection.status === DetectionStatus.RUNNING) {
             isFinished = false;
           }
