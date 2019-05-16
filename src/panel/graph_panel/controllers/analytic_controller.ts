@@ -226,7 +226,6 @@ export class AnalyticController {
     if(from === undefined || to === undefined) {
       return;
     }
-    this.stopAnalyticUnitsDetectionsFetching();
     this.analyticUnits.forEach(analyticUnit => {
       if(analyticUnit.status === 'READY') {
         this._runDetectionsWaiter(analyticUnit, from, to);
