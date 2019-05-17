@@ -316,8 +316,12 @@
       </div>
     </div>
 
-    <div class="gf-form-button-row" ng-if="!ctrl.analyticsController.creatingAnalyticUnit">
-      <button class="btn btn-secondary width-12" ng-click="ctrl.createNew()">
+    <div class="gf-form-button-row">
+      <button 
+        class="btn btn-secondary width-12" 
+        ng-click="ctrl.createNew()"
+        ng-disabled="ctrl.analyticsController.creatingNew"
+      >
         <i class="fa fa-plus"></i>
         Add Analytic Unit
       </button>
