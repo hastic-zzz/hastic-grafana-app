@@ -127,57 +127,24 @@
           </label>
         </div>
 
-        <div class="gf-form">
-          <label class="gf-form-label">
-            <a
-              ng-if="!analyticUnit.selected"
-              ng-click="ctrl.onRemove(analyticUnit.id)"
-              class="pointer"
-            >
-              <i class="fa fa-trash"></i>
-            </a>
+        <div class="gf-form" ng-if="!analyticUnit.selected">
+          <a 
+            class="btn btn-danger"
+            ng-click="ctrl.onRemove(analyticUnit.id)"
+          >
+            <i class="fa fa-trash"></i>
+          </a>
+        </div>
 
+        <div class="gf-form" ng-if="analyticUnit.selected">
+          <div class="gf-form-label">
             <a
               class="pointer"
-              ng-if="analyticUnit.selected"
               ng-click="ctrl.onCancelLabeling(analyticUnit.id)"
             >
               Cancel
             </a>
-          </label>
-        </div>
-
-        <div class="gf-form" ng-if="analyticUnit.selected && !analyticUnit.saving">
-          <!-- Standard way to add conditions to ng-style: https://stackoverflow.com/a/29470439 -->
-          <label
-            class="gf-form-label"
-            ng-style="analyticUnit.status === 'LEARNING' && { 'cursor': 'not-allowed' }"
-            ng-disabled="analyticUnit.status === 'LEARNING'"
-          >
-            <a class="pointer"
-              ng-click="ctrl.onToggleLabelingMode(analyticUnit.id)"
-              ng-disabled="analyticUnit.status === 'LEARNING'"
-            >
-              <i class="fa fa-spinner fa-spin" ng-if="analyticUnit.saving"></i>
-              <b ng-if="!analyticUnit.saving"> Detect </b>
-              <b ng-if="analyticUnit.saving" ng-disabled="true"> saving... </b>
-              </a>
-          </label>
-        </div>
-
-        <div class="gf-form"
-          ng-if="
-            analyticUnit.detectorType === 'threshold' ||
-            (analyticUnit.detectorType === 'anomaly' && !analyticUnit.hasSeasonality)
-          "
-        >
-          <label class="gf-form-label">
-            <a class="pointer" ng-click="ctrl.runDetectInCurrentRange(analyticUnit.id)">
-              <i class="fa fa-spinner fa-spin" ng-if="analyticUnit.saving"></i>
-              <b ng-if="!analyticUnit.saving"> Detect </b>
-              <b ng-if="analyticUnit.saving" ng-disabled="true"> saving... </b>
-            </a>
-          </label>
+          </div>
         </div>
 
         <div class="gf-form">
@@ -212,7 +179,7 @@
           />
         </div>
 
-        <div class="gf-form" ng-if="analyticUnit.detectorType === 'anomaly' && !analyticUnit.selected">
+        <div class="gf-form" ng-if="analyticUnit.detectorType === 'anomaly'">
           <label class="gf-form-label width-5"> Alpha </label>
           <input class="gf-form-input width-9"
             ng-hide="analyticUnit.selected"
@@ -224,7 +191,7 @@
           />
         </div>
 
-        <div class="gf-form" ng-if="analyticUnit.detectorType === 'anomaly' && !analyticUnit.selected">
+        <div class="gf-form" ng-if="analyticUnit.detectorType === 'anomaly'">
           <label class="gf-form-label width-6"> Confidence </label>
           <input class="gf-form-input width-5"
             min="0"
@@ -234,7 +201,7 @@
           />
         </div>
 
-        <div class="gf-form" ng-if="analyticUnit.detectorType === 'anomaly' && !analyticUnit.selected">
+        <div class="gf-form" ng-if="analyticUnit.detectorType === 'anomaly'">
           <!-- TODO: Remove hack with "margin-bottom: 0" -->
           <gf-form-switch
             class="gf-form"
@@ -248,7 +215,7 @@
 
         <div
           class="gf-form"
-          ng-if="analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality && !analyticUnit.selected"
+          ng-if="analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality"
         >
           <label class="gf-form-label width-9"> Seasonality Period </label>
           <input
@@ -263,8 +230,7 @@
         <div class="gf-form"
           ng-if="
             analyticUnit.detectorType === 'anomaly' &&
-            analyticUnit.hasSeasonality &&
-            !analyticUnit.selected
+            analyticUnit.hasSeasonality
           "
         >
           <div class="gf-form-select-wrapper">
@@ -275,6 +241,43 @@
               ng-options="type for type in ['seconds', 'minutes', 'hours', 'days', 'years']"
             />
           </div>
+        </div>
+
+        <div class="gf-form">
+          <a class="btn btn-success"
+            ng-click="ctrl.onAnalyticUnitSave(analyticUnit)"
+            ng-disabled="!analyticUnit.changed"
+          >
+            <i class="fa fa-spinner fa-spin" ng-if="analyticUnit.saving"></i>
+            <b ng-if="!analyticUnit.saving"> Save </b>
+            <b ng-if="analyticUnit.saving" ng-disabled="true"> saving... </b>
+          </a>
+        </div>
+
+        
+
+        <div class="gf-form" ng-if="analyticUnit.selected && !analyticUnit.saving">
+          <a class="btn btn-secondary"
+            ng-click="ctrl.onToggleLabelingMode(analyticUnit.id)"
+            ng-disabled="analyticUnit.status === 'LEARNING' || analyticUnit.saving"
+          >
+            <i class="fa fa-spinner fa-spin" ng-if="analyticUnit.saving"></i>
+            <b ng-if="!analyticUnit.saving"> Detect </b>
+            <b ng-if="analyticUnit.saving"> saving... </b>
+          </a>
+        </div>
+
+        <div class="gf-form"
+          ng-if="
+            analyticUnit.detectorType === 'threshold' ||
+            (analyticUnit.detectorType === 'anomaly' && !analyticUnit.hasSeasonality)
+          "
+        >
+          <a class="btn btn-secondary" ng-click="ctrl.runDetectInCurrentRange(analyticUnit.id)">
+            <i class="fa fa-spinner fa-spin" ng-if="analyticUnit.saving"></i>
+            <b ng-if="!analyticUnit.saving"> Detect </b>
+            <b ng-if="analyticUnit.saving" ng-disabled="true"> saving... </b>
+          </a>
         </div>
       </div>
     </div>
