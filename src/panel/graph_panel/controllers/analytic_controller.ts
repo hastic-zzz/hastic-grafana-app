@@ -314,7 +314,7 @@ export class AnalyticController {
     return newIds;
   }
 
-  async redetectAll() {
+  async redetectAll(from?: number, to?: number) {
     this.analyticUnits.forEach(unit => {
       // TODO: remove duplication with runDetect
       unit.segments.clear();
@@ -322,7 +322,7 @@ export class AnalyticController {
       unit.status = null;
     });
     const ids = this.analyticUnits.map(analyticUnit => analyticUnit.id);
-    await this._analyticService.runDetect(ids);
+    await this._analyticService.runDetect(ids, from, to);
 
     this.fetchAnalyticUnitsStatuses();
   }
