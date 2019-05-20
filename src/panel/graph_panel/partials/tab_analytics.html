@@ -287,14 +287,16 @@
       </div>
     </div>
 
-    <div class="editor-row" ng-if="ctrl.analyticsController.creatingNew">
+    <div class="gf-form-inline" ng-if="ctrl.analyticsController.creatingNew">
       <div class="gf-form">
         <label class="gf-form-label width-5"> Name </label>
         <input
           type="text" class="gf-form-input width-15"
           ng-model="ctrl.analyticsController.newAnalyticUnit.name"
         >
+      </div>
 
+      <div class="gf-form">
         <label class="gf-form-label width-8"> Detector Type </label>
         <div class="gf-form-select-wrapper">
           <select class="gf-form-input width-8"
@@ -303,7 +305,9 @@
             ng-change="ctrl.analyticsController.onAnalyticUnitDetectorChange(ctrl.analyticUnitTypes);"
           />
         </div>
+      </div>
 
+      <div class="gf-form">
         <label class="gf-form-label width-5"> Type </label>
         <div class="gf-form-select-wrapper">
           <select class="gf-form-input width-9"
@@ -314,11 +318,15 @@
             "
           />
         </div>
+      </div>
 
+      <div class="gf-form">
         <a class="btn btn-danger" ng-click="ctrl.cancelCreation()">
           <b> Cancel </b>
         </a>
+      </div>
 
+      <div class="gf-form">
         <a class="btn btn-secondary" ng-click="ctrl.saveNew()">
           <b ng-if="!ctrl.analyticsController.saving"> Create </b>
           <b ng-if="ctrl.analyticsController.saving" ng-disabled="true"> Saving... </b>
