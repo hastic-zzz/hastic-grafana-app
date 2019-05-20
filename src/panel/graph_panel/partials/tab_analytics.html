@@ -265,7 +265,7 @@
         >
           <button class="btn btn-secondary"
             ng-click="ctrl.onToggleLabelingMode(analyticUnit.id)"
-            ng-disabled="analyticUnit.status === 'LEARNING' || analyticUnit.saving || analyticUnit.changed || !analyticUnit.segments.length"
+            ng-disabled="analyticUnit.status === 'LEARNING' || analyticUnit.saving || analyticUnit.changed || !analyticUnit.selected"
           >
             <b> Detect </b>
           </button>
