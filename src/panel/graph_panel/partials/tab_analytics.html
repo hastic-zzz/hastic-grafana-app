@@ -128,7 +128,7 @@
         </div>
 
         <div class="gf-form" ng-if="!analyticUnit.selected">
-          <a 
+          <a
             class="btn btn-danger"
             ng-click="ctrl.onRemove(analyticUnit.id)"
           >
@@ -254,7 +254,7 @@
           </a>
         </div>
 
-        
+
 
         <div class="gf-form" ng-if="analyticUnit.selected && !analyticUnit.saving">
           <a class="btn btn-secondary"
@@ -292,7 +292,7 @@
 
         <label class="gf-form-label width-8"> Detector Type </label>
         <div class="gf-form-select-wrapper">
-          <select class="gf-form-input width-7"
+          <select class="gf-form-input width-8"
             ng-model="ctrl.analyticsController.newAnalyticUnit.detectorType"
             ng-options="analyticUnitDetectorType for analyticUnitDetectorType in ctrl.analyticUnitDetectorTypes"
             ng-change="ctrl.analyticsController.onAnalyticUnitDetectorChange(ctrl.analyticUnitTypes);"
@@ -310,18 +310,20 @@
           />
         </div>
 
-        <label class="gf-form-label">
-          <a class="pointer" tabindex="1" ng-click="ctrl.saveNew()">
-            <b ng-if="!ctrl.analyticsController.saving"> create </b>
-            <b ng-if="ctrl.analyticsController.saving" ng-disabled="true"> saving... </b>
-          </a>
-        </label>
+        <a class="btn btn-danger" ng-click="ctrl.cancelCreation()">
+          <b> Cancel </b>
+        </a>
+
+        <a class="btn btn-secondary" ng-click="ctrl.saveNew()">
+          <b ng-if="!ctrl.analyticsController.saving"> Create </b>
+          <b ng-if="ctrl.analyticsController.saving" ng-disabled="true"> Saving... </b>
+        </a>
       </div>
     </div>
 
     <div class="gf-form-button-row">
-      <button 
-        class="btn btn-secondary width-12" 
+      <button
+        class="btn btn-secondary width-12"
         ng-click="ctrl.createNew()"
         ng-disabled="ctrl.analyticsController.creatingNew"
       >

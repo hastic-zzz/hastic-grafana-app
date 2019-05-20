@@ -103,6 +103,11 @@ export class AnalyticController {
     }
   }
 
+  cancelCreation() {
+    delete this._newAnalyticUnit;
+    this._creatingNewAnalyticUnit = false;
+  }
+
   async saveNew(metric: MetricExpanded, datasource: DatasourceRequest) {
     this._savingNewAnalyticUnit = true;
     const newAnalyticUnit = createAnalyticUnit(this._newAnalyticUnit.toJSON());

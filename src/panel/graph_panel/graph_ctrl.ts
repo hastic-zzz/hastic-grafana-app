@@ -571,6 +571,10 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.analyticsController.createNew();
   }
 
+  cancelCreation() {
+    this.analyticsController.cancelCreation();
+  }
+
   redetectAll() {
     this.analyticsController.redetectAll();
   }
