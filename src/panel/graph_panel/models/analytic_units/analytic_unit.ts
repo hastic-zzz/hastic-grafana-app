@@ -157,8 +157,10 @@ export class AnalyticUnit {
       value !== '404' &&
       value !== 'READY' &&
       value !== 'LEARNING' &&
+      value !== 'DETECTION' &&
       value !== 'PENDING' &&
       value !== 'FAILED' &&
+      value !== 'SUCCESS' &&
       value !== null
     ) {
       throw new Error('Unsupported status value: ' + value);

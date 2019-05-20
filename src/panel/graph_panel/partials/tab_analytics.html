@@ -150,7 +150,9 @@
         <div class="gf-form">
           <label>
             <i ng-if="analyticUnit.status === 'READY'" class="grafana-tip fa fa-check-circle ng-scope" bs-tooltip="'Ready'"></i>
+            <i ng-if="analyticUnit.status === 'SUCCESS'" class="grafana-tip fa fa-check ng-scope" bs-tooltip="'Learning succeeded'"></i>
             <i ng-if="analyticUnit.status === 'LEARNING'" class="grafana-tip fa fa-leanpub ng-scope" bs-tooltip="'Learning'"></i>
+            <i ng-if="analyticUnit.status === 'DETECTION'" class="grafana-tip fa fa-search ng-scope" bs-tooltip="'Detection'"></i>
             <i ng-if="analyticUnit.status === 'PENDING'" class="grafana-tip fa fa-list-ul ng-scope" bs-tooltip="'Pending'"></i>
             <i ng-if="analyticUnit.status === 'FAILED'" class="grafana-tip fa fa-exclamation-circle ng-scope" bs-tooltip="'Error: ' + analyticUnit.error"></i>
           </label>
