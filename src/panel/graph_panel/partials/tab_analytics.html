@@ -182,7 +182,6 @@
         <div class="gf-form" ng-if="analyticUnit.detectorType === 'anomaly'">
           <label class="gf-form-label width-5"> Alpha </label>
           <input class="gf-form-input width-9"
-            ng-hide="analyticUnit.selected"
             min="0"
             max="1"
             type="number"
@@ -242,27 +241,34 @@
             />
           </div>
         </div>
-
+      </div>
+      
+      <div class="gf-form-inline">
+        <div class="gf-form width-20"/>
         <div class="gf-form">
-          <a class="btn btn-success"
+          <button class="btn btn-secondary"
             ng-click="ctrl.onAnalyticUnitSave(analyticUnit)"
             ng-disabled="!analyticUnit.changed"
           >
             <i class="fa fa-spinner fa-spin" ng-if="analyticUnit.saving"></i>
             <b ng-if="!analyticUnit.saving"> Save </b>
             <b ng-if="analyticUnit.saving" ng-disabled="true"> saving... </b>
-          </a>
+          </button>
         </div>
 
-
-
-        <div class="gf-form" ng-if="analyticUnit.selected && !analyticUnit.saving">
-          <a class="btn btn-secondary"
+        <!-- TODO: Leave one Detect button instead of 2 -->
+        <div class="gf-form"
+          ng-if="
+            analyticUnit.detectorType === 'pattern' ||
+            (analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality)
+          "
+        >
+          <button class="btn btn-secondary"
             ng-click="ctrl.onToggleLabelingMode(analyticUnit.id)"
-            ng-disabled="analyticUnit.status === 'LEARNING' || analyticUnit.saving || analyticUnit.changed"
+            ng-disabled="analyticUnit.status === 'LEARNING' || analyticUnit.saving || analyticUnit.changed || !analyticUnit.segments.length"
           >
-            <b ng-if="!analyticUnit.saving"> Detect </b>
-          </a>
+            <b> Detect </b>
+          </button>
         </div>
 
         <div class="gf-form"
@@ -271,9 +277,12 @@
             (analyticUnit.detectorType === 'anomaly' && !analyticUnit.hasSeasonality)
           "
         >
-          <a class="btn btn-secondary" ng-click="ctrl.runDetectInCurrentRange(analyticUnit.id)">
-            <b ng-if="!analyticUnit.saving"> Detect </b>
-          </a>
+          <button class="btn btn-secondary"
+            ng-click="ctrl.runDetectInCurrentRange(analyticUnit.id)"
+            ng-disabled="analyticUnit.status === 'LEARNING' || analyticUnit.saving || analyticUnit.changed"
+          >
+            <b> Detect </b>
+          </button>
         </div>
       </div>
     </div>
