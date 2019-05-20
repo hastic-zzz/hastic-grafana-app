@@ -60,6 +60,7 @@ export class AnalyticUnit {
   private _segmentSet = new SegmentArray<AnalyticSegment>();
   private _detectionSpans: DetectionSpan[];
   private _inspect = false;
+  private _changed = false;
   private _status: string;
   private _error: string;
 
@@ -116,6 +117,9 @@ export class AnalyticUnit {
 
   get saving(): boolean { return this._saving; }
   set saving(value: boolean) { this._saving = value; }
+
+  get changed(): boolean { return this._changed; }
+  set changed(value: boolean) { this._changed = value; }
 
   get inspect(): boolean { return this._inspect; }
   set inspect(value: boolean) { this._inspect = value; }

@@ -37,7 +37,7 @@
         <div class="gf-form">
           <label class="gf-form-label width-5"> Type </label>
           <div class="gf-form-select-wrapper">
-            <select class="gf-form-input width-10"
+            <select class="gf-form-input width-9"
               ng-model="analyticUnit.type"
               ng-options="type.value as type.name for type in ctrl.analyticUnitTypes[analyticUnit.detectorType]"
               ng-disabled="true"
@@ -73,7 +73,7 @@
             class="gf-form"
             style="margin-bottom: 0"
             label="Inspect"
-            label-class="width-7"
+            label-class="width-5"
             on-change="ctrl.onToggleInspect(analyticUnit.id)"
             checked="analyticUnit.inspect"
           />
@@ -127,57 +127,24 @@
           </label>
         </div>
 
-        <div class="gf-form">
-          <label class="gf-form-label">
-            <a
-              ng-if="!analyticUnit.selected"
-              ng-click="ctrl.onRemove(analyticUnit.id)"
-              class="pointer"
-            >
-              <i class="fa fa-trash"></i>
-            </a>
-
-            <a
-              ng-if="analyticUnit.selected"
-              ng-click="ctrl.onCancelLabeling(analyticUnit.id)"
-              class="pointer"
-            >
-              <i class="fa fa-ban"></i>
-            </a>
-          </label>
-        </div>
-
-        <div class="gf-form" ng-if="analyticUnit.selected && !analyticUnit.saving">
-          <!-- Standard way to add conditions to ng-style: https://stackoverflow.com/a/29470439 -->
-          <label
-            class="gf-form-label"
-            ng-style="analyticUnit.status === 'LEARNING' && { 'cursor': 'not-allowed' }"
-            ng-disabled="analyticUnit.status === 'LEARNING'"
+        <div class="gf-form" ng-if="!analyticUnit.selected">
+          <a
+            class="btn btn-danger"
+            ng-click="ctrl.onRemove(analyticUnit.id)"
           >
-            <a class="pointer"
-              ng-click="ctrl.onToggleLabelingMode(analyticUnit.id)"
-              ng-disabled="analyticUnit.status === 'LEARNING'"
-            >
-              <i class="fa fa-spinner fa-spin" ng-if="analyticUnit.saving"></i>
-              <b ng-if="!analyticUnit.saving"> Detect </b>
-              <b ng-if="analyticUnit.saving" ng-disabled="true"> saving... </b>
-              </a>
-          </label>
+            <i class="fa fa-trash"></i>
+          </a>
         </div>
 
-        <div class="gf-form"
-          ng-if="
-            analyticUnit.detectorType === 'threshold' ||
-            (analyticUnit.detectorType === 'anomaly' && !analyticUnit.hasSeasonality)
-          "
-        >
-          <label class="gf-form-label">
-            <a class="pointer" ng-click="ctrl.runDetectInCurrentRange(analyticUnit.id)">
-              <i class="fa fa-spinner fa-spin" ng-if="analyticUnit.saving"></i>
-              <b ng-if="!analyticUnit.saving"> Detect </b>
-              <b ng-if="analyticUnit.saving" ng-disabled="true"> saving... </b>
+        <div class="gf-form" ng-if="analyticUnit.selected">
+          <div class="gf-form-label">
+            <a
+              class="pointer"
+              ng-click="ctrl.onCancelLabeling(analyticUnit.id)"
+            >
+              Cancel
             </a>
-          </label>
+          </div>
         </div>
 
         <div class="gf-form">
@@ -195,16 +162,16 @@
         <!-- TODO: move analytic-unit-specific fields rendering to class -->
         <div class="gf-form" ng-if="analyticUnit.detectorType === 'threshold'">
           <label class="gf-form-label width-5"> Condition </label>
-          <select class="gf-form-input width-5"
+          <select class="gf-form-input"
             ng-class="{
               'width-5': analyticUnit.condition !== 'NO_DATA',
-              'width-10': analyticUnit.condition === 'NO_DATA'
+              'width-9': analyticUnit.condition === 'NO_DATA'
             }"
             ng-model="analyticUnit.condition"
             ng-options="type for type in ctrl.analyticsController.conditions"
             ng-change="ctrl.onAnalyticUnitChange(analyticUnit)"
           />
-          <input class="gf-form-input width-5"
+          <input class="gf-form-input width-4"
             ng-if="analyticUnit.condition !== 'NO_DATA'"
             type="number"
             ng-model="analyticUnit.value"
@@ -212,10 +179,9 @@
           />
         </div>
 
-        <div class="gf-form" ng-if="analyticUnit.detectorType === 'anomaly' && !analyticUnit.selected">
+        <div class="gf-form" ng-if="analyticUnit.detectorType === 'anomaly'">
           <label class="gf-form-label width-5"> Alpha </label>
-          <input class="gf-form-input width-10"
-            ng-hide="analyticUnit.selected"
+          <input class="gf-form-input width-9"
             min="0"
             max="1"
             type="number"
@@ -224,7 +190,7 @@
           />
         </div>
 
-        <div class="gf-form" ng-if="analyticUnit.detectorType === 'anomaly' && !analyticUnit.selected">
+        <div class="gf-form" ng-if="analyticUnit.detectorType === 'anomaly'">
           <label class="gf-form-label width-6"> Confidence </label>
           <input class="gf-form-input width-5"
             min="0"
@@ -234,7 +200,7 @@
           />
         </div>
 
-        <div class="gf-form" ng-if="analyticUnit.detectorType === 'anomaly' && !analyticUnit.selected">
+        <div class="gf-form" ng-if="analyticUnit.detectorType === 'anomaly'">
           <!-- TODO: Remove hack with "margin-bottom: 0" -->
           <gf-form-switch
             class="gf-form"
@@ -248,7 +214,7 @@
 
         <div
           class="gf-form"
-          ng-if="analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality && !analyticUnit.selected"
+          ng-if="analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality"
         >
           <label class="gf-form-label width-9"> Seasonality Period </label>
           <input
@@ -263,8 +229,7 @@
         <div class="gf-form"
           ng-if="
             analyticUnit.detectorType === 'anomaly' &&
-            analyticUnit.hasSeasonality &&
-            !analyticUnit.selected
+            analyticUnit.hasSeasonality
           "
         >
           <div class="gf-form-select-wrapper">
@@ -277,28 +242,75 @@
           </div>
         </div>
       </div>
+      
+      <div class="gf-form-inline">
+        <div class="gf-form width-20"/>
+        <div class="gf-form">
+          <button class="btn btn-secondary"
+            ng-click="ctrl.onAnalyticUnitSave(analyticUnit)"
+            ng-disabled="!analyticUnit.changed"
+          >
+            <i class="fa fa-spinner fa-spin" ng-if="analyticUnit.saving"></i>
+            <b ng-if="!analyticUnit.saving"> Save </b>
+            <b ng-if="analyticUnit.saving" ng-disabled="true"> saving... </b>
+          </button>
+        </div>
+
+        <!-- TODO: Leave one Detect button instead of 2 -->
+        <div class="gf-form"
+          ng-if="
+            analyticUnit.detectorType === 'pattern' ||
+            (analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality)
+          "
+        >
+          <button class="btn btn-secondary"
+            ng-click="ctrl.onToggleLabelingMode(analyticUnit.id)"
+            ng-disabled="analyticUnit.status === 'LEARNING' || analyticUnit.saving || analyticUnit.changed || !analyticUnit.segments.length"
+          >
+            <b> Detect </b>
+          </button>
+        </div>
+
+        <div class="gf-form"
+          ng-if="
+            analyticUnit.detectorType === 'threshold' ||
+            (analyticUnit.detectorType === 'anomaly' && !analyticUnit.hasSeasonality)
+          "
+        >
+          <button class="btn btn-secondary"
+            ng-click="ctrl.runDetectInCurrentRange(analyticUnit.id)"
+            ng-disabled="analyticUnit.status === 'LEARNING' || analyticUnit.saving || analyticUnit.changed"
+          >
+            <b> Detect </b>
+          </button>
+        </div>
+      </div>
     </div>
 
-    <div class="editor-row" ng-if="ctrl.analyticsController.creatingNew">
+    <div class="gf-form-inline" ng-if="ctrl.analyticsController.creatingNew">
       <div class="gf-form">
         <label class="gf-form-label width-5"> Name </label>
         <input
           type="text" class="gf-form-input width-15"
           ng-model="ctrl.analyticsController.newAnalyticUnit.name"
         >
+      </div>
 
+      <div class="gf-form">
         <label class="gf-form-label width-8"> Detector Type </label>
         <div class="gf-form-select-wrapper">
-          <select class="gf-form-input width-7"
+          <select class="gf-form-input width-8"
             ng-model="ctrl.analyticsController.newAnalyticUnit.detectorType"
             ng-options="analyticUnitDetectorType for analyticUnitDetectorType in ctrl.analyticUnitDetectorTypes"
             ng-change="ctrl.analyticsController.onAnalyticUnitDetectorChange(ctrl.analyticUnitTypes);"
           />
         </div>
+      </div>
 
+      <div class="gf-form">
         <label class="gf-form-label width-5"> Type </label>
         <div class="gf-form-select-wrapper">
-          <select class="gf-form-input width-10"
+          <select class="gf-form-input width-9"
             ng-model="ctrl.analyticsController.newAnalyticUnit.type"
             ng-options="
               type.value as type.name
@@ -306,18 +318,28 @@
             "
           />
         </div>
+      </div>
 
-        <label class="gf-form-label">
-          <a class="pointer" tabindex="1" ng-click="ctrl.saveNew()">
-            <b ng-if="!ctrl.analyticsController.saving"> create </b>
-            <b ng-if="ctrl.analyticsController.saving" ng-disabled="true"> saving... </b>
-          </a>
-        </label>
+      <div class="gf-form">
+        <a class="btn btn-danger" ng-click="ctrl.cancelCreation()">
+          <b> Cancel </b>
+        </a>
+      </div>
+
+      <div class="gf-form">
+        <a class="btn btn-secondary" ng-click="ctrl.saveNew()">
+          <b ng-if="!ctrl.analyticsController.saving"> Create </b>
+          <b ng-if="ctrl.analyticsController.saving" ng-disabled="true"> Saving... </b>
+        </a>
       </div>
     </div>
 
-    <div class="gf-form-button-row" ng-if="!ctrl.analyticsController.creatingAnalyticUnit">
-      <button class="btn btn-secondary width-12" ng-click="ctrl.createNew()">
+    <div class="gf-form-button-row">
+      <button
+        class="btn btn-secondary width-12"
+        ng-click="ctrl.createNew()"
+        ng-disabled="ctrl.analyticsController.creatingNew"
+      >
         <i class="fa fa-plus"></i>
         Add Analytic Unit
       </button>

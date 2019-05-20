@@ -562,6 +562,10 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.analyticsController.createNew();
   }
 
+  cancelCreation() {
+    this.analyticsController.cancelCreation();
+  }
+
   redetectAll() {
     this.analyticsController.redetectAll();
   }
@@ -600,7 +604,11 @@ class GraphCtrl extends MetricsPanelCtrl {
     await this.analyticsController.toggleAnalyticUnitAlert(analyticUnit);
   }
 
-  async onAnalyticUnitChange(analyticUnit: AnalyticUnit) {
+  onAnalyticUnitChange(analyticUnit: AnalyticUnit) {
+    this.analyticsController.toggleAnalyticUnitChange(analyticUnit, true);
+  }
+
+  async onAnalyticUnitSave(analyticUnit: AnalyticUnit) {
     await this.analyticsController.saveAnalyticUnit(analyticUnit);
     this.refresh();
   }

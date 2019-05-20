@@ -103,6 +103,11 @@ export class AnalyticController {
     }
   }
 
+  cancelCreation() {
+    delete this._newAnalyticUnit;
+    this._creatingNewAnalyticUnit = false;
+  }
+
   async saveNew(metric: MetricExpanded, datasource: DatasourceRequest) {
     this._savingNewAnalyticUnit = true;
     const newAnalyticUnit = createAnalyticUnit(this._newAnalyticUnit.toJSON());
@@ -215,7 +220,7 @@ export class AnalyticController {
     } else {
       analyticUnit.labeledColor = value;
     }
-    await this.saveAnalyticUnit(analyticUnit);
+    analyticUnit.changed = true;
   }
 
   fetchAnalyticUnitsStatuses() {
@@ -474,6 +479,10 @@ export class AnalyticController {
     await this._analyticService.setAnalyticUnitAlert(analyticUnit);
   }
 
+  toggleAnalyticUnitChange(analyticUnit: AnalyticUnit, value: boolean): void {
+    analyticUnit.changed = value;
+  }
+
   async saveAnalyticUnit(analyticUnit: AnalyticUnit): Promise<void> {
     if(analyticUnit.id === null || analyticUnit.id === undefined) {
       throw new Error('Cannot save analytic unit without id');
@@ -482,6 +491,7 @@ export class AnalyticController {
     analyticUnit.saving = true;
     await this._analyticService.updateAnalyticUnit(analyticUnit.toJSON());
     analyticUnit.saving = false;
+    analyticUnit.changed = false;
   }
 
   async getAnalyticUnits(): Promise<any[]> {
@@ -671,14 +681,14 @@ export class AnalyticController {
     return this._tempIdCounted.toString();
   }
 
-  public async toggleVisibility(id: AnalyticUnitId, value?: boolean) {
+  public toggleVisibility(id: AnalyticUnitId, value?: boolean) {
     const analyticUnit = this._analyticUnitsSet.byId(id);
     if(value !== undefined) {
       analyticUnit.visible = value;
     } else {
       analyticUnit.visible = !analyticUnit.visible;
     }
-    await this.saveAnalyticUnit(analyticUnit);
+    analyticUnit.changed = true;
   }
 
   public toggleInspect(id: AnalyticUnitId) {
@@ -692,7 +702,7 @@ export class AnalyticController {
     if(value !== undefined) {
       analyticUnit.seasonalityPeriod.value = value;
     }
-    await this.saveAnalyticUnit(analyticUnit);
+    analyticUnit.changed = true;
   }
 
   public onAnalyticUnitDetectorChange(analyticUnitTypes: any) {
