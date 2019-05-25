@@ -21,7 +21,7 @@ See also:
 * [Wiki](https://github.com/hastic/hastic-grafana-app/wiki)
 * [FAQ](https://github.com/hastic/hastic-grafana-app/wiki/FAQ)
 * [Hastic-server](https://github.com/hastic/hastic-server)
-* [Installation from source](https://github.com/hastic/hastic-grafana-app/wiki/Installation-from-source)
+* [Installation from source](https://github.com/hastic/hastic-grafana-app/wiki/Development#install-from-source)
 * [Changelog](https://github.com/hastic/hastic-grafana-app/wiki/Changelog)
 
 # Prerequisites
