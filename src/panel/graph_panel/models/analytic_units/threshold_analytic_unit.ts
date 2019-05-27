@@ -19,6 +19,8 @@ const DEFAULTS = {
   condition: Condition.ABOVE_OR_EQUAL
 };
 
+const LABELING_MODES = [];
+
 export class ThresholdAnalyticUnit extends AnalyticUnit {
 
   constructor(_serverObject?: any) {
@@ -40,4 +42,8 @@ export class ThresholdAnalyticUnit extends AnalyticUnit {
 
   set condition(val: Condition) { this._serverObject.condition = val; }
   get condition(): Condition { return this._serverObject.condition; }
+
+  get labelingModes() {
+    return LABELING_MODES;
+  }
 }

@@ -12,6 +12,11 @@ import { appEvents } from 'grafana/app/core/core';
 
 import * as _ from 'lodash';
 
+// TODO: TableTimeSeries is bad name
+export type TableTimeSeries = {
+  values: [number, number][];
+  columns: string[];
+};
 
 export class AnalyticService {
   private _isUp: boolean = false;
@@ -201,10 +206,14 @@ export class AnalyticService {
   }
 
   async getHSR(analyticUnitId: AnalyticUnitId, from: number, to: number): Promise<{
-    values: [number, number][];
-    columns: string[];
-  }> {
+    hsr: TableTimeSeries,
+    lowerBound?: TableTimeSeries,
+    upperBound?: TableTimeSeries
+  } | null> {
     const data = await this.get('/query', { analyticUnitId, from, to });
+    if(data === undefined) {
+      return null;
+    }
     return data.results;
   }
 
@@ -242,7 +251,7 @@ export class AnalyticService {
     } catch(error) {
       // xhrStatus may be one of: ('complete', 'error', 'timeout' or 'abort')
       // See: https://github.com/angular/angular.js/blob/55075b840c9194b8524627a293d6166528b9a1c2/src/ng/http.js#L919-L920
-      if(error.xhrStatus !== 'complete') {
+      if(error.xhrStatus !== 'complete' || error.status === 502) {
         this.displayConnectionErrorAlert();
         this._isUp = false;
       } else {

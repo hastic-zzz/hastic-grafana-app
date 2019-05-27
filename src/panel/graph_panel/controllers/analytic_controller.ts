@@ -1,12 +1,11 @@
 // Corresponds to https://github.com/hastic/hastic-server/blob/master/server/src/models/analytic_units/analytic_unit.ts
 
-import { AnalyticService } from '../services/analytic_service';
+import { AnalyticService, TableTimeSeries } from '../services/analytic_service';
 
 import {
   AnalyticUnitId, AnalyticUnit,
   AnalyticSegment, AnalyticSegmentsSearcher, AnalyticSegmentPair,
-  LabelingMode,
-  DetectorType
+  LabelingMode
 } from '../models/analytic_units/analytic_unit';
 import { AnomalyAnalyticUnit } from '../models/analytic_units/anomaly_analytic_unit';
 import { AnalyticUnitsSet } from '../models/analytic_units/analytic_units_set';
@@ -104,9 +103,14 @@ export class AnalyticController {
     }
   }
 
+  cancelCreation() {
+    delete this._newAnalyticUnit;
+    this._creatingNewAnalyticUnit = false;
+  }
+
   async saveNew(metric: MetricExpanded, datasource: DatasourceRequest) {
     this._savingNewAnalyticUnit = true;
-    const newAnalyticUnit = createAnalyticUnit(this._newAnalyticUnit.serverObject);
+    const newAnalyticUnit = createAnalyticUnit(this._newAnalyticUnit.toJSON());
     newAnalyticUnit.id = await this._analyticService.postNewAnalyticUnit(
       newAnalyticUnit, metric, datasource, this._grafanaUrl, this._panelId
     );
@@ -143,7 +147,8 @@ export class AnalyticController {
     await this.disableLabeling();
     this._selectedAnalyticUnitId = id;
     this.labelingUnit.selected = true;
-    this.toggleLabelingMode(LabelingMode.LABELING);
+    const labelingModes = this.labelingUnit.labelingModes;
+    this.toggleLabelingMode(labelingModes[0].value);
   }
 
   async disableLabeling() {
@@ -196,9 +201,9 @@ export class AnalyticController {
     this.labelingUnit.labelingMode = labelingMode;
   }
 
-  addLabelSegment(segment: Segment, deleted = false) {
-    const asegment = this.labelingUnit.addLabeledSegment(segment, deleted);
-    this._labelingDataAddedSegments.addSegment(asegment);
+  addSegment(segment: Segment, deleted = false) {
+    const addedSegment = this.labelingUnit.addSegment(segment, deleted);
+    this._labelingDataAddedSegments.addSegment(addedSegment);
   }
 
   get analyticUnits(): AnalyticUnit[] {
@@ -215,7 +220,7 @@ export class AnalyticController {
     } else {
       analyticUnit.labeledColor = value;
     }
-    await this.saveAnalyticUnit(analyticUnit);
+    analyticUnit.changed = true;
   }
 
   fetchAnalyticUnitsStatuses() {
@@ -309,7 +314,7 @@ export class AnalyticController {
     return newIds;
   }
 
-  async redetectAll() {
+  async redetectAll(from?: number, to?: number) {
     this.analyticUnits.forEach(unit => {
       // TODO: remove duplication with runDetect
       unit.segments.clear();
@@ -317,9 +322,9 @@ export class AnalyticController {
       unit.status = null;
     });
     const ids = this.analyticUnits.map(analyticUnit => analyticUnit.id);
-    await this._analyticService.runDetect(ids);
+    await this._analyticService.runDetect(ids, from, to);
 
-    _.each(this.analyticUnits, analyticUnit => this._runStatusWaiter(analyticUnit));
+    this.fetchAnalyticUnitsStatuses();
   }
 
   async runDetect(analyticUnitId: AnalyticUnitId, from?: number, to?: number) {
@@ -453,11 +458,7 @@ export class AnalyticController {
     if(!this.inLabelingMode) {
       throw new Error(`Can't enter ${labelingMode} mode when labeling mode is disabled`);
     }
-    if(this.labelingUnit.labelingMode === labelingMode) {
-      this.labelingUnit.labelingMode = LabelingMode.LABELING;
-    } else {
-      this.labelingUnit.labelingMode = labelingMode;
-    }
+    this.labelingUnit.labelingMode = labelingMode;
   }
 
   async removeAnalyticUnit(id: AnalyticUnitId, silent: boolean = false): Promise<void> {
@@ -478,14 +479,19 @@ export class AnalyticController {
     await this._analyticService.setAnalyticUnitAlert(analyticUnit);
   }
 
+  toggleAnalyticUnitChange(analyticUnit: AnalyticUnit, value: boolean): void {
+    analyticUnit.changed = value;
+  }
+
   async saveAnalyticUnit(analyticUnit: AnalyticUnit): Promise<void> {
     if(analyticUnit.id === null || analyticUnit.id === undefined) {
       throw new Error('Cannot save analytic unit without id');
     }
 
     analyticUnit.saving = true;
-    await this._analyticService.updateAnalyticUnit(analyticUnit.serverObject);
+    await this._analyticService.updateAnalyticUnit(analyticUnit.toJSON());
     analyticUnit.saving = false;
+    analyticUnit.changed = false;
   }
 
   async getAnalyticUnits(): Promise<any[]> {
@@ -503,69 +509,73 @@ export class AnalyticController {
     this.fetchAnalyticUnitsStatuses();
   }
 
-  async getHSR(from: number, to: number): Promise<HSRTimeSeries | null> {
-    // Returns HSR (Hastic Signal Representation) for analytic unit with enabled "Show HSR"
-    // Returns null when there is no analytic units which have "Show HSR" enabled
-    if(this.hsrAnalyticUnit === null) {
+  async getHSR(from: number, to: number): Promise<{
+    hsr: HSRTimeSeries,
+    lowerBound?: HSRTimeSeries,
+    upperBound?: HSRTimeSeries
+  } | null> {
+    // Returns HSR (Hastic Signal Representation) for analytic unit in "Inspect" mode
+    // Returns null when there are no analytic units in "Inspect" mode
+    // or if there is no response from server
+    if(this.inspectedAnalyticUnit === null) {
       return null;
     }
 
-    const hsr = await this._analyticService.getHSR(this.hsrAnalyticUnit.id, from, to);
-    const datapoints = hsr.values.map(value => value.reverse() as [number, number]);
-    return { target: 'HSR', datapoints };
+    const response = await this._analyticService.getHSR(this.inspectedAnalyticUnit.id, from, to);
+    if(response === null) {
+      return null;
+    }
+
+    const hsr = convertTableToTimeSeries('HSR', response.hsr);
+    const lowerBound = convertTableToTimeSeries('Lower bound', response.lowerBound);
+    const upperBound = convertTableToTimeSeries('Upper bound', response.upperBound);
+
+    return {
+      hsr,
+      lowerBound,
+      upperBound
+    };
   }
 
   async getHSRSeries(from: number, to: number) {
-    const hsr = await this.getHSR(from, to);
+    const response = await this.getHSR(from, to);
 
-    if(hsr === null) {
+    if(response === null) {
       return [];
     }
-    if(this.hsrAnalyticUnit.detectorType === DetectorType.ANOMALY) {
-      const confidence = (this.hsrAnalyticUnit as AnomalyAnalyticUnit).confidence;
-      // TODO: looks bad
-      return [
-        {
-          target: 'Confidence interval lower',
-          datapoints: hsr.datapoints.map(datapoint =>
-            [datapoint[0] - confidence, datapoint[1]]
-          ),
-          color: ANALYTIC_UNIT_COLORS[0],
-          overrides: [{ alias: 'Confidence interval lower', linewidth: 1, fill: 0 }]
-        },
-        {
-          target: 'Confidence interval upper',
-          datapoints: hsr.datapoints.map(datapoint =>
-            [datapoint[0] + confidence, datapoint[1]]
-          ),
-          color: ANALYTIC_UNIT_COLORS[0],
-          overrides: [{ alias: 'Confidence interval upper', linewidth: 1, fill: 0 }]
-        },
-      ];
-    }
-    return {
-      ...hsr,
+    const hsrSerie = {
+      ...response.hsr,
       color: ANALYTIC_UNIT_COLORS[0],
       // TODO: render it separately from Metric series
       overrides: [
         { alias: 'HSR', linewidth: 3, fill: 0 }
       ]
     };
+
+    if(response.lowerBound !== undefined && response.upperBound !== undefined) {
+      // TODO: looks bad
+      return [
+        {
+          target: '[AnomalyDetector]: lower bound',
+          datapoints: response.lowerBound.datapoints,
+          color: ANALYTIC_UNIT_COLORS[0],
+          overrides: [{ alias: '[AnomalyDetector]: lower bound', linewidth: 1, fill: 0 }]
+        },
+        {
+          target: '[AnomalyDetector]: upper bound',
+          datapoints: response.upperBound.datapoints,
+          color: ANALYTIC_UNIT_COLORS[0],
+          overrides: [{ alias: '[AnomalyDetector]: upper bound', linewidth: 1, fill: 0 }]
+        },
+        hsrSerie
+      ];
+    }
+    return hsrSerie;
   }
 
   get inspectedAnalyticUnit(): AnalyticUnit | null {
     for(let analyticUnit of this.analyticUnits) {
       if(analyticUnit.inspect) {
-        return analyticUnit;
-      }
-    };
-    return null;
-  }
-
-  get hsrAnalyticUnit(): AnalyticUnit | null {
-    // TODO: remove inspectedAnalyticUnit duplication
-    for(let analyticUnit of this.analyticUnits) {
-      if(analyticUnit.showHSR) {
         return analyticUnit;
       }
     };
@@ -617,7 +627,7 @@ export class AnalyticController {
         }
         analyticUnit.detectionSpans = data;
         let isFinished = true;
-        for (let detection of data) {
+        for(let detection of data) {
           if(detection.status === DetectionStatus.RUNNING) {
             isFinished = false;
           }
@@ -671,29 +681,28 @@ export class AnalyticController {
     return this._tempIdCounted.toString();
   }
 
-  public async toggleVisibility(id: AnalyticUnitId, value?: boolean) {
+  public toggleVisibility(id: AnalyticUnitId, value?: boolean) {
     const analyticUnit = this._analyticUnitsSet.byId(id);
     if(value !== undefined) {
       analyticUnit.visible = value;
     } else {
       analyticUnit.visible = !analyticUnit.visible;
     }
-    await this.saveAnalyticUnit(analyticUnit);
+    analyticUnit.changed = true;
   }
 
   public toggleInspect(id: AnalyticUnitId) {
-    const analyticUnit = this._analyticUnitsSet.byId(id);
-    if(!analyticUnit.inspect) {
-      this.analyticUnits.forEach(unit => unit.inspect = false);
-    }
+    this.analyticUnits
+      .filter(analyticUnit => analyticUnit.id !== id)
+      .forEach(unit => unit.inspect = false);
   }
 
-  public toggleHSR(id: AnalyticUnitId) {
-    // TODO: remove toggleInspect duplication
-    const analyticUnit = this._analyticUnitsSet.byId(id);
-    if(!analyticUnit.showHSR) {
-      this.analyticUnits.forEach(unit => unit.showHSR = false);
+  public async updateSeasonality(id: AnalyticUnitId, value?: number) {
+    const analyticUnit = this._analyticUnitsSet.byId(id) as AnomalyAnalyticUnit;
+    if(value !== undefined) {
+      analyticUnit.seasonalityPeriod.value = value;
     }
+    analyticUnit.changed = true;
   }
 
   public onAnalyticUnitDetectorChange(analyticUnitTypes: any) {
@@ -729,4 +738,13 @@ function addAlphaToRGB(colorString: string, alpha: number): string {
   } else {
     return colorString;
   }
+}
+
+function convertTableToTimeSeries(target: string, tableData?: TableTimeSeries): HSRTimeSeries {
+  if(tableData === undefined) {
+    return undefined;
+  }
+  const datapoints = tableData.values.map(value => value.reverse() as [number, number]);
+
+  return { target, datapoints };
 }

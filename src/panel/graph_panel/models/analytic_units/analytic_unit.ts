@@ -33,6 +33,9 @@ export class AnalyticSegment extends Segment {
     if(!_.isBoolean(this.labeled)) {
       throw new Error('labeled value is not boolean');
     }
+    if(labeled && deleted) {
+      throw new Error('Segment can`t be both labeled and deleted');
+    }
   }
 }
 
@@ -47,6 +50,8 @@ const DEFAULTS = {
   visible: true
 };
 
+const LABELING_MODES = [];
+
 export class AnalyticUnit {
 
   private _labelingMode: LabelingMode = LabelingMode.LABELING;
@@ -55,7 +60,7 @@ export class AnalyticUnit {
   private _segmentSet = new SegmentArray<AnalyticSegment>();
   private _detectionSpans: DetectionSpan[];
   private _inspect = false;
-  private _showHSR = false;
+  private _changed = false;
   private _status: string;
   private _error: string;
 
@@ -113,11 +118,11 @@ export class AnalyticUnit {
   get saving(): boolean { return this._saving; }
   set saving(value: boolean) { this._saving = value; }
 
+  get changed(): boolean { return this._changed; }
+  set changed(value: boolean) { this._changed = value; }
+
   get inspect(): boolean { return this._inspect; }
   set inspect(value: boolean) { this._inspect = value; }
-
-  get showHSR(): boolean { return this._showHSR; }
-  set showHSR(value: boolean) { this._showHSR = value; }
 
   get visible(): boolean {
     return (this._serverObject.visible === undefined) ? true : this._serverObject.visible
@@ -126,10 +131,10 @@ export class AnalyticUnit {
     this._serverObject.visible = value;
   }
 
-  addLabeledSegment(segment: Segment, deleted: boolean): AnalyticSegment {
-    const asegment = new AnalyticSegment(!deleted, segment.id, segment.from, segment.to, deleted);
-    this._segmentSet.addSegment(asegment);
-    return asegment;
+  addSegment(segment: Segment, deleted: boolean): AnalyticSegment {
+    const addedSegment = new AnalyticSegment(!deleted, segment.id, segment.from, segment.to, deleted);
+    this._segmentSet.addSegment(addedSegment);
+    return addedSegment;
   }
 
   removeSegmentsInRange(from: number, to: number): AnalyticSegment[] {
@@ -152,8 +157,10 @@ export class AnalyticUnit {
       value !== '404' &&
       value !== 'READY' &&
       value !== 'LEARNING' &&
+      value !== 'DETECTION' &&
       value !== 'PENDING' &&
       value !== 'FAILED' &&
+      value !== 'SUCCESS' &&
       value !== null
     ) {
       throw new Error('Unsupported status value: ' + value);
@@ -176,4 +183,8 @@ export class AnalyticUnit {
 
   get serverObject() { return this._serverObject; }
 
+  // TODO: make it abstract
+  get labelingModes() {
+    return LABELING_MODES;
+  }
 }

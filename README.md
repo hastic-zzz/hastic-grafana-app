@@ -21,13 +21,13 @@ See also:
 * [Wiki](https://github.com/hastic/hastic-grafana-app/wiki)
 * [FAQ](https://github.com/hastic/hastic-grafana-app/wiki/FAQ)
 * [Hastic-server](https://github.com/hastic/hastic-server)
-* [Installation from source](https://github.com/hastic/hastic-grafana-app/wiki/Installation-from-source)
+* [Install from source](https://github.com/hastic/hastic-grafana-app/wiki/Development#install-from-source)
 * [Changelog](https://github.com/hastic/hastic-grafana-app/wiki/Changelog)
 
 # Prerequisites
 
 * [hastic-server](https://github.com/hastic/hastic-server)
-* [Grafana >= 5.4.0](https://grafana.com/grafana/download)
+* [Grafana >= 5.4.0](https://grafana.com/grafana/download), we don't support Grafana 6.x.x yet
 
 ## Support and Consulting
 

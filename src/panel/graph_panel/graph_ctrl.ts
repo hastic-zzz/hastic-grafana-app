@@ -272,12 +272,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       if(analyticUnit.status === '404') {
         await this.analyticsController.removeAnalyticUnit(analyticUnit.id, true);
       }
-      if(analyticUnit.status === 'READY') {
-        const { from, to } = this.rangeTimestamp;
-        await this.analyticsController.fetchSegments(analyticUnit, from, to);
-      }
-      this.render(this.seriesList);
-      this.$scope.$digest();
+      this.refresh();
     });
 
     appEvents.on('ds-request-response', data => {
@@ -326,7 +321,6 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
 
     this.analyticsController = new AnalyticController(this._grafanaUrl, this._panelId, this.panel, this.events, this.analyticService);
-    this.analyticsController.fetchAnalyticUnitsStatuses();
 
     this._updatePanelInfo();
     this.analyticsController.updateServerInfo();
@@ -398,23 +392,27 @@ class GraphCtrl extends MetricsPanelCtrl {
           };
           break;
         }
+        const from = _.find(series.datapoints, datapoint => datapoint[0] !== null);
+        const to = _.findLast(series.datapoints, datapoint => datapoint[0] !== null);
+
+        this._dataTimerange = {};
+        if(from !== undefined && to !== undefined) {
+          this._dataTimerange = { from: from[1], to: to[1] };
+        }
       }
     }
 
     if(this.analyticsController !== undefined) {
+      await this.analyticsController.fetchAnalyticUnitsSegments(from, to);
+      // TODO: make statuses and detection spans connected
+      this.analyticsController.fetchAnalyticUnitsStatuses();
       this.analyticsController.stopAnalyticUnitsDetectionsFetching();
-      const loadTasks = [
-        // this.annotationsPromise,
-        this.analyticsController.fetchAnalyticUnitsSegments(from, to)
-      ];
-
-      await Promise.all(loadTasks);
-      // this.annotations = results[0].annotations;
-      this.render(this.seriesList);
+      // TODO: re-run detection waiters if this._dataTimerange is changed
       this.analyticsController.fetchAnalyticUnitsDetections(
         this._dataTimerange.from,
         this._dataTimerange.to
       );
+      this.render(this.seriesList);
     }
 
     this.loading = false;
@@ -426,14 +424,6 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
 
     for(let series of this.seriesList) {
-      const from = _.find(series.datapoints, datapoint => datapoint[0] !== null);
-      const to = _.findLast(series.datapoints, datapoint => datapoint[0] !== null);
-
-      this._dataTimerange = {};
-      if(from !== undefined && to !== undefined) {
-        this._dataTimerange = { from: from[1], to: to[1] };
-      }
-
       if (series.unit) {
         this.panel.yaxes[series.yaxis - 1].format = series.unit;
       }
@@ -572,8 +562,13 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.analyticsController.createNew();
   }
 
+  cancelCreation() {
+    this.analyticsController.cancelCreation();
+  }
+
   redetectAll() {
-    this.analyticsController.redetectAll();
+    const { from, to } = this.rangeTimestamp;
+    this.analyticsController.redetectAll(from, to);
   }
 
   async runDetectInCurrentRange(analyticUnitId: AnalyticUnitId) {
@@ -610,7 +605,11 @@ class GraphCtrl extends MetricsPanelCtrl {
     await this.analyticsController.toggleAnalyticUnitAlert(analyticUnit);
   }
 
-  async onAnalyticUnitChange(analyticUnit: AnalyticUnit) {
+  onAnalyticUnitChange(analyticUnit: AnalyticUnit) {
+    this.analyticsController.toggleAnalyticUnitChange(analyticUnit, true);
+  }
+
+  async onAnalyticUnitSave(analyticUnit: AnalyticUnit) {
     await this.analyticsController.saveAnalyticUnit(analyticUnit);
     this.refresh();
   }
@@ -683,8 +682,8 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.refresh();
   }
 
-  onToggleHSR(id: AnalyticUnitId) {
-    this.analyticsController.toggleHSR(id);
+  onSeasonalityChange(id: AnalyticUnitId, value?: number) {
+    this.analyticsController.updateSeasonality(id, value);
     this.refresh();
   }
 
