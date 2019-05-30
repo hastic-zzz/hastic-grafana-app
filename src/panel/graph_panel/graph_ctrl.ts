@@ -597,8 +597,7 @@ class GraphCtrl extends MetricsPanelCtrl {
         ]
       );
     }
-    this.$scope.$digest();
-    this.render(this.seriesList);
+    this.refresh();
   }
 
   async onAnalyticUnitAlertChange(analyticUnit: AnalyticUnit) {
