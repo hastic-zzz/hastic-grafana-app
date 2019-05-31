@@ -545,7 +545,7 @@ export class AnalyticController {
     }
     const hsrSerie = {
       ...response.hsr,
-      color: ANALYTIC_UNIT_COLORS[0],
+      color: ANALYTIC_UNIT_COLORS[1],
       // TODO: render it separately from Metric series
       overrides: [
         { alias: 'HSR', linewidth: 3, fill: 0 }
@@ -558,14 +558,25 @@ export class AnalyticController {
         {
           target: '[AnomalyDetector]: lower bound',
           datapoints: response.lowerBound.datapoints,
-          color: ANALYTIC_UNIT_COLORS[0],
-          overrides: [{ alias: '[AnomalyDetector]: lower bound', linewidth: 1, fill: 0 }]
+          color: ANALYTIC_UNIT_COLORS[1],
+          overrides: [{
+            alias: '[AnomalyDetector]: lower bound',
+            linewidth: 1,
+            fill: 0,
+            legend: false
+          }]
         },
         {
           target: '[AnomalyDetector]: upper bound',
           datapoints: response.upperBound.datapoints,
-          color: ANALYTIC_UNIT_COLORS[0],
-          overrides: [{ alias: '[AnomalyDetector]: upper bound', linewidth: 1, fill: 0 }]
+          color: ANALYTIC_UNIT_COLORS[1],
+          overrides: [{
+            alias: '[AnomalyDetector]: upper bound',
+            linewidth: 1,
+            fill: 0,
+            fillBelowTo: '[AnomalyDetector]: lower bound',
+            legend: false
+          }]
         },
         hsrSerie
       ];
