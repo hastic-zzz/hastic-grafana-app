@@ -1,6 +1,6 @@
 <div class="query-editor-row" ng-repeat="analyticUnit in ctrl.analyticsController.analyticUnits">
   <div class="query-editor-row__header">
-    <div class="query-editor-row__ref-id" ng-click="ctrl.onToggleCollapsed(analyticUnit.id)">
+    <div class="query-editor-row__ref-id width-20" ng-click="ctrl.onToggleCollapsed(analyticUnit.id)">
       <i class="fa fa-fw fa-caret-down" ng-hide="analyticUnit.collapsed"></i>
       <i class="fa fa-fw fa-caret-right" ng-show="analyticUnit.collapsed"></i>
       <span>{{analyticUnit.name}}</span>
