@@ -1,0 +1,43 @@
+<div class="gf-form-inline">
+  <div class="gf-form">
+    <label class="gf-form-label query-keyword width-8"> Name </label>
+    <input
+      type="text" class="gf-form-input width-15"
+      ng-model="ctrl.analyticsController.newAnalyticUnit.name"
+    >
+  </div>
+
+  <div class="gf-form gf-form--grow">
+    <div class="gf-form-label gf-form-label--grow"></div>
+  </div>
+</div>
+
+<div class="gf-form-inline">
+  <div class="gf-form">
+    <label class="gf-form-label query-keyword width-8"> Detector Type </label>
+    <div class="gf-form-select-wrapper">
+      <select class="gf-form-input width-8"
+        ng-model="ctrl.analyticsController.newAnalyticUnit.detectorType"
+        ng-options="analyticUnitDetectorType for analyticUnitDetectorType in ctrl.analyticUnitDetectorTypes"
+        ng-change="ctrl.analyticsController.onAnalyticUnitDetectorChange(ctrl.analyticUnitTypes);"
+      />
+    </div>
+  </div>
+
+  <div class="gf-form">
+    <label class="gf-form-label query-keyword width-8"> Type </label>
+    <div class="gf-form-select-wrapper">
+      <select class="gf-form-input width-9"
+        ng-model="ctrl.analyticsController.newAnalyticUnit.type"
+        ng-options="
+          type.value as type.name
+          for type in ctrl.analyticUnitTypes[ctrl.analyticsController.newAnalyticUnit.detectorType]
+        "
+      />
+    </div>
+  </div>
+
+  <div class="gf-form gf-form--grow">
+    <div class="gf-form-label gf-form-label--grow"></div>
+  </div>
+</div>
