@@ -56,6 +56,16 @@
         </a>
       </button>
 
+      <button class="query-editor-row__action"
+        ng-click="ctrl.onToggleInspect(analyticUnit.id)"
+        bs-tooltip="'Inspect Mode'"
+      >
+        <a class="pointer">
+          <i class="fa fa-crosshairs" ng-if="analyticUnit.inspect"></i>
+          <i class="fa fa-circle-thin" ng-if="!analyticUnit.inspect"></i>
+        </a>
+      </button>
+
       <button class="query-editor-row__action" ng-click="ctrl.onRemove(analyticUnit.id)">
         <a class="pointer">
           <i class="fa fa-fw fa-trash"></i>

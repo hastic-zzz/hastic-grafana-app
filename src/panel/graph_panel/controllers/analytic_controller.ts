@@ -706,6 +706,9 @@ export class AnalyticController {
     this.analyticUnits
       .filter(analyticUnit => analyticUnit.id !== id)
       .forEach(unit => unit.inspect = false);
+
+    const analyticUnit = this._analyticUnitsSet.byId(id);
+    analyticUnit.inspect = !analyticUnit.inspect;
   }
 
   public toggleCollapsed(id: AnalyticUnitId) {
