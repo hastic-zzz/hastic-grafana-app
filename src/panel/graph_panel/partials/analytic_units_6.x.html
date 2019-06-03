@@ -33,9 +33,23 @@
           <i class="fa fa-fw fa-trash"></i>
         </a>
       </button>
+      <button class="query-editor-row__action"
+        ng-click="ctrl.onAnalyticUnitSave(analyticUnit)"
+        ng-disabled="!analyticUnit.changed"
+      >
+        <a class="pointer"
+          ng-style="!analyticUnit.changed && {
+            'color': 'gray',
+            'cursor': 'not-allowed'
+          }"
+        >
+          <i class="fa fa-fw fa-spinner fa-spin" ng-if="analyticUnit.saving"></i>
+          <i class="fa fa-fw fa-save" ng-if="!analyticUnit.saving"></i>
+        </a>
+      </button>
     </div>
   </div>
-  <div 
+  <div
     class="query-editor-row__body gf-form-query"
     ng-class="analyticUnit.collapsed && 'query-editor-row__body--collapsed'"
   >

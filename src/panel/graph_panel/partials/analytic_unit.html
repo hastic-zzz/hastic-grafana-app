@@ -192,18 +192,6 @@
 </div>
 
 <div class="gf-form-inline">
-  <div class="gf-form width-20"/>
-  <div class="gf-form">
-    <button class="btn btn-secondary"
-      ng-click="ctrl.onAnalyticUnitSave(analyticUnit)"
-      ng-disabled="!analyticUnit.changed"
-    >
-      <i class="fa fa-spinner fa-spin" ng-if="analyticUnit.saving"></i>
-      <b ng-if="!analyticUnit.saving"> Save </b>
-      <b ng-if="analyticUnit.saving" ng-disabled="true"> saving... </b>
-    </button>
-  </div>
-
   <!-- TODO: Leave one Detect button instead of 2 -->
   <div class="gf-form"
     ng-if="

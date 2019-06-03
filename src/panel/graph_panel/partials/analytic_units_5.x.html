@@ -50,5 +50,18 @@
         <i class="fa fa-trash"></i>
       </a>
     </label>
+    <label class="gf-form-label"
+      ng-style="!analyticUnit.changed && { 'cursor': 'not-allowed' }"
+    >
+      <a class="pointer"
+        ng-click="ctrl.onAnalyticUnitSave(analyticUnit)"
+        ng-disabled="!analyticUnit.changed"
+        ng-style="!analyticUnit.changed && { 'color': 'gray' }"
+        role="menuitem"
+      >
+        <i class="fa fa-spinner fa-spin" ng-if="analyticUnit.saving"></i>
+        <i class="fa fa-save"ng-if="!analyticUnit.saving"></i>
+      </a>
+    </label>
   </div>
 </div>
