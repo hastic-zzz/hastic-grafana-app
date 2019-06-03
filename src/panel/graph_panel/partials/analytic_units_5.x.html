@@ -98,6 +98,30 @@
       </a>
     </label>
 
+    <div class="gf-form-label" ng-if="
+      (analyticUnit.detectorType === 'pattern' ||
+      (analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality)) &&
+      !analyticUnit.selected
+    ">
+      <a
+        class="pointer"
+        ng-style="analyticUnit.status === 'LEARNING' && { 'cursor': 'not-allowed' }"
+        ng-click="ctrl.onToggleLabelingMode(analyticUnit.id)"
+        ng-disabled="analyticUnit.status === 'LEARNING'"
+      >
+        <i class="fa fa-bar-chart" ng-if="!analyticUnit.saving"></i>
+        <i class="fa fa-spinner fa-spin" ng-if="analyticUnit.saving"></i>
+        Label
+      </a>
+    </div>
+
+    <select class="gf-form-input width-12"
+      ng-if="analyticUnit.selected && !analyticUnit.saving"
+      ng-model="ctrl.analyticsController.labelingMode"
+      ng-options="type.value as type.name for type in analyticUnit.labelingModes"
+      ng-disabled="analyticUnit.status === 'LEARNING'"
+    />
+
     <!-- TODO: Leave one Detect button instead of 2 -->
     <label class="gf-form-label"
       ng-if="
