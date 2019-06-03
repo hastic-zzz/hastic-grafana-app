@@ -9,6 +9,31 @@
         <span class="gf-form-query-letter-cell-letter">{{analyticUnit.name}}</span>
         <em class="gf-form-query-letter-cell-ds" ng-show="analyticUnit.id">({{analyticUnit.id}})</em>
       </a>
+      &nbsp;
+      <i ng-if="analyticUnit.status === 'READY'"
+        class="fa fa-check-circle"
+        bs-tooltip="'Ready'"
+      ></i>
+      <i ng-if="analyticUnit.status === 'SUCCESS'"
+        class="fa fa-check"
+        bs-tooltip="'Learning succeeded'"
+      ></i>
+      <i ng-if="analyticUnit.status === 'LEARNING'"
+        class="fa fa-leanpub"
+        bs-tooltip="'Learning'"
+      ></i>
+      <i ng-if="analyticUnit.status === 'DETECTION'"
+        class="fa fa-search"
+        bs-tooltip="'Detection'"
+      ></i>
+      <i ng-if="analyticUnit.status === 'PENDING'"
+        class="fa fa-list-ul"
+        bs-tooltip="'Pending'"
+      ></i>
+      <i ng-if="analyticUnit.status === 'FAILED'"
+        class="fa fa-exclamation-circle"
+        bs-tooltip="'Error: ' + analyticUnit.error"
+      ></i>
     </label>
   </div>
 
@@ -45,11 +70,13 @@
         <i class="fa fa-eye-slash"></i>
       </a>
     </label>
+
     <label class="gf-form-label">
       <a class="pointer" ng-click="ctrl.onRemove(analyticUnit.id)" role="menuitem">
         <i class="fa fa-trash"></i>
       </a>
     </label>
+
     <label class="gf-form-label"
       ng-style="!analyticUnit.changed && { 'cursor': 'not-allowed' }"
     >
@@ -61,6 +88,33 @@
       >
         <i class="fa fa-spinner fa-spin" ng-if="analyticUnit.saving"></i>
         <i class="fa fa-save"ng-if="!analyticUnit.saving"></i>
+      </a>
+    </label>
+
+    <!-- TODO: Leave one Detect button instead of 2 -->
+    <label class="gf-form-label"
+      ng-if="
+        analyticUnit.detectorType === 'pattern' ||
+        (analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality)
+      "
+      ng-click="ctrl.onToggleLabelingMode(analyticUnit.id)"
+      ng-disabled="analyticUnit.status === 'LEARNING' || analyticUnit.saving || analyticUnit.changed || !analyticUnit.selected"
+    >
+      <a class="pointer">
+        Detect
+      </a>
+    </label>
+
+    <label class="gf-form-label"
+      ng-if="
+        analyticUnit.detectorType === 'threshold' ||
+        (analyticUnit.detectorType === 'anomaly' && !analyticUnit.hasSeasonality)
+      "
+      ng-click="ctrl.runDetectInCurrentRange(analyticUnit.id)"
+      ng-disabled="analyticUnit.status === 'LEARNING' || analyticUnit.saving || analyticUnit.changed"
+    >
+      <a class="pointer">
+        Detect
       </a>
     </label>
   </div>

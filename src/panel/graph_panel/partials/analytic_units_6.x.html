@@ -6,8 +6,35 @@
       <span>{{analyticUnit.name}}</span>
       <em class="query-editor-row__context-info">({{analyticUnit.id}})</em>
     </div>
+    &nbsp;
+    <i ng-if="analyticUnit.status === 'READY'"
+      class="fa fa-fw fa-check-circle"
+      bs-tooltip="'Ready'"
+    ></i>
+    <i ng-if="analyticUnit.status === 'SUCCESS'"
+      class="fa fa-fw fa-check"
+      bs-tooltip="'Learning succeeded'"
+    ></i>
+    <i ng-if="analyticUnit.status === 'LEARNING'"
+      class="fa fa-fw fa-leanpub"
+      bs-tooltip="'Learning'"
+    ></i>
+    <i ng-if="analyticUnit.status === 'DETECTION'"
+      class="fa fa-fw fa-search"
+      bs-tooltip="'Detection'"
+    ></i>
+    <i ng-if="analyticUnit.status === 'PENDING'"
+      class="fa fa-fw fa-list-ul"
+      bs-tooltip="'Pending'"
+    ></i>
+    <i ng-if="analyticUnit.status === 'FAILED'"
+      class="fa fa-fw fa-exclamation-circle"
+      bs-tooltip="'Error: ' + analyticUnit.error"
+    ></i>
+
     <div class="query-editor-row__collapsed-text">
     </div>
+
     <div class="query-editor-row__actions">
       <button
         class="query-editor-row__action"
@@ -28,11 +55,13 @@
           <i class="fa fa-fw fa-eye-slash"></i>
         </a>
       </button>
+
       <button class="query-editor-row__action" ng-click="ctrl.onRemove(analyticUnit.id)">
         <a class="pointer">
           <i class="fa fa-fw fa-trash"></i>
         </a>
       </button>
+
       <button class="query-editor-row__action"
         ng-click="ctrl.onAnalyticUnitSave(analyticUnit)"
         ng-disabled="!analyticUnit.changed"
@@ -47,8 +76,36 @@
           <i class="fa fa-fw fa-save" ng-if="!analyticUnit.saving"></i>
         </a>
       </button>
+
+      <!-- TODO: Leave one Detect button instead of 2 -->
+      <button class="query-editor-row__action"
+        ng-if="
+          analyticUnit.detectorType === 'pattern' ||
+          (analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality)
+        "
+        ng-click="ctrl.onToggleLabelingMode(analyticUnit.id)"
+        ng-disabled="analyticUnit.status === 'LEARNING' || analyticUnit.saving || analyticUnit.changed || !analyticUnit.selected"
+      >
+        <a class="pointer">
+          Detect
+        </a>
+      </button>
+
+      <button class="query-editor-row__action"
+        ng-if="
+          analyticUnit.detectorType === 'threshold' ||
+          (analyticUnit.detectorType === 'anomaly' && !analyticUnit.hasSeasonality)
+        "
+        ng-click="ctrl.runDetectInCurrentRange(analyticUnit.id)"
+        ng-disabled="analyticUnit.status === 'LEARNING' || analyticUnit.saving || analyticUnit.changed"
+      >
+        <a class="pointer">
+          Detect
+        </a>
+      </button>
     </div>
   </div>
+
   <div
     class="query-editor-row__body gf-form-query"
     ng-class="analyticUnit.collapsed && 'query-editor-row__body--collapsed'"

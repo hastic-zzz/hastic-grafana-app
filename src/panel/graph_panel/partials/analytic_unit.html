@@ -1,8 +1,7 @@
 <div class="gf-form-inline">
   <div class="gf-form">
-    <label class="gf-form-label width-5">
-      <i class="fa fa-info" bs-tooltip="'Analytic unit id: ' + analyticUnit.id"></i>
-      &nbsp; Name
+    <label class="gf-form-label query-keyword width-8">
+      Name
     </label>
     <input
       type="text" class="gf-form-input width-15"
@@ -10,9 +9,14 @@
       ng-blur="ctrl.onAnalyticUnitChange(analyticUnit)"
     >
   </div>
+  <div class="gf-form gf-form--grow">
+    <div class="gf-form-label gf-form-label--grow"></div>
+  </div>
+</div>
 
+<div class="gf-form-inline">
   <div class="gf-form">
-    <label class="gf-form-label width-5"> Type </label>
+    <label class="gf-form-label query-keyword width-8"> Type </label>
     <div class="gf-form-select-wrapper">
       <select class="gf-form-input width-9"
         ng-model="analyticUnit.type"
@@ -21,48 +25,63 @@
       />
     </div>
   </div>
+  <div class="gf-form gf-form--grow">
+    <div class="gf-form-label gf-form-label--grow"></div>
+  </div>
+</div>
 
+<div class="gf-form-inline">
   <div class="gf-form">
-    <label class="gf-form-label width-8"> Positive Color </label>
-    <span class="gf-form-label">
+    <label class="gf-form-label query-keyword width-8"> Positive Color </label>
+    <label class="gf-form-label">
       <color-picker
         color="analyticUnit.labeledColor"
         onChange="ctrl.onColorChange.bind(ctrl, analyticUnit.id, false)"
       />
-    </span>
+    </label>
   </div>
 
   <div class="gf-form"
     ng-if="analyticUnit.detectorType === 'pattern' || analyticUnit.detectorType === 'anomaly'"
   >
-    <label class="gf-form-label width-8"> Negative Color </label>
-    <span class="gf-form-label">
+    <label class="gf-form-label query-keyword"> Negative Color </label>
+    <label class="gf-form-label">
       <color-picker
         color="analyticUnit.deletedColor"
         onChange="ctrl.onColorChange.bind(ctrl, analyticUnit.id, true)"
       />
-    </span>
+    </label>
   </div>
+  <div class="gf-form gf-form--grow">
+    <div class="gf-form-label gf-form-label--grow"></div>
+  </div>
+</div>
 
-  <div class="gf-form" ng-if="analyticUnit.visible">
-    <!-- TODO: Remove hack with "margin-bottom: 0" -->
+<!-- Move to buttons -->
+<div class="gf-form-inline" ng-if="analyticUnit.visible">
+  <div class="gf-form">
     <gf-form-switch
       class="gf-form"
-      style="margin-bottom: 0"
       label="Inspect"
-      label-class="width-5"
+      label-class="query-keyword width-8"
       on-change="ctrl.onToggleInspect(analyticUnit.id)"
       checked="analyticUnit.inspect"
     />
   </div>
 
-  <div
-    class="gf-form"
-    ng-if="
-      analyticUnit.detectorType === 'pattern' ||
-      (analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality)
-    "
-  >
+  <div class="gf-form gf-form--grow">
+    <div class="gf-form-label gf-form-label--grow"></div>
+  </div>
+</div>
+
+<div
+  class="gf-form-inline"
+  ng-if="
+    analyticUnit.detectorType === 'pattern' ||
+    (analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality)
+  "
+>
+  <div class="gf-form">
     <label
       class="gf-form-label pointer"
       ng-if="!analyticUnit.selected"
@@ -81,35 +100,27 @@
       ng-disabled="analyticUnit.status === 'LEARNING'"
     />
   </div>
-
-  <div class="gf-form" ng-if="analyticUnit.selected">
-    <div class="gf-form-label">
-      <a
-        class="pointer"
-        ng-click="ctrl.onCancelLabeling(analyticUnit.id)"
-      >
-        Cancel
-      </a>
-    </div>
-  </div>
-
-  <div class="gf-form">
-    <label>
-      <i ng-if="analyticUnit.status === 'READY'" class="grafana-tip fa fa-check-circle ng-scope" bs-tooltip="'Ready'"></i>
-      <i ng-if="analyticUnit.status === 'SUCCESS'" class="grafana-tip fa fa-check ng-scope" bs-tooltip="'Learning succeeded'"></i>
-      <i ng-if="analyticUnit.status === 'LEARNING'" class="grafana-tip fa fa-leanpub ng-scope" bs-tooltip="'Learning'"></i>
-      <i ng-if="analyticUnit.status === 'DETECTION'" class="grafana-tip fa fa-search ng-scope" bs-tooltip="'Detection'"></i>
-      <i ng-if="analyticUnit.status === 'PENDING'" class="grafana-tip fa fa-list-ul ng-scope" bs-tooltip="'Pending'"></i>
-      <i ng-if="analyticUnit.status === 'FAILED'" class="grafana-tip fa fa-exclamation-circle ng-scope" bs-tooltip="'Error: ' + analyticUnit.error"></i>
-    </label>
+  <div class="gf-form gf-form--grow">
+    <div class="gf-form-label gf-form-label--grow"></div>
   </div>
 </div>
 
-<div class="gf-form-inline">
-  <div class="gf-form width-20"/>
+<!-- Move to common -->
+<div class="gf-form" ng-if="analyticUnit.selected">
+  <div class="gf-form-label">
+    <a
+      class="pointer"
+      ng-click="ctrl.onCancelLabeling(analyticUnit.id)"
+    >
+      Cancel
+    </a>
+  </div>
+</div>
+
+<div class="gf-form-inline" ng-if="analyticUnit.detectorType === 'threshold'">
   <!-- TODO: move analytic-unit-specific fields rendering to class -->
-  <div class="gf-form" ng-if="analyticUnit.detectorType === 'threshold'">
-    <label class="gf-form-label width-5"> Condition </label>
+  <div class="gf-form">
+    <label class="gf-form-label query-keyword width-8"> Condition </label>
     <select class="gf-form-input"
       ng-class="{
         'width-5': analyticUnit.condition !== 'NO_DATA',
@@ -126,9 +137,14 @@
       ng-blur="ctrl.onAnalyticUnitChange(analyticUnit)"
     />
   </div>
+  <div class="gf-form gf-form--grow">
+    <div class="gf-form-label gf-form-label--grow"></div>
+  </div>
+</div>
 
-  <div class="gf-form" ng-if="analyticUnit.detectorType === 'anomaly'">
-    <label class="gf-form-label width-5"> Alpha </label>
+<div class="gf-form-inline" ng-if="analyticUnit.detectorType === 'anomaly'">
+  <div class="gf-form">
+    <label class="gf-form-label query-keyword width-8"> Alpha </label>
     <input class="gf-form-input width-9"
       min="0"
       max="1"
@@ -138,8 +154,8 @@
     />
   </div>
 
-  <div class="gf-form" ng-if="analyticUnit.detectorType === 'anomaly'">
-    <label class="gf-form-label width-6"> Confidence </label>
+  <div class="gf-form">
+    <label class="gf-form-label query-keyword width-6"> Confidence </label>
     <input class="gf-form-input width-5"
       min="0"
       type="number"
@@ -148,23 +164,24 @@
     />
   </div>
 
-  <div class="gf-form" ng-if="analyticUnit.detectorType === 'anomaly'">
-    <!-- TODO: Remove hack with "margin-bottom: 0" -->
+  <div class="gf-form gf-form--grow">
+    <div class="gf-form-label gf-form-label--grow"></div>
+  </div>
+</div>
+
+<div class="gf-form-inline" ng-if="analyticUnit.detectorType === 'anomaly'">
+  <div class="gf-form">
     <gf-form-switch
       class="gf-form"
-      style="margin-bottom: 0"
       label="Seasonality"
-      label-class="width-7"
+      label-class="query-keyword width-8"
       on-change="ctrl.onAnalyticUnitChange(analyticUnit)"
       checked="analyticUnit.hasSeasonality"
     />
   </div>
 
-  <div
-    class="gf-form"
-    ng-if="analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality"
-  >
-    <label class="gf-form-label width-9"> Seasonality Period </label>
+  <div class="gf-form" ng-if="analyticUnit.hasSeasonality">
+    <label class="gf-form-label query-keyword width-9"> Seasonality Period </label>
     <input
       type="number" class="gf-form-input width-5"
       ng-init="seasonalityValue = analyticUnit.seasonalityPeriod.value"
@@ -174,12 +191,7 @@
     >
   </div>
 
-  <div class="gf-form"
-    ng-if="
-      analyticUnit.detectorType === 'anomaly' &&
-      analyticUnit.hasSeasonality
-    "
-  >
+  <div class="gf-form" ng-if="analyticUnit.hasSeasonality">
     <div class="gf-form-select-wrapper">
       <!-- TODO: move periods from ng-options -->
       <select class="gf-form-input width-8"
@@ -189,35 +201,8 @@
       />
     </div>
   </div>
-</div>
 
-<div class="gf-form-inline">
-  <!-- TODO: Leave one Detect button instead of 2 -->
-  <div class="gf-form"
-    ng-if="
-      analyticUnit.detectorType === 'pattern' ||
-      (analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality)
-    "
-  >
-    <button class="btn btn-secondary"
-      ng-click="ctrl.onToggleLabelingMode(analyticUnit.id)"
-      ng-disabled="analyticUnit.status === 'LEARNING' || analyticUnit.saving || analyticUnit.changed || !analyticUnit.selected"
-    >
-      <b> Detect </b>
-    </button>
-  </div>
-
-  <div class="gf-form"
-    ng-if="
-      analyticUnit.detectorType === 'threshold' ||
-      (analyticUnit.detectorType === 'anomaly' && !analyticUnit.hasSeasonality)
-    "
-  >
-    <button class="btn btn-secondary"
-      ng-click="ctrl.runDetectInCurrentRange(analyticUnit.id)"
-      ng-disabled="analyticUnit.status === 'LEARNING' || analyticUnit.saving || analyticUnit.changed"
-    >
-      <b> Detect </b>
-    </button>
+  <div class="gf-form gf-form--grow">
+    <div class="gf-form-label gf-form-label--grow"></div>
   </div>
 </div>
