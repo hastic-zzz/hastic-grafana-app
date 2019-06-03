@@ -292,13 +292,12 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     this.rebindKeys(); // a small hask: bind if we open page in edit mode
 
-    const partialPath = this.panelPath + '/partials';
-    this.addEditorTab('Analytics', `${partialPath}/tab_analytics.html`, 2);
-    this.addEditorTab('Webhooks', `${partialPath}/tab_webhooks.html`, 3);
+    this.addEditorTab('Analytics', `${this.partialsPath}/tab_analytics.html`, 2);
+    this.addEditorTab('Webhooks', `${this.partialsPath}/tab_webhooks.html`, 3);
     this.addEditorTab('Axes', axesEditorComponent, 4);
-    this.addEditorTab('Legend', `${partialPath}/tab_legend.html`, 5);
-    this.addEditorTab('Display', `${partialPath}/tab_display.html`, 6);
-    this.addEditorTab('Hastic info', `${partialPath}/tab_info.html`, 7);
+    this.addEditorTab('Legend', `${this.partialsPath}/tab_legend.html`, 5);
+    this.addEditorTab('Display', `${this.partialsPath}/tab_display.html`, 6);
+    this.addEditorTab('Hastic info', `${this.partialsPath}/tab_info.html`, 7);
 
     this.subTabIndex = 0;
   }
@@ -555,7 +554,32 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   get panelPath() {
-    return this.pluginPath + '/panel/graph_panel';
+    return `${this.pluginPath}/panel/graph_panel`;
+  }
+
+  get partialsPath() {
+    return `${this.panelPath}/partials`;
+  }
+
+  get grafanaVersion() {
+    if(_.has(window, 'grafanaBootData.settings.buildInfo.version')) {
+      return window.grafanaBootData.settings.buildInfo.version;
+    }
+    return null;
+  }
+
+  getTemplatePath(filename: string) {
+    const grafanaVersion = this.grafanaVersion;
+    if(grafanaVersion === null) {
+      throw new Error('Unknown Grafana version');
+    }
+    if(grafanaVersion[0] === '5') {
+      return `${this.partialsPath}/${filename}_5.x.html`;
+    }
+    if(grafanaVersion[0] === '6') {
+      return `${this.partialsPath}/${filename}_6.x.html`;
+    }
+    throw new Error(`Unsupported Grafana version: ${grafanaVersion}`);
   }
 
   createNew() {
@@ -681,6 +705,11 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.refresh();
   }
 
+  onToggleCollapsed(id: AnalyticUnitId) {
+    this.analyticsController.toggleCollapsed(id);
+    this.refresh();
+  }
+
   onSeasonalityChange(id: AnalyticUnitId, value?: number) {
     this.analyticsController.updateSeasonality(id, value);
     this.refresh();
@@ -694,9 +723,9 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     const hasticDatasource = this.hasticDatasource;
 
-    let grafanaVersion = 'unknown';
-    if(_.has(window, 'grafanaBootData.settings.buildInfo.version')) {
-      grafanaVersion = window.grafanaBootData.settings.buildInfo.version;
+    let grafanaVersion = this.grafanaVersion;
+    if(grafanaVersion === null) {
+      grafanaVersion = 'unknown';
     }
     this._panelInfo = {
       grafanaVersion,
