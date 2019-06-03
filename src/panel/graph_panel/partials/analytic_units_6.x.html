@@ -1,0 +1,44 @@
+<div class="query-editor-row" ng-repeat="analyticUnit in ctrl.analyticsController.analyticUnits">
+  <div class="query-editor-row__header">
+    <div class="query-editor-row__ref-id" ng-click="ctrl.onToggleCollapsed(analyticUnit.id)">
+      <i class="fa fa-caret-down" ng-hide="analyticUnit.collapsed"></i>
+      <i class="fa fa-caret-right" ng-show="analyticUnit.collapsed"></i>
+      <span>{{analyticUnit.name}}</span>
+      <em class="query-editor-row__context-info">({{analyticUnit.id}})</em>
+    </div>
+    <div class="query-editor-row__collapsed-text">
+    </div>
+    <div class="query-editor-row__actions">
+      <button
+        class="query-editor-row__action"
+        ng-click=ctrl.onToggleVisibility(analyticUnit.id)
+      >
+        <a
+          ng-if="analyticUnit.visible"
+          bs-tooltip="'Hide. It`s visible now.'"
+          class="pointer"
+        >
+          <i class="fa fa-fw fa-eye"></i>
+        </a>
+        <a
+          ng-if="!analyticUnit.visible"
+          bs-tooltip="'Show. It`s hidden now.'"
+          class="pointer"
+        >
+          <i class="fa fa-fw fa-eye-slash"></i>
+        </a>
+      </button>
+      <button class="query-editor-row__action" ng-click="ctrl.onRemove(analyticUnit.id)">
+        <a class="pointer">
+          <i class="fa fa-fw fa-trash"></i>
+        </a>
+      </button>
+    </div>
+  </div>
+  <div 
+    class="query-editor-row__body gf-form-query"
+    ng-class="analyticUnit.collapsed && 'query-editor-row__body--collapsed'"
+  >
+    <ng-include src="ctrl.partialsPath + '/analytic_unit.html'"></ng-include>
+  </div>
+</div>

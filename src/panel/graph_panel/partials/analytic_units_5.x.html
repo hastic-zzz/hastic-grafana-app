@@ -1,0 +1,54 @@
+<div class="gf-form-query" ng-repeat="analyticUnit in ctrl.analyticsController.analyticUnits">
+  <div class="gf-form gf-form-query-letter-cell">
+    <label class="gf-form-label">
+      <a class="pointer" ng-click="ctrl.onToggleCollapsed(analyticUnit.id)">
+        <span class="gf-form-query-letter-cell-carret">
+          <i class="fa fa-caret-down" ng-hide="analyticUnit.collapsed"></i>
+          <i class="fa fa-caret-right" ng-show="analyticUnit.collapsed"></i>
+        </span>
+        <span class="gf-form-query-letter-cell-letter">{{analyticUnit.name}}</span>
+        <em class="gf-form-query-letter-cell-ds" ng-show="analyticUnit.id">({{analyticUnit.id}})</em>
+      </a>
+    </label>
+  </div>
+
+  <div class="gf-form-query-content gf-form-query-content--collapsed" ng-if="analyticUnit.collapsed">
+    <div class="gf-form">
+      <label class="gf-form-label pointer gf-form-label--grow" ng-click="ctrl.onToggleCollapsed(analyticUnit.id)">
+      </label>
+    </div>
+  </div>
+
+  <div class="gf-form-query-content" ng-if="!analyticUnit.collapsed">
+    <ng-include src="ctrl.partialsPath + '/analytic_unit.html'"></ng-include>
+  </div>
+
+  <div class="gf-form">
+    <label class="gf-form-label">
+      <a
+        ng-if="analyticUnit.visible"
+        bs-tooltip="'Hide. It`s visible now.'"
+        ng-click="ctrl.onToggleVisibility(analyticUnit.id)"
+        class="pointer"
+        role="menuitem"
+      >
+        <i class="fa fa-eye"></i>
+      </a>
+
+      <a
+        ng-if="!analyticUnit.visible"
+        bs-tooltip="'Show. It`s hidden now.'"
+        ng-click="ctrl.onToggleVisibility(analyticUnit.id)"
+        class="pointer"
+        role="menuitem"
+      >
+        <i class="fa fa-eye-slash"></i>
+      </a>
+    </label>
+    <label class="gf-form-label">
+      <a class="pointer" ng-click="ctrl.onRemove(analyticUnit.id)" role="menuitem">
+        <i class="fa fa-trash"></i>
+      </a>
+    </label>
+  </div>
+</div>
