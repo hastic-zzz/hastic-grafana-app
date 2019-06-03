@@ -57,18 +57,6 @@
   </div>
 </div>
 
-<!-- Move to common -->
-<div class="gf-form" ng-if="analyticUnit.selected">
-  <div class="gf-form-label">
-    <a
-      class="pointer"
-      ng-click="ctrl.onCancelLabeling(analyticUnit.id)"
-    >
-      Cancel
-    </a>
-  </div>
-</div>
-
 <div class="gf-form-inline" ng-if="analyticUnit.detectorType === 'threshold'">
   <!-- TODO: move analytic-unit-specific fields rendering to class -->
   <div class="gf-form">
