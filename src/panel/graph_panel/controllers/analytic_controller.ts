@@ -708,6 +708,12 @@ export class AnalyticController {
       .forEach(unit => unit.inspect = false);
   }
 
+  public toggleCollapsed(id: AnalyticUnitId) {
+    const analyticUnit = this._analyticUnitsSet.byId(id);
+    analyticUnit.collapsed = !analyticUnit.collapsed;
+    analyticUnit.changed = true;
+  }
+
   public async updateSeasonality(id: AnalyticUnitId, value?: number) {
     const analyticUnit = this._analyticUnitsSet.byId(id) as AnomalyAnalyticUnit;
     if(value !== undefined) {

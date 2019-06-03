@@ -47,7 +47,8 @@ const DEFAULTS = {
   labeledColor: ANALYTIC_UNIT_COLORS[0],
   deletedColor: DEFAULT_DELETED_SEGMENT_COLOR,
   alert: false,
-  visible: true
+  visible: true,
+  collapsed: false
 };
 
 const LABELING_MODES = [];
@@ -85,6 +86,7 @@ export class AnalyticUnit {
       deletedColor: this.deletedColor,
       alert: this.alert,
       visible: this.visible,
+      collapsed: this.collapsed
     };
   }
 
@@ -105,6 +107,9 @@ export class AnalyticUnit {
 
   set deletedColor(value: string) { this._serverObject.deletedColor = value; }
   get deletedColor(): string { return this._serverObject.deletedColor; }
+
+  get collapsed(): boolean { return this._serverObject.collapsed; }
+  set collapsed(value: boolean) { this._serverObject.collapsed = value; }
 
   set alert(value: boolean) { this._serverObject.alert = value; }
   get alert(): boolean { return this._serverObject.alert; }
