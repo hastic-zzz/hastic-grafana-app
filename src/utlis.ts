@@ -1,7 +1,7 @@
 import url from 'url-parse';
 import * as _ from 'lodash';
 
-export const SUPPORTED_SERVER_VERSION = '0.3.4-beta';
+export const SUPPORTED_SERVER_VERSION = '0.3.5-beta';
 
 export function normalizeUrl(inputUrl: string) {
   if(!inputUrl) {
