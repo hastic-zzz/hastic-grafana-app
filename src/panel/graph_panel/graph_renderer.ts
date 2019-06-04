@@ -164,6 +164,7 @@ export class GraphRenderer {
         );
       }
 
+      this.scope.$apply();
       this.renderPanel();
       return;
     }

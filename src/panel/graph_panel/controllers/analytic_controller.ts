@@ -166,9 +166,7 @@ export class AnalyticController {
 
     this.labelingUnit.saving = false;
 
-    let unit = this.labelingUnit;
     this.dropLabeling();
-    this._runStatusWaiter(unit);
   }
 
   undoLabeling() {
@@ -185,6 +183,8 @@ export class AnalyticController {
     this._labelingDataAddedSegments.clear();
     this._labelingDataRemovedSegments.clear();
     this.labelingUnit.selected = false;
+    // TODO: it could be changed before labeling
+    this.labelingUnit.changed = false;
     this._selectedAnalyticUnitId = null;
     this._tempIdCounted = -1;
   }
@@ -206,6 +206,7 @@ export class AnalyticController {
 
   addSegment(segment: Segment, deleted = false) {
     const addedSegment = this.labelingUnit.addSegment(segment, deleted);
+    this.labelingUnit.changed = true;
     this._labelingDataAddedSegments.addSegment(addedSegment);
   }
 
@@ -311,9 +312,6 @@ export class AnalyticController {
     const newIds = await this._analyticService.updateSegments(
       unit.id, this._labelingDataAddedSegments, this._labelingDataRemovedSegments
     );
-    if(unit.labelingMode !== LabelingMode.UNLABELING) {
-      await this._analyticService.runDetect(unit.id);
-    }
     return newIds;
   }
 
@@ -455,6 +453,7 @@ export class AnalyticController {
       }
     });
     this._labelingDataAddedSegments.removeInRange(from, to);
+    this.labelingUnit.changed = true;
   }
 
   toggleLabelingMode(labelingMode: LabelingMode): void {
