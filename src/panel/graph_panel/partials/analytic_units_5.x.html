@@ -9,31 +9,34 @@
         <span class="gf-form-query-letter-cell-letter">{{analyticUnit.name}}</span>
         <em class="gf-form-query-letter-cell-ds" ng-show="analyticUnit.id">({{analyticUnit.id}})</em>
       </a>
-      &nbsp;
-      <i ng-if="analyticUnit.status === 'READY'"
-        class="fa fa-check-circle"
-        bs-tooltip="'Ready'"
-      ></i>
-      <i ng-if="analyticUnit.status === 'SUCCESS'"
-        class="fa fa-check"
-        bs-tooltip="'Learning succeeded'"
-      ></i>
-      <i ng-if="analyticUnit.status === 'LEARNING'"
-        class="fa fa-leanpub"
-        bs-tooltip="'Learning'"
-      ></i>
-      <i ng-if="analyticUnit.status === 'DETECTION'"
-        class="fa fa-search"
-        bs-tooltip="'Detection'"
-      ></i>
-      <i ng-if="analyticUnit.status === 'PENDING'"
-        class="fa fa-list-ul"
-        bs-tooltip="'Pending'"
-      ></i>
-      <i ng-if="analyticUnit.status === 'FAILED'"
-        class="fa fa-exclamation-circle"
-        bs-tooltip="'Error: ' + analyticUnit.error"
-      ></i>
+
+      <span style="cursor: default;">
+        &nbsp;
+        <i ng-if="analyticUnit.status === 'READY'"
+          class="fa fa-check-circle"
+          bs-tooltip="'Ready'"
+        ></i>
+        <i ng-if="analyticUnit.status === 'SUCCESS'"
+          class="fa fa-check"
+          bs-tooltip="'Learning succeeded'"
+        ></i>
+        <i ng-if="analyticUnit.status === 'LEARNING'"
+          class="fa fa-leanpub"
+          bs-tooltip="'Learning'"
+        ></i>
+        <i ng-if="analyticUnit.status === 'DETECTION'"
+          class="fa fa-search"
+          bs-tooltip="'Detection'"
+        ></i>
+        <i ng-if="analyticUnit.status === 'PENDING'"
+          class="fa fa-list-ul"
+          bs-tooltip="'Pending'"
+        ></i>
+        <i ng-if="analyticUnit.status === 'FAILED'"
+          class="fa fa-exclamation-circle"
+          bs-tooltip="'Error: ' + analyticUnit.error"
+        ></i>
+      </span>
     </label>
   </div>
 

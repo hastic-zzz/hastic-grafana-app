@@ -1,36 +1,39 @@
 <div class="query-editor-row" ng-repeat="analyticUnit in ctrl.analyticsController.analyticUnits">
   <div class="query-editor-row__header">
-    <div class="query-editor-row__ref-id width-25" ng-click="ctrl.onToggleCollapsed(analyticUnit.id)">
+    <div class="query-editor-row__ref-id" ng-click="ctrl.onToggleCollapsed(analyticUnit.id)">
       <i class="fa fa-fw fa-caret-down" ng-hide="analyticUnit.collapsed"></i>
       <i class="fa fa-fw fa-caret-right" ng-show="analyticUnit.collapsed"></i>
       <span>{{analyticUnit.name}}</span>
       <em class="query-editor-row__context-info">({{analyticUnit.id}})</em>
+
+      <span style="cursor: default;">
+        &nbsp;
+        <i ng-if="analyticUnit.status === 'READY'"
+          class="fa fa-fw fa-check-circle"
+          bs-tooltip="'Ready'"
+        ></i>
+        <i ng-if="analyticUnit.status === 'SUCCESS'"
+          class="fa fa-fw fa-check"
+          bs-tooltip="'Learning succeeded'"
+        ></i>
+        <i ng-if="analyticUnit.status === 'LEARNING'"
+          class="fa fa-fw fa-leanpub"
+          bs-tooltip="'Learning'"
+        ></i>
+        <i ng-if="analyticUnit.status === 'DETECTION'"
+          class="fa fa-fw fa-search"
+          bs-tooltip="'Detection'"
+        ></i>
+        <i ng-if="analyticUnit.status === 'PENDING'"
+          class="fa fa-fw fa-list-ul"
+          bs-tooltip="'Pending'"
+        ></i>
+        <i ng-if="analyticUnit.status === 'FAILED'"
+          class="fa fa-fw fa-exclamation-circle"
+          bs-tooltip="'Error: ' + analyticUnit.error"
+        ></i>
+      </span>
     </div>
-    &nbsp;
-    <i ng-if="analyticUnit.status === 'READY'"
-      class="fa fa-fw fa-check-circle"
-      bs-tooltip="'Ready'"
-    ></i>
-    <i ng-if="analyticUnit.status === 'SUCCESS'"
-      class="fa fa-fw fa-check"
-      bs-tooltip="'Learning succeeded'"
-    ></i>
-    <i ng-if="analyticUnit.status === 'LEARNING'"
-      class="fa fa-fw fa-leanpub"
-      bs-tooltip="'Learning'"
-    ></i>
-    <i ng-if="analyticUnit.status === 'DETECTION'"
-      class="fa fa-fw fa-search"
-      bs-tooltip="'Detection'"
-    ></i>
-    <i ng-if="analyticUnit.status === 'PENDING'"
-      class="fa fa-fw fa-list-ul"
-      bs-tooltip="'Pending'"
-    ></i>
-    <i ng-if="analyticUnit.status === 'FAILED'"
-      class="fa fa-fw fa-exclamation-circle"
-      bs-tooltip="'Error: ' + analyticUnit.error"
-    ></i>
 
     <div class="query-editor-row__collapsed-text">
     </div>
