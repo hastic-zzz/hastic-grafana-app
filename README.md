@@ -27,7 +27,7 @@ See also:
 # Prerequisites
 
 * [hastic-server](https://github.com/hastic/hastic-server)
-* [Grafana >= 5.4.0](https://grafana.com/grafana/download), we don't support Grafana 6.x.x yet
+* [Grafana >= 5.4.0](https://grafana.com/grafana/download)
 
 ## Support and Consulting
 
