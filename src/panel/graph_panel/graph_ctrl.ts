@@ -645,7 +645,10 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   async onAnalyticUnitSave(analyticUnit: AnalyticUnit) {
-    if(this.analyticsController.labelingUnit.id === analyticUnit.id) {
+    if(
+      this.analyticsController.labelingUnit !== null && 
+      this.analyticsController.labelingUnit.id === analyticUnit.id
+    ) {
       await this.onToggleLabelingMode(analyticUnit.id)
     }
     await this.analyticsController.saveAnalyticUnit(analyticUnit);
