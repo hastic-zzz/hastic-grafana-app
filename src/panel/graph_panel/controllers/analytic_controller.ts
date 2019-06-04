@@ -452,8 +452,10 @@ export class AnalyticController {
         this._labelingDataRemovedSegments.addSegment(s);
       }
     });
-    this._labelingDataAddedSegments.removeInRange(from, to);
-    this.labelingUnit.changed = true;
+    const removed = this._labelingDataAddedSegments.removeInRange(from, to);
+    if(!_.isEmpty(removed)) {
+      this.labelingUnit.changed = true;
+    }
   }
 
   toggleLabelingMode(labelingMode: LabelingMode): void {
