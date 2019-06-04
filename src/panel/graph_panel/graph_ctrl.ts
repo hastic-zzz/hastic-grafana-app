@@ -365,10 +365,6 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     const { from, to } = this.rangeTimestamp;
 
-    if(this.analyticsController !== undefined) {
-      const hsrSeries = await this.analyticsController.getHSRSeries(from, to);
-      this.dataList = _.concat(this.dataList, hsrSeries);
-    }
     this.seriesList = this.processor.getSeriesList({
       dataList: this.dataList,
       range: this.range,
@@ -402,6 +398,19 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
 
     if(this.analyticsController !== undefined) {
+      let { from, to } = this.rangeTimestamp;
+      if(!_.isEmpty(this._dataTimerange)) {
+        from = this._dataTimerange.from;
+        to = this._dataTimerange.to;
+      }
+      const hsrData = await this.analyticsController.getHSRSeries(from, to);
+
+      const hsrSeries = this.processor.getSeriesList({
+        dataList: hsrData,
+        range: this.range,
+      });
+      this.seriesList = _.concat(this.seriesList, hsrSeries);
+
       await this.analyticsController.fetchAnalyticUnitsSegments(from, to);
       // TODO: make statuses and detection spans connected
       this.analyticsController.fetchAnalyticUnitsStatuses();
@@ -423,7 +432,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
 
     for(let series of this.seriesList) {
-      if (series.unit) {
+      if(series.unit) {
         this.panel.yaxes[series.yaxis - 1].format = series.unit;
       }
     }
