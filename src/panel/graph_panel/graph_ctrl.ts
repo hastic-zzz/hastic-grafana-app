@@ -437,7 +437,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       }
     }
 
-    if(!this.analyticsController.graphLocked) {
+    if(this.analyticsController === undefined || !this.analyticsController.graphLocked) {
       this._graphRenderer.render(this.seriesList);
       this._graphLegend.render();
       this._graphRenderer.renderPanel();
