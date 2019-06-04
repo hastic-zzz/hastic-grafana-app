@@ -456,6 +456,10 @@ export class AnalyticController {
     if(!_.isEmpty(removed)) {
       this.labelingUnit.changed = true;
     }
+    if(this._labelingDataAddedSegments.length === 0 &&
+      this._labelingDataRemovedSegments.length === 0) {
+      this.labelingUnit.changed = false;
+    }
   }
 
   toggleLabelingMode(labelingMode: LabelingMode): void {
