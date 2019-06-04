@@ -362,16 +362,14 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     this.dataList = dataList;
     this.loading = true;
-
-    const { from, to } = this.rangeTimestamp;
-
-    this.seriesList = this.processor.getSeriesList({
+    
+    let seriesList = this.processor.getSeriesList({
       dataList: this.dataList,
       range: this.range,
     });
 
     this.dataWarning = null;
-    const hasSomePoint = this.seriesList.some(s => s.datapoints.length > 0);
+    const hasSomePoint = seriesList.some(s => s.datapoints.length > 0);
 
     if(!hasSomePoint) {
       this.dataWarning = {
@@ -379,7 +377,7 @@ class GraphCtrl extends MetricsPanelCtrl {
         tip: 'No datapoints returned from data query',
       };
     } else {
-      for(let series of this.seriesList) {
+      for(let series of seriesList) {
         if(series.isOutsideRange) {
           this.dataWarning = {
             title: 'Data points outside time range',
@@ -387,13 +385,14 @@ class GraphCtrl extends MetricsPanelCtrl {
           };
           break;
         }
-        const from = _.find(series.datapoints, datapoint => datapoint[0] !== null);
-        const to = _.findLast(series.datapoints, datapoint => datapoint[0] !== null);
+      }
+      // TODO: multiple metrics will be supported
+      const from = _.find(seriesList[0].datapoints, datapoint => datapoint[0] !== null);
+      const to = _.findLast(seriesList[0].datapoints, datapoint => datapoint[0] !== null);
 
-        this._dataTimerange = {};
-        if(from !== undefined && to !== undefined) {
-          this._dataTimerange = { from: from[1], to: to[1] };
-        }
+      this._dataTimerange = {};
+      if (from !== undefined && to !== undefined) {
+        this._dataTimerange = { from: from[1], to: to[1] };
       }
     }
 
@@ -409,7 +408,7 @@ class GraphCtrl extends MetricsPanelCtrl {
         dataList: hsrData,
         range: this.range,
       });
-      this.seriesList = _.concat(this.seriesList, hsrSeries);
+      seriesList = _.concat(seriesList, hsrSeries);
 
       await this.analyticsController.fetchAnalyticUnitsSegments(from, to);
       // TODO: make statuses and detection spans connected
@@ -420,8 +419,9 @@ class GraphCtrl extends MetricsPanelCtrl {
         this._dataTimerange.from,
         this._dataTimerange.to
       );
-      this.render(this.seriesList);
     }
+    this.seriesList = seriesList;
+    this.render();
 
     this.loading = false;
   }
