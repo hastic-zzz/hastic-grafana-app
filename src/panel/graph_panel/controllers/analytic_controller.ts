@@ -80,12 +80,15 @@ export class AnalyticController {
   }
 
   private _segmentsSearcher(point: number, rangeDist: number): AnalyticSegmentPair[] {
-    var result: AnalyticSegmentPair[] = [];
-    this._analyticUnitsSet.items.forEach(at => {
-      var segs = at.segments.findSegments(point, rangeDist);
+    let result: AnalyticSegmentPair[] = [];
+    this._analyticUnitsSet.items.forEach(analyticUnit => {
+      if(!analyticUnit.visible) {
+        return;
+      }
+      const segs = analyticUnit.segments.findSegments(point, rangeDist);
       segs.forEach(s => {
-        result.push({ analyticUnit: at, segment: s });
-      })
+        result.push({ analyticUnit, segment: s });
+      });
     })
     return result;
   }

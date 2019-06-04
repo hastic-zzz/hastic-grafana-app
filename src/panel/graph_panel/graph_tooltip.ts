@@ -116,7 +116,7 @@ export class GraphTooltip {
       }
 
       
-      seriesHtml += this._appendAnomaliesHTML(pos.x, rangeDist);
+      seriesHtml += this._appendAnalyticsHTML(pos.x, rangeDist);
       
 
       this._renderAndShow(absoluteTime, seriesHtml, pos, xMode);
@@ -140,7 +140,7 @@ export class GraphTooltip {
 
       group += '<div class="graph-tooltip-value">' + value + '</div>';
 
-      group += this._appendAnomaliesHTML(pos.x, rangeDist);
+      group += this._appendAnalyticsHTML(pos.x, rangeDist);
 
       this._renderAndShow(absoluteTime, group, pos, xMode);
     }
@@ -192,7 +192,7 @@ export class GraphTooltip {
     }
   };
 
-  private _appendAnomaliesHTML(pos: number, rangeDist: number): string {
+  private _appendAnalyticsHTML(pos: number, rangeDist: number): string {
     if(this._analyticSegmentsSearcher === undefined) {
       return '';
     }
