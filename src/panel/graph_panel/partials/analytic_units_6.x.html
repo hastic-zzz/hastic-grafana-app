@@ -117,27 +117,9 @@
         </a>
       </button>
 
-      <!-- TODO: Leave one Detect button instead of 2 -->
       <button class="query-editor-row__action"
-        ng-if="
-          analyticUnit.detectorType === 'pattern' ||
-          (analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality)
-        "
-        ng-click="ctrl.onToggleLabelingMode(analyticUnit.id)"
-        ng-disabled="analyticUnit.status === 'LEARNING' || analyticUnit.saving || analyticUnit.changed || !analyticUnit.selected"
-      >
-        <a class="pointer">
-          Detect
-        </a>
-      </button>
-
-      <button class="query-editor-row__action"
-        ng-if="
-          analyticUnit.detectorType === 'threshold' ||
-          (analyticUnit.detectorType === 'anomaly' && !analyticUnit.hasSeasonality)
-        "
-        ng-click="ctrl.runDetectInCurrentRange(analyticUnit.id)"
-        ng-disabled="analyticUnit.status === 'LEARNING' || analyticUnit.saving || analyticUnit.changed"
+        ng-click="ctrl.runDetectInCurrentRange(analyticUnit)"
+        ng-disabled="analyticUnit.status === 'LEARNING' || analyticUnit.saving"
       >
         <a class="pointer">
           Detect

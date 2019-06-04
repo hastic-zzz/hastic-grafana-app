@@ -604,11 +604,14 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.analyticsController.redetectAll(from, to);
   }
 
-  async runDetectInCurrentRange(analyticUnitId: AnalyticUnitId) {
+  async runDetectInCurrentRange(analyticUnit: AnalyticUnit) {
     const { from, to } = this.rangeTimestamp;
 
+    if(analyticUnit.changed) {
+      await this.onAnalyticUnitSave(analyticUnit);
+    }
     this.analyticsController.runDetect(
-      analyticUnitId,
+      analyticUnit.id,
       from, to
     );
   }
@@ -642,6 +645,9 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   async onAnalyticUnitSave(analyticUnit: AnalyticUnit) {
+    if(this.analyticsController.labelingUnit.id === analyticUnit.id) {
+      await this.onToggleLabelingMode(analyticUnit.id)
+    }
     await this.analyticsController.saveAnalyticUnit(analyticUnit);
     this.refresh();
   }
