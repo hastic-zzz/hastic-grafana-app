@@ -553,7 +553,7 @@ export class AnalyticController {
     }
     const hsrSerie = {
       ...response.hsr,
-      color: ANALYTIC_UNIT_COLORS[1],
+      color: ANALYTIC_UNIT_COLORS[0],
       // TODO: render it separately from Metric series
       overrides: [
         { alias: 'HSR', linewidth: 3, fill: 0 }
