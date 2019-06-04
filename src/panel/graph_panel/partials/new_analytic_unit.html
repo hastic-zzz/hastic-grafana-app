@@ -16,7 +16,7 @@
   <div class="gf-form">
     <label class="gf-form-label query-keyword width-8"> Detector Type </label>
     <div class="gf-form-select-wrapper">
-      <select class="gf-form-input width-8"
+      <select class="gf-form-input width-10"
         ng-model="ctrl.analyticsController.newAnalyticUnit.detectorType"
         ng-options="analyticUnitDetectorType for analyticUnitDetectorType in ctrl.analyticUnitDetectorTypes"
         ng-change="ctrl.analyticsController.onAnalyticUnitDetectorChange(ctrl.analyticUnitTypes);"
@@ -27,7 +27,7 @@
   <div class="gf-form">
     <label class="gf-form-label query-keyword width-8"> Type </label>
     <div class="gf-form-select-wrapper">
-      <select class="gf-form-input width-9"
+      <select class="gf-form-input width-12"
         ng-model="ctrl.analyticsController.newAnalyticUnit.type"
         ng-options="
           type.value as type.name
