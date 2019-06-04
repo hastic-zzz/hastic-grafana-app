@@ -584,7 +584,7 @@ export class AnalyticController {
         hsrSerie
       ];
     }
-    return hsrSerie;
+    return [hsrSerie];
   }
 
   get inspectedAnalyticUnit(): AnalyticUnit | null {
