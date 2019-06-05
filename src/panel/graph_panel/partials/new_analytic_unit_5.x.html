@@ -8,4 +8,17 @@
   <div class="gf-form-query-content">
     <ng-include src="ctrl.partialsPath + '/new_analytic_unit.html'"></ng-include>
   </div>
+
+  <label class="gf-form-label">
+    <a class="pointer" ng-click="ctrl.cancelCreation()">
+      Cancel
+    </a>
+  </label>
+  
+  <label class="gf-form-label">
+    <a class="pointer" ng-click="ctrl.saveNew()">
+      <b ng-if="!ctrl.analyticsController.saving"> Create </b>
+      <b ng-if="ctrl.analyticsController.saving" ng-disabled="true"> Saving... </b>
+    </a>
+  </label>
 </div>
