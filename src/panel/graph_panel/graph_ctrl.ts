@@ -172,6 +172,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     } else {
       throw new Error('Cannot parse grafana url');
     }
+    console.log(this)
 
     this._panelId = `${this.dashboard.uid}/${this.panel.id}`;
     this._datasources = {};
@@ -277,6 +278,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     appEvents.on('ds-request-response', data => {
       let requestConfig = data.config;
+      console.log(data.config)
 
       this._datasourceRequest = {
         url: requestConfig.url,
@@ -362,11 +364,13 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     this.dataList = dataList;
     this.loading = true;
-    
+
+    console.log(dataList)
     let seriesList = this.processor.getSeriesList({
       dataList: this.dataList,
       range: this.range,
     });
+
 
     this.dataWarning = null;
     const hasSomePoint = seriesList.some(s => s.datapoints.length > 0);
@@ -758,6 +762,9 @@ class GraphCtrl extends MetricsPanelCtrl {
   private async _getDatasourceRequest() {
     if(this._datasourceRequest.type === undefined) {
       const datasource = await this._getDatasourceByName(this.panel.datasource);
+      if(datasource.access !== 'proxy') {
+        throw new Error(`"${datasource.name}" datasource has Browser access type but only Server is supported`);
+      }
       this._datasourceRequest.type = datasource.type;
     }
     return this._datasourceRequest;
