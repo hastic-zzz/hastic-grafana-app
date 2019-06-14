@@ -763,7 +763,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     if(this._datasourceRequest.type === undefined) {
       const datasource = await this._getDatasourceByName(this.panel.datasource);
       if(datasource.access !== 'proxy') {
-        throw new Error(`"${datasource.name}" datasource has Browser access type but only Server is supported`);
+        throw new Error(`"${datasource.name}" datasource has "Browser" access type but only "Server" is supported`);
       }
       this._datasourceRequest.type = datasource.type;
     }
