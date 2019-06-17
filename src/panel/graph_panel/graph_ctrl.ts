@@ -172,7 +172,6 @@ class GraphCtrl extends MetricsPanelCtrl {
     } else {
       throw new Error('Cannot parse grafana url');
     }
-    console.log(this)
 
     this._panelId = `${this.dashboard.uid}/${this.panel.id}`;
     this._datasources = {};
@@ -278,7 +277,6 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     appEvents.on('ds-request-response', data => {
       let requestConfig = data.config;
-      console.log(data.config)
 
       this._datasourceRequest = {
         url: requestConfig.url,
@@ -364,8 +362,6 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     this.dataList = dataList;
     this.loading = true;
-
-    console.log(dataList)
     let seriesList = this.processor.getSeriesList({
       dataList: this.dataList,
       range: this.range,
