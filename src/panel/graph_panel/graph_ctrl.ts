@@ -362,11 +362,11 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     this.dataList = dataList;
     this.loading = true;
+
     let seriesList = this.processor.getSeriesList({
       dataList: this.dataList,
       range: this.range,
     });
-
 
     this.dataWarning = null;
     const hasSomePoint = seriesList.some(s => s.datapoints.length > 0);
@@ -646,7 +646,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   async onAnalyticUnitSave(analyticUnit: AnalyticUnit) {
     if(
-      this.analyticsController.labelingUnit !== null && 
+      this.analyticsController.labelingUnit !== null &&
       this.analyticsController.labelingUnit.id === analyticUnit.id
     ) {
       await this.onToggleLabelingMode(analyticUnit.id)
