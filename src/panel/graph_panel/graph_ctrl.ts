@@ -362,7 +362,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     this.dataList = dataList;
     this.loading = true;
-    
+
     let seriesList = this.processor.getSeriesList({
       dataList: this.dataList,
       range: this.range,
@@ -646,7 +646,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   async onAnalyticUnitSave(analyticUnit: AnalyticUnit) {
     if(
-      this.analyticsController.labelingUnit !== null && 
+      this.analyticsController.labelingUnit !== null &&
       this.analyticsController.labelingUnit.id === analyticUnit.id
     ) {
       await this.onToggleLabelingMode(analyticUnit.id)
@@ -758,6 +758,9 @@ class GraphCtrl extends MetricsPanelCtrl {
   private async _getDatasourceRequest() {
     if(this._datasourceRequest.type === undefined) {
       const datasource = await this._getDatasourceByName(this.panel.datasource);
+      if(datasource.access !== 'proxy') {
+        throw new Error(`"${datasource.name}" datasource has "Browser" access type but only "Server" is supported`);
+      }
       this._datasourceRequest.type = datasource.type;
     }
     return this._datasourceRequest;
