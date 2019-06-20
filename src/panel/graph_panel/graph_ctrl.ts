@@ -14,6 +14,8 @@ import { HasticPanelInfo } from './models/hastic_panel_info';
 
 import { axesEditorComponent } from './axes_editor';
 
+import { getFlotTickDecimals } from './vendor/grafana/ticks';
+
 import { MetricsPanelCtrl } from 'grafana/app/plugins/sdk';
 import { appEvents } from 'grafana/app/core/core'
 import { BackendSrv } from 'grafana/app/core/services/backend_srv';
@@ -790,8 +792,20 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   get unitFormatter() {
+    let tickDecimals = 2;
+    let scaledDecimals: Number;
+
     const axis = this.panel.yaxes[0];
-    return val => kbn.valueFormats[axis.format](val, axis.decimals || 2);
+
+    if(!_.isEmpty(this.seriesList)) {
+      const flotDecimals = getFlotTickDecimals(this.seriesList, axis);
+      tickDecimals = flotDecimals.tickDecimals;
+      scaledDecimals = flotDecimals.scaledDecimals;
+    }
+    if(axis.decimals !== undefined) {
+      tickDecimals = axis.decimals;
+    }
+    return val => kbn.valueFormats[axis.format](val, tickDecimals, scaledDecimals);
   }
 
   get rangeTimestamp(): { from: number, to: number } {
