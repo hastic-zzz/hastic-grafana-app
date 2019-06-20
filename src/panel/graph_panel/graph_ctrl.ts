@@ -17,6 +17,7 @@ import { axesEditorComponent } from './axes_editor';
 import { MetricsPanelCtrl } from 'grafana/app/plugins/sdk';
 import { appEvents } from 'grafana/app/core/core'
 import { BackendSrv } from 'grafana/app/core/services/backend_srv';
+import kbn from 'grafana/app/core/utils/kbn';
 
 import _ from 'lodash';
 
@@ -786,6 +787,11 @@ class GraphCtrl extends MetricsPanelCtrl {
     this._hasticDatasources = await this.backendSrv.get('api/datasources');
     this._hasticDatasources = this._hasticDatasources.filter(ds => ds.type === 'corpglory-hastic-datasource');
     this.$scope.$digest();
+  }
+
+  get unitFormatter() {
+    const axis = this.panel.yaxes[0];
+    return val => kbn.valueFormats[axis.format](val, axis.decimals || 2);
   }
 
   get rangeTimestamp(): { from: number, to: number } {

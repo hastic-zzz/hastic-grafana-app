@@ -85,7 +85,7 @@
 <div class="gf-form-inline" ng-if="analyticUnit.detectorType === 'anomaly'">
   <div class="gf-form">
     <label class="gf-form-label query-keyword width-8"> Alpha </label>
-    <input class="gf-form-input width-9"
+    <input class="gf-form-input width-7"
       min="0"
       max="1"
       type="number"
@@ -95,12 +95,22 @@
   </div>
 
   <div class="gf-form">
-    <label class="gf-form-label query-keyword width-6"> Confidence </label>
-    <input class="gf-form-input width-5"
+    <label class="gf-form-label query-keyword width-9"> Confidence (raw) </label>
+    <input class="gf-form-input width-10"
       min="0"
       type="number"
       ng-model="analyticUnit.confidence"
       ng-blur="ctrl.onAnalyticUnitChange(analyticUnit)"
+    />
+
+    <label class="gf-form-label query-keyword width-12">
+      <i class="fa fa-info" bs-tooltip="'Updated automatically on confidence change'"></i>
+      &nbsp;
+      Confidence (formatted) 
+    </label>
+    <input class="gf-form-input width-10"
+      value={{ctrl.unitFormatter(analyticUnit.confidence)}}
+      ng-disabled="true"
     />
   </div>
 
