@@ -146,3 +146,19 @@
     <div class="gf-form-label gf-form-label--grow"></div>
   </div>
 </div>
+
+<div class="gf-form-inline" ng-if="analyticUnit.detectorType === 'anomaly'">
+  <div class="gf-form">
+    <label class="gf-form-label query-keyword width-8"> Disable bound </label>
+    <div class="gf-form-select-wrapper">
+      <select class="gf-form-input width-12"
+        ng-model="analyticUnit.disableBound"
+        ng-model="ctrl.onAnalyticUnitChange(analyticUnit)"
+        ng-options="bound.value as bound.name for bound in ctrl.boundTypes"
+      />
+    </div>
+  </div>
+  <div class="gf-form gf-form--grow">
+    <div class="gf-form-label gf-form-label--grow"></div>
+  </div>
+</div>
