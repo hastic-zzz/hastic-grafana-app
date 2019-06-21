@@ -153,7 +153,7 @@
     <div class="gf-form-select-wrapper">
       <select class="gf-form-input width-12"
         ng-model="analyticUnit.disableBound"
-        ng-model="ctrl.onAnalyticUnitChange(analyticUnit)"
+        ng-change="ctrl.onAnalyticUnitChange(analyticUnit)"
         ng-options="bound.value as bound.name for bound in ctrl.boundTypes"
       />
     </div>
