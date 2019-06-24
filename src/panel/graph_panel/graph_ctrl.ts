@@ -176,6 +176,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     this._panelId = `${this.dashboard.uid}/${this.panel.id}`;
     this._datasources = {};
+    this._dataTimerange = {};
   }
 
   rebindKeys() {
@@ -391,7 +392,6 @@ class GraphCtrl extends MetricsPanelCtrl {
       const from = _.find(seriesList[0].datapoints, datapoint => datapoint[0] !== null);
       const to = _.findLast(seriesList[0].datapoints, datapoint => datapoint[0] !== null);
 
-      this._dataTimerange = {};
       if (from !== undefined && to !== undefined) {
         this._dataTimerange = { from: from[1], to: to[1] };
       }
