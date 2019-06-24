@@ -6,21 +6,6 @@
 
     <div class="query-editor-row__collapsed-text">
     </div>
-    
-    <div class="query-editor-row__actions">
-      <button class="query-editor-row__action">
-        <a class="pointer" ng-click="ctrl.cancelCreation()">
-          Cancel
-        </a>
-      </button>
-      
-      <button class="query-editor-row__action">
-        <a class="pointer" ng-click="ctrl.saveNew()">
-          <b ng-if="!ctrl.analyticsController.saving"> Create </b>
-          <b ng-if="ctrl.analyticsController.saving" ng-disabled="true"> Saving... </b>
-        </a>
-      </button>
-    </div>
   </div>
 
   <div class="query-editor-row__body gf-form-query">

@@ -28,14 +28,40 @@
     >
     </ng-include>
 
-    <div class="gf-form-button-row">
+    <div class="gf-form-button-row" ng-if="!ctrl.analyticsController.creatingNew">
       <button
         class="btn btn-secondary width-12"
         ng-click="ctrl.createNew()"
-        ng-disabled="ctrl.analyticsController.creatingNew"
       >
         <i class="fa fa-plus"></i>
         Add Analytic Unit
+      </button>
+    </div>
+    <div class="gf-form-button-row" ng-if="ctrl.analyticsController.creatingNew">
+      <button
+        class="btn btn-secondary width-12"
+        ng-click="ctrl.saveNew()"
+        ng-if="!ctrl.analyticsController.saving"
+      >
+        <i class="fa fa-plus"></i>
+        Create
+      </button>
+      <button
+        class="btn btn-secondary width-12"
+        ng-click="ctrl.saveNew()"
+        ng-if="ctrl.analyticsController.saving"
+        ng-disabled="true"
+      >
+        <i class="fa fa-spin fa-spinner"></i>
+        Saving
+      </button>
+      <button
+        class="btn btn-danger width-12"
+        ng-click="ctrl.cancelCreation()"
+        ng-disabled="ctrl.analyticsController.saving"
+      >
+        <i class="fa fa-ban"></i>
+        Cancel
       </button>
     </div>
     <div class="gf-form-button-row" ng-if="ctrl.analyticsController.analyticUnits.length > 0">
