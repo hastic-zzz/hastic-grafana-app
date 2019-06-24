@@ -64,8 +64,7 @@
         bs-tooltip="'Inspect Mode'"
       >
         <a class="pointer">
-          <i class="fa fa-fw fa-crosshairs" ng-if="analyticUnit.inspect"></i>
-          <i class="fa fa-fw fa-circle-thin" ng-if="!analyticUnit.inspect"></i>
+          <i class="fa fa-glasses" ng-style="!analyticUnit.inspect && { 'color': 'gray' }"></i>
         </a>
       </button>
 
