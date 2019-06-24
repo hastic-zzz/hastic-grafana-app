@@ -551,45 +551,46 @@ export class AnalyticController {
     if(response === null) {
       return [];
     }
-    const hsrSerie = {
+
+    let series: any[] = [{
       ...response.hsr,
       color: ANALYTIC_UNIT_COLORS[0],
       // TODO: render it separately from Metric series
       overrides: [
         { alias: 'HSR', linewidth: 3, fill: 0 }
       ]
-    };
-
-    if(response.lowerBound !== undefined && response.upperBound !== undefined) {
+    }];
+    if(response.lowerBound !== undefined) {
       // TODO: looks bad
-      return [
-        {
-          target: '[AnomalyDetector]: lower bound',
-          datapoints: response.lowerBound.datapoints,
-          color: ANALYTIC_UNIT_COLORS[1],
-          overrides: [{
-            alias: '[AnomalyDetector]: lower bound',
-            linewidth: 1,
-            fill: 0,
-            legend: false
-          }]
-        },
-        {
-          target: '[AnomalyDetector]: upper bound',
-          datapoints: response.upperBound.datapoints,
-          color: ANALYTIC_UNIT_COLORS[1],
-          overrides: [{
-            alias: '[AnomalyDetector]: upper bound',
-            linewidth: 1,
-            fill: 0,
-            fillBelowTo: '[AnomalyDetector]: lower bound',
-            legend: false
-          }]
-        },
-        hsrSerie
-      ];
+      series.push({
+        target: '[AnomalyDetector]: lower bound',
+        datapoints: response.lowerBound.datapoints,
+        color: ANALYTIC_UNIT_COLORS[1],
+        overrides: [{
+          alias: '[AnomalyDetector]: lower bound',
+          linewidth: 1,
+          fill: 0,
+          legend: false
+        }]
+      });
     }
-    return [hsrSerie];
+
+    if(response.upperBound !== undefined) {
+      series.push({
+        target: '[AnomalyDetector]: upper bound',
+        datapoints: response.upperBound.datapoints,
+        color: ANALYTIC_UNIT_COLORS[1],
+        overrides: [{
+          alias: '[AnomalyDetector]: upper bound',
+          linewidth: 1,
+          fill: response.lowerBound === undefined ? 1 : 0,
+          fillBelowTo: response.lowerBound === undefined ? '' : '[AnomalyDetector]: lower bound',
+          legend: false
+        }]
+      });
+    }
+
+    return series;
   }
 
   get inspectedAnalyticUnit(): AnalyticUnit | null {

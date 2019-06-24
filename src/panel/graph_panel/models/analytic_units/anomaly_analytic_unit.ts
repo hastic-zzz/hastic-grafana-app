@@ -8,6 +8,18 @@ type TimePeriod = {
   unit: string
 };
 
+enum Bound {
+  NONE = 'NONE',
+  UPPER = 'UPPER',
+  LOWER = 'LOWER'
+};
+
+export const BOUND_TYPES = [
+  { name: 'None', value: Bound.NONE },
+  { name: 'Upper', value: Bound.UPPER },
+  { name: 'Lower', value: Bound.LOWER }
+];
+
 const DEFAULTS = {
   detectorType: DetectorType.ANOMALY,
   type: 'ANOMALY',
@@ -17,7 +29,8 @@ const DEFAULTS = {
   seasonalityPeriod: {
     value: 0,
     unit: 'seconds'
-  }
+  },
+  disableBound: Bound.NONE
 };
 
 const LABELING_MODES = [
@@ -39,7 +52,8 @@ export class AnomalyAnalyticUnit extends AnalyticUnit {
       alpha: this.alpha,
       confidence: this.confidence,
       seasonality: this.seasonality,
-      seasonalityPeriod: this.seasonalityPeriod
+      seasonalityPeriod: this.seasonalityPeriod,
+      disableBound: this.disableBound
     };
   }
 
@@ -57,6 +71,9 @@ export class AnomalyAnalyticUnit extends AnalyticUnit {
 
   set seasonalityPeriod(val: TimePeriod) { this._serverObject.seasonalityPeriod = val; }
   get seasonalityPeriod(): TimePeriod { return this._serverObject.seasonalityPeriod; }
+
+  set disableBound(val: Bound) { this._serverObject.disableBound = val; }
+  get disableBound(): Bound { return this._serverObject.disableBound; }
 
   // TODO: merge seasonality and hasSeasonality
   set hasSeasonality(val: boolean) {
