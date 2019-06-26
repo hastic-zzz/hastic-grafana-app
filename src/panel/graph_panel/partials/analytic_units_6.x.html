@@ -64,8 +64,9 @@
         bs-tooltip="'Inspect Mode'"
       >
         <a class="pointer">
-          <i class="fa fa-fw fa-crosshairs" ng-if="analyticUnit.inspect"></i>
-          <i class="fa fa-fw fa-circle-thin" ng-if="!analyticUnit.inspect"></i>
+          <!--use ctrl.pluginPath-->
+          <img src="public/plugins/corpglory-hastic-app/img/inspect_enabled.svg" class="fa fa-fw" ng-if="analyticUnit.inspect"></img>
+          <img src="public/plugins/corpglory-hastic-app/img/inspect_disabled.svg" class="fa fa-fw" ng-if="!analyticUnit.inspect"></img>
         </a>
       </button>
 
