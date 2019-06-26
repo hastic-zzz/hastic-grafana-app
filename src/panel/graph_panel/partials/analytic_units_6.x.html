@@ -64,7 +64,8 @@
         bs-tooltip="'Inspect Mode'"
       >
         <a class="pointer">
-          <i class="fa fa-glasses" ng-style="!analyticUnit.inspect && { 'color': 'gray' }"></i>
+          <img src="../../../img/inspect_enabled.svg" class="fa fa-fw fa-crosshairs" ng-if="analyticUnit.inspect"></img>
+          <img src="../../../img/inspect_disabled.svg" class="fa fa-fw fa-circle-thin" ng-if="!analyticUnit.inspect"></img>
         </a>
       </button>
 

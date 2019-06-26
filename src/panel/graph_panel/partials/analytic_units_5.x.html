@@ -76,7 +76,8 @@
 
     <label class="gf-form-label" bs-tooltip="'Inspect Mode'">
       <a class="pointer" ng-click="ctrl.onToggleInspect(analyticUnit.id)">
-        <i class="fa fa-bug" ng-style="!analyticUnit.inspect && { 'color': 'gray' }"></i>
+        <img src="../../../img/inspect_enabled.svg" class="fa fa-crosshairs" ng-if="analyticUnit.inspect"></img>
+        <img src="../../../img/inspect_disabled.svg" class="fa fa-circle-thin" ng-if="!analyticUnit.inspect"></img>
       </a>
     </label>
 
