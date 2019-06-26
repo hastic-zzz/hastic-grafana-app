@@ -76,6 +76,7 @@
 
     <label class="gf-form-label" bs-tooltip="'Inspect Mode'">
       <a class="pointer" ng-click="ctrl.onToggleInspect(analyticUnit.id)">
+        <!--use ctrl.pluginPath-->
         <img src="public/plugins/corpglory-hastic-app/img/inspect_enabled.svg" class="fa fa-fw" ng-if="analyticUnit.inspect"></img>
         <img src="public/plugins/corpglory-hastic-app/img/inspect_disabled.svg" class="fa fa-fw" ng-if="!analyticUnit.inspect"></img>
       </a>
