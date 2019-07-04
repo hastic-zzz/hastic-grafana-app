@@ -168,6 +168,11 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     const grafanaUrlRegex = /^(.+)\/d/;
     const parsedUrl = window.location.href.match(grafanaUrlRegex);
+    // api-rendering parameter is added for webhook images rendering
+    // We disable alerts in this case
+    if(window.location.search.includes('api-rendering')) {
+      appEvents.emit = function() { };
+    }
     if(parsedUrl !== null) {
       this._grafanaUrl = parsedUrl[1];
     } else {
