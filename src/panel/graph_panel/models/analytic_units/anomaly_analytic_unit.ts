@@ -9,13 +9,13 @@ type TimePeriod = {
 };
 
 enum Bound {
-  NONE = 'NONE',
+  ALL = 'ALL',
   UPPER = 'UPPER',
   LOWER = 'LOWER'
 };
 
 export const BOUND_TYPES = [
-  { name: 'None', value: Bound.NONE },
+  { name: 'Both', value: Bound.ALL },
   { name: 'Upper', value: Bound.UPPER },
   { name: 'Lower', value: Bound.LOWER }
 ];
@@ -30,7 +30,7 @@ const DEFAULTS = {
     value: 0,
     unit: 'seconds'
   },
-  disableBound: Bound.NONE
+  disableBound: Bound.ALL
 };
 
 const LABELING_MODES = [
