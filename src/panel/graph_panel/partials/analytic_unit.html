@@ -84,7 +84,10 @@
 
 <div class="gf-form-inline" ng-if="analyticUnit.detectorType === 'anomaly'">
   <div class="gf-form">
-    <label class="gf-form-label query-keyword width-8"> Alpha </label>
+    <label class="gf-form-label query-keyword width-8">
+      <i class="fa fa-info" bs-tooltip="'Takes value from 0 to 1. Less Alpha means smoother bounds'"></i>
+      &nbsp; Alpha
+    </label>
     <input class="gf-form-input width-9"
       min="0"
       max="1"
@@ -95,7 +98,10 @@
   </div>
 
   <div class="gf-form">
-    <label class="gf-form-label query-keyword width-6"> Confidence </label>
+    <label class="gf-form-label query-keyword width-8">
+      <i class="fa fa-info" bs-tooltip="'Range where metric value considered as &quot;normal&quot;'"></i>
+      &nbsp; Сonfidence
+    </label>
     <input class="gf-form-input width-5"
       min="0"
       type="number"
