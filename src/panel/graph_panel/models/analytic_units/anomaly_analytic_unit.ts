@@ -30,7 +30,7 @@ const DEFAULTS = {
     value: 0,
     unit: 'seconds'
   },
-  enableBound: Bound.ALL
+  enableBounds: Bound.ALL
 };
 
 const LABELING_MODES = [
@@ -53,7 +53,7 @@ export class AnomalyAnalyticUnit extends AnalyticUnit {
       confidence: this.confidence,
       seasonality: this.seasonality,
       seasonalityPeriod: this.seasonalityPeriod,
-      enableBound: this.enableBound
+      enableBounds: this.enableBounds
     };
   }
 
@@ -72,8 +72,8 @@ export class AnomalyAnalyticUnit extends AnalyticUnit {
   set seasonalityPeriod(val: TimePeriod) { this._serverObject.seasonalityPeriod = val; }
   get seasonalityPeriod(): TimePeriod { return this._serverObject.seasonalityPeriod; }
 
-  set enableBound(val: Bound) { this._serverObject.enableBound = val; }
-  get enableBound(): Bound { return this._serverObject.enableBound; }
+  set enableBounds(val: Bound) { this._serverObject.enableBounds = val; }
+  get enableBounds(): Bound { return this._serverObject.enableBounds; }
 
   // TODO: merge seasonality and hasSeasonality
   set hasSeasonality(val: boolean) {
