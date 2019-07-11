@@ -31,4 +31,7 @@ See also:
 
 ## Support and Consulting
 
-Commercial support, consulting, professional services — please send us your inquiry at ping@hastic.io
+Commercial support, professional services **or any help** — send us your inquiry at ping@hastic.io
+
+## About CorpGlory Inc.
+Hastic project developed by [CorpGlory Inc.](https://corpglory.com/), a company which provides high quality software development, data visualization, Grafana and monitoring consulting.
