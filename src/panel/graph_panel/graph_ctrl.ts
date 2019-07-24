@@ -762,6 +762,9 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   private async _getDatasourceRequest() {
+    if(this._datasourceRequest === undefined) {
+      throw new Error('Grafana test-datasource is not supported')
+    }
     if(this._datasourceRequest.type === undefined) {
       const datasource = await this._getDatasourceByName(this.panel.datasource);
       if(datasource.access !== 'proxy') {
