@@ -70,7 +70,10 @@
         </a>
       </button>
 
-      <button class="query-editor-row__action" ng-click="ctrl.onRemove(analyticUnit.id)">
+      <button class="query-editor-row__action"
+              ng-click="ctrl.onRemove(analyticUnit.id)"
+              bs-tooltip="'Delete'"
+      >
         <a class="pointer">
           <i class="fa fa-fw fa-trash"></i>
         </a>
@@ -79,8 +82,9 @@
       <button class="query-editor-row__action" ng-if="
         (analyticUnit.detectorType === 'pattern' ||
         (analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality)) &&
-        !analyticUnit.selected
-      ">
+        !analyticUnit.selected"
+       bs-tooltip="'Save'"
+      >
         <a
           class="pointer"
           ng-style="analyticUnit.status === 'LEARNING' && { 'cursor': 'not-allowed' }"
@@ -100,7 +104,10 @@
         ng-disabled="analyticUnit.status === 'LEARNING'"
       />
 
-      <button class="query-editor-row__action" ng-if="analyticUnit.selected && !analyticUnit.saving">
+      <button class="query-editor-row__action"
+              ng-if="analyticUnit.selected && !analyticUnit.saving"
+              bs-tooltip="'Detect'"
+        >
         <a class="pointer" ng-click="ctrl.onCancelLabeling(analyticUnit.id)">
           <i class="fa fa-fw fa-ban"></i>
         </a>
