@@ -299,7 +299,7 @@ export class AnalyticService {
     appEvents.emit(
       'alert-error',
       [
-        'No connection to Hastic Server',
+        'Timeout when connecting to Hastic Server',
         `Hastic Datasource URL: "${this._hasticDatasourceURL}"`,
       ]
     );
