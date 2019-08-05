@@ -83,7 +83,7 @@
         (analyticUnit.detectorType === 'pattern' ||
         (analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality)) &&
         !analyticUnit.selected"
-       bs-tooltip="'Save'"
+        bs-tooltip="'Save'"
       >
         <a
           class="pointer"
@@ -106,7 +106,7 @@
 
       <button class="query-editor-row__action"
               ng-if="analyticUnit.selected && !analyticUnit.saving"
-              bs-tooltip="'Detect'"
+              bs-tooltip="'Learn & Detect'"
         >
         <a class="pointer" ng-click="ctrl.onCancelLabeling(analyticUnit.id)">
           <i class="fa fa-fw fa-ban"></i>
