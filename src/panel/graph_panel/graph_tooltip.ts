@@ -208,7 +208,7 @@ export class GraphTooltip {
       if(s.segment.labeled) {
         icon = 'fa-thumb-tack';
       } else if (s.segment.deleted) {
-        icon = 'fa-trash';
+        icon = 'fa-search-minus';
       } else {
         icon = 'fa-search-plus';
       }
