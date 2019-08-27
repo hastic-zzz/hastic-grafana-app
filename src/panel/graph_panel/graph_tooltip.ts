@@ -108,6 +108,7 @@ export class GraphTooltip {
         series = seriesList[hoverInfo.index];
 
         value = series.formatValue(hoverInfo.value);
+
         seriesHtml += '<div class="graph-tooltip-list-item ' + highlightClass + '"><div class="graph-tooltip-series-name">';
         seriesHtml += '<i class="fa fa-minus" style="color:' + hoverInfo.color +';"></i> ' + hoverInfo.label + ':</div>';
         seriesHtml += '<div class="graph-tooltip-value">' + value + '</div></div>';
