@@ -219,11 +219,10 @@ export class GraphTooltip {
       result += `
         <div class="graph-tooltip-list-item">
           <div class="graph-tooltip-series-name">
-            <i class="fa fa-exclamation" style="color:${segmentColor}"></i>
+            <i class="fa ${ icon }" style="color:${segmentColor}"></i>
             ${s.analyticUnit.name}:
           </div>
           <div class="graph-tooltip-value">
-            <i class="fa ${ icon }" aria-hidden="true"></i>
             ${from} — ${to}
           </div>
         </div>
