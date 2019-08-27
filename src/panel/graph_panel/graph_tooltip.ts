@@ -108,7 +108,6 @@ export class GraphTooltip {
         series = seriesList[hoverInfo.index];
 
         value = series.formatValue(hoverInfo.value);
-
         seriesHtml += '<div class="graph-tooltip-list-item ' + highlightClass + '"><div class="graph-tooltip-series-name">';
         seriesHtml += '<i class="fa fa-minus" style="color:' + hoverInfo.color +';"></i> ' + hoverInfo.label + ':</div>';
         seriesHtml += '<div class="graph-tooltip-value">' + value + '</div></div>';
@@ -213,10 +212,14 @@ export class GraphTooltip {
       } else {
         icon = 'fa-search-plus';
       }
+      let segmentColor = s.analyticUnit.labeledColor;
+      if(s.analyticUnit.detectorType === 'pattern' && s.segment.deleted === true) {
+        segmentColor = s.analyticUnit.deletedColor;
+      }
       result += `
         <div class="graph-tooltip-list-item">
           <div class="graph-tooltip-series-name">
-            <i class="fa fa-exclamation" style="color:${s.analyticUnit.labeledColor}"></i>
+            <i class="fa fa-exclamation" style="color:${segmentColor}"></i>
             ${s.analyticUnit.name}:
           </div>
           <div class="graph-tooltip-value">
