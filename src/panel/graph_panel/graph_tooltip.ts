@@ -213,7 +213,7 @@ export class GraphTooltip {
         icon = 'fa-search-plus';
       }
       let segmentColor = s.analyticUnit.labeledColor;
-      if(s.analyticUnit.detectorType === 'pattern' && s.segment.deleted === true) {
+      if(s.segment.deleted === true) {
         segmentColor = s.analyticUnit.deletedColor;
       }
       result += `
