@@ -21,6 +21,9 @@ import { BackendSrv } from 'grafana/app/core/services/backend_srv';
 
 import _ from 'lodash';
 
+if((<any>window).ALL_URL_MAP === undefined) {
+  (<any>window).ALL_URL_MAP = [];
+}
 
 class GraphCtrl extends MetricsPanelCtrl {
   static template = template;
@@ -246,6 +249,11 @@ class GraphCtrl extends MetricsPanelCtrl {
       const connected = await this.analyticService.isDatasourceOk();
       if(connected) {
         this.updateAnalyticUnitTypes();
+        console.log(jQuery.inArray(this.analyticService.hasticDatasourceURL, (<any>window).ALL_URL_MAP));
+        if(jQuery.inArray(this.analyticService.hasticDatasourceURL, (<any>window).ALL_URL_MAP) != -1) {
+          return;
+        }
+        (<any>window).ALL_URL_MAP.push(this.analyticService.hasticDatasourceURL);
         appEvents.emit(
           'alert-success',
           [
