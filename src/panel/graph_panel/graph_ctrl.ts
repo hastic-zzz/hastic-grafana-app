@@ -249,7 +249,6 @@ class GraphCtrl extends MetricsPanelCtrl {
       const connected = await this.analyticService.isDatasourceOk();
       if(connected) {
         this.updateAnalyticUnitTypes();
-        console.log(jQuery.inArray(this.analyticService.hasticDatasourceURL, (<any>window).ALL_URL_MAP));
         if(jQuery.inArray(this.analyticService.hasticDatasourceURL, (<any>window).ALL_URL_MAP) != -1) {
           return;
         }
