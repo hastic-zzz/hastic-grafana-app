@@ -249,7 +249,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       const connected = await this.analyticService.isDatasourceOk();
       if(connected) {
         this.updateAnalyticUnitTypes();
-        if(jQuery.inArray(this.analyticService.hasticDatasourceURL, (<any>window).ALL_URL_MAP) != -1) {
+        if((<any>window).ALL_URL_MAP.includes(this.analyticService.hasticDatasourceURL)) {
           return;
         }
         (<any>window).ALL_URL_MAP.push(this.analyticService.hasticDatasourceURL);
@@ -330,7 +330,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       delete this.analyticService;
     } else {
       this.analyticService = new AnalyticService(hasticDatasource.url, this.$http);
-      this.runDatasourceConnectivityCheck();
+      await this.runDatasourceConnectivityCheck();
     }
 
     this.analyticsController = new AnalyticController(this._grafanaUrl, this._panelId, this.panel, this.events, this.analyticService);
