@@ -297,10 +297,12 @@ export class AnalyticService {
 
   private displayConnectionErrorAlert() {
     console.log(window.hasticUrlMap);
-    if (window.hasticUrlMap.includes(this._hasticDatasourceURL)) {
+    if(window.hasticUrlMap.hasOwnProperty(this._hasticDatasourceURL) &&
+      window.hasticUrlMap[this._hasticDatasourceURL] === 'Not available') {
+      console.log('return');
       return;
     } else {
-      window.hasticUrlMap.push(this._hasticDatasourceURL);
+      window.hasticUrlMap[this._hasticDatasourceURL] = 'Not available';
     }
     console.log('error1');
     appEvents.emit(
@@ -314,10 +316,12 @@ export class AnalyticService {
 
   private displayWrongUrlAlert() {
     console.log(window.hasticUrlMap);
-    if(window.hasticUrlMap.includes(this._hasticDatasourceURL)) {
+    if(window.hasticUrlMap.hasOwnProperty(this._hasticDatasourceURL) &&
+      window.hasticUrlMap[this._hasticDatasourceURL] === 'Not available') {
+      console.log('return');
       return;
     } else {
-      window.hasticUrlMap.push(this._hasticDatasourceURL);
+      window.hasticUrlMap[this._hasticDatasourceURL] = 'Not available';
     }
     console.log('error1');
     appEvents.emit(
@@ -331,10 +335,12 @@ export class AnalyticService {
 
   private displayUnsupportedVersionAlert(actual: string) {
     console.log(window.hasticUrlMap);
-    if(window.hasticUrlMap.includes(this._hasticDatasourceURL)) {
+    if(window.hasticUrlMap.hasOwnProperty(this._hasticDatasourceURL) &&
+      window.hasticUrlMap[this._hasticDatasourceURL] === 'Not available') {
+      console.log('return');
       return;
     } else {
-      window.hasticUrlMap.push(this._hasticDatasourceURL);
+      window.hasticUrlMap[this._hasticDatasourceURL] = 'Not available';
     }
     console.log('error1');
     appEvents.emit(
