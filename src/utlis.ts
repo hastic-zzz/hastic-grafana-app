@@ -1,5 +1,6 @@
 import url from 'url-parse';
 import * as _ from 'lodash';
+import { HasticDatasourceStatus } from './panel/graph_panel/graph_ctrl';
 
 export const SUPPORTED_SERVER_VERSION = '0.3.6-beta';
 
@@ -46,4 +47,14 @@ export function isSupportedServerVersion(response: any) {
     return false;
   }
   return true;
+}
+
+export function checkHasticUrlStatus(hasticUrl: string, status: HasticDatasourceStatus) {
+  if (window.hasticUrlMap.hasOwnProperty(hasticUrl) &&
+    window.hasticUrlMap[hasticUrl] === status) {
+    return true;
+  } else {
+    window.hasticUrlMap[hasticUrl] = status;
+    return false;
+  }
 }

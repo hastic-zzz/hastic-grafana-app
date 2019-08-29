@@ -6,9 +6,10 @@ import { AnalyticUnitId, AnalyticUnit, AnalyticSegment } from '../models/analyti
 import { HasticServerInfo, HasticServerInfoUnknown } from '../models/hastic_server_info';
 import { DetectionSpan } from '../models/detection';
 
-import { isHasticServerResponse, isSupportedServerVersion, SUPPORTED_SERVER_VERSION } from '../../../utlis';
+import { isHasticServerResponse, isSupportedServerVersion, SUPPORTED_SERVER_VERSION, checkHasticUrlStatus } from '../../../utlis';
 
 import { appEvents } from 'grafana/app/core/core';
+import { HasticDatasourceStatus } from './../graph_ctrl';
 
 import * as _ from 'lodash';
 
@@ -297,12 +298,8 @@ export class AnalyticService {
 
   private displayConnectionErrorAlert() {
     console.log(window.hasticUrlMap);
-    if(window.hasticUrlMap.hasOwnProperty(this._hasticDatasourceURL) &&
-      window.hasticUrlMap[this._hasticDatasourceURL] === 'Not available') {
-      console.log('return');
+    if(checkHasticUrlStatus(this._hasticDatasourceURL, HasticDatasourceStatus.AVAILABLE)) {
       return;
-    } else {
-      window.hasticUrlMap[this._hasticDatasourceURL] = 'Not available';
     }
     console.log('error1');
     appEvents.emit(
@@ -316,12 +313,8 @@ export class AnalyticService {
 
   private displayWrongUrlAlert() {
     console.log(window.hasticUrlMap);
-    if(window.hasticUrlMap.hasOwnProperty(this._hasticDatasourceURL) &&
-      window.hasticUrlMap[this._hasticDatasourceURL] === 'Not available') {
-      console.log('return');
+    if(checkHasticUrlStatus(this._hasticDatasourceURL, HasticDatasourceStatus.AVAILABLE)) {
       return;
-    } else {
-      window.hasticUrlMap[this._hasticDatasourceURL] = 'Not available';
     }
     console.log('error1');
     appEvents.emit(
@@ -335,12 +328,8 @@ export class AnalyticService {
 
   private displayUnsupportedVersionAlert(actual: string) {
     console.log(window.hasticUrlMap);
-    if(window.hasticUrlMap.hasOwnProperty(this._hasticDatasourceURL) &&
-      window.hasticUrlMap[this._hasticDatasourceURL] === 'Not available') {
-      console.log('return');
+    if(checkHasticUrlStatus(this._hasticDatasourceURL, HasticDatasourceStatus.AVAILABLE)) {
       return;
-    } else {
-      window.hasticUrlMap[this._hasticDatasourceURL] = 'Not available';
     }
     console.log('error1');
     appEvents.emit(
