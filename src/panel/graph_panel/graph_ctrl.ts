@@ -245,15 +245,17 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   async runDatasourceConnectivityCheck() {
-    if((<any>window).ALL_URL_MAP.includes(this.analyticService.hasticDatasourceURL)) {
-      return;
-    } else {
-      (<any>window).ALL_URL_MAP.push(this.analyticService.hasticDatasourceURL);
-    }
+    console.log('check1');
     try {
       const connected = await this.analyticService.isDatasourceOk();
       if(connected) {
+        if((<any>window).ALL_URL_MAP.includes(this.analyticService.hasticDatasourceURL)) {
+          return;
+        } else {
+          (<any>window).ALL_URL_MAP.push(this.analyticService.hasticDatasourceURL);
+        }
         this.updateAnalyticUnitTypes();
+        console.log('check2');
         appEvents.emit(
           'alert-success',
           [
