@@ -297,7 +297,7 @@ export class AnalyticService {
   }
 
   private displayConnectionErrorAlert() {
-    if(checkHasticUrlStatus(this._hasticDatasourceURL, HasticDatasourceStatus.AVAILABLE)) {
+    if(checkHasticUrlStatus(this._hasticDatasourceURL, HasticDatasourceStatus.NOT_AVAILABLE)) {
       return;
     }
     appEvents.emit(
@@ -310,7 +310,7 @@ export class AnalyticService {
   }
 
   private displayWrongUrlAlert() {
-    if(checkHasticUrlStatus(this._hasticDatasourceURL, HasticDatasourceStatus.AVAILABLE)) {
+    if(checkHasticUrlStatus(this._hasticDatasourceURL, HasticDatasourceStatus.NOT_AVAILABLE)) {
       return;
     }
     appEvents.emit(
@@ -323,7 +323,7 @@ export class AnalyticService {
   }
 
   private displayUnsupportedVersionAlert(actual: string) {
-    if(checkHasticUrlStatus(this._hasticDatasourceURL, HasticDatasourceStatus.AVAILABLE)) {
+    if(checkHasticUrlStatus(this._hasticDatasourceURL, HasticDatasourceStatus.NOT_AVAILABLE)) {
       return;
     }
     appEvents.emit(
