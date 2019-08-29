@@ -297,11 +297,9 @@ export class AnalyticService {
   }
 
   private displayConnectionErrorAlert() {
-    console.log(window.hasticUrlMap);
     if(checkHasticUrlStatus(this._hasticDatasourceURL, HasticDatasourceStatus.AVAILABLE)) {
       return;
     }
-    console.log('error1');
     appEvents.emit(
       'alert-error',
       [
@@ -312,11 +310,9 @@ export class AnalyticService {
   }
 
   private displayWrongUrlAlert() {
-    console.log(window.hasticUrlMap);
     if(checkHasticUrlStatus(this._hasticDatasourceURL, HasticDatasourceStatus.AVAILABLE)) {
       return;
     }
-    console.log('error1');
     appEvents.emit(
       'alert-error',
       [
@@ -327,11 +323,9 @@ export class AnalyticService {
   }
 
   private displayUnsupportedVersionAlert(actual: string) {
-    console.log(window.hasticUrlMap);
     if(checkHasticUrlStatus(this._hasticDatasourceURL, HasticDatasourceStatus.AVAILABLE)) {
       return;
     }
-    console.log('error1');
     appEvents.emit(
       'alert-error',
       [

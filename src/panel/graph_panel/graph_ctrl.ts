@@ -254,8 +254,6 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   async runDatasourceConnectivityCheck() {
-    console.log('check1');
-    console.log(window.hasticUrlMap);
     try {
       const connected = await this.analyticService.isDatasourceOk();
       if(connected) {
@@ -263,7 +261,6 @@ class GraphCtrl extends MetricsPanelCtrl {
           return;
         }
         this.updateAnalyticUnitTypes();
-        console.log('check2');
         appEvents.emit(
           'alert-success',
           [
