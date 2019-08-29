@@ -21,8 +21,12 @@ import { BackendSrv } from 'grafana/app/core/services/backend_srv';
 
 import _ from 'lodash';
 
-if((<any>window).ALL_URL_MAP === undefined) {
-  (<any>window).ALL_URL_MAP = [];
+declare global {
+  interface Window { hasticUrlMap: any; }
+}
+
+if(window.hasOwnProperty('hasticUrlMap') === false) {
+  window.hasticUrlMap = {};
 }
 
 class GraphCtrl extends MetricsPanelCtrl {
@@ -246,13 +250,16 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   async runDatasourceConnectivityCheck() {
     console.log('check1');
+    console.log(window.hasticUrlMap);
     try {
       const connected = await this.analyticService.isDatasourceOk();
       if(connected) {
-        if((<any>window).ALL_URL_MAP.includes(this.analyticService.hasticDatasourceURL)) {
+        if(window.hasticUrlMap.hasOwnProperty(this.analyticService.hasticDatasourceURL) &&
+          window.hasticUrlMap[this.analyticService.hasticDatasourceURL] === 'OK') {
+          console.log('return');
           return;
         } else {
-          (<any>window).ALL_URL_MAP.push(this.analyticService.hasticDatasourceURL);
+          window.hasticUrlMap[this.analyticService.hasticDatasourceURL] = 'OK';
         }
         this.updateAnalyticUnitTypes();
         console.log('check2');

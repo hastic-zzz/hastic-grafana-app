@@ -296,11 +296,11 @@ export class AnalyticService {
   }
 
   private displayConnectionErrorAlert() {
-    console.log((<any>window).ALL_URL_MAP);
-    if ((<any>window).ALL_URL_MAP.includes(this._hasticDatasourceURL)) {
+    console.log(window.hasticUrlMap);
+    if (window.hasticUrlMap.includes(this._hasticDatasourceURL)) {
       return;
     } else {
-      (<any>window).ALL_URL_MAP.push(this._hasticDatasourceURL);
+      window.hasticUrlMap.push(this._hasticDatasourceURL);
     }
     console.log('error1');
     appEvents.emit(
@@ -313,11 +313,11 @@ export class AnalyticService {
   }
 
   private displayWrongUrlAlert() {
-    console.log((<any>window).ALL_URL_MAP);
-    if((<any>window).ALL_URL_MAP.includes(this._hasticDatasourceURL)) {
+    console.log(window.hasticUrlMap);
+    if(window.hasticUrlMap.includes(this._hasticDatasourceURL)) {
       return;
     } else {
-      (<any>window).ALL_URL_MAP.push(this._hasticDatasourceURL);
+      window.hasticUrlMap.push(this._hasticDatasourceURL);
     }
     console.log('error1');
     appEvents.emit(
@@ -330,11 +330,11 @@ export class AnalyticService {
   }
 
   private displayUnsupportedVersionAlert(actual: string) {
-    console.log((<any>window).ALL_URL_MAP);
-    if((<any>window).ALL_URL_MAP.includes(this._hasticDatasourceURL)) {
+    console.log(window.hasticUrlMap);
+    if(window.hasticUrlMap.includes(this._hasticDatasourceURL)) {
       return;
     } else {
-      (<any>window).ALL_URL_MAP.push(this._hasticDatasourceURL);
+      window.hasticUrlMap.push(this._hasticDatasourceURL);
     }
     console.log('error1');
     appEvents.emit(
