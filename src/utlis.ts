@@ -1,8 +1,12 @@
 import url from 'url-parse';
 import * as _ from 'lodash';
-import { HasticDatasourceStatus } from './panel/graph_panel/graph_ctrl';
 
 export const SUPPORTED_SERVER_VERSION = '0.3.6-beta';
+
+export enum HasticDatasourceStatus {
+  AVAILABLE,
+  NOT_AVAILABLE
+}
 
 export function normalizeUrl(inputUrl: string) {
   if(!inputUrl) {
@@ -50,8 +54,15 @@ export function isSupportedServerVersion(response: any) {
 }
 
 export function checkHasticUrlStatus(hasticUrl: string, status: HasticDatasourceStatus) {
-  if (window.hasticUrlMap.hasOwnProperty(hasticUrl) &&
-    window.hasticUrlMap[hasticUrl] === status) {
+
+  if (window.hasOwnProperty('hasticUrlMap') === false) {
+    window.hasticUrlMap = {};
+  }
+
+  if (
+    window.hasticUrlMap.hasOwnProperty(hasticUrl) &&
+    window.hasticUrlMap[hasticUrl] === status
+  ) {
     return true;
   } else {
     window.hasticUrlMap[hasticUrl] = status;

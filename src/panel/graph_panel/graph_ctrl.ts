@@ -12,7 +12,7 @@ import { BOUND_TYPES } from './models/analytic_units/anomaly_analytic_unit';
 import { AnalyticService } from './services/analytic_service';
 import { AnalyticController } from './controllers/analytic_controller';
 import { HasticPanelInfo } from './models/hastic_panel_info';
-import { checkHasticUrlStatus } from '../../utlis';
+import { checkHasticUrlStatus, HasticDatasourceStatus } from '../../utlis';
 import { axesEditorComponent } from './axes_editor';
 
 import { MetricsPanelCtrl } from 'grafana/app/plugins/sdk';
@@ -21,17 +21,9 @@ import { BackendSrv } from 'grafana/app/core/services/backend_srv';
 
 import _ from 'lodash';
 
-export enum HasticDatasourceStatus {
-  AVAILABLE,
-  NOT_AVAILABLE
-}
 
 declare global {
   interface Window { hasticUrlMap: { [key: string]: HasticDatasourceStatus} }
-}
-
-if(window.hasOwnProperty('hasticUrlMap') === false) {
-  window.hasticUrlMap = {};
 }
 
 class GraphCtrl extends MetricsPanelCtrl {

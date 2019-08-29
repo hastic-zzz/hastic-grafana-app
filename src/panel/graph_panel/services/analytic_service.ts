@@ -6,10 +6,9 @@ import { AnalyticUnitId, AnalyticUnit, AnalyticSegment } from '../models/analyti
 import { HasticServerInfo, HasticServerInfoUnknown } from '../models/hastic_server_info';
 import { DetectionSpan } from '../models/detection';
 
-import { isHasticServerResponse, isSupportedServerVersion, SUPPORTED_SERVER_VERSION, checkHasticUrlStatus } from '../../../utlis';
+import { isHasticServerResponse, HasticDatasourceStatus, isSupportedServerVersion, SUPPORTED_SERVER_VERSION, checkHasticUrlStatus } from '../../../utlis';
 
 import { appEvents } from 'grafana/app/core/core';
-import { HasticDatasourceStatus } from './../graph_ctrl';
 
 import * as _ from 'lodash';
 
