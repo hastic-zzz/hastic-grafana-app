@@ -12,7 +12,7 @@ import { BOUND_TYPES } from './models/analytic_units/anomaly_analytic_unit';
 import { AnalyticService } from './services/analytic_service';
 import { AnalyticController } from './controllers/analytic_controller';
 import { HasticPanelInfo } from './models/hastic_panel_info';
-import { checkHasticUrlStatus, HasticDatasourceStatus, displayAlert } from '../../utlis';
+import { HasticDatasourceStatus, displayAlert } from '../../utils';
 import { axesEditorComponent } from './axes_editor';
 
 import { MetricsPanelCtrl } from 'grafana/app/plugins/sdk';

@@ -1,4 +1,4 @@
-import { normalizeUrl } from '../utlis';
+import { normalizeUrl } from '../utils';
 import configTemplate from './partials/config.html';
 
 

@@ -1,4 +1,4 @@
-import { isHasticServerResponse, isSupportedServerVersion, SUPPORTED_SERVER_VERSION } from '../utlis';
+import { isHasticServerResponse, isSupportedServerVersion, SUPPORTED_SERVER_VERSION } from '../utils';
 
 import { BackendSrv } from 'grafana/app/core/services/backend_srv';
 
