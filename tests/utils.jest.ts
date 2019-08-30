@@ -1,4 +1,4 @@
-import { normalizeUrl } from '../src/utlis';
+import { normalizeUrl } from '../src/utils';
 
 describe('Normalize URL', function() {
   const cases = [
