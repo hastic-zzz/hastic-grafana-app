@@ -1,5 +1,6 @@
 import url from 'url-parse';
 import * as _ from 'lodash';
+import { appEvents } from 'grafana/app/core/core';
 
 export const SUPPORTED_SERVER_VERSION = '0.3.6-beta';
 
@@ -53,7 +54,17 @@ export function isSupportedServerVersion(response: any) {
   return true;
 }
 
-export function checkHasticUrlStatus(hasticUrl: string, status: HasticDatasourceStatus) {
+export function displayAlert(url: string, status: HasticDatasourceStatus, alert: string, message: string[]) {
+  if (checkHasticUrlStatus(url, status)) {
+    return;
+  }
+  appEvents.emit(
+    alert,
+    message
+  );
+}
+
+export function checkHasticUrlStatus(hasticUrl: string, status: HasticDatasourceStatus): boolean {
 
   if (window.hasOwnProperty('hasticUrlMap') === false) {
     window.hasticUrlMap = {};

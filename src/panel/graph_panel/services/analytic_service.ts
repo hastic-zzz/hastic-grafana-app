@@ -6,7 +6,7 @@ import { AnalyticUnitId, AnalyticUnit, AnalyticSegment } from '../models/analyti
 import { HasticServerInfo, HasticServerInfoUnknown } from '../models/hastic_server_info';
 import { DetectionSpan } from '../models/detection';
 
-import { isHasticServerResponse, HasticDatasourceStatus, isSupportedServerVersion, SUPPORTED_SERVER_VERSION, checkHasticUrlStatus } from '../../../utlis';
+import { isHasticServerResponse, HasticDatasourceStatus, isSupportedServerVersion, SUPPORTED_SERVER_VERSION, checkHasticUrlStatus, displayAlert } from '../../../utlis';
 
 import { appEvents } from 'grafana/app/core/core';
 
@@ -296,42 +296,30 @@ export class AnalyticService {
   }
 
   private displayConnectionErrorAlert() {
-    if(checkHasticUrlStatus(this._hasticDatasourceURL, HasticDatasourceStatus.NOT_AVAILABLE)) {
-      return;
-    }
-    appEvents.emit(
-      'alert-error',
-      [
-        'Timeout when connecting to Hastic Server',
-        `Hastic Datasource URL: "${this._hasticDatasourceURL}"`,
-      ]
-    );
+    const alert = 'alert-error';
+    const message = [
+      'Timeout when connecting to Hastic Server',
+      `Hastic Datasource URL: "${this._hasticDatasourceURL}"`,
+    ]
+    displayAlert(this._hasticDatasourceURL, HasticDatasourceStatus.NOT_AVAILABLE, alert, message);
   }
 
   private displayWrongUrlAlert() {
-    if(checkHasticUrlStatus(this._hasticDatasourceURL, HasticDatasourceStatus.NOT_AVAILABLE)) {
-      return;
-    }
-    appEvents.emit(
-      'alert-error',
-      [
-        'Please check Hastic Server URL',
-        `Something is working at "${this._hasticDatasourceURL}" but it's not Hastic Server`,
-      ]
-    );
+    const alert = 'alert-error';
+    const message = [
+      'Please check Hastic Server URL',
+      `Something is working at "${this._hasticDatasourceURL}" but it's not Hastic Server`,
+    ]
+    displayAlert(this._hasticDatasourceURL, HasticDatasourceStatus.NOT_AVAILABLE, alert, message);
   }
 
   private displayUnsupportedVersionAlert(actual: string) {
-    if(checkHasticUrlStatus(this._hasticDatasourceURL, HasticDatasourceStatus.NOT_AVAILABLE)) {
-      return;
-    }
-    appEvents.emit(
-      'alert-error',
-      [
-        'Unsupported Hastic Server version',
-        `Hastic Server at "${this._hasticDatasourceURL}" has unsupported version (got ${actual}, should be ${SUPPORTED_SERVER_VERSION})`,
-      ]
-    );
+    const alert = 'alert-error';
+    const message = [
+      'Unsupported Hastic Server version',
+      `Hastic Server at "${this._hasticDatasourceURL}" has unsupported version (got ${actual}, should be ${SUPPORTED_SERVER_VERSION})`,
+    ]
+    displayAlert(this._hasticDatasourceURL, HasticDatasourceStatus.NOT_AVAILABLE, alert, message);
   }
 
   public get isUp(): boolean {

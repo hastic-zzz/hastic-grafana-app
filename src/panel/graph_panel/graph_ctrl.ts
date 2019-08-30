@@ -12,7 +12,7 @@ import { BOUND_TYPES } from './models/analytic_units/anomaly_analytic_unit';
 import { AnalyticService } from './services/analytic_service';
 import { AnalyticController } from './controllers/analytic_controller';
 import { HasticPanelInfo } from './models/hastic_panel_info';
-import { checkHasticUrlStatus, HasticDatasourceStatus } from '../../utlis';
+import { checkHasticUrlStatus, HasticDatasourceStatus, displayAlert } from '../../utlis';
 import { axesEditorComponent } from './axes_editor';
 
 import { MetricsPanelCtrl } from 'grafana/app/plugins/sdk';
@@ -249,17 +249,13 @@ class GraphCtrl extends MetricsPanelCtrl {
     try {
       const connected = await this.analyticService.isDatasourceOk();
       if(connected) {
-        if(checkHasticUrlStatus(this.analyticService.hasticDatasourceURL, HasticDatasourceStatus.AVAILABLE)) {
-          return;
-        }
         this.updateAnalyticUnitTypes();
-        appEvents.emit(
-          'alert-success',
-          [
-            'Connected to Hastic Datasource',
-            `Hastic datasource URL: "${this.analyticService.hasticDatasourceURL}"`
-          ]
-        );
+        const alert = 'alert-success';
+        const message = [
+          'Connected to Hastic Datasource',
+          `Hastic datasource URL: "${this.analyticService.hasticDatasourceURL}"`
+        ];
+        displayAlert(this.analyticService.hasticDatasourceURL, HasticDatasourceStatus.NOT_AVAILABLE, alert, message);
       }
     }
     catch(err) {
