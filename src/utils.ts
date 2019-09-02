@@ -73,7 +73,7 @@ export function checkHasticUrlStatus(hasticUrl: string, status: HasticDatasource
       return true;
     } else {
       window.hasticUrlMap[hasticUrl] = status;
-      appEvents.emit('change-hastic-datasource-status', hasticUrl);
+      appEvents.emit('hastic-datasource-status-changed', hasticUrl);
       return false;
     }
   } else {
