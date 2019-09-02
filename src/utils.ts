@@ -58,7 +58,6 @@ export function displayAlert(url: string, status: HasticDatasourceStatus, alert:
   if(checkHasticUrlStatus(url, status)) {
     return;
   }
-  appEvents.emit('check-hastic-datasource', url);
   appEvents.emit(
     alert,
     message
@@ -81,13 +80,4 @@ export function checkHasticUrlStatus(hasticUrl: string, status: HasticDatasource
     window.hasticUrlMap[hasticUrl] = status;
     return false;
   }
-  // if(
-  //   window.hasticUrlMap.hasOwnProperty(hasticUrl) &&
-  //   window.hasticUrlMap[hasticUrl] === status
-  // ) {
-  //   return true;
-  // } else {
-  //   window.hasticUrlMap[hasticUrl] = status;
-  //   return false;
-  // }
 }
