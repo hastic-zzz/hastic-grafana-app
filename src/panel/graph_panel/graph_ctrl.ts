@@ -299,7 +299,6 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     appEvents.on('change-hastic-datasource-status', (url: string) => {
       if(url === this.analyticService.hasticDatasourceURL) {
-        console.log(url);
         this.refresh();
       }
     });
