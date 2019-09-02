@@ -9,6 +9,12 @@ export enum HasticDatasourceStatus {
   NOT_AVAILABLE
 }
 
+export enum hasticUrlStatus {
+  NEW_URL,
+  STATUS_CHANGES,
+  NO_CHANGES
+}
+
 export function normalizeUrl(inputUrl: string) {
   if(!inputUrl) {
     return inputUrl;
@@ -55,8 +61,11 @@ export function isSupportedServerVersion(response: any) {
 }
 
 export function displayAlert(url: string, status: HasticDatasourceStatus, alert: string, message: string[]) {
-  if(checkHasticUrlStatus(url, status)) {
+  const urlStatus = updateHasticUrlStatus(url, status);
+  if(urlStatus === hasticUrlStatus.NO_CHANGES) {
     return;
+  } else if(urlStatus === hasticUrlStatus.STATUS_CHANGES) {
+    appEvents.emit('hastic-datasource-status-changed', url);
   }
   appEvents.emit(
     alert,
@@ -64,20 +73,19 @@ export function displayAlert(url: string, status: HasticDatasourceStatus, alert:
   );
 }
 
-export function checkHasticUrlStatus(hasticUrl: string, status: HasticDatasourceStatus): boolean {
+export function updateHasticUrlStatus(hasticUrl: string, status: HasticDatasourceStatus): hasticUrlStatus {
   if(window.hasOwnProperty('hasticUrlMap') === false) {
-    window.hasticUrlMap = {};
+    window.hasticDatasourcesStatuses = {};
   }
-  if(window.hasticUrlMap.hasOwnProperty(hasticUrl)) {
-    if(window.hasticUrlMap[hasticUrl] === status) {
-      return true;
+  if(window.hasticDatasourcesStatuses.hasOwnProperty(hasticUrl)) {
+    if(window.hasticDatasourcesStatuses[hasticUrl] === status) {
+      return hasticUrlStatus.NO_CHANGES;
     } else {
-      window.hasticUrlMap[hasticUrl] = status;
-      appEvents.emit('hastic-datasource-status-changed', hasticUrl);
-      return false;
+      window.hasticDatasourcesStatuses[hasticUrl] = status;
+      return hasticUrlStatus.STATUS_CHANGES;
     }
   } else {
-    window.hasticUrlMap[hasticUrl] = status;
-    return false;
+    window.hasticDatasourcesStatuses[hasticUrl] = status;
+    return hasticUrlStatus.NEW_URL;
   }
 }

@@ -23,7 +23,7 @@ import _ from 'lodash';
 
 
 declare global {
-  interface Window { hasticUrlMap: { [key: string]: HasticDatasourceStatus} }
+  interface Window { hasticDatasourcesStatuses: { [key: string]: HasticDatasourceStatus} }
 }
 
 class GraphCtrl extends MetricsPanelCtrl {
