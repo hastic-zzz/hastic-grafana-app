@@ -55,9 +55,10 @@ export function isSupportedServerVersion(response: any) {
 }
 
 export function displayAlert(url: string, status: HasticDatasourceStatus, alert: string, message: string[]) {
-  if (checkHasticUrlStatus(url, status)) {
+  if(checkHasticUrlStatus(url, status)) {
     return;
   }
+  appEvents.emit('check-hastic-datasource', url);
   appEvents.emit(
     alert,
     message
@@ -65,18 +66,28 @@ export function displayAlert(url: string, status: HasticDatasourceStatus, alert:
 }
 
 export function checkHasticUrlStatus(hasticUrl: string, status: HasticDatasourceStatus): boolean {
-
-  if (window.hasOwnProperty('hasticUrlMap') === false) {
+  if(window.hasOwnProperty('hasticUrlMap') === false) {
     window.hasticUrlMap = {};
   }
-
-  if (
-    window.hasticUrlMap.hasOwnProperty(hasticUrl) &&
-    window.hasticUrlMap[hasticUrl] === status
-  ) {
-    return true;
+  if(window.hasticUrlMap.hasOwnProperty(hasticUrl)) {
+    if(window.hasticUrlMap[hasticUrl] === status) {
+      return true;
+    } else {
+      window.hasticUrlMap[hasticUrl] = status;
+      appEvents.emit('change-hastic-datasource-status', hasticUrl);
+      return false;
+    }
   } else {
     window.hasticUrlMap[hasticUrl] = status;
     return false;
   }
+  // if(
+  //   window.hasticUrlMap.hasOwnProperty(hasticUrl) &&
+  //   window.hasticUrlMap[hasticUrl] === status
+  // ) {
+  //   return true;
+  // } else {
+  //   window.hasticUrlMap[hasticUrl] = status;
+  //   return false;
+  // }
 }

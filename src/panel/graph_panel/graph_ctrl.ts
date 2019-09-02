@@ -296,6 +296,14 @@ class GraphCtrl extends MetricsPanelCtrl {
         type: undefined
       };
     });
+
+    appEvents.on('change-hastic-datasource-status', (url: string) => {
+      console.log('status has changed!');
+      if(url === this.analyticService.hasticDatasourceURL) {
+        console.log(url);
+        this.refresh();
+      }
+    });
   }
 
   onInitEditMode() {
