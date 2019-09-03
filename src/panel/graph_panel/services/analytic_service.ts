@@ -353,11 +353,10 @@ export class AnalyticService {
 
   private _displayConnectionAlert(status: HasticDatasourceStatus, message: string[]) {
     const statusChanged = this._updateHasticUrlStatus(status);
+
     if(!statusChanged) {
       return;
     }
-
-    appEvents.emit('hastic-datasource-status-changed', this._hasticDatasourceURL);
 
     appEvents.emit(
       STATUS_TO_ALERT_TYPE_MAPPING.get(status),
@@ -367,22 +366,22 @@ export class AnalyticService {
 
   /**
    * Updates hastic datasource status
-   * @returns true if existing status has been changed
+   * @returns true if status has been changed
    */
   private _updateHasticUrlStatus(status: HasticDatasourceStatus): boolean {
-    if(window.hasOwnProperty('hasticDatasourcesStatuses') === false) {
+    if(!window.hasOwnProperty('hasticDatasourcesStatuses')) {
       window.hasticDatasourcesStatuses = {};
     }
     if(!window.hasticDatasourcesStatuses.hasOwnProperty(this._hasticDatasourceURL)) {
       window.hasticDatasourcesStatuses[this._hasticDatasourceURL] = status;
-      return false;
+      return true;
     }
-    if(window.hasticDatasourcesStatuses[this._hasticDatasourceURL] === status) {
-      return false;
-    } else {
+    if(window.hasticDatasourcesStatuses[this._hasticDatasourceURL] !== status) {
+      appEvents.emit('hastic-datasource-status-changed', this._hasticDatasourceURL);
       window.hasticDatasourcesStatuses[this._hasticDatasourceURL] = status;
       return true;
     }
+    return false;
   }
 
 }
