@@ -1,7 +1,7 @@
 import url from 'url-parse';
 import * as _ from 'lodash';
 import { appEvents } from 'grafana/app/core/core';
-import { HasticDatasourceStatus, hasticUrlStatus } from 'panel/graph_panel/services/analytic_service';
+import { HasticDatasourceStatus, hasticUrlStatus } from './panel/graph_panel/services/analytic_service';
 
 export const SUPPORTED_SERVER_VERSION = '0.3.6-beta';
 
