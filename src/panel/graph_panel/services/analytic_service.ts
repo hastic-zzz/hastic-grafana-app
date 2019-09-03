@@ -368,7 +368,7 @@ export class AnalyticService {
 
   /**
    * Updates hastic datasource status
-   * @returns true if status has been changed
+   * @returns true if existing status has been changed
    */
   private _updateHasticUrlStatus(status: HasticDatasourceStatus): boolean {
     if(window.hasOwnProperty('hasticDatasourcesStatuses') === false) {
