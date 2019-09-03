@@ -214,7 +214,7 @@ export class GraphTooltip {
         icon = 'fa-thumb-tack';
         subIcon = 'fa-minus';
       } else {
-        icon = 'fa-check-circle';
+        icon = 'fa-crosshairs';
         subIcon = '';
       }
       let segmentColor = s.analyticUnit.labeledColor;
