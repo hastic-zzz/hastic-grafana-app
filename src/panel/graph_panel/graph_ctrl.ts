@@ -9,7 +9,7 @@ import { MetricExpanded } from './models/metric';
 import { DatasourceRequest } from './models/datasource';
 import { AnalyticUnitId, AnalyticUnit, LabelingMode } from './models/analytic_units/analytic_unit';
 import { BOUND_TYPES } from './models/analytic_units/anomaly_analytic_unit';
-import { AnalyticService, HasticDatasourceStatus } from './services/analytic_service';
+import { AnalyticService } from './services/analytic_service';
 import { AnalyticController } from './controllers/analytic_controller';
 import { HasticPanelInfo } from './models/hastic_panel_info';
 import { axesEditorComponent } from './axes_editor';
@@ -20,10 +20,6 @@ import { BackendSrv } from 'grafana/app/core/services/backend_srv';
 
 import _ from 'lodash';
 
-
-declare global {
-  interface Window { hasticDatasourcesStatuses: { [key: string]: HasticDatasourceStatus} }
-}
 
 class GraphCtrl extends MetricsPanelCtrl {
   static template = template;

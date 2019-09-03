@@ -1,7 +1,5 @@
 import url from 'url-parse';
 import * as _ from 'lodash';
-import { appEvents } from 'grafana/app/core/core';
-import { HasticDatasourceStatus, hasticUrlStatus } from './panel/graph_panel/services/analytic_service';
 
 export const SUPPORTED_SERVER_VERSION = '0.3.6-beta';
 
@@ -48,34 +46,4 @@ export function isSupportedServerVersion(response: any) {
     return false;
   }
   return true;
-}
-
-export function displayAlert(url: string, status: HasticDatasourceStatus, alert: string, message: string[]) {
-  const urlStatus = updateHasticUrlStatus(url, status);
-  if(urlStatus === hasticUrlStatus.NO_CHANGES) {
-    return;
-  } else if(urlStatus === hasticUrlStatus.STATUS_CHANGES) {
-    appEvents.emit('hastic-datasource-status-changed', url);
-  }
-  appEvents.emit(
-    alert,
-    message
-  );
-}
-
-export function updateHasticUrlStatus(hasticUrl: string, status: HasticDatasourceStatus): hasticUrlStatus {
-  if(window.hasOwnProperty('hasticUrlMap') === false) {
-    window.hasticDatasourcesStatuses = {};
-  }
-  if(window.hasticDatasourcesStatuses.hasOwnProperty(hasticUrl)) {
-    if(window.hasticDatasourcesStatuses[hasticUrl] === status) {
-      return hasticUrlStatus.NO_CHANGES;
-    } else {
-      window.hasticDatasourcesStatuses[hasticUrl] = status;
-      return hasticUrlStatus.STATUS_CHANGES;
-    }
-  } else {
-    window.hasticDatasourcesStatuses[hasticUrl] = status;
-    return hasticUrlStatus.NEW_URL;
-  }
 }
