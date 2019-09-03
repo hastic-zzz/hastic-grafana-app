@@ -9,10 +9,10 @@ import { MetricExpanded } from './models/metric';
 import { DatasourceRequest } from './models/datasource';
 import { AnalyticUnitId, AnalyticUnit, LabelingMode } from './models/analytic_units/analytic_unit';
 import { BOUND_TYPES } from './models/analytic_units/anomaly_analytic_unit';
-import { AnalyticService } from './services/analytic_service';
+import { AnalyticService, HasticDatasourceStatus } from './services/analytic_service';
 import { AnalyticController } from './controllers/analytic_controller';
 import { HasticPanelInfo } from './models/hastic_panel_info';
-import { HasticDatasourceStatus, displayAlert } from '../../utils';
+import { displayAlert } from '../../utils';
 import { axesEditorComponent } from './axes_editor';
 
 import { MetricsPanelCtrl } from 'grafana/app/plugins/sdk';
@@ -243,24 +243,6 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   get analyticUnitDetectorTypes() {
     return _.keys(this._analyticUnitTypes);
-  }
-
-  async runDatasourceConnectivityCheck() { //isDatasourceAvailable
-    try {
-      const connected = await this.analyticService.isDatasourceOk();
-      if(connected) {
-        this.updateAnalyticUnitTypes();
-        const alert = 'alert-success';
-        const message = [
-          'Connected to Hastic Datasource',
-          `Hastic datasource URL: "${this.analyticService.hasticDatasourceURL}"`
-        ];
-        displayAlert(this.analyticService.hasticDatasourceURL, HasticDatasourceStatus.NOT_AVAILABLE, alert, message);
-      }
-    }
-    catch(err) {
-      console.error(err);
-    }
   }
 
   async link(scope, elem, attrs, ctrl) {

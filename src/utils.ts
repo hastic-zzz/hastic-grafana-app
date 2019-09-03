@@ -1,19 +1,9 @@
 import url from 'url-parse';
 import * as _ from 'lodash';
 import { appEvents } from 'grafana/app/core/core';
+import { HasticDatasourceStatus, hasticUrlStatus } from 'panel/graph_panel/services/analytic_service';
 
 export const SUPPORTED_SERVER_VERSION = '0.3.6-beta';
-
-export enum HasticDatasourceStatus {
-  AVAILABLE,
-  NOT_AVAILABLE
-}
-
-export enum hasticUrlStatus {
-  NEW_URL,
-  STATUS_CHANGES,
-  NO_CHANGES
-}
 
 export function normalizeUrl(inputUrl: string) {
   if(!inputUrl) {

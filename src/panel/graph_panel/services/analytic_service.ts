@@ -6,7 +6,7 @@ import { AnalyticUnitId, AnalyticUnit, AnalyticSegment } from '../models/analyti
 import { HasticServerInfo, HasticServerInfoUnknown } from '../models/hastic_server_info';
 import { DetectionSpan } from '../models/detection';
 
-import { isHasticServerResponse, HasticDatasourceStatus, isSupportedServerVersion, SUPPORTED_SERVER_VERSION, displayAlert } from '../../../utils';
+import { isHasticServerResponse, isSupportedServerVersion, SUPPORTED_SERVER_VERSION, displayAlert } from '../../../utils';
 
 import { appEvents } from 'grafana/app/core/core';
 
@@ -18,12 +18,12 @@ export type TableTimeSeries = {
   columns: string[];
 };
 
-export enum HasticDatasourceStatus1 {
+export enum HasticDatasourceStatus {
   AVAILABLE,
   NOT_AVAILABLE
 }
 
-export enum hasticUrlStatus1 {
+export enum hasticUrlStatus {
   NEW_URL,
   STATUS_CHANGES,
   NO_CHANGES
@@ -246,8 +246,7 @@ export class AnalyticService {
         ];
         displayAlert(this._hasticDatasourceURL, HasticDatasourceStatus.NOT_AVAILABLE, alert, message);
       }
-    }
-    catch (err) {
+    } catch (err) {
       console.error(err);
     }
   }
