@@ -248,7 +248,7 @@ export class AnalyticService {
         'Connected to Hastic Datasource',
         `Hastic datasource URL: "${this._hasticDatasourceURL}"`
       ];
-      this._displayConnectionAlert(HasticDatasourceStatus.NOT_AVAILABLE, message);
+      this._displayConnectionAlert(HasticDatasourceStatus.AVAILABLE, message);
       return true;
   }
 
