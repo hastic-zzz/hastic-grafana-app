@@ -28,7 +28,7 @@ export enum HasticDatasourceStatus {
   NOT_AVAILABLE
 };
 
-export const STATUS_TO_ALERT_TYPE_MAPPING = new Map<HasticDatasourceStatus, string>([
+const STATUS_TO_ALERT_TYPE_MAPPING = new Map<HasticDatasourceStatus, string>([
   [HasticDatasourceStatus.AVAILABLE, 'alert-success'],
   [HasticDatasourceStatus.NOT_AVAILABLE, 'alert-error']
 ]);
