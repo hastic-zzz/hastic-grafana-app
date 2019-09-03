@@ -245,7 +245,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     return _.keys(this._analyticUnitTypes);
   }
 
-  async runDatasourceConnectivityCheck() {
+  async runDatasourceConnectivityCheck() { //isDatasourceAvailable
     try {
       const connected = await this.analyticService.isDatasourceOk();
       if(connected) {
@@ -332,7 +332,10 @@ class GraphCtrl extends MetricsPanelCtrl {
       delete this.analyticService;
     } else {
       this.analyticService = new AnalyticService(hasticDatasource.url, this.$http);
-      await this.runDatasourceConnectivityCheck();
+      const datasourceConnectivity = await this.analyticService.isDatasourceAvailable();
+      if(datasourceConnectivity) {
+        this.updateAnalyticUnitTypes();
+      }
     }
 
     this.analyticsController = new AnalyticController(this._grafanaUrl, this._panelId, this.panel, this.events, this.analyticService);

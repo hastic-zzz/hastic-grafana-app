@@ -18,6 +18,17 @@ export type TableTimeSeries = {
   columns: string[];
 };
 
+export enum HasticDatasourceStatus1 {
+  AVAILABLE,
+  NOT_AVAILABLE
+}
+
+export enum hasticUrlStatus1 {
+  NEW_URL,
+  STATUS_CHANGES,
+  NO_CHANGES
+}
+
 export class AnalyticService {
   private _isUp: boolean = false;
 
@@ -222,6 +233,23 @@ export class AnalyticService {
       analyticUnitId: analyticUnit.id,
       alert: analyticUnit.alert
     });
+  }
+
+  async isDatasourceAvailable() {
+    try {
+      const connected = await this.isDatasourceOk();
+      if(connected) {
+        const alert = 'alert-success';
+        const message = [
+          'Connected to Hastic Datasource',
+          `Hastic datasource URL: "${this._hasticDatasourceURL}"`
+        ];
+        displayAlert(this._hasticDatasourceURL, HasticDatasourceStatus.NOT_AVAILABLE, alert, message);
+      }
+    }
+    catch (err) {
+      console.error(err);
+    }
   }
 
   async updateAnalyticUnit(updateObj: any) {
