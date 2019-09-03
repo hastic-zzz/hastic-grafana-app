@@ -240,16 +240,16 @@ export class AnalyticService {
   }
 
   async isDatasourceAvailable(): Promise<boolean> {
-      const connected = await this._isDatasourceOk();
-      if(!connected) {
-        return false;
-      }
-      const message = [
-        'Connected to Hastic Datasource',
-        `Hastic datasource URL: "${this._hasticDatasourceURL}"`
-      ];
-      this._displayConnectionAlert(HasticDatasourceStatus.AVAILABLE, message);
-      return true;
+    const connected = await this._isDatasourceOk();
+    if(!connected) {
+      return false;
+    }
+    const message = [
+      'Connected to Hastic Datasource',
+      `Hastic datasource URL: "${this._hasticDatasourceURL}"`
+    ];
+    this._displayConnectionAlert(HasticDatasourceStatus.AVAILABLE, message);
+    return true;
   }
 
   async updateAnalyticUnit(updateObj: any) {
