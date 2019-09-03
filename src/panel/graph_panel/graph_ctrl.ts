@@ -309,8 +309,8 @@ class GraphCtrl extends MetricsPanelCtrl {
       delete this.analyticService;
     } else {
       this.analyticService = new AnalyticService(hasticDatasource.url, this.$http);
-      const datasourceConnectivity = await this.analyticService.isDatasourceAvailable();
-      if(datasourceConnectivity) {
+      const isDatasourceAvailable = await this.analyticService.isDatasourceAvailable();
+      if(isDatasourceAvailable) {
         this.updateAnalyticUnitTypes();
       }
     }

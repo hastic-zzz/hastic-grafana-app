@@ -239,12 +239,11 @@ export class AnalyticService {
       if(!connected) {
         return false;
       }
-      const alert = 'alert-success';
       const message = [
         'Connected to Hastic Datasource',
         `Hastic datasource URL: "${this._hasticDatasourceURL}"`
       ];
-      this._displayAlert(HasticDatasourceStatus.NOT_AVAILABLE, alert, message);
+      this._displayConnectionAlert(HasticDatasourceStatus.NOT_AVAILABLE, message);
       return true;
   }
 
@@ -320,42 +319,45 @@ export class AnalyticService {
   }
 
   private displayConnectionErrorAlert() {
-    const alert = 'alert-error';
     const message = [
       'Timeout when connecting to Hastic Server',
       `Hastic Datasource URL: "${this._hasticDatasourceURL}"`,
     ]
-    this._displayAlert(HasticDatasourceStatus.NOT_AVAILABLE, alert, message);
+    this._displayConnectionAlert(HasticDatasourceStatus.NOT_AVAILABLE, message);
   }
 
   private displayWrongUrlAlert() {
-    const alert = 'alert-error';
     const message = [
       'Please check Hastic Server URL',
       `Something is working at "${this._hasticDatasourceURL}" but it's not Hastic Server`,
     ]
-    this._displayAlert(HasticDatasourceStatus.NOT_AVAILABLE, alert, message);
+    this._displayConnectionAlert(HasticDatasourceStatus.NOT_AVAILABLE, message);
   }
 
   private displayUnsupportedVersionAlert(actual: string) {
-    const alert = 'alert-error';
     const message = [
       'Unsupported Hastic Server version',
       `Hastic Server at "${this._hasticDatasourceURL}" has unsupported version (got ${actual}, should be ${SUPPORTED_SERVER_VERSION})`,
     ]
-    this._displayAlert(HasticDatasourceStatus.NOT_AVAILABLE, alert, message);
+    this._displayConnectionAlert(HasticDatasourceStatus.NOT_AVAILABLE, message);
   }
 
   public get isUp(): boolean {
     return this._isUp;
   }
 
-  private _displayAlert(status: HasticDatasourceStatus, alert: string, message: string[]) {
+  private _displayConnectionAlert(status: HasticDatasourceStatus, message: string[]) {
     const statusChanged = this._updateHasticUrlStatus(status);
     if(!statusChanged) {
       return;
     }
 
+    let alert: string;
+    if(status === HasticDatasourceStatus.AVAILABLE) {
+      alert = 'alert-success';
+    } else {
+      alert = 'alert-error';
+    }
     appEvents.emit('hastic-datasource-status-changed', this._hasticDatasourceURL);
 
     appEvents.emit(
