@@ -28,6 +28,11 @@ export enum HasticDatasourceStatus {
   NOT_AVAILABLE
 };
 
+export const STATUS_TO_ALERT_TYPE_MAPPING = new Map<HasticDatasourceStatus, string>([
+  [HasticDatasourceStatus.AVAILABLE, 'alert-success'],
+  [HasticDatasourceStatus.NOT_AVAILABLE, 'alert-error']
+]);
+
 export class AnalyticService {
   private _isUp: boolean = false;
 
@@ -352,16 +357,10 @@ export class AnalyticService {
       return;
     }
 
-    let alert: string;
-    if(status === HasticDatasourceStatus.AVAILABLE) {
-      alert = 'alert-success';
-    } else {
-      alert = 'alert-error';
-    }
     appEvents.emit('hastic-datasource-status-changed', this._hasticDatasourceURL);
 
     appEvents.emit(
-      alert,
+      STATUS_TO_ALERT_TYPE_MAPPING.get(status),
       message
     );
   }
