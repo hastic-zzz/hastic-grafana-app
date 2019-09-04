@@ -6,17 +6,32 @@ import { AnalyticUnitId, AnalyticUnit, AnalyticSegment } from '../models/analyti
 import { HasticServerInfo, HasticServerInfoUnknown } from '../models/hastic_server_info';
 import { DetectionSpan } from '../models/detection';
 
-import { isHasticServerResponse, isSupportedServerVersion, SUPPORTED_SERVER_VERSION } from '../../../utlis';
+import { isHasticServerResponse, isSupportedServerVersion, SUPPORTED_SERVER_VERSION } from '../../../utils';
 
 import { appEvents } from 'grafana/app/core/core';
 
 import * as _ from 'lodash';
+
+
+declare global {
+  interface Window { hasticDatasourcesStatuses: { [key: string]: HasticDatasourceStatus } }
+}
 
 // TODO: TableTimeSeries is bad name
 export type TableTimeSeries = {
   values: [number, number][];
   columns: string[];
 };
+
+export enum HasticDatasourceStatus {
+  AVAILABLE,
+  NOT_AVAILABLE
+};
+
+const STATUS_TO_ALERT_TYPE_MAPPING = new Map<HasticDatasourceStatus, string>([
+  [HasticDatasourceStatus.AVAILABLE, 'alert-success'],
+  [HasticDatasourceStatus.NOT_AVAILABLE, 'alert-error']
+]);
 
 export class AnalyticService {
   private _isUp: boolean = false;
@@ -81,7 +96,7 @@ export class AnalyticService {
     return this.delete('/analyticUnits', { id });
   }
 
-  async isDatasourceOk(): Promise<boolean> {
+  private async _isDatasourceOk(): Promise<boolean> {
     if(!this._checkDatasourceConfig()) {
       this._isUp = false;
       return false;
@@ -224,6 +239,19 @@ export class AnalyticService {
     });
   }
 
+  async isDatasourceAvailable(): Promise<boolean> {
+    const connected = await this._isDatasourceOk();
+    if(!connected) {
+      return false;
+    }
+    const message = [
+      'Connected to Hastic Datasource',
+      `Hastic datasource URL: "${this._hasticDatasourceURL}"`
+    ];
+    this._displayConnectionAlert(HasticDatasourceStatus.AVAILABLE, message);
+    return true;
+  }
+
   async updateAnalyticUnit(updateObj: any) {
     return this.patch('/analyticUnits', updateObj);
   }
@@ -296,38 +324,66 @@ export class AnalyticService {
   }
 
   private displayConnectionErrorAlert() {
-    appEvents.emit(
-      'alert-error',
-      [
-        'Timeout when connecting to Hastic Server',
-        `Hastic Datasource URL: "${this._hasticDatasourceURL}"`,
-      ]
-    );
+    const message = [
+      'Timeout when connecting to Hastic Server',
+      `Hastic Datasource URL: "${this._hasticDatasourceURL}"`,
+    ]
+    this._displayConnectionAlert(HasticDatasourceStatus.NOT_AVAILABLE, message);
   }
 
   private displayWrongUrlAlert() {
-    appEvents.emit(
-      'alert-error',
-      [
-        'Please check Hastic Server URL',
-        `Something is working at "${this._hasticDatasourceURL}" but it's not Hastic Server`,
-      ]
-    );
+    const message = [
+      'Please check Hastic Server URL',
+      `Something is working at "${this._hasticDatasourceURL}" but it's not Hastic Server`,
+    ]
+    this._displayConnectionAlert(HasticDatasourceStatus.NOT_AVAILABLE, message);
   }
 
   private displayUnsupportedVersionAlert(actual: string) {
-    appEvents.emit(
-      'alert-error',
-      [
-        'Unsupported Hastic Server version',
-        `Hastic Server at "${this._hasticDatasourceURL}" has unsupported version (got ${actual}, should be ${SUPPORTED_SERVER_VERSION})`,
-      ]
-    );
+    const message = [
+      'Unsupported Hastic Server version',
+      `Hastic Server at "${this._hasticDatasourceURL}" has unsupported version (got ${actual}, should be ${SUPPORTED_SERVER_VERSION})`,
+    ]
+    this._displayConnectionAlert(HasticDatasourceStatus.NOT_AVAILABLE, message);
   }
 
   public get isUp(): boolean {
     return this._isUp;
   }
+
+  private _displayConnectionAlert(status: HasticDatasourceStatus, message: string[]) {
+    const statusChanged = this._updateHasticUrlStatus(status);
+
+    if(!statusChanged) {
+      return;
+    }
+
+    appEvents.emit(
+      STATUS_TO_ALERT_TYPE_MAPPING.get(status),
+      message
+    );
+  }
+
+  /**
+   * Updates hastic datasource status
+   * @returns true if status has been changed
+   */
+  private _updateHasticUrlStatus(status: HasticDatasourceStatus): boolean {
+    if(!window.hasOwnProperty('hasticDatasourcesStatuses')) {
+      window.hasticDatasourcesStatuses = {};
+    }
+    if(!window.hasticDatasourcesStatuses.hasOwnProperty(this._hasticDatasourceURL)) {
+      window.hasticDatasourcesStatuses[this._hasticDatasourceURL] = status;
+      return true;
+    }
+    if(window.hasticDatasourcesStatuses[this._hasticDatasourceURL] !== status) {
+      appEvents.emit('hastic-datasource-status-changed', this._hasticDatasourceURL);
+      window.hasticDatasourcesStatuses[this._hasticDatasourceURL] = status;
+      return true;
+    }
+    return false;
+  }
+
 }
 
 async function *getGenerator<T>(

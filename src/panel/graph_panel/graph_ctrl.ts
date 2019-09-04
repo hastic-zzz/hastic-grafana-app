@@ -12,7 +12,6 @@ import { BOUND_TYPES } from './models/analytic_units/anomaly_analytic_unit';
 import { AnalyticService } from './services/analytic_service';
 import { AnalyticController } from './controllers/analytic_controller';
 import { HasticPanelInfo } from './models/hastic_panel_info';
-
 import { axesEditorComponent } from './axes_editor';
 
 import { MetricsPanelCtrl } from 'grafana/app/plugins/sdk';
@@ -241,25 +240,6 @@ class GraphCtrl extends MetricsPanelCtrl {
     return _.keys(this._analyticUnitTypes);
   }
 
-  async runDatasourceConnectivityCheck() {
-    try {
-      const connected = await this.analyticService.isDatasourceOk();
-      if(connected) {
-        this.updateAnalyticUnitTypes();
-        appEvents.emit(
-          'alert-success',
-          [
-            'Connected to Hastic Datasource',
-            `Hastic datasource URL: "${this.analyticService.hasticDatasourceURL}"`
-          ]
-        );
-      }
-    }
-    catch(err) {
-      console.error(err);
-    }
-  }
-
   async link(scope, elem, attrs, ctrl) {
     this.$graphElem = $(elem[0]).find('#graphPanel');
     this.$legendElem = $(elem[0]).find('#graphLegend');
@@ -293,6 +273,12 @@ class GraphCtrl extends MetricsPanelCtrl {
         type: undefined
       };
     });
+
+    appEvents.on('hastic-datasource-status-changed', (url: string) => {
+      if(url === this.analyticService.hasticDatasourceURL) {
+        this.refresh();
+      }
+    });
   }
 
   onInitEditMode() {
@@ -323,7 +309,10 @@ class GraphCtrl extends MetricsPanelCtrl {
       delete this.analyticService;
     } else {
       this.analyticService = new AnalyticService(hasticDatasource.url, this.$http);
-      this.runDatasourceConnectivityCheck();
+      const isDatasourceAvailable = await this.analyticService.isDatasourceAvailable();
+      if(isDatasourceAvailable) {
+        this.updateAnalyticUnitTypes();
+      }
     }
 
     this.analyticsController = new AnalyticController(this._grafanaUrl, this._panelId, this.panel, this.events, this.analyticService);
