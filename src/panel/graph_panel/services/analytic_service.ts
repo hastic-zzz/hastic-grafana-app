@@ -283,7 +283,7 @@ export class AnalyticService {
         if(error.status === 504) {
           this.displayConnectionTimeoutAlert();
         } else {
-          this.displayConnectionErrorAlert();
+          this.displayNoConnectionAlert();
         }
         this._isUp = false;
         throw new Error(`Fetching error: ${error.status}: ${error.statusText}`);
@@ -327,7 +327,7 @@ export class AnalyticService {
     return this._analyticRequest('DELETE', url, data);
   }
 
-  private displayConnectionErrorAlert() {
+  private displayNoConnectionAlert() {
     const message = [
       'No connection to Hastic Server',
       `Hastic Datasource URL: "${this._hasticDatasourceURL}"`,
