@@ -280,7 +280,7 @@ export class AnalyticService {
       // xhrStatus may be one of: ('complete', 'error', 'timeout' or 'abort')
       // See: https://github.com/angular/angular.js/blob/55075b840c9194b8524627a293d6166528b9a1c2/src/ng/http.js#L919-L920
       if(error.xhrStatus !== 'complete' || error.status > 500) {
-        this.displayConnectionErrorAlert();
+        this.displayConnectionErrorAlert(error.status);
         this._isUp = false;
         throw new Error(`Fetching error: ${error.status}: ${error.statusText}`);
       } else {
@@ -323,9 +323,13 @@ export class AnalyticService {
     return this._analyticRequest('DELETE', url, data);
   }
 
-  private displayConnectionErrorAlert() {
+  private displayConnectionErrorAlert(errorCode: Number) {
+    let firstMessage = 'No connection to Hastic Server';
+    if(errorCode === 504) {
+      firstMessage = 'Timeout when connecting to Hastic Server';
+    }
     const message = [
-      'Timeout when connecting to Hastic Server',
+      firstMessage,
       `Hastic Datasource URL: "${this._hasticDatasourceURL}"`,
     ]
     this._displayConnectionAlert(HasticDatasourceStatus.NOT_AVAILABLE, message);
