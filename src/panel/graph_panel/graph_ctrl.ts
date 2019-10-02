@@ -422,7 +422,7 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   onRender() {
-    if(!this.seriesList) {
+    if(!this.seriesList || !this._graphRenderer || !this._graphLegend) {
       return;
     }
 
@@ -433,15 +433,9 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
 
     if(this.analyticsController === undefined || !this.analyticsController.graphLocked) {
-      if(this._graphRenderer !== undefined && this.seriesList !== undefined) {
-        this._graphRenderer.render(this.seriesList);
-      }
-      if(this._graphLegend !== undefined) {
-        this._graphLegend.render();
-      }
-      if(this._graphRenderer !== undefined) {
-        this._graphRenderer.renderPanel();
-      }
+      this._graphRenderer.render(this.seriesList);
+      this._graphLegend.render();
+      this._graphRenderer.renderPanel();
     }
   }
 
