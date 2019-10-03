@@ -324,6 +324,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       this.$graphElem, this.timeSrv, this.contextSrv, this.$scope, this.analyticsController
     );
     this._graphLegend = new GraphLegend(this.$legendElem, this.popoverSrv, this.$scope, this.analyticsController);
+    this.onRender();
   }
 
   issueQueries(datasource) {
@@ -422,7 +423,7 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   onRender() {
-    if(!this.seriesList) {
+    if(!this.seriesList || !this._graphRenderer || !this._graphLegend) {
       return;
     }
 
