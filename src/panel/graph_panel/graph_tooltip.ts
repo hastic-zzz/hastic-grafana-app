@@ -206,21 +206,29 @@ export class GraphTooltip {
       var to = this.dashboard.formatDate(s.segment.to, 'HH:mm:ss.SSS');
 
       let icon;
+      let subIcon;
       if(s.segment.labeled) {
         icon = 'fa-thumb-tack';
+        subIcon = 'fa-plus';
       } else if (s.segment.deleted) {
-        icon = 'fa-trash';
+        icon = 'fa-thumb-tack';
+        subIcon = 'fa-minus';
       } else {
-        icon = 'fa-search-plus';
+        icon = 'fa-crosshairs';
+        subIcon = '';
+      }
+      let segmentColor = s.analyticUnit.labeledColor;
+      if(s.segment.deleted === true) {
+        segmentColor = s.analyticUnit.deletedColor;
       }
       result += `
         <div class="graph-tooltip-list-item">
           <div class="graph-tooltip-series-name">
-            <i class="fa fa-exclamation" style="color:${s.analyticUnit.labeledColor}"></i>
+            <i class="fa ${ icon }" style="color:${segmentColor}"></i>
+            <i class="fa ${ subIcon }" style="color:${segmentColor}"></i>
             ${s.analyticUnit.name}:
           </div>
           <div class="graph-tooltip-value">
-            <i class="fa ${ icon }" aria-hidden="true"></i>
             ${from} — ${to}
           </div>
         </div>
