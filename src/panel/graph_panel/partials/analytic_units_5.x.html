@@ -82,17 +82,20 @@
       </a>
     </label>
 
-    <label class="gf-form-label">
+    <label class="gf-form-label" bs-tooltip="'Delete'">
       <a class="pointer" ng-click="ctrl.onRemove(analyticUnit.id)" role="menuitem">
-        <i class="fa fa-trash" bs-tooltip="'Delete'" ></i>
+        <i class="fa fa-trash"></i>
       </a>
     </label>
 
-    <div class="gf-form-label" ng-if="
-      (analyticUnit.detectorType === 'pattern' ||
-      (analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality)) &&
-      !analyticUnit.selected
-    " bs-tooltip="'Save'" >
+    <div class="gf-form-label"
+      ng-if="
+        (analyticUnit.detectorType === 'pattern' ||
+        (analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality)) &&
+        !analyticUnit.selected
+      "
+      bs-tooltip="'Label'"
+    >
       <a
         class="pointer"
         ng-style="analyticUnit.status === 'LEARNING' && { 'cursor': 'not-allowed' }"
@@ -112,7 +115,10 @@
       ng-disabled="analyticUnit.status === 'LEARNING'"
     />
 
-    <label class="gf-form-label" ng-if="analyticUnit.selected && !analyticUnit.saving" bs-tooltip="'Learn & Detect'">
+    <label class="gf-form-label"
+      ng-if="analyticUnit.selected && !analyticUnit.saving"
+      bs-tooltip="'Cancel labeling'"
+    >
       <a class="pointer" ng-click="ctrl.onCancelLabeling(analyticUnit.id)">
         <i class="fa fa-ban"></i>
       </a>
@@ -121,6 +127,7 @@
     <label class="gf-form-label"
       ng-click="ctrl.runDetectInCurrentRange(analyticUnit)"
       ng-disabled="analyticUnit.status === 'LEARNING' || analyticUnit.saving"
+      bs-tooltip="'Learn & Detect'"
     >
       <a class="pointer">
         Apply
