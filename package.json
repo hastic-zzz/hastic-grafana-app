@@ -1,7 +1,7 @@
 {
   "name": "grafana-hastic-app",
-  "version": "0.3.6",
-  "description": "Hastic app: labeling and rendeting analytics from hastic-server",
+  "version": "0.3.7",
+  "description": "Hastic app: labeling and rendering analytics from hastic-server",
   "main": "dist/module",
   "scripts": {
     "build": "webpack --config build/webpack.prod.conf.js",
