@@ -71,8 +71,8 @@
       </button>
 
       <button class="query-editor-row__action"
-              ng-click="ctrl.onRemove(analyticUnit.id)"
-              bs-tooltip="'Delete'"
+        ng-click="ctrl.onRemove(analyticUnit.id)"
+        bs-tooltip="'Delete'"
       >
         <a class="pointer">
           <i class="fa fa-fw fa-trash"></i>
@@ -83,7 +83,7 @@
         (analyticUnit.detectorType === 'pattern' ||
         (analyticUnit.detectorType === 'anomaly' && analyticUnit.hasSeasonality)) &&
         !analyticUnit.selected"
-        bs-tooltip="'Save'"
+        bs-tooltip="'Label'"
       >
         <a
           class="pointer"
@@ -105,9 +105,9 @@
       />
 
       <button class="query-editor-row__action"
-              ng-if="analyticUnit.selected && !analyticUnit.saving"
-              bs-tooltip="'Learn & Detect'"
-        >
+        ng-if="analyticUnit.selected && !analyticUnit.saving"
+        bs-tooltip="'Cancel labeling'"
+      >
         <a class="pointer" ng-click="ctrl.onCancelLabeling(analyticUnit.id)">
           <i class="fa fa-fw fa-ban"></i>
         </a>
@@ -116,6 +116,7 @@
       <button class="query-editor-row__action"
         ng-click="ctrl.runDetectInCurrentRange(analyticUnit)"
         ng-disabled="analyticUnit.status === 'LEARNING' || analyticUnit.saving"
+        bs-tooltip="'Learn & Detect'"
       >
         <a class="pointer">
           Apply
