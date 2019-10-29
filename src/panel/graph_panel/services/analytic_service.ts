@@ -58,6 +58,13 @@ export class AnalyticService {
     if(resp === undefined) {
       return [];
     }
+    appEvents.emit(
+      'alert-success',
+      [
+        `getAnalyticUnits`,
+        panelId
+      ]
+    );
     return resp.analyticUnits;
   }
 

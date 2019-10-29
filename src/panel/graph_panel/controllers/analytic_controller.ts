@@ -31,6 +31,7 @@ import {
 } from '../colors';
 
 import { Emitter } from 'grafana/app/core/utils/emitter';
+import { appEvents } from 'grafana/app/core/core';
 
 import _ from 'lodash';
 import * as tinycolor from 'tinycolor2';
@@ -511,6 +512,13 @@ export class AnalyticController {
   }
 
   async fetchAnalyticUnits(): Promise<void> {
+    appEvents.emit(
+      'alert-success',
+      [
+        `fetchAnalyticUnits`,
+        ''
+      ]
+    );
     const units = await this.getAnalyticUnits();
     this._analyticUnitsSet = new AnalyticUnitsSet(units);
     this._loading = false;

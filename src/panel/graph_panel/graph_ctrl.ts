@@ -324,7 +324,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       this.$graphElem, this.timeSrv, this.contextSrv, this.$scope, this.analyticsController
     );
     this._graphLegend = new GraphLegend(this.$legendElem, this.popoverSrv, this.$scope, this.analyticsController);
-    this.onRender();
+    // this.onRender();
   }
 
   issueQueries(datasource) {
@@ -438,6 +438,13 @@ class GraphCtrl extends MetricsPanelCtrl {
       this._graphLegend.render();
       this._graphRenderer.renderPanel();
     }
+    appEvents.emit(
+      'alert-success',
+      [
+        `onRender`,
+        ``
+      ]
+    );
   }
 
   changeSeriesColor(series, color) {
