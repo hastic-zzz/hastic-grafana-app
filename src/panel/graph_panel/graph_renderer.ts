@@ -42,6 +42,7 @@ export class GraphRenderer {
 
   ;
   private data: any;
+  private webhookId: string;
   private tooltip: GraphTooltip;
   private panelWidth: number;
   private plot: any;
@@ -205,11 +206,15 @@ export class GraphRenderer {
     }
   }
 
-  public render(renderData) {
+  public render(renderData, webhookId?) {
 
     this.data = renderData || this.data;
     if (!this.data) {
       return;
+    }
+
+    if(webhookId !== undefined) {
+      this.webhookId = webhookId;
     }
     // this.annotations = this.ctrl.annotations || [];
     this._buildFlotPairs(this.data);
@@ -335,7 +340,7 @@ export class GraphRenderer {
     this.panel.dashes = this.panel.lines ? this.panel.dashes : false;
 
     // Populate element
-    this._buildFlotOptions(this.panel);
+    this._buildFlotOptions(this.panel);//build 2 units
     this._prepareXAxis(this.panel);
     this._configureYAxisOptions(this.data);
     // this.eventManager.addFlotEvents(this.annotations, this.flotOptions);
@@ -444,7 +449,7 @@ export class GraphRenderer {
   
   private _drawAnalyticHook(plot: any) {
     // We call updateFlotEvents from hook cause we need access to min Y axis value
-    this._analyticController.updateFlotEvents(this.contextSrv.isEditor, plot)
+    this._analyticController.updateFlotEvents(this.contextSrv.isEditor, plot, this.webhookId);
   }
 
   private _buildFlotOptions(panel) {

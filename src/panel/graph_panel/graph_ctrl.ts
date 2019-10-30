@@ -58,6 +58,8 @@ class GraphCtrl extends MetricsPanelCtrl {
   private _grafanaUrl: string;
   private _panelId: string;
 
+  private _webhookId: string = undefined;
+
   private _dataTimerange: {
     from?: number,
     to?: number
@@ -171,6 +173,10 @@ class GraphCtrl extends MetricsPanelCtrl {
     // We disable alerts in this case
     if(window.location.search.includes('api-rendering')) {
       appEvents.emit = function() { };
+    }
+    if(window.location.search.includes('unitId')) {
+      const reg = /unitId=([^\&]*)&/;
+      this._webhookId = window.location.search.match(reg)[1];
     }
     if(parsedUrl !== null) {
       this._grafanaUrl = parsedUrl[1];
@@ -434,17 +440,10 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
 
     if(this.analyticsController === undefined || !this.analyticsController.graphLocked) {
-      this._graphRenderer.render(this.seriesList);
+      this._graphRenderer.render(this.seriesList, this._webhookId);
       this._graphLegend.render();
       this._graphRenderer.renderPanel();
     }
-    appEvents.emit(
-      'alert-success',
-      [
-        `onRender`,
-        ``
-      ]
-    );
   }
 
   changeSeriesColor(series, color) {

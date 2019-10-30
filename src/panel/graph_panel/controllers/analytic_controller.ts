@@ -339,7 +339,7 @@ export class AnalyticController {
   }
 
   // TODO: move to renderer
-  updateFlotEvents(isEditMode: boolean, plot: any): void {
+  updateFlotEvents(isEditMode: boolean, plot: any, webId?: string ): void {
     // We get a reference to flot options so we can change it and it'll be rendered
     let options = plot.getOptions();
     if(options.grid.markings === undefined) {
@@ -348,7 +348,7 @@ export class AnalyticController {
 
     for(let i = 0; i < this.analyticUnits.length; i++) {
       const analyticUnit = this.analyticUnits[i];
-      if(!analyticUnit.visible) {
+      if(!analyticUnit.visible || analyticUnit.id !== webId) {
         continue;
       }
 
@@ -512,13 +512,6 @@ export class AnalyticController {
   }
 
   async fetchAnalyticUnits(): Promise<void> {
-    appEvents.emit(
-      'alert-success',
-      [
-        `fetchAnalyticUnits`,
-        ''
-      ]
-    );
     const units = await this.getAnalyticUnits();
     this._analyticUnitsSet = new AnalyticUnitsSet(units);
     this._loading = false;
