@@ -28,6 +28,9 @@ export class MetricExpanded {
   private _targets: Target[];
   constructor(public datasource: string, targets: any[]) {
     const visibleTargets = targets.filter(target => !target.hide);
+    if(visibleTargets.length === 0) {
+      throw new Error('There are no visible metrics. Please add at least one metric');
+    }
     if(visibleTargets.length > 1) {
       throw new Error('Multiple metrics are not supported currently');
     }
