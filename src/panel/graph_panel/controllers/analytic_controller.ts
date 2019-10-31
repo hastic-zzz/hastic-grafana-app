@@ -31,7 +31,6 @@ import {
 } from '../colors';
 
 import { Emitter } from 'grafana/app/core/utils/emitter';
-import { appEvents } from 'grafana/app/core/core';
 
 import _ from 'lodash';
 import * as tinycolor from 'tinycolor2';
@@ -244,14 +243,15 @@ export class AnalyticController {
     });
   }
 
-  hideAnalyticUnitsExeptOne() {
-    if(this._webhookId !== undefined) {
-      this.analyticUnits.forEach(analyticUnit => {
-        if (analyticUnit.id !== this._webhookId) {
-          analyticUnit.visible = false;
-        }
-      });
+  showOnlyWebhookAnalyticUnit() {
+    if(this._webhookId === undefined) {
+      return ;
     }
+    this.analyticUnits.forEach(analyticUnit => {
+      if(analyticUnit.id !== this._webhookId) {
+        analyticUnit.visible = false;
+      }
+    });
   }
 
   stopAnalyticUnitsDetectionsFetching() {
@@ -357,7 +357,7 @@ export class AnalyticController {
       options.grid.markings = [];
     }
 
-    this.hideAnalyticUnitsExeptOne();
+    this.showOnlyWebhookAnalyticUnit();
     for(let i = 0; i < this.analyticUnits.length; i++) {
       const analyticUnit = this.analyticUnits[i];
       if(!analyticUnit.visible) {
