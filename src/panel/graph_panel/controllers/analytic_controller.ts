@@ -63,6 +63,7 @@ export class AnalyticController {
     private _panelObject: any,
     private _emitter: Emitter,
     private _analyticService?: AnalyticService,
+    private _webhookId?: string,    
   ) {
     this._labelingDataAddedSegments = new SegmentArray<AnalyticSegment>();
     this._labelingDataRemovedSegments = new SegmentArray<AnalyticSegment>();
@@ -243,6 +244,16 @@ export class AnalyticController {
     });
   }
 
+  hideAnalyticUnitsExeptOne() {
+    if(this._webhookId !== undefined) {
+      this.analyticUnits.forEach(analyticUnit => {
+        if (analyticUnit.id !== this._webhookId) {
+          analyticUnit.visible = false;
+        }
+      });
+    }
+  }
+
   stopAnalyticUnitsDetectionsFetching() {
     this.analyticUnits.forEach(analyticUnit => this._detectionRunners.delete(analyticUnit.id));
   }
@@ -339,16 +350,17 @@ export class AnalyticController {
   }
 
   // TODO: move to renderer
-  updateFlotEvents(isEditMode: boolean, plot: any, webId?: string ): void {
+  updateFlotEvents(isEditMode: boolean, plot: any): void {
     // We get a reference to flot options so we can change it and it'll be rendered
     let options = plot.getOptions();
     if(options.grid.markings === undefined) {
       options.grid.markings = [];
     }
 
+    this.hideAnalyticUnitsExeptOne();
     for(let i = 0; i < this.analyticUnits.length; i++) {
       const analyticUnit = this.analyticUnits[i];
-      if(!analyticUnit.visible || analyticUnit.id !== webId) {
+      if(!analyticUnit.visible) {
         continue;
       }
 

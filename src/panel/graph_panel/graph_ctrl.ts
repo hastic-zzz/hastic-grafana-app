@@ -321,7 +321,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       }
     }
 
-    this.analyticsController = new AnalyticController(this._grafanaUrl, this._panelId, this.panel, this.events, this.analyticService);
+    this.analyticsController = new AnalyticController(this._grafanaUrl, this._panelId, this.panel, this.events, this.analyticService, this._webhookId);
 
     this._updatePanelInfo();
     this.analyticsController.updateServerInfo();
@@ -440,7 +440,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
 
     if(this.analyticsController === undefined || !this.analyticsController.graphLocked) {
-      this._graphRenderer.render(this.seriesList, this._webhookId);
+      this._graphRenderer.render(this.seriesList);
       this._graphLegend.render();
       this._graphRenderer.renderPanel();
     }
