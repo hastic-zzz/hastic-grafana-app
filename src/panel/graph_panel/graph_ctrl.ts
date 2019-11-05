@@ -250,7 +250,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.$graphElem = $(elem[0]).find('#graphPanel');
     this.$legendElem = $(elem[0]).find('#graphLegend');
 
-    this.onHasticDatasourceChange();
+    await this.onHasticDatasourceChange();
 
     this.events.on('render', this.onRender.bind(this));
     this.events.on('data-received', this.onDataReceived.bind(this));
@@ -330,6 +330,8 @@ class GraphCtrl extends MetricsPanelCtrl {
       this._analyticUnitsToShow
     );
 
+    await this.analyticsController.init();
+
     this._updatePanelInfo();
     this.analyticsController.updateServerInfo();
 
@@ -337,7 +339,6 @@ class GraphCtrl extends MetricsPanelCtrl {
       this.$graphElem, this.timeSrv, this.contextSrv, this.$scope, this.analyticsController
     );
     this._graphLegend = new GraphLegend(this.$legendElem, this.popoverSrv, this.$scope, this.analyticsController);
-    this.onRender();
   }
 
   issueQueries(datasource) {
@@ -429,6 +430,7 @@ class GraphCtrl extends MetricsPanelCtrl {
         this._dataTimerange.to
       );
     }
+
     this.seriesList = seriesList;
     this.render();
 
