@@ -62,6 +62,7 @@ export class AnalyticController {
     private _panelObject: any,
     private _emitter: Emitter,
     private _analyticService?: AnalyticService,
+    private _analyticUnitsToShow?: AnalyticUnitId | AnalyticUnitId[],
   ) {
     this._labelingDataAddedSegments = new SegmentArray<AnalyticSegment>();
     this._labelingDataRemovedSegments = new SegmentArray<AnalyticSegment>();
@@ -242,6 +243,25 @@ export class AnalyticController {
     });
   }
 
+  private _showOnlySpecifiedAnalyticUnits() {
+    if(this._analyticUnitsToShow === undefined) {
+      return;
+    }
+
+    if(!_.isArray(this._analyticUnitsToShow)) {
+      this._analyticUnitsToShow = [this._analyticUnitsToShow];
+    }
+
+    this.analyticUnits.forEach(analyticUnit => {
+      const shouldShow = _.includes(this._analyticUnitsToShow, analyticUnit.id);
+      if(shouldShow) {
+        analyticUnit.visible = true;
+      } else {
+        analyticUnit.visible = false;
+      }
+    });
+  }
+
   stopAnalyticUnitsDetectionsFetching() {
     this.analyticUnits.forEach(analyticUnit => this._detectionRunners.delete(analyticUnit.id));
   }
@@ -345,6 +365,7 @@ export class AnalyticController {
       options.grid.markings = [];
     }
 
+    this._showOnlySpecifiedAnalyticUnits();
     for(let i = 0; i < this.analyticUnits.length; i++) {
       const analyticUnit = this.analyticUnits[i];
       if(!analyticUnit.visible) {

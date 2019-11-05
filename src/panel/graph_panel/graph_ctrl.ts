@@ -58,6 +58,8 @@ class GraphCtrl extends MetricsPanelCtrl {
   private _grafanaUrl: string;
   private _panelId: string;
 
+  private _analyticUnitsToShow: AnalyticUnitId | AnalyticUnitId[];
+
   private _dataTimerange: {
     from?: number,
     to?: number
@@ -149,7 +151,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   /** @ngInject */
   constructor(
-    $scope, $injector, private $http,
+    $scope, $injector, private $http, private $location,
     private annotationsSrv,
     private backendSrv: BackendSrv,
     private popoverSrv,
@@ -167,11 +169,15 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     const grafanaUrlRegex = /^(.+)\/d/;
     const parsedUrl = window.location.href.match(grafanaUrlRegex);
+
+    const params = this.$location.search();
     // api-rendering parameter is added for webhook images rendering
     // We disable alerts in this case
-    if(window.location.search.includes('api-rendering')) {
+    if(params.apiRendering !== undefined) {
       appEvents.emit = function() { };
     }
+    this._analyticUnitsToShow = params.analyticUnitId;
+
     if(parsedUrl !== null) {
       this._grafanaUrl = parsedUrl[1];
     } else {
@@ -315,7 +321,14 @@ class GraphCtrl extends MetricsPanelCtrl {
       }
     }
 
-    this.analyticsController = new AnalyticController(this._grafanaUrl, this._panelId, this.panel, this.events, this.analyticService);
+    this.analyticsController = new AnalyticController(
+      this._grafanaUrl,
+      this._panelId,
+      this.panel,
+      this.events,
+      this.analyticService,
+      this._analyticUnitsToShow
+    );
 
     this._updatePanelInfo();
     this.analyticsController.updateServerInfo();
