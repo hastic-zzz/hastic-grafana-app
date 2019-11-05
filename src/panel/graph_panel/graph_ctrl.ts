@@ -22,8 +22,8 @@ import _ from 'lodash';
 
 
 enum PanelParameter {
-  API_RENDERING = 'api-rendering',
-  SHOW_ANALYTIC_UNIT = 'show-analytic-unit'
+  API_RENDERING = 'apiRendering',
+  SHOW_ANALYTIC_UNIT = 'showAnalyticUnit'
 };
 
 class GraphCtrl extends MetricsPanelCtrl {
