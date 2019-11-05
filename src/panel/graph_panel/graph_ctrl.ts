@@ -21,11 +21,6 @@ import { BackendSrv } from 'grafana/app/core/services/backend_srv';
 import _ from 'lodash';
 
 
-enum PanelParameter {
-  API_RENDERING = 'apiRendering',
-  SHOW_ANALYTIC_UNIT = 'showAnalyticUnit'
-};
-
 class GraphCtrl extends MetricsPanelCtrl {
   static template = template;
 
@@ -178,10 +173,10 @@ class GraphCtrl extends MetricsPanelCtrl {
     const params = this.$location.search();
     // api-rendering parameter is added for webhook images rendering
     // We disable alerts in this case
-    if(params[PanelParameter.API_RENDERING] !== undefined) {
+    if(params.apiRendering !== undefined) {
       appEvents.emit = function() { };
     }
-    this._showAnalyticUnitIds = params[PanelParameter.SHOW_ANALYTIC_UNIT];
+    this._showAnalyticUnitIds = params.showAnalyticUnit;
 
     if(parsedUrl !== null) {
       this._grafanaUrl = parsedUrl[1];
@@ -327,11 +322,11 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
 
     this.analyticsController = new AnalyticController(
-      this._grafanaUrl, 
-      this._panelId, 
-      this.panel, 
-      this.events, 
-      this.analyticService, 
+      this._grafanaUrl,
+      this._panelId,
+      this.panel,
+      this.events,
+      this.analyticService,
       this._showAnalyticUnitIds
     );
 
