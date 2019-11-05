@@ -21,6 +21,11 @@ import { BackendSrv } from 'grafana/app/core/services/backend_srv';
 import _ from 'lodash';
 
 
+enum PanelParameter {
+  API_RENDERING = 'api-rendering',
+  SHOW_ANALYTIC_UNIT = 'show-analytic-unit'
+};
+
 class GraphCtrl extends MetricsPanelCtrl {
   static template = template;
 
@@ -58,7 +63,7 @@ class GraphCtrl extends MetricsPanelCtrl {
   private _grafanaUrl: string;
   private _panelId: string;
 
-  private _webhookId: string = undefined;
+  private _showAnalyticUnitIds: AnalyticUnitId | AnalyticUnitId[];
 
   private _dataTimerange: {
     from?: number,
@@ -151,7 +156,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   /** @ngInject */
   constructor(
-    $scope, $injector, private $http,
+    $scope, $injector, private $http, private $location,
     private annotationsSrv,
     private backendSrv: BackendSrv,
     private popoverSrv,
@@ -169,15 +174,15 @@ class GraphCtrl extends MetricsPanelCtrl {
 
     const grafanaUrlRegex = /^(.+)\/d/;
     const parsedUrl = window.location.href.match(grafanaUrlRegex);
+
+    const params = this.$location.search();
     // api-rendering parameter is added for webhook images rendering
     // We disable alerts in this case
-    if(window.location.search.includes('api-rendering')) {
+    if(params[PanelParameter.API_RENDERING] !== undefined) {
       appEvents.emit = function() { };
     }
-    if(window.location.search.includes('unitId')) {
-      const reg = /unitId=([^\&]*)&/;
-      this._webhookId = window.location.search.match(reg)[1];
-    }
+    this._showAnalyticUnitIds = params[PanelParameter.SHOW_ANALYTIC_UNIT];
+
     if(parsedUrl !== null) {
       this._grafanaUrl = parsedUrl[1];
     } else {
@@ -321,7 +326,14 @@ class GraphCtrl extends MetricsPanelCtrl {
       }
     }
 
-    this.analyticsController = new AnalyticController(this._grafanaUrl, this._panelId, this.panel, this.events, this.analyticService, this._webhookId);
+    this.analyticsController = new AnalyticController(
+      this._grafanaUrl, 
+      this._panelId, 
+      this.panel, 
+      this.events, 
+      this.analyticService, 
+      this._showAnalyticUnitIds
+    );
 
     this._updatePanelInfo();
     this.analyticsController.updateServerInfo();

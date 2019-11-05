@@ -62,7 +62,7 @@ export class AnalyticController {
     private _panelObject: any,
     private _emitter: Emitter,
     private _analyticService?: AnalyticService,
-    private _webhookId?: string,    
+    private _analyticUnitsToShow?: AnalyticUnitId | AnalyticUnitId[],
   ) {
     this._labelingDataAddedSegments = new SegmentArray<AnalyticSegment>();
     this._labelingDataRemovedSegments = new SegmentArray<AnalyticSegment>();
@@ -243,12 +243,20 @@ export class AnalyticController {
     });
   }
 
-  showOnlyWebhookAnalyticUnit() {
-    if(this._webhookId === undefined) {
-      return ;
+  private _showOnlySpecifiedAnalyticUnits() {
+    if(this._analyticUnitsToShow === undefined) {
+      return;
     }
+
+    if(!_.isArray(this._analyticUnitsToShow)) {
+      this._analyticUnitsToShow = [this._analyticUnitsToShow];
+    }
+
     this.analyticUnits.forEach(analyticUnit => {
-      if(analyticUnit.id !== this._webhookId) {
+      const shouldShow = _.includes(this._analyticUnitsToShow, analyticUnit.id);
+      if(shouldShow) {
+        analyticUnit.visible = true;
+      } else {
         analyticUnit.visible = false;
       }
     });
@@ -357,7 +365,7 @@ export class AnalyticController {
       options.grid.markings = [];
     }
 
-    this.showOnlyWebhookAnalyticUnit();
+    this._showOnlySpecifiedAnalyticUnits();
     for(let i = 0; i < this.analyticUnits.length; i++) {
       const analyticUnit = this.analyticUnits[i];
       if(!analyticUnit.visible) {
