@@ -58,7 +58,7 @@ class GraphCtrl extends MetricsPanelCtrl {
   private _grafanaUrl: string;
   private _panelId: string;
 
-  private _showAnalyticUnitIds: AnalyticUnitId | AnalyticUnitId[];
+  private _analyticUnitsToShow: AnalyticUnitId | AnalyticUnitId[];
 
   private _dataTimerange: {
     from?: number,
@@ -176,7 +176,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     if(params.apiRendering !== undefined) {
       appEvents.emit = function() { };
     }
-    this._showAnalyticUnitIds = params.showAnalyticUnit;
+    this._analyticUnitsToShow = params.analyticUnitId;
 
     if(parsedUrl !== null) {
       this._grafanaUrl = parsedUrl[1];
@@ -327,7 +327,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       this.panel,
       this.events,
       this.analyticService,
-      this._showAnalyticUnitIds
+      this._analyticUnitsToShow
     );
 
     this._updatePanelInfo();
