@@ -96,10 +96,10 @@ export class AnalyticService {
     return this.delete('/analyticUnits', { id });
   }
 
-  private async _isDatasourceOk(): Promise<boolean> {
+  private async _checkDatasourceAvailability(): Promise<void> {
     if(!this._checkDatasourceConfig()) {
       this._isUp = false;
-      return false;
+      return;
     }
     try {
       const response = await this.get('/');
@@ -117,7 +117,6 @@ export class AnalyticService {
       this.displayNoConnectionAlert();
       this._isUp = false;
     }
-    return this._isUp;
   }
 
   async updateSegments(
@@ -248,8 +247,8 @@ export class AnalyticService {
   }
 
   async isDatasourceAvailable(): Promise<boolean> {
-    const connected = await this._isDatasourceOk();
-    if(!connected) {
+    await this._checkDatasourceAvailability();
+    if(!this._isUp) {
       return false;
     }
     const message = [
