@@ -284,6 +284,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       }
     });
 
+    // TODO: maybe it's not the best idea
     await this.onHasticDatasourceChange();
   }
 
