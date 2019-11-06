@@ -101,12 +101,19 @@ export class AnalyticService {
       this._isUp = false;
       return false;
     }
-    const response = await this.get('/');
-    if(!isHasticServerResponse(response)) {
-      this.displayWrongUrlAlert();
-      this._isUp = false;
-    } else if(!isSupportedServerVersion(response)) {
-      this.displayUnsupportedVersionAlert(response.packageVersion);
+    try {
+      const response = await this.get('/');
+      if(!isHasticServerResponse(response)) {
+        this.displayWrongUrlAlert();
+        this._isUp = false;
+      } else if(!isSupportedServerVersion(response)) {
+        this.displayUnsupportedVersionAlert(response.packageVersion);
+        this._isUp = false;
+      }
+
+      this._isUp = true;
+    } catch(e) {
+      this.displayNoConnectionAlert();
       this._isUp = false;
     }
     return this._isUp;

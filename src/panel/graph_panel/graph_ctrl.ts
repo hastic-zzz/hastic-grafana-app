@@ -330,10 +330,14 @@ class GraphCtrl extends MetricsPanelCtrl {
       this._analyticUnitsToShow
     );
 
-    await this.analyticsController.init();
+    if(this.analyticService.isUp) {
+      await this.analyticsController.init();
 
-    this._updatePanelInfo();
-    this.analyticsController.updateServerInfo();
+      this._updatePanelInfo();
+      this.analyticsController.updateServerInfo();
+    } else {
+      this.refresh()
+    }
 
     this._graphRenderer = new GraphRenderer(
       this.$graphElem, this.timeSrv, this.contextSrv, this.$scope, this.analyticsController
