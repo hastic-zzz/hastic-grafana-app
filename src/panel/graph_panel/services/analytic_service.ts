@@ -113,6 +113,7 @@ export class AnalyticService {
 
       this._isUp = true;
     } catch(e) {
+      console.error(e);
       this.displayNoConnectionAlert();
       this._isUp = false;
     }
