@@ -67,7 +67,10 @@ export class AnalyticController {
     this._labelingDataAddedSegments = new SegmentArray<AnalyticSegment>();
     this._labelingDataRemovedSegments = new SegmentArray<AnalyticSegment>();
     this._analyticUnitsSet = new AnalyticUnitsSet([]);
-    this.fetchAnalyticUnits();
+  }
+
+  async init() {
+    await this.fetchAnalyticUnits();
   }
 
   get helpSectionText() { return helpSectionText; }

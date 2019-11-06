@@ -250,8 +250,6 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.$graphElem = $(elem[0]).find('#graphPanel');
     this.$legendElem = $(elem[0]).find('#graphLegend');
 
-    this.onHasticDatasourceChange();
-
     this.events.on('render', this.onRender.bind(this));
     this.events.on('data-received', this.onDataReceived.bind(this));
     this.events.on('data-error', this.onDataError.bind(this));
@@ -285,6 +283,9 @@ class GraphCtrl extends MetricsPanelCtrl {
         this.refresh();
       }
     });
+
+    // TODO: maybe it's not the best idea
+    await this.onHasticDatasourceChange();
   }
 
   onInitEditMode() {
@@ -330,14 +331,21 @@ class GraphCtrl extends MetricsPanelCtrl {
       this._analyticUnitsToShow
     );
 
-    this._updatePanelInfo();
-    this.analyticsController.updateServerInfo();
+    if(this.analyticService.isUp) {
+      await this.analyticsController.init();
+
+      this._updatePanelInfo();
+      this.analyticsController.updateServerInfo();
+    }
 
     this._graphRenderer = new GraphRenderer(
       this.$graphElem, this.timeSrv, this.contextSrv, this.$scope, this.analyticsController
     );
     this._graphLegend = new GraphLegend(this.$legendElem, this.popoverSrv, this.$scope, this.analyticsController);
-    this.onRender();
+
+    if(!this.analyticService.isUp) {
+      this.refresh();
+    }
   }
 
   issueQueries(datasource) {
@@ -429,6 +437,7 @@ class GraphCtrl extends MetricsPanelCtrl {
         this._dataTimerange.to
       );
     }
+
     this.seriesList = seriesList;
     this.render();
 

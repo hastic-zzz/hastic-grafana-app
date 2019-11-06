@@ -96,20 +96,27 @@ export class AnalyticService {
     return this.delete('/analyticUnits', { id });
   }
 
-  private async _isDatasourceOk(): Promise<boolean> {
+  private async _checkDatasourceAvailability(): Promise<void> {
     if(!this._checkDatasourceConfig()) {
       this._isUp = false;
-      return false;
+      return;
     }
-    const response = await this.get('/');
-    if(!isHasticServerResponse(response)) {
-      this.displayWrongUrlAlert();
-      this._isUp = false;
-    } else if(!isSupportedServerVersion(response)) {
-      this.displayUnsupportedVersionAlert(response.packageVersion);
+    try {
+      const response = await this.get('/');
+      if(!isHasticServerResponse(response)) {
+        this.displayWrongUrlAlert();
+        this._isUp = false;
+      } else if(!isSupportedServerVersion(response)) {
+        this.displayUnsupportedVersionAlert(response.packageVersion);
+        this._isUp = false;
+      }
+
+      this._isUp = true;
+    } catch(e) {
+      console.error(e);
+      this.displayNoConnectionAlert();
       this._isUp = false;
     }
-    return this._isUp;
   }
 
   async updateSegments(
@@ -240,8 +247,8 @@ export class AnalyticService {
   }
 
   async isDatasourceAvailable(): Promise<boolean> {
-    const connected = await this._isDatasourceOk();
-    if(!connected) {
+    await this._checkDatasourceAvailability();
+    if(!this._isUp) {
       return false;
     }
     const message = [
