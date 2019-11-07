@@ -657,7 +657,10 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   onAnalyticUnitChange(analyticUnit: AnalyticUnit) {
-    this.analyticsController.toggleAnalyticUnitChange(analyticUnit, true);
+    if(analyticUnit.isValid) {
+      this.analyticsController.toggleAnalyticUnitChange(analyticUnit, true);
+    }
+    // TODO: lock "Apply" button if analytic unit config is not valid
   }
 
   async onAnalyticUnitSave(analyticUnit: AnalyticUnit) {

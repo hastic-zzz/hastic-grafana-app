@@ -5,6 +5,8 @@ import { DetectionSpan } from '../detection';
 
 import { ANALYTIC_UNIT_COLORS, DEFAULT_DELETED_SEGMENT_COLOR } from '../../colors';
 
+import { appEvents } from 'grafana/app/core/core';
+
 import _ from 'lodash';
 
 
@@ -186,10 +188,26 @@ export class AnalyticUnit {
     return true;
   }
 
+  get isValid(): boolean {
+    return true;
+  }
+
   get serverObject() { return this._serverObject; }
 
   // TODO: make it abstract
   get labelingModes() {
     return LABELING_MODES;
+  }
+
+  protected checkFieldValidity(fieldChecker: () => boolean, errorMessage: string): boolean {
+    const isValid = fieldChecker();
+    if(!isValid) {
+      appEvents.emit(
+        'alert-warning',
+        [`Wrong "${this.name}" config`, errorMessage]
+      );
+    }
+
+    return isValid;
   }
 }

@@ -87,6 +87,15 @@ export class AnomalyAnalyticUnit extends AnalyticUnit {
     return this.seasonality > 0;
   }
 
+  get isValid(): boolean {
+    const isAlphaValid = this.checkFieldValidity(
+      () => this.alpha >= 0 && this.alpha <= 1,
+      `Alpha must be between 0 and 1.`
+    );
+
+    return isAlphaValid;
+  }
+
   get labelingModes() {
     return LABELING_MODES;
   }
