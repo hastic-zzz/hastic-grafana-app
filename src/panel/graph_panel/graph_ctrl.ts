@@ -343,9 +343,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     );
     this._graphLegend = new GraphLegend(this.$legendElem, this.popoverSrv, this.$scope, this.analyticsController);
 
-    if(!this.analyticService.isUp) {
-      this.refresh();
-    }
+    this.refresh();
   }
 
   issueQueries(datasource) {
