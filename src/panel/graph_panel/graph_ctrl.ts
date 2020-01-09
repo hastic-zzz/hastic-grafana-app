@@ -623,6 +623,24 @@ class GraphCtrl extends MetricsPanelCtrl {
   async runDetectInCurrentRange(analyticUnit: AnalyticUnit) {
     const { from, to } = this.rangeTimestamp;
 
+    if(analyticUnit.status === 'LEARNING' || analyticUnit.saving) {
+      let modalScope = this.$scope.$new(true);
+      modalScope.confirm = async () => {
+        if(analyticUnit.changed) {
+          await this.onAnalyticUnitSave(analyticUnit);
+        }
+        this.analyticsController.runDetect(
+          analyticUnit.id,
+          from, to
+        )
+      };
+      appEvents.emit('show-modal', {
+        src: `${this.partialsPath}/relearning_confirmation.html`,
+        scope: modalScope
+      });
+      return;
+    }
+
     if(analyticUnit.changed) {
       await this.onAnalyticUnitSave(analyticUnit);
     }

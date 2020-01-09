@@ -1,0 +1,27 @@
+<div class="modal-body" ng-cloak>
+  <div class="modal-header">
+    <h2 class="modal-header-title">
+      <i class="fa"></i>
+      <span class="p-l-1">
+        Confirm re-learning
+      </span>
+    </h2>
+
+    <a class="modal-header-close" ng-click="dismiss()">
+      <i class="fa fa-remove"></i>
+    </a>
+  </div>
+  
+  <div class="modal-content text-center">
+    <div class="confirm-modal-text">
+      <span>
+        Analytic is learning. Do you want to cancel it and re-learn?
+      </span>
+    </div>
+
+    <div class="confirm-modal-buttons">
+      <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+      <button type="button" class="btn btn-danger btn-ok" data-dismiss="modal" ng-click="confirm()">Yes</button>
+    </div>
+  </div>
+</div>
