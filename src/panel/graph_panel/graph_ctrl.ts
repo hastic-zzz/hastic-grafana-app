@@ -644,14 +644,6 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.analyticsController.runDetect(
       analyticUnit.id,
       from, to
-    )
-
-    if(analyticUnit.changed) {
-      await this.onAnalyticUnitSave(analyticUnit);
-    }
-    this.analyticsController.runDetect(
-      analyticUnit.id,
-      from, to
     );
   }
 
