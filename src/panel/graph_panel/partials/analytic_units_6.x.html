@@ -115,6 +115,7 @@
 
       <button class="query-editor-row__action"
         ng-click="ctrl.runDetectInCurrentRange(analyticUnit)"
+        ng-disabled="analyticUnit.saving"
         bs-tooltip="'Learn & Detect'"
       >
         <a class="pointer">
