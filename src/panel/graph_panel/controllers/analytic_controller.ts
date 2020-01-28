@@ -115,6 +115,10 @@ export class AnalyticController {
     this._creatingNewAnalyticUnit = false;
   }
 
+  async exportAnalyticUnits(): Promise<object> {
+    return this._analyticService.exportAnalyticUnits(this._panelId);
+  }
+
   async saveNew(metric: MetricExpanded, datasource: DatasourceRequest) {
     this._savingNewAnalyticUnit = true;
     const newAnalyticUnit = createAnalyticUnit(this._newAnalyticUnit.toJSON());
