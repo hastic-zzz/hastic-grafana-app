@@ -302,9 +302,10 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.subTabIndex = 0;
   }
 
-  onInitPanelActions(actions) {
+  onInitPanelActions(actions: { text: string, click: string }[]): void {
     actions.push({ text: 'Export CSV', click: 'ctrl.exportCsv()' });
     actions.push({ text: 'Toggle legend', click: 'ctrl.toggleLegend()' });
+    actions.push({ text: 'Export analytic units', click: 'ctrl.exportAnalyticUnits()' });
   }
 
   async onHasticDatasourceChange() {
@@ -549,6 +550,14 @@ class GraphCtrl extends MetricsPanelCtrl {
       templateHtml: '<export-data-modal data="seriesList"></export-data-modal>',
       scope,
       modalClass: 'modal--narrow',
+    });
+  }
+
+  async exportAnalyticUnits(): Promise<void> {
+    const json = await this.analyticsController.exportAnalyticUnits();
+    this.publishAppEvent('show-modal', {
+      src: 'public/app/partials/edit_json.html',
+      model: { object: json, enableCopy: true }
     });
   }
 
