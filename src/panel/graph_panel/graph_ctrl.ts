@@ -18,6 +18,8 @@ import { MetricsPanelCtrl } from 'grafana/app/plugins/sdk';
 import { appEvents } from 'grafana/app/core/core'
 import { BackendSrv } from 'grafana/app/core/services/backend_srv';
 
+import angular from 'angular';
+
 import _ from 'lodash';
 
 
@@ -64,6 +66,8 @@ class GraphCtrl extends MetricsPanelCtrl {
     from?: number,
     to?: number
   };
+
+  public panelTemplate = {};
 
   panelDefaults = {
     // datasource name, null = default datasource
@@ -305,7 +309,8 @@ class GraphCtrl extends MetricsPanelCtrl {
   onInitPanelActions(actions: { text: string, click: string }[]): void {
     actions.push({ text: 'Export CSV', click: 'ctrl.exportCsv()' });
     actions.push({ text: 'Toggle legend', click: 'ctrl.toggleLegend()' });
-    actions.push({ text: 'Export analytic units', click: 'ctrl.exportAnalyticUnits()' });
+    actions.push({ text: 'Export analytic units', click: 'ctrl.exportPanel()' });
+    actions.push({ text: 'Import analytic units', click: 'ctrl.displayImportPanelModal()' });
   }
 
   async onHasticDatasourceChange() {
@@ -553,12 +558,46 @@ class GraphCtrl extends MetricsPanelCtrl {
     });
   }
 
-  async exportAnalyticUnits(): Promise<void> {
-    const json = await this.analyticsController.exportAnalyticUnits();
+  async exportPanel(): Promise<void> {
+    const json = await this.analyticsController.exportPanel();
     this.publishAppEvent('show-modal', {
       src: 'public/app/partials/edit_json.html',
       model: { object: json, enableCopy: true }
     });
+  }
+
+  async displayImportPanelModal(): Promise<void> {
+    const modalScope = this.$scope.$new(true);
+
+    const prettify = true;
+    modalScope.panelTemplate = angular.toJson({}, prettify);
+    modalScope.import = async (
+      panelTemplate: string,
+      grafanaUrl: string,
+      panelId: string,
+      datasourceUrl: string
+    ) => {
+      // TODO: use template variables from form
+      await this.importPanel(JSON.parse(panelTemplate), {
+        grafanaUrl: this._grafanaUrl,
+        panelId: this._panelId,
+        datasourceUrl: this._datasourceRequest.url
+      });
+    };
+
+    this.publishAppEvent('show-modal', {
+      src: `${this.partialsPath}/import_panel.html`,
+      scope: modalScope
+    });
+  }
+
+  // TODO: not any
+  async importPanel(
+    panelTemplate: any,
+    templateVariables: { grafanaUrl: string, panelId: string, datasourceUrl: string }
+  ): Promise<void> {
+    // TODO: show import errors properly
+    await this.analyticsController.importPanel(panelTemplate, templateVariables);
   }
 
   // getAnnotationsByTag(tag) {

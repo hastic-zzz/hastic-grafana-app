@@ -61,12 +61,19 @@ export class AnalyticService {
     return resp.analyticUnits;
   }
 
-  async exportAnalyticUnits(panelId: string): Promise<object> {
+  async exportPanel(panelId: string): Promise<object> {
     const resp = await this.get('/panels/template', { panelId });
     if(resp === undefined) {
       return {};
     }
     return resp;
+  }
+
+  async importPanel(
+    panelTemplate: any,
+    templateVariables: { grafanaUrl: string, panelId: string, datasourceUrl: string }
+  ): Promise<void> {
+    await this.post('/panels/template', { panelTemplate, templateVariables });
   }
 
   async postNewAnalyticUnit(

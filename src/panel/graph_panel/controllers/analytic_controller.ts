@@ -115,8 +115,15 @@ export class AnalyticController {
     this._creatingNewAnalyticUnit = false;
   }
 
-  async exportAnalyticUnits(): Promise<object> {
-    return this._analyticService.exportAnalyticUnits(this._panelId);
+  async exportPanel(): Promise<object> {
+    return this._analyticService.exportPanel(this._panelId);
+  }
+
+  async importPanel(
+    panelTemplate: any,
+    templateVariables: { grafanaUrl: string, panelId: string, datasourceUrl: string }
+  ): Promise<void> {
+    return this._analyticService.importPanel(panelTemplate, templateVariables);
   }
 
   async saveNew(metric: MetricExpanded, datasource: DatasourceRequest) {
