@@ -115,7 +115,7 @@ export class AnalyticController {
     this._creatingNewAnalyticUnit = false;
   }
 
-  async exportPanel(): Promise<object> {
+  async exportPanel(): Promise<any> {
     return this._analyticService.exportPanel(this._panelId);
   }
 

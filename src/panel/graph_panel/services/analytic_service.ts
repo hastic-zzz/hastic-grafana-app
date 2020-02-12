@@ -61,7 +61,7 @@ export class AnalyticService {
     return resp.analyticUnits;
   }
 
-  async exportPanel(panelId: string): Promise<object> {
+  async exportPanel(panelId: string): Promise<any> {
     const resp = await this.get('/panels/template', { panelId });
     if(resp === undefined) {
       return {};
