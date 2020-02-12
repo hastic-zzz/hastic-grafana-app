@@ -5,6 +5,7 @@ import { SegmentsSet } from '../models/segment_set';
 import { AnalyticUnitId, AnalyticUnit, AnalyticSegment } from '../models/analytic_units/analytic_unit';
 import { HasticServerInfo, HasticServerInfoUnknown } from '../models/hastic_server_info';
 import { DetectionSpan } from '../models/detection';
+import { PanelTemplate, TemplateVariables } from '../models/panel';
 
 import { isHasticServerResponse, isSupportedServerVersion, SUPPORTED_SERVER_VERSION } from '../../../utils';
 
@@ -61,7 +62,7 @@ export class AnalyticService {
     return resp.analyticUnits;
   }
 
-  async exportPanel(panelId: string): Promise<any> {
+  async exportPanel(panelId: string): Promise<PanelTemplate> {
     const resp = await this.get('/panels/template', { panelId });
     if(resp === undefined) {
       return {};
@@ -70,8 +71,8 @@ export class AnalyticService {
   }
 
   async importPanel(
-    panelTemplate: any,
-    templateVariables: { grafanaUrl: string, panelId: string, datasourceUrl: string }
+    panelTemplate: PanelTemplate,
+    templateVariables: TemplateVariables
   ): Promise<void> {
     await this.post('/panels/template', { panelTemplate, templateVariables });
   }

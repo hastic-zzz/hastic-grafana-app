@@ -17,6 +17,7 @@ import { SegmentArray } from '../models/segment_array';
 import { HasticServerInfo, HasticServerInfoUnknown } from '../models/hastic_server_info';
 import { Condition } from '../models/analytic_units/threshold_analytic_unit';
 import { DetectionStatus, DETECTION_STATUS_TEXT, DetectionSpan } from '../models/detection';
+import { PanelTemplate, TemplateVariables } from '../models/panel';
 import { createAnalyticUnit } from '../models/analytic_units/utils';
 import helpSectionText from '../partials/help_section.html';
 
@@ -115,13 +116,13 @@ export class AnalyticController {
     this._creatingNewAnalyticUnit = false;
   }
 
-  async exportPanel(): Promise<any> {
+  async exportPanel(): Promise<PanelTemplate> {
     return this._analyticService.exportPanel(this._panelId);
   }
 
   async importPanel(
-    panelTemplate: any,
-    templateVariables: { grafanaUrl: string, panelId: string, datasourceUrl: string }
+    panelTemplate: PanelTemplate,
+    templateVariables: TemplateVariables
   ): Promise<void> {
     return this._analyticService.importPanel(panelTemplate, templateVariables);
   }

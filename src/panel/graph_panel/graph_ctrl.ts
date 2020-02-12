@@ -12,6 +12,7 @@ import { BOUND_TYPES } from './models/analytic_units/anomaly_analytic_unit';
 import { AnalyticService } from './services/analytic_service';
 import { AnalyticController } from './controllers/analytic_controller';
 import { HasticPanelInfo } from './models/hastic_panel_info';
+import { PanelTemplate, TemplateVariables } from './models/panel';
 import { axesEditorComponent } from './axes_editor';
 
 import { MetricsPanelCtrl } from 'grafana/app/plugins/sdk';
@@ -67,7 +68,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     to?: number
   };
 
-  public panelTemplate = {};
+  public panelTemplate: PanelTemplate = {};
 
   panelDefaults = {
     // datasource name, null = default datasource
@@ -559,10 +560,10 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   async exportPanel(): Promise<void> {
-    const json = await this.analyticsController.exportPanel();
+    const panelTemplate = await this.analyticsController.exportPanel();
     this.publishAppEvent('show-modal', {
       src: 'public/app/partials/edit_json.html',
-      model: { object: json, enableCopy: true }
+      model: { object: panelTemplate, enableCopy: true }
     });
   }
 
@@ -591,11 +592,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     });
   }
 
-  // TODO: not any
-  async importPanel(
-    panelTemplate: any,
-    templateVariables: { grafanaUrl: string, panelId: string, datasourceUrl: string }
-  ): Promise<void> {
+  async importPanel(panelTemplate: PanelTemplate, templateVariables: TemplateVariables): Promise<void> {
     // TODO: show import errors properly
     await this.analyticsController.importPanel(panelTemplate, templateVariables);
   }
