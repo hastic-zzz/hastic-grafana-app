@@ -578,12 +578,37 @@ class GraphCtrl extends MetricsPanelCtrl {
       panelId: string,
       datasourceUrl: string
     ) => {
-      // TODO: use template variables from form
-      await this.importPanel(JSON.parse(panelTemplate), {
-        grafanaUrl: this._grafanaUrl,
-        panelId: this._panelId,
-        datasourceUrl: this._datasourceRequest.url
-      });
+      try {
+        // TODO: use template variables from form (or not?)
+        await this.importPanel(JSON.parse(panelTemplate), {
+          grafanaUrl: this._grafanaUrl,
+          panelId: this._panelId,
+          datasourceUrl: this._datasourceRequest.url
+        });
+
+        appEvents.emit(
+          'alert-success',
+          [
+            // TODO: analytic units count?
+            'Analytic units are imported successfully'
+          ]
+        );
+
+        await this.onHasticDatasourceChange();
+      } catch(e) {
+        let status = e.status !== undefined ? `Status code: ${e.status}` : '';
+        let message = e.message;
+        if(e.data !== undefined && e.data.message !== undefined) {
+          message = e.data.message;
+        }
+        appEvents.emit(
+          'alert-error',
+          [
+            `Error while importing analytic units. ${status}`,
+            message
+          ]
+        );
+      }
     };
 
     this.publishAppEvent('show-modal', {
@@ -594,7 +619,7 @@ class GraphCtrl extends MetricsPanelCtrl {
 
   async importPanel(panelTemplate: PanelTemplate, templateVariables: TemplateVariables): Promise<void> {
     // TODO: show import errors properly
-    await this.analyticsController.importPanel(panelTemplate, templateVariables);
+    return this.analyticsController.importPanel(panelTemplate, templateVariables);
   }
 
   // getAnnotationsByTag(tag) {
