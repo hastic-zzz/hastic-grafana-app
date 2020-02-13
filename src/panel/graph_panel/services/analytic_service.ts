@@ -74,7 +74,8 @@ export class AnalyticService {
     panelTemplate: PanelTemplate,
     templateVariables: TemplateVariables
   ): Promise<void> {
-    await this.post('/panels/template', { panelTemplate, templateVariables });
+    const rawError = true;
+    return this.post('/panels/template', { panelTemplate, templateVariables }, rawError);
   }
 
   async postNewAnalyticUnit(
@@ -286,7 +287,7 @@ export class AnalyticService {
     return this.post('/analyticUnits/detect', { ids, from, to });
   }
 
-  private async _analyticRequest(method: string, url: string, data?: any) {
+  private async _analyticRequest(method: string, url: string, data?: any, rawError: boolean = false) {
     try {
       method = method.toUpperCase();
       url = this._hasticDatasourceURL + url;
@@ -300,6 +301,9 @@ export class AnalyticService {
       this._isUp = true;
       return response.data;
     } catch(error) {
+      if(rawError) {
+        throw error;
+      }
       // xhrStatus may be one of: ('complete', 'error', 'timeout' or 'abort')
       // See: https://github.com/angular/angular.js/blob/55075b840c9194b8524627a293d6166528b9a1c2/src/ng/http.js#L919-L920
       if(error.xhrStatus !== 'complete' || error.status > 500) {
@@ -334,20 +338,20 @@ export class AnalyticService {
     return true;
   }
 
-  private async get(url, params?) {
-    return this._analyticRequest('GET', url, params);
+  private async get(url: string, params?: any, rawError: boolean = false): Promise<any> {
+    return this._analyticRequest('GET', url, params, rawError);
   }
 
-  private async post(url, data?) {
-    return this._analyticRequest('POST', url, data);
+  private async post(url: string, data?: any, rawError: boolean = false): Promise<any> {
+    return this._analyticRequest('POST', url, data, rawError);
   }
 
-  private async patch(url, data?) {
-    return this._analyticRequest('PATCH', url, data);
+  private async patch(url: string, data?: any, rawError: boolean = false): Promise<any> {
+    return this._analyticRequest('PATCH', url, data, rawError);
   }
 
-  private async delete(url, data?) {
-    return this._analyticRequest('DELETE', url, data);
+  private async delete(url: string, data?: any, rawError: boolean = false): Promise<any> {
+    return this._analyticRequest('DELETE', url, data, rawError);
   }
 
   private displayNoConnectionAlert() {
