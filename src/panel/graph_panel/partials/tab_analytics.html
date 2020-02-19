@@ -10,13 +10,7 @@
 </div>
 
 <div>
-  <div class="gf-form-button-row" ng-if="ctrl.analyticsController.serverStatus === false">
-    <h5>Hastic server at "{{ctrl.hasticDatasource.url}}" is not available</h5>
-    <button class="btn btn-inverse" ng-click="ctrl.onHasticDatasourceChange()">
-      <i class="fa fa-plug"></i>
-      Reconnect to Hastic server
-    </button>
-  </div>
+  <ng-include src="ctrl.partialsPath + '/reconnect_to_datasource.html'" />
 
   <div ng-if="ctrl.analyticsController.serverStatus === true && !ctrl.analyticsController.loading">
     <ng-include src="ctrl.getTemplatePath('analytic_units')">
