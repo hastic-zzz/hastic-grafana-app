@@ -306,9 +306,9 @@ export class AnalyticService {
         // -1 usually means the request was aborted, e.g. using a config.timeout
         // See: https://docs.angularjs.org/api/ng/service/$http#$http-returns
         if(error.status === 504 || error.status === -1) {
-          this.displayConnectionTimeoutAlert(statusText);
+          this._displayConnectionTimeoutAlert(statusText);
         } else {
-          this.displayNoConnectionAlert(statusText);
+          this._displayNoConnectionAlert(statusText);
         }
         this._isUp = false;
         throw new Error(`Fetching error: ${statusText}`);
@@ -352,7 +352,7 @@ export class AnalyticService {
     return this._analyticRequest('DELETE', url, data);
   }
 
-  private displayNoConnectionAlert(statusText: string) {
+  private _displayNoConnectionAlert(statusText: string): void {
     const message = [
       `No connection to Hastic Server. Status: ${statusText}`,
       `Hastic Datasource URL: "${this._hasticDatasourceURL}"`,
@@ -360,7 +360,7 @@ export class AnalyticService {
     this._displayConnectionAlert(HasticDatasourceStatus.NOT_AVAILABLE, message);
   }
 
-  private displayConnectionTimeoutAlert(statusText: string) {
+  private _displayConnectionTimeoutAlert(statusText: string): void {
     const message = [
       `Timeout when connecting to Hastic Server. Status: ${statusText}`,
       `Hastic Datasource URL: "${this._hasticDatasourceURL}"`,
@@ -368,7 +368,7 @@ export class AnalyticService {
     this._displayConnectionAlert(HasticDatasourceStatus.NOT_AVAILABLE, message);
   }
 
-  private displayWrongUrlAlert() {
+  private displayWrongUrlAlert(): void {
     const message = [
       'Please check Hastic Server URL',
       `Something is working at "${this._hasticDatasourceURL}" but it's not Hastic Server`,
@@ -376,7 +376,7 @@ export class AnalyticService {
     this._displayConnectionAlert(HasticDatasourceStatus.NOT_AVAILABLE, message);
   }
 
-  private displayUnsupportedVersionAlert(actual: string) {
+  private displayUnsupportedVersionAlert(actual: string): void {
     const message = [
       'Unsupported Hastic Server version',
       `Hastic Server at "${this._hasticDatasourceURL}" has unsupported version (got ${actual}, should be ${SUPPORTED_SERVER_VERSION})`,
