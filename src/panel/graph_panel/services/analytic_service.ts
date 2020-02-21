@@ -112,26 +112,30 @@ export class AnalyticService {
     return this.delete('/analyticUnits', { id });
   }
 
-  private async _checkDatasourceAvailability(): Promise<void> {
+  private async _isDatasourceAvailable(): Promise<boolean> {
     if(!this._checkDatasourceConfig()) {
-      this._isUp = false;
-      return;
+      return false;
     }
     try {
       const response = await this.get('/');
       if(!isHasticServerResponse(response)) {
         this.displayWrongUrlAlert();
-        this._isUp = false;
+        return false
       } else if(!isSupportedServerVersion(response)) {
         this.displayUnsupportedVersionAlert(response.packageVersion);
-        this._isUp = false;
+        return false;
       }
 
-      this._isUp = true;
+      const message = [
+        'Connected to Hastic Datasource',
+        `Hastic datasource URL: "${this._hasticDatasourceURL}"`
+      ];
+      this._displayConnectionAlert(HasticDatasourceStatus.AVAILABLE, message);
+
+      return true;
     } catch(e) {
       console.error(e);
-      this.displayNoConnectionAlert();
-      this._isUp = false;
+      return false;
     }
   }
 
@@ -262,17 +266,9 @@ export class AnalyticService {
     });
   }
 
-  async isDatasourceAvailable(): Promise<boolean> {
-    await this._checkDatasourceAvailability();
-    if(!this._isUp) {
-      return false;
-    }
-    const message = [
-      'Connected to Hastic Datasource',
-      `Hastic datasource URL: "${this._hasticDatasourceURL}"`
-    ];
-    this._displayConnectionAlert(HasticDatasourceStatus.AVAILABLE, message);
-    return true;
+  async checkDatasourceAvailability(): Promise<boolean> {
+    this._isUp = await this._isDatasourceAvailable();
+    return this._isUp;
   }
 
   async updateAnalyticUnit(updateObj: any) {
@@ -303,13 +299,19 @@ export class AnalyticService {
       // xhrStatus may be one of: ('complete', 'error', 'timeout' or 'abort')
       // See: https://github.com/angular/angular.js/blob/55075b840c9194b8524627a293d6166528b9a1c2/src/ng/http.js#L919-L920
       if(error.xhrStatus !== 'complete' || error.status > 500) {
-        if(error.status === 504) {
-          this.displayConnectionTimeoutAlert();
+        let statusText = error.status;
+        if (error.statusText !== '') {
+          status += ` (${error.statusText})`;
+        }
+        // -1 usually means the request was aborted, e.g. using a config.timeout
+        // See: https://docs.angularjs.org/api/ng/service/$http#$http-returns
+        if(error.status === 504 || error.status === -1) {
+          this._displayConnectionTimeoutAlert(statusText);
         } else {
-          this.displayNoConnectionAlert();
+          this._displayNoConnectionAlert(statusText);
         }
         this._isUp = false;
-        throw new Error(`Fetching error: ${error.status}: ${error.statusText}`);
+        throw new Error(`Fetching error: ${statusText}`);
       } else {
         this._isUp = true;
       }
@@ -350,23 +352,23 @@ export class AnalyticService {
     return this._analyticRequest('DELETE', url, data);
   }
 
-  private displayNoConnectionAlert() {
+  private _displayNoConnectionAlert(statusText: string): void {
     const message = [
-      'No connection to Hastic Server',
+      `No connection to Hastic Server. Status: ${statusText}`,
       `Hastic Datasource URL: "${this._hasticDatasourceURL}"`,
     ]
     this._displayConnectionAlert(HasticDatasourceStatus.NOT_AVAILABLE, message);
   }
 
-  private displayConnectionTimeoutAlert() {
+  private _displayConnectionTimeoutAlert(statusText: string): void {
     const message = [
-      'Timeout when connecting to Hastic Server',
+      `Timeout when connecting to Hastic Server. Status: ${statusText}`,
       `Hastic Datasource URL: "${this._hasticDatasourceURL}"`,
     ]
     this._displayConnectionAlert(HasticDatasourceStatus.NOT_AVAILABLE, message);
   }
 
-  private displayWrongUrlAlert() {
+  private displayWrongUrlAlert(): void {
     const message = [
       'Please check Hastic Server URL',
       `Something is working at "${this._hasticDatasourceURL}" but it's not Hastic Server`,
@@ -374,7 +376,7 @@ export class AnalyticService {
     this._displayConnectionAlert(HasticDatasourceStatus.NOT_AVAILABLE, message);
   }
 
-  private displayUnsupportedVersionAlert(actual: string) {
+  private displayUnsupportedVersionAlert(actual: string): void {
     const message = [
       'Unsupported Hastic Server version',
       `Hastic Server at "${this._hasticDatasourceURL}" has unsupported version (got ${actual}, should be ${SUPPORTED_SERVER_VERSION})`,
@@ -386,7 +388,7 @@ export class AnalyticService {
     return this._isUp;
   }
 
-  private _displayConnectionAlert(status: HasticDatasourceStatus, message: string[]) {
+  private _displayConnectionAlert(status: HasticDatasourceStatus, message: string[]): void {
     const statusChanged = this._updateHasticUrlStatus(status);
 
     if(!statusChanged) {
