@@ -266,8 +266,9 @@ export class AnalyticService {
     });
   }
 
-  async checkDatasourceAvailability(): Promise<void> {
+  async checkDatasourceAvailability(): Promise<boolean> {
     this._isUp = await this._isDatasourceAvailable();
+    return this._isUp;
   }
 
   async updateAnalyticUnit(updateObj: any) {
