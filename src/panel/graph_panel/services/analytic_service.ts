@@ -15,7 +15,7 @@ import * as _ from 'lodash';
 
 
 declare global {
-  interface Window { hasticDatasourcesAvailability: { [key: string]: HasticDatasourceAvailability } }
+  interface Window { hasticDatasourcesAvailability: { [key: string]: HasticDatasourceStatus } }
 }
 
 // TODO: TableTimeSeries is bad name
@@ -24,21 +24,21 @@ export type TableTimeSeries = {
   columns: string[];
 };
 
-export enum HasticDatasourceAvailability {
+export enum HasticDatasourceStatus {
   AVAILABLE = 'success',
   NOT_AVAILABLE = 'error'
 };
 
-export type HasticDatasourceStatus = {
+export type HasticDatasourceTestingStatus = {
   testing: boolean,
-  availability: HasticDatasourceAvailability,
+  status: HasticDatasourceStatus,
   message: string
 }
 
 export class AnalyticService {
-  public hasticDatasourceStatus: HasticDatasourceStatus = {
+  public testingStatus: HasticDatasourceTestingStatus = {
     testing: false,
-    availability: HasticDatasourceAvailability.NOT_AVAILABLE,
+    status: HasticDatasourceStatus.NOT_AVAILABLE,
     message: ''
   };
 
@@ -137,7 +137,7 @@ export class AnalyticService {
         'Connected to Hastic Datasource',
         `Hastic datasource URL: "${this._hasticDatasourceURL}"`
       ];
-      this._displayConnectionAlert(HasticDatasourceAvailability.AVAILABLE, message);
+      this._displayConnectionAlert(HasticDatasourceStatus.AVAILABLE, message);
 
       return true;
     } catch(e) {
@@ -274,11 +274,11 @@ export class AnalyticService {
   }
 
   async checkDatasourceAvailability(): Promise<boolean> {
-    this.hasticDatasourceStatus.testing = true;
+    this.testingStatus.testing = true;
 
     this._isUp = await this._isDatasourceAvailable();
 
-    this.hasticDatasourceStatus.testing = false;
+    this.testingStatus.testing = false;
     return this._isUp;
   }
 
@@ -368,7 +368,7 @@ export class AnalyticService {
       `No connection to Hastic Server. Status: ${statusText}`,
       `Hastic Datasource URL: "${this._hasticDatasourceURL}"`,
     ]
-    this._displayConnectionAlert(HasticDatasourceAvailability.NOT_AVAILABLE, message);
+    this._displayConnectionAlert(HasticDatasourceStatus.NOT_AVAILABLE, message);
   }
 
   private _displayConnectionTimeoutAlert(statusText: string): void {
@@ -376,7 +376,7 @@ export class AnalyticService {
       `Timeout when connecting to Hastic Server. Status: ${statusText}`,
       `Hastic Datasource URL: "${this._hasticDatasourceURL}"`,
     ]
-    this._displayConnectionAlert(HasticDatasourceAvailability.NOT_AVAILABLE, message);
+    this._displayConnectionAlert(HasticDatasourceStatus.NOT_AVAILABLE, message);
   }
 
   private displayWrongUrlAlert(): void {
@@ -384,7 +384,7 @@ export class AnalyticService {
       'Please check Hastic Server URL',
       `Something is working at "${this._hasticDatasourceURL}" but it's not Hastic Server`,
     ]
-    this._displayConnectionAlert(HasticDatasourceAvailability.NOT_AVAILABLE, message);
+    this._displayConnectionAlert(HasticDatasourceStatus.NOT_AVAILABLE, message);
   }
 
   private displayUnsupportedVersionAlert(actual: string): void {
@@ -392,16 +392,16 @@ export class AnalyticService {
       'Unsupported Hastic Server version',
       `Hastic Server at "${this._hasticDatasourceURL}" has unsupported version (got ${actual}, should be ${SUPPORTED_SERVER_VERSION})`,
     ]
-    this._displayConnectionAlert(HasticDatasourceAvailability.NOT_AVAILABLE, message);
+    this._displayConnectionAlert(HasticDatasourceStatus.NOT_AVAILABLE, message);
   }
 
   public get isUp(): boolean {
     return this._isUp;
   }
 
-  private _displayConnectionAlert(status: HasticDatasourceAvailability, message: string[]): void {
-    this.hasticDatasourceStatus.availability = status;
-    this.hasticDatasourceStatus.message = message.join('<br /> ');
+  private _displayConnectionAlert(status: HasticDatasourceStatus, message: string[]): void {
+    this.testingStatus.status = status;
+    this.testingStatus.message = message.join('<br /> ');
 
     const statusChanged = this._updateHasticUrlStatus(status);
 
@@ -419,7 +419,7 @@ export class AnalyticService {
    * Updates hastic datasource status
    * @returns true if status has been changed
    */
-  private _updateHasticUrlStatus(status: HasticDatasourceAvailability): boolean {
+  private _updateHasticUrlStatus(status: HasticDatasourceStatus): boolean {
     if(!window.hasOwnProperty('hasticDatasourcesAvailability')) {
       window.hasticDatasourcesAvailability = {};
     }
