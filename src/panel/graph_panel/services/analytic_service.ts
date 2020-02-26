@@ -277,7 +277,6 @@ export class AnalyticService {
     this.testingStatus.message = 'Testing...';
 
     this._isUp = await this._isDatasourceAvailable();
-
     return this._isUp;
   }
 
