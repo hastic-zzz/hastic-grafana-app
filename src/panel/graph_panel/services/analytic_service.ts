@@ -31,7 +31,7 @@ export enum HasticDatasourceAvailability {
 
 export type HasticDatasourceStatus = {
   testing: boolean,
-  availability: string,
+  availability: HasticDatasourceAvailability,
   message: string
 }
 
