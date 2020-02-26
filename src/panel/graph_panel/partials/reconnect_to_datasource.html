@@ -2,7 +2,7 @@
   <div class="gf-form-group">
     <div class="alert-{{ctrl.testingStatus.status}} alert"">
       <div class="alert-icon">
-        <i class="fa fa-spiner fa-spin" ng-show="ctrl.testingStatus.testing"></i>
+        <i class="fa fa-spiner fa-spin" ng-show="ctrl.testingStatus.status === 'info'"></i>
         <i class="fa fa-exclamation-triangle" ng-show="ctrl.testingStatus.status === 'error'"></i>
         <i class="fa fa-check" ng-show="ctrl.testingStatus.status !== 'error'"></i>
       </div>
@@ -10,7 +10,7 @@
         <div class="alert-title" ng-bind-html="ctrl.testingStatus.message" />
       </div>
     </div>
-    <div ng-hide="ctrl.testingStatus.testing">
+    <div ng-hide="ctrl.testingStatus.status === 'info'">
       <button class="btn btn-secondary" ng-click="ctrl.onHasticDatasourceChange()">
         <i class="fa fa-plug"></i>
         &nbsp; Connect to Hastic Datasource

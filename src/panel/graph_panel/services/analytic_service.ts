@@ -26,20 +26,19 @@ export type TableTimeSeries = {
 
 export enum HasticDatasourceStatus {
   AVAILABLE = 'success',
-  NOT_AVAILABLE = 'error'
+  NOT_AVAILABLE = 'error',
+  TESTING = 'info'
 };
 
 export type HasticDatasourceTestingStatus = {
-  testing: boolean,
   status: HasticDatasourceStatus,
   message: string
 }
 
 export class AnalyticService {
   public testingStatus: HasticDatasourceTestingStatus = {
-    testing: false,
-    status: HasticDatasourceStatus.NOT_AVAILABLE,
-    message: ''
+    status: HasticDatasourceStatus.TESTING,
+    message: 'Testing...'
   };
 
   private _isUp: boolean = false;
@@ -274,11 +273,11 @@ export class AnalyticService {
   }
 
   async checkDatasourceAvailability(): Promise<boolean> {
-    this.testingStatus.testing = true;
+    this.testingStatus.status = HasticDatasourceStatus.TESTING;
+    this.testingStatus.message = 'Testing...';
 
     this._isUp = await this._isDatasourceAvailable();
 
-    this.testingStatus.testing = false;
     return this._isUp;
   }
 
