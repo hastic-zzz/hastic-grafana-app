@@ -342,18 +342,16 @@ class GraphCtrl extends MetricsPanelCtrl {
       appEvents.emit(
         'alert-warning',
         [
-          `Hastic Datasource is missing.`,
           `Please select Hastic Datasource.`
         ]
       );
-      throw new Error('Select Hastic Datasource');
-    }
+    } else {
+      if (this.analyticService.isUp) {
+        await this.analyticsController.init();
 
-    if(this.analyticService.isUp) {
-      await this.analyticsController.init();
-
-      this._updatePanelInfo();
-      this.analyticsController.updateServerInfo();
+        this._updatePanelInfo();
+        this.analyticsController.updateServerInfo();
+      }
     }
 
     this._graphRenderer = new GraphRenderer(
