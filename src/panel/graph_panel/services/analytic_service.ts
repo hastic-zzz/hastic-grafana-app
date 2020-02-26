@@ -15,7 +15,7 @@ import * as _ from 'lodash';
 
 
 declare global {
-  interface Window { hasticDatasourcesAvailability: { [key: string]: HasticDatasourceStatus } }
+  interface Window { hasticDatasourcesStatuses: { [key: string]: HasticDatasourceStatus } }
 }
 
 // TODO: TableTimeSeries is bad name
@@ -420,16 +420,16 @@ export class AnalyticService {
    * @returns true if status has been changed
    */
   private _updateHasticUrlStatus(status: HasticDatasourceStatus): boolean {
-    if(!window.hasOwnProperty('hasticDatasourcesAvailability')) {
-      window.hasticDatasourcesAvailability = {};
+    if(!window.hasOwnProperty('hasticDatasourcesStatuses')) {
+      window.hasticDatasourcesStatuses = {};
     }
-    if(!window.hasticDatasourcesAvailability.hasOwnProperty(this._hasticDatasourceURL)) {
-      window.hasticDatasourcesAvailability[this._hasticDatasourceURL] = status;
+    if(!window.hasticDatasourcesStatuses.hasOwnProperty(this._hasticDatasourceURL)) {
+      window.hasticDatasourcesStatuses[this._hasticDatasourceURL] = status;
       return true;
     }
-    if(window.hasticDatasourcesAvailability[this._hasticDatasourceURL] !== status) {
+    if(window.hasticDatasourcesStatuses[this._hasticDatasourceURL] !== status) {
       appEvents.emit('hastic-datasource-status-changed', this._hasticDatasourceURL);
-      window.hasticDatasourcesAvailability[this._hasticDatasourceURL] = status;
+      window.hasticDatasourcesStatuses[this._hasticDatasourceURL] = status;
       return true;
     }
     return false;
