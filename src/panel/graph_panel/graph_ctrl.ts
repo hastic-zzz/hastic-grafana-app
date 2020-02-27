@@ -338,15 +338,16 @@ class GraphCtrl extends MetricsPanelCtrl {
       this._analyticUnitsToShow
     );
 
-    if (this.analyticService === undefined) {
+    if(this.analyticService === undefined) {
       appEvents.emit(
-        'alert-warning',
+        'alert-error',
         [
-          `Please select Hastic Datasource.`
+          'Select Hastic datasource',
+          'Panel config -> Visualization'
         ]
       );
     } else {
-      if (this.analyticService.isUp) {
+      if(this.analyticService.isUp) {
         await this.analyticsController.init();
 
         this._updatePanelInfo();
