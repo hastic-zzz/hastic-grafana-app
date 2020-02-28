@@ -9,7 +9,7 @@ import { MetricExpanded } from './models/metric';
 import { DatasourceRequest } from './models/datasource';
 import { AnalyticUnitId, AnalyticUnit, LabelingMode } from './models/analytic_units/analytic_unit';
 import { BOUND_TYPES } from './models/analytic_units/anomaly_analytic_unit';
-import { AnalyticService, HasticDatasourceTestingStatus } from './services/analytic_service';
+import { AnalyticService, HasticDatasourceConnectingStatus } from './services/analytic_service';
 import { AnalyticController } from './controllers/analytic_controller';
 import { HasticPanelInfo } from './models/hastic_panel_info';
 import { PanelTemplate, TemplateVariables } from './models/panel';
@@ -353,8 +353,8 @@ class GraphCtrl extends MetricsPanelCtrl {
     this.refresh();
   }
 
-  get testingStatus(): HasticDatasourceTestingStatus {
-    return this.analyticService.testingStatus;
+  get connectingStatus(): HasticDatasourceConnectingStatus {
+    return this.analyticService.connectingStatus;
   }
 
   issueQueries(datasource) {

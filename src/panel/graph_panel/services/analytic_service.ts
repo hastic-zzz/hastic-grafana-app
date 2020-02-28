@@ -27,18 +27,18 @@ export type TableTimeSeries = {
 export enum HasticDatasourceStatus {
   AVAILABLE = 'success',
   NOT_AVAILABLE = 'error',
-  TESTING = 'info'
+  CONNECTING = 'info'
 };
 
-export type HasticDatasourceTestingStatus = {
+export type HasticDatasourceConnectingStatus = {
   status: HasticDatasourceStatus,
   message: string
 }
 
 export class AnalyticService {
-  public testingStatus: HasticDatasourceTestingStatus = {
-    status: HasticDatasourceStatus.TESTING,
-    message: 'Testing...'
+  public connectingStatus: HasticDatasourceConnectingStatus = {
+    status: HasticDatasourceStatus.CONNECTING,
+    message: 'Connecting...'
   };
 
   private _isUp: boolean = false;
@@ -273,8 +273,8 @@ export class AnalyticService {
   }
 
   async checkDatasourceAvailability(): Promise<boolean> {
-    this.testingStatus.status = HasticDatasourceStatus.TESTING;
-    this.testingStatus.message = 'Testing...';
+    this.connectingStatus.status = HasticDatasourceStatus.CONNECTING;
+    this.connectingStatus.message = 'Connecting...';
 
     this._isUp = await this._isDatasourceAvailable();
     return this._isUp;
@@ -398,8 +398,8 @@ export class AnalyticService {
   }
 
   private _displayConnectionAlert(status: HasticDatasourceStatus, message: string[]): void {
-    this.testingStatus.status = status;
-    this.testingStatus.message = message.join('<br /> ');
+    this.connectingStatus.status = status;
+    this.connectingStatus.message = message.join('<br /> ');
 
     const statusChanged = this._updateHasticUrlStatus(status);
 
