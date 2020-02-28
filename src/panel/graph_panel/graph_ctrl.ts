@@ -338,11 +338,21 @@ class GraphCtrl extends MetricsPanelCtrl {
       this._analyticUnitsToShow
     );
 
-    if(this.analyticService.isUp) {
-      await this.analyticsController.init();
+    if(this.analyticService === undefined) {
+      appEvents.emit(
+        'alert-error',
+        [
+          'Select Hastic datasource',
+          'Panel config -> Visualization'
+        ]
+      );
+    } else {
+      if(this.analyticService.isUp) {
+        await this.analyticsController.init();
 
-      this._updatePanelInfo();
-      this.analyticsController.updateServerInfo();
+        this._updatePanelInfo();
+        this.analyticsController.updateServerInfo();
+      }
     }
 
     this._graphRenderer = new GraphRenderer(
