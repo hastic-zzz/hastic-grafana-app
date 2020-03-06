@@ -25,16 +25,22 @@ export type TableTimeSeries = {
 };
 
 export enum HasticDatasourceStatus {
-  AVAILABLE,
-  NOT_AVAILABLE
+  AVAILABLE = 'success',
+  NOT_AVAILABLE = 'error',
+  CONNECTING = 'info'
 };
 
-const STATUS_TO_ALERT_TYPE_MAPPING = new Map<HasticDatasourceStatus, string>([
-  [HasticDatasourceStatus.AVAILABLE, 'alert-success'],
-  [HasticDatasourceStatus.NOT_AVAILABLE, 'alert-error']
-]);
+export type HasticDatasourceConnectionStatus = {
+  status: HasticDatasourceStatus,
+  message: string
+}
 
 export class AnalyticService {
+  public connectionStatus: HasticDatasourceConnectionStatus = {
+    status: HasticDatasourceStatus.CONNECTING,
+    message: 'Connecting...'
+  };
+
   private _isUp: boolean = false;
 
   constructor(
@@ -268,6 +274,9 @@ export class AnalyticService {
   }
 
   async checkDatasourceAvailability(): Promise<boolean> {
+    this.connectionStatus.status = HasticDatasourceStatus.CONNECTING;
+    this.connectionStatus.message = 'Connecting...';
+
     this._isUp = await this._isDatasourceAvailable();
     return this._isUp;
   }
@@ -393,6 +402,9 @@ export class AnalyticService {
   }
 
   private _displayConnectionAlert(status: HasticDatasourceStatus, message: string[]): void {
+    this.connectionStatus.status = status;
+    this.connectionStatus.message = message.join('<br />');
+
     const statusChanged = this._updateHasticUrlStatus(status);
 
     if(!statusChanged) {
@@ -400,7 +412,7 @@ export class AnalyticService {
     }
 
     appEvents.emit(
-      STATUS_TO_ALERT_TYPE_MAPPING.get(status),
+      `alert-${status}`,
       message
     );
   }

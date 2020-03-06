@@ -1,7 +1,20 @@
 <div class="gf-form-button-row" ng-if="ctrl.hasticDatasource !== undefined && ctrl.analyticsController.serverStatus === false">
-  <h5>Hastic server at "{{ctrl.hasticDatasource.url}}" is not available</h5>
-  <button class="btn btn-inverse" ng-click="ctrl.onHasticDatasourceChange()">
-    <i class="fa fa-plug"></i>
-    Reconnect to Hastic server
-  </button>
+  <div class="gf-form-group">
+    <div class="alert-{{ctrl.connectionStatus.status}} alert"">
+      <div class="alert-icon">
+        <i class="fa fa-spiner fa-spin" ng-show="ctrl.connectionStatus.status === 'info'"></i>
+        <i class="fa fa-exclamation-triangle" ng-show="ctrl.connectionStatus.status === 'error'"></i>
+        <i class="fa fa-check" ng-show="ctrl.connectionStatus.status !== 'error'"></i>
+      </div>
+      <div class="alert-body">
+        <div class="alert-title" ng-bind-html="ctrl.connectionStatus.message" />
+      </div>
+    </div>
+    <div ng-hide="ctrl.connectionStatus.status === 'info'">
+      <button class="btn btn-secondary" ng-click="ctrl.onHasticDatasourceChange()">
+        <i class="fa fa-plug"></i>
+        &nbsp; Connect to Hastic Datasource
+      </button>
+    </div>
+  </div>
 </div>
