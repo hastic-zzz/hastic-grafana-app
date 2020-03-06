@@ -399,7 +399,7 @@ export class AnalyticService {
 
   private _displayConnectionAlert(status: HasticDatasourceStatus, message: string[]): void {
     this.connectingStatus.status = status;
-    this.connectingStatus.message = message.join('<br /> ');
+    this.connectingStatus.message = message.join('<br />');
 
     const statusChanged = this._updateHasticUrlStatus(status);
 
