@@ -28,7 +28,24 @@
         ng-click="ctrl.createNew()"
       >
         <i class="fa fa-plus"></i>
-        Add Analytic Unit
+         &ensp;Add Analytic Unit
+      </button>
+      <button
+        ng-if="ctrl.analyticsController.analyticUnits.length > 0"
+        class="gf-form-label width-12 pointer"
+        style="display: inline;"
+        ng-click="ctrl.redetectAll()"
+      >
+        Re-detect all analytic units
+      </button>
+      <button
+        class="gf-form-label width-12 pointer"
+        style="display: inline;"
+        ng-click="ctrl.showHelp = !ctrl.showHelp"
+      >
+        Show Help
+        <i class="fa fa-caret-down" ng-show="ctrl.showHelp"></i>
+        <i class="fa fa-caret-right" ng-hide="ctrl.showHelp"></i>
       </button>
     </div>
     <div class="gf-form-button-row" ng-if="ctrl.analyticsController.creatingNew">
@@ -50,24 +67,12 @@
         Saving
       </button>
       <button
-        class="btn btn-danger width-12"
+        class="btn btn-inverse width-12"
         ng-click="ctrl.cancelCreation()"
         ng-disabled="ctrl.analyticsController.saving"
       >
         <i class="fa fa-ban"></i>
         &ensp;Cancel
-      </button>
-    </div>
-    <div class="gf-form-button-row" ng-if="ctrl.analyticsController.analyticUnits.length > 0">
-      <button class="gf-form-label width-12 pointer" ng-click="ctrl.redetectAll()">
-        Re-detect all analytic units
-      </button>
-    </div>
-    <div class="gf-form-button-row">
-      <button class="gf-form-label width-12 pointer" ng-click="ctrl.showHelp = !ctrl.showHelp">
-        Show Help
-        <i class="fa fa-caret-down" ng-show="ctrl.showHelp"></i>
-        <i class="fa fa-caret-right" ng-hide="ctrl.showHelp"></i>
       </button>
     </div>
 
