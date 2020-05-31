@@ -13,6 +13,7 @@
   "license": "MIT",
   "repository": "https://github.com/CorpGlory/hastic/hastic-grafana-app",
   "devDependencies": {
+    "@chartwerk/grafana-chartwerk-panel": "github:chartwerk/grafana-chartwerk-panel",
     "@types/angular": "^1.6.43",
     "@types/flot": "0.0.31",
     "@types/grafana": "github:CorpGlory/types-grafana",
