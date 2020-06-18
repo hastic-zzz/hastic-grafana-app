@@ -189,7 +189,9 @@ class GraphCtrl extends MetricsPanelCtrl {
       throw new Error('Cannot parse grafana url');
     }
 
-    this._panelId = `${this.dashboard.uid}/${this.panel.id}`;
+    // editSourceId is a true panel ID in panel editor mode in Grafana 7.x
+    const panelId = this.panel.editSourceId || this.panel.id;
+    this._panelId = `${this.dashboard.uid}/${panelId}`;
     this._datasources = {};
     this._dataTimerange = {};
   }
@@ -469,7 +471,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
 
     for(let series of this.seriesList) {
-      if(series.unit) {
+      if(series.unit !== undefined && series.yaxis !== undefined) {
         this.panel.yaxes[series.yaxis - 1].format = series.unit;
       }
     }
@@ -685,7 +687,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     if(grafanaVersion[0] === '5') {
       return `${this.partialsPath}/${filename}_5.x.html`;
     }
-    if(grafanaVersion[0] === '6') {
+    if(grafanaVersion[0] === '6' || grafanaVersion[0] === '7') {
       return `${this.partialsPath}/${filename}_6.x.html`;
     }
     throw new Error(`Unsupported Grafana version: ${grafanaVersion}`);
