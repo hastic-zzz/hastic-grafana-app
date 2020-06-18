@@ -631,6 +631,10 @@ export class AnalyticController {
 
   get inspectedAnalyticUnit(): AnalyticUnit | null {
     for(let analyticUnit of this.analyticUnits) {
+      // TODO: inspect flag isn't persisted on the server,
+      // so it resets when closing panel editor in Grafana 7
+      // (because AnalyticController is re-created)
+      // P.S. it works in Grafana 5 and 6
       if(analyticUnit.inspect) {
         return analyticUnit;
       }
