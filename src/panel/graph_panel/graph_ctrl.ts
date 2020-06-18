@@ -189,7 +189,9 @@ class GraphCtrl extends MetricsPanelCtrl {
       throw new Error('Cannot parse grafana url');
     }
 
-    this._panelId = `${this.dashboard.uid}/${this.panel.id}`;
+    // editSourceId is a true panel ID in panel editor mode in Grafana 7.x
+    const panelId = this.panel.editSourceId || this.panel.id;
+    this._panelId = `${this.dashboard.uid}/${panelId}`;
     this._datasources = {};
     this._dataTimerange = {};
   }
@@ -469,7 +471,7 @@ class GraphCtrl extends MetricsPanelCtrl {
     }
 
     for(let series of this.seriesList) {
-      if(series.unit) {
+      if(series.unit !== undefined && series.yaxis !== undefined) {
         this.panel.yaxes[series.yaxis - 1].format = series.unit;
       }
     }
@@ -670,25 +672,28 @@ class GraphCtrl extends MetricsPanelCtrl {
     return `${this.panelPath}/partials`;
   }
 
-  get grafanaVersion() {
+  get grafanaVersion(): string | null {
     if(_.has(window, 'grafanaBootData.settings.buildInfo.version')) {
       return window.grafanaBootData.settings.buildInfo.version;
     }
     return null;
   }
 
-  getTemplatePath(filename: string) {
+  getTemplatePath(filename: string): string {
     const grafanaVersion = this.grafanaVersion;
     if(grafanaVersion === null) {
       throw new Error('Unknown Grafana version');
     }
-    if(grafanaVersion[0] === '5') {
-      return `${this.partialsPath}/${filename}_5.x.html`;
+    switch(grafanaVersion[0]) {
+      case '5':
+        return `${this.partialsPath}/${filename}_5.x.html`;
+      case '6':
+        return `${this.partialsPath}/${filename}_6.x.html`;
+      case '7':
+        return `${this.partialsPath}/${filename}_7.x.html`;
+      default:
+        throw new Error(`Unsupported Grafana version: ${grafanaVersion}`);
     }
-    if(grafanaVersion[0] === '6') {
-      return `${this.partialsPath}/${filename}_6.x.html`;
-    }
-    throw new Error(`Unsupported Grafana version: ${grafanaVersion}`);
   }
 
   createNew() {

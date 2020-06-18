@@ -1,7 +1,7 @@
-<div class="gf-form-group">
+<div class="section gf-form-group">
   <div class="gf-form">
     <label class="gf-form-label">Select Hastic datasource</label>
-    <select class="gf-form-input width-15"
+    <select class="gf-form-input"
       ng-model="ctrl.panel.hasticDatasource"
       ng-options="ds.id as ds.name for ds in ctrl.hasticDatasources"
       ng-change="ctrl.onHasticDatasourceChange()"
