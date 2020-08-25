@@ -16,7 +16,7 @@
         ng-model="analyticUnit.type"
         ng-options="type.value as type.name for type in ctrl.analyticUnitTypes[analyticUnit.detectorType]"
         ng-disabled="true"
-      />
+      ></select>
     </div>
   </div>
 </div>
@@ -57,7 +57,7 @@
       ng-model="analyticUnit.condition"
       ng-options="type for type in ctrl.analyticsController.conditions"
       ng-change="ctrl.onAnalyticUnitChange(analyticUnit)"
-    />
+    ></select>
     <input class="gf-form-input"
       ng-if="analyticUnit.condition !== 'NO_DATA'"
       type="number"
@@ -128,7 +128,7 @@
         ng-model="analyticUnit.seasonalityPeriod.unit"
         ng-change="ctrl.onSeasonalityChange(analyticUnit.id)"
         ng-options="type for type in ['seconds', 'minutes', 'hours', 'days', 'years']"
-      />
+      ></select>
     </div>
   </div>
 
@@ -142,7 +142,7 @@
         ng-model="analyticUnit.enableBounds"
         ng-change="ctrl.onAnalyticUnitChange(analyticUnit)"
         ng-options="bound.value as bound.name for bound in ctrl.boundTypes"
-      />
+      ></select>
     </div>
   </div>
 </div>
