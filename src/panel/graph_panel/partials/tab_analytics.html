@@ -5,12 +5,12 @@
       ng-model="ctrl.panel.hasticDatasource"
       ng-options="ds.id as ds.name for ds in ctrl.hasticDatasources"
       ng-change="ctrl.onHasticDatasourceChange()"
-    />
+    ></select>
   </div>
 </div>
 
 <div>
-  <ng-include src="ctrl.partialsPath + '/reconnect_to_datasource.html'" />
+  <ng-include src="ctrl.partialsPath + '/reconnect_to_datasource.html'" ></ng-include>
 
   <div ng-if="ctrl.analyticsController.serverStatus === true && !ctrl.analyticsController.loading">
     <ng-include src="ctrl.getTemplatePath('analytic_units')">
@@ -80,7 +80,6 @@
   </div>
 
   <div ng-if="ctrl.analyticsController.serverStatus === true && ctrl.analyticsController.loading">
-    <i class="fa fa-spinner fa-spin" /> Fetching analytic units...
+    <i class="fa fa-spinner fa-spin" > Fetching analytic units... </i>
   </div>
 </div>
-
