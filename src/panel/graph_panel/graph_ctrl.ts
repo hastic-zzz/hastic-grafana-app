@@ -884,6 +884,7 @@ class GraphCtrl extends MetricsPanelCtrl {
       if(datasource.access !== 'proxy') {
         throw new Error(`"${datasource.name}" datasource has "Browser" access type but only "Server" is supported`);
       }
+      this._datasourceRequest.datasourceId = datasource.id;
       this._datasourceRequest.type = datasource.type;
     }
     return this._datasourceRequest;
