@@ -20,7 +20,7 @@
         ng-model="ctrl.analyticsController.newAnalyticUnit.detectorType"
         ng-options="analyticUnitDetectorType for analyticUnitDetectorType in ctrl.analyticUnitDetectorTypes"
         ng-change="ctrl.analyticsController.onAnalyticUnitDetectorChange(ctrl.analyticUnitTypes);"
-      />
+      ></select>
     </div>
   </div>
 
@@ -33,7 +33,7 @@
           type.value as type.name
           for type in ctrl.analyticUnitTypes[ctrl.analyticsController.newAnalyticUnit.detectorType]
         "
-      />
+      ></select>
     </div>
   </div>
 

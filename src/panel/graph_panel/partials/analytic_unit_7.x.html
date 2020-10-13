@@ -28,7 +28,7 @@
       <color-picker
         color="analyticUnit.labeledColor"
         onChange="ctrl.onColorChange.bind(ctrl, analyticUnit.id, false)"
-      />
+      ></color-picker>
     </label>
   </div>
 
@@ -40,7 +40,7 @@
       <color-picker
         color="analyticUnit.deletedColor"
         onChange="ctrl.onColorChange.bind(ctrl, analyticUnit.id, true)"
-      />
+      ></color-picker>
     </label>
   </div>
 </div>
@@ -107,7 +107,7 @@
       label-class="query-keyword"
       on-change="ctrl.onAnalyticUnitChange(analyticUnit)"
       checked="analyticUnit.hasSeasonality"
-    />
+    ></gf-form-switch>
   </div>
 
   <div class="gf-form" ng-if="analyticUnit.hasSeasonality">

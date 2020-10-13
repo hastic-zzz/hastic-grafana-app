@@ -102,7 +102,7 @@
         ng-model="ctrl.analyticsController.labelingMode"
         ng-options="type.value as type.name for type in analyticUnit.labelingModes"
         ng-disabled="analyticUnit.status === 'LEARNING'"
-      />
+      ></select>
 
       <button class="query-editor-row__action"
         ng-if="analyticUnit.selected && !analyticUnit.saving"

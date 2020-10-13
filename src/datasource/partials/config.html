@@ -35,7 +35,7 @@
             class="gf-form-input"
             ng-model="ctrl.current.access"
             ng-options="f.key as f.value for f in ctrl.ACCESS_OPTIONS"
-          />
+          ></select>
         </div>
       </div>
       <div class="gf-form">
@@ -74,7 +74,7 @@
           ng-model="ctrl.current.jsonData.keepCookies"
           width-class="width-20" tagclass="label label-tag"
           placeholder="Add Name"
-        />
+        ></bootstrap-tagsinput>
         <info-popover mode="right-absolute">
           Grafana Proxy deletes forwarded cookies by default. Specify cookies by name
           that should be forwarded to the data source.
