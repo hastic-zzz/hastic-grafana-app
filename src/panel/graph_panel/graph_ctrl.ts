@@ -18,6 +18,7 @@ import { axesEditorComponent } from './axes_editor';
 import { MetricsPanelCtrl } from 'grafana/app/plugins/sdk';
 import { appEvents } from 'grafana/app/core/core'
 import { BackendSrv } from 'grafana/app/core/services/backend_srv';
+import { eventFactory } from '@grafana/data';
 
 import angular from 'angular';
 
@@ -273,7 +274,15 @@ class GraphCtrl extends MetricsPanelCtrl {
       this.refresh();
     });
 
-    appEvents.on('ds-request-response', data => {
+    // const a as appEvent<'ds-request-response', string> = 'ds-request-response';
+    const event = {
+      name: 'ds-request-response'
+    }
+    console.log('eventFactory', eventFactory);
+    // const dsRequestResponse = eventFactory<any>('ds-request-response');
+
+    appEvents.on(event, data => {
+      console.log('ds-request-response', data);
       let requestConfig = data.config;
 
       this._datasourceRequest = {
@@ -283,6 +292,13 @@ class GraphCtrl extends MetricsPanelCtrl {
         params: requestConfig.params,
         type: undefined
       };
+    });
+
+    const timeEvent = {
+      name: 'time-range-updated'
+    }
+    appEvents.on(timeEvent, data => {
+      console.log('timeEvent', data);
     });
 
     appEvents.on('hastic-datasource-status-changed', (url: string) => {
