@@ -10,7 +10,7 @@
   },
   "keywords": [],
   "author": "CorpGlory Inc.",
-  "license": "MIT",
+  "license": "GPL-3.0-or-later",
   "repository": "https://github.com/CorpGlory/hastic/hastic-grafana-app",
   "devDependencies": {
     "@types/angular": "^1.6.43",
