@@ -1,18 +1,18 @@
 <div class="section gf-form-group">
   <div class="gf-form">
-    <label class="gf-form-label query-keyword">
+    <label class="gf-form-label query-keyword width-6">
       Name
     </label>
     <input
-      type="text" class="gf-form-input"
+      type="text" class="gf-form-input width-12"
       ng-model="analyticUnit.name"
       ng-blur="ctrl.onAnalyticUnitChange(analyticUnit)"
     >
   </div>
   <div class="gf-form">
-    <label class="gf-form-label query-keyword"> Type </label>
+    <label class="gf-form-label query-keyword width-6"> Type </label>
     <div class="gf-form-select-wrapper">
-      <select class="gf-form-input"
+      <select class="gf-form-input width-12"
         ng-model="analyticUnit.type"
         ng-options="type.value as type.name for type in ctrl.analyticUnitTypes[analyticUnit.detectorType]"
         ng-disabled="true"
@@ -23,7 +23,7 @@
 
 <div class="section gf-form-group">
   <div class="gf-form">
-    <label class="gf-form-label query-keyword"> Positive Color </label>
+    <label class="gf-form-label query-keyword width-6"> Positive Color </label>
     <label class="gf-form-label">
       <color-picker
         color="analyticUnit.labeledColor"
@@ -35,7 +35,7 @@
   <div class="gf-form"
     ng-if="analyticUnit.detectorType === 'pattern' || analyticUnit.detectorType === 'anomaly'"
   >
-    <label class="gf-form-label query-keyword"> Negative Color </label>
+    <label class="gf-form-label query-keyword width-6"> Negative Color </label>
     <label class="gf-form-label">
       <color-picker
         color="analyticUnit.deletedColor"
@@ -48,7 +48,7 @@
 <div class="section gf-form-group" ng-if="analyticUnit.detectorType === 'threshold'">
   <!-- TODO: move analytic-unit-specific fields rendering to class -->
   <div class="gf-form">
-    <label class="gf-form-label query-keyword"> Condition </label>
+    <label class="gf-form-label query-keyword width-6"> Condition </label>
     <select class="gf-form-input"
       ng-class="{
         'width-5': analyticUnit.condition !== 'NO_DATA',
@@ -69,12 +69,12 @@
 
 <div class="section gf-form-group" ng-if="analyticUnit.detectorType === 'anomaly'">
   <div class="gf-form">
-    <label class="gf-form-label query-keyword">
+    <label class="gf-form-label query-keyword width-6">
       Alpha
       &nbsp;
       <i class="fa fa-info" bs-tooltip="'Takes value from 0 to 1. Less Alpha means smoother bounds'"></i>
     </label>
-    <input class="gf-form-input"
+    <input class="gf-form-input width-12"
       min="0"
       max="1"
       type="number"
@@ -84,12 +84,12 @@
   </div>
 
   <div class="gf-form">
-    <label class="gf-form-label query-keyword">
+    <label class="gf-form-label query-keyword width-6">
       Сonfidence
       &nbsp;
       <i class="fa fa-info" bs-tooltip="'Bounds for the metric'"></i>
     </label>
-    <input class="gf-form-input"
+    <input class="gf-form-input width-12"
       min="0"
       type="number"
       ng-model="analyticUnit.confidence"
