@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 
 
 // TODO: move to config
-export const SUPPORTED_SERVER_VERSION = '0.5.0';
+export const SUPPORTED_SERVER_VERSION = '0.5.1';
 
 export function normalizeUrl(inputUrl: string) {
   if(!inputUrl) {
