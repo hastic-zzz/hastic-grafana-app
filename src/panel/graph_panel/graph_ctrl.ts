@@ -9,7 +9,7 @@ import { MetricExpanded } from './models/metric';
 import { DatasourceRequest } from './models/datasource';
 import { AnalyticUnitId, AnalyticUnit, LabelingMode } from './models/analytic_units/analytic_unit';
 import { BOUND_TYPES } from './models/analytic_units/anomaly_analytic_unit';
-import { AnalyticService, HasticDatasourceConnectionStatus } from './services/analytic_service';
+import { AnalyticService, HasticDatasourceConnectionStatus, HasticDatasourceStatus } from './services/analytic_service';
 import { AnalyticController } from './controllers/analytic_controller';
 import { HasticPanelInfo } from './models/hastic_panel_info';
 import { PanelTemplate, TemplateVariables } from './models/panel';
@@ -366,6 +366,9 @@ class GraphCtrl extends MetricsPanelCtrl {
   }
 
   get connectionStatus(): HasticDatasourceConnectionStatus {
+    if(this.analyticService === undefined) {
+      return { status: HasticDatasourceStatus.CONNECTING, message: 'Loading...' };
+    }
     return this.analyticService.connectionStatus;
   }
 
