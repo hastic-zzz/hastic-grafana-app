@@ -273,17 +273,16 @@ class GraphCtrl extends MetricsPanelCtrl {
       this.refresh();
     });
 
-    appEvents.on('ds-request-response', data => {
-      let requestConfig = data.config;
+    // TODO: @types/grafana: add `getInspectorStream()` to `BackendSrv`
+    // @ts-ignore
+    if(this.backendSrv.getInspectorStream !== undefined) {
+    // @ts-ignore
+      this.backendSrv.getInspectorStream().subscribe({
+        next: this._updateDatasourceRequest.bind(this)
+      });
+    }
 
-      this._datasourceRequest = {
-        url: requestConfig.url,
-        method: requestConfig.method,
-        data: requestConfig.data,
-        params: requestConfig.params,
-        type: undefined
-      };
-    });
+    appEvents.on('ds-request-response', this._updateDatasourceRequest.bind(this));
 
     appEvents.on('hastic-datasource-status-changed', (url: string) => {
       if(url === this.analyticService.hasticDatasourceURL) {
@@ -854,6 +853,23 @@ class GraphCtrl extends MetricsPanelCtrl {
   onSeasonalityChange(id: AnalyticUnitId, value?: number) {
     this.analyticsController.updateSeasonality(id, value);
     this.refresh();
+  }
+
+  // TODO: response type
+  private _updateDatasourceRequest(response: any) {
+    let requestConfig = response.config;
+
+    if(requestConfig.hideFromInspector === true) {
+      return;
+    }
+
+    this._datasourceRequest = {
+      url: requestConfig.url,
+      method: requestConfig.method,
+      data: requestConfig.data,
+      params: requestConfig.params,
+      type: undefined
+    };
   }
 
   private async _updatePanelInfo() {
